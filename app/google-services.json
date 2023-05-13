@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "544155461218",
+    "project_id": "eventmatics-da3d2",
+    "storage_bucket": "eventmatics-da3d2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:544155461218:android:6d5bbbe0ff5457bfdb133b",
+        "android_client_info": {
+          "package_name": "com.example.eventmatics"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "544155461218-9sksqsr1tn7rol4jd2si3u29gnsqc63b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9yx5jXMj8cIyVwQbnIzqFK6uYJjJMCME"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "544155461218-9sksqsr1tn7rol4jd2si3u29gnsqc63b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
