@@ -14,7 +14,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "544155461218-9sksqsr1tn7rol4jd2si3u29gnsqc63b.apps.googleusercontent.com",
+          "client_id": "544155461218-iutgu0tbuv18abmorhobr0pdu10jaga7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.eventmatics",
+            "certificate_hash": "0e6aab9c84ccc5b3b8cf0b72859f8ae883b6f21c"
+          }
+        },
+        {
+          "client_id": "544155461218-47c36bcuqtp0uavjbm67sco02ktj3kje.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -27,7 +35,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "544155461218-9sksqsr1tn7rol4jd2si3u29gnsqc63b.apps.googleusercontent.com",
+              "client_id": "544155461218-47c36bcuqtp0uavjbm67sco02ktj3kje.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
