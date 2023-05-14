@@ -79,17 +79,6 @@
                     android:textColorHint="@color/black"
                     tools:ignore="RtlSymmetry" />
             </com.google.android.material.textfield.TextInputLayout>
-            <TextView
-                android:id="@+id/forgetpass"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/forget_password"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                android:layout_marginBottom="15dp"
-                android:textAlignment="textEnd"
-                android:textStyle="bold"
-                />
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/createbutton"
                 android:layout_width="match_parent"

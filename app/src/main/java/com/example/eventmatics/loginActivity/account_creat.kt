@@ -1,4 +1,3 @@
-@file:Suppress("DEPRECATION")
 
 package com.example.eventmatics.loginActivity
 
@@ -29,7 +28,6 @@ import java.lang.Exception
 class account_creat : AppCompatActivity() {
     private lateinit var emailField: EditText
     private lateinit var passField: EditText
-    private lateinit var forgetpas:TextView
     private lateinit var createButton: Button
     private lateinit var googleLoginButton: Button
     private lateinit var alreadyHaveAccountText: TextView
@@ -39,13 +37,11 @@ class account_creat : AppCompatActivity() {
     private lateinit var firestore : FirebaseFirestore
     val RC_SIGN_IN = 1
 
-    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_account_creation)
         emailField = findViewById(R.id.emailfield)
         passField = findViewById(R.id.passfield)
-        forgetpas = findViewById(R.id.forgetpass)
         createButton = findViewById(R.id.createbutton)
         googleLoginButton = findViewById(R.id.google_creation)
         alreadyHaveAccountText = findViewById(R.id.alreadyfield)
@@ -73,7 +69,7 @@ class account_creat : AppCompatActivity() {
                         progressDialog.cancel()
                     }
                 }.addOnFailureListener {e->
-                    Toast.makeText(this,"Email not found +${e.message}",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this,"${e.message}",Toast.LENGTH_SHORT).show()
                     progressDialog.cancel()
                 }
                 progressDialog.setMessage("Logging ...")
@@ -84,10 +80,6 @@ class account_creat : AppCompatActivity() {
 
         googleLoginButton.setOnClickListener {
             googleaccess()
-        }
-        forgetpas.setOnClickListener {
-            resetpassword()
-
         }
         alreadyHaveAccountText.setOnClickListener {
             Intent(this,signin_account::class.java).also {
@@ -146,7 +138,6 @@ class account_creat : AppCompatActivity() {
             "email" to user.email,
             "photoUrl" to user.photoUrl
         )
-//        val firestore = FirebaseFirestore.getInstance()
         firestore.collection("GoogleSignINUser")
             .document(user.uid)
             .set(Usermap)
@@ -166,23 +157,6 @@ class account_creat : AppCompatActivity() {
 
     }
 
-    private fun resetpassword() {
-        val email=emailField.text.toString()
-        if(email.isEmpty()){
-            emailField.error="Please enter your mail to reset"
-        }
-        else{
-            firebaseauth.sendPasswordResetEmail(email).addOnSuccessListener {
-                Toast.makeText(this,"Email has been sent your mail",Toast.LENGTH_SHORT).show()
-                progressDialog.cancel()
-            }.addOnFailureListener{e->
-                Toast.makeText(this,"Enter A Valid Email ${e.message}",Toast.LENGTH_SHORT).show()
-                progressDialog.cancel()
-            }
-            progressDialog.setMessage("Sending Mail")
-            progressDialog.setCanceledOnTouchOutside(false)
-            progressDialog.show()
-        }
-    }
+
 
 }
