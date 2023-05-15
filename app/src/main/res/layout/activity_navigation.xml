@@ -4,8 +4,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/fabConstraint"
     android:layout_height="match_parent"
     tools:context=".Navigation.Navigation">
+    <View
+        android:id="@+id/transparentBg"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#66000000"
+        android:visibility="invisible" />
 
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottomapp"
@@ -25,12 +32,103 @@
     </com.google.android.material.bottomappbar.BottomAppBar>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/addbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/add"
         app:layout_anchor="@id/bottomapp"
         />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/budgetfab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/calculator"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="178sp"
+        android:visibility="invisible"
+        app:layout_anchor="@id/addbutton"
+        android:layout_marginBottom="130sp"
+        />
+    <TextView
+        android:id="@+id/budgettv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/budget"
+        android:textColor="#AE82F6"
+        android:layout_marginTop="608sp"
+        android:visibility="invisible"
+        android:layout_gravity="left"
+        app:layout_anchor="@id/budgetfab"
+        android:textSize="20sp"
+        />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/guestfab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/guest"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="178sp"
+        android:visibility="invisible"
+        app:layout_anchor="@id/budgetfab"
+        android:layout_marginBottom="196sp"
+        />
+    <TextView
+        android:id="@+id/guesttv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/guest"
+        android:textColor="#AE82F6"
+        android:layout_marginTop="538sp"
+        android:layout_gravity="left"
+        android:visibility="invisible"
+        app:layout_anchor="@id/guestfab"
+        android:textSize="20sp"
+        />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/vendorfab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/vendor"
+        android:visibility="invisible"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="178sp"
+        android:layout_marginBottom="260sp"
+        />
+    <TextView
+        android:id="@+id/vendortv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/vendor"
+        android:textColor="#AE82F6"
+        android:layout_marginTop="479sp"
+        android:layout_gravity="left"
+        android:visibility="invisible"
+        app:layout_anchor="@id/vendorfab"
+        android:textSize="20sp"
+        />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/taskfab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/task"
+        android:visibility="invisible"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="178sp"
+        android:layout_marginBottom="325sp"
+        />
+    <TextView
+        android:id="@+id/TaskList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Task List"
+        android:visibility="invisible"
+        android:textColor="#AE82F6"
+        android:layout_marginTop="415sp"
+        android:layout_gravity="left"
+        app:layout_anchor="@id/taskfab"
+        android:textSize="20sp"
+        />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

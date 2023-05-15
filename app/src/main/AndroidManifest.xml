@@ -15,6 +15,18 @@
         android:theme="@style/Theme.Eventmatics"
         tools:targetApi="31">
         <activity
+            android:name=".Event_Activities.Budget"
+            android:exported="false" />
+        <activity
+            android:name=".Event_Activities.Guest"
+            android:exported="false" />
+        <activity
+            android:name=".Event_Activities.Vendor"
+            android:exported="false" />
+        <activity
+            android:name=".EventAdd"
+            android:exported="false" />
+        <activity
             android:name=".Navigation.Navigation"
             android:exported="false" />
         <activity
