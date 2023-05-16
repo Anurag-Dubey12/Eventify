@@ -19,8 +19,4 @@ class BudgetFragment : Fragment() {
         return view
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.budget_menu, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
 }

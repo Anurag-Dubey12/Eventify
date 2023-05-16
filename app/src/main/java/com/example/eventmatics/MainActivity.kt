@@ -34,29 +34,36 @@ class MainActivity : AppCompatActivity() {
     lateinit var guestfab: FloatingActionButton
     lateinit var vendorfab: FloatingActionButton
     lateinit var taskfab: FloatingActionButton
-     lateinit var  fragcon:FrameLayout
+    lateinit var  fragcon:FrameLayout
+
+
      //Animation to make texview and Button to be Appear
      private val frombottomfabanim:Animation by lazy{
          AnimationUtils.loadAnimation(this,R.anim.from_bottom_fab)
      }
+
     private val tobottomfabanim:Animation by lazy{
         AnimationUtils.loadAnimation(this,R.anim.to_bottom_fab)
     }
+
     private val rotateclock:Animation by lazy{
         AnimationUtils.loadAnimation(this,R.anim.rotate_clock_wise)
     }
+
     private val anticlockwise:Animation by lazy{
         AnimationUtils.loadAnimation(this,R.anim.rotate_anticlock_wise)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         fabConstraint=findViewById(R.id.fabConstraint)
         budgettv = findViewById(R.id.budgettv)
         budgetfab = findViewById(R.id.budgetfab)
         guestfab = findViewById(R.id.guestfab)
         vendorfab = findViewById(R.id.vendorfab)
-        navView = findViewById(R.id.navView)
+        navView= findViewById(R.id.navView)
         taskfab = findViewById(R.id.taskfab)
         guesttv = findViewById(R.id.guesttv)
         vendortv = findViewById(R.id.vendortv)
@@ -64,15 +71,25 @@ class MainActivity : AppCompatActivity() {
         drawerLayout=findViewById(R.id.drawerlayout)
         addbutton=findViewById(R.id.addbutton)
 
+
         val bottomnav: BottomNavigationView =findViewById(R.id.bottomnav)
         bottomnav.background=null
         bottomnav.menu.getItem(2).isEnabled=false
-
-
-
         navigationDrawershow()
 
-//        bottomnav.setOnNavigationItemSelectedListener { item ->
+        bottomNavigationclickListener()
+        addbutton.setOnClickListener{
+            if(isExpanded){
+                shrinkfab()
+            }
+            else{
+                expand()
+            }
+
+        } }
+
+    private fun bottomNavigationclickListener() {
+        //        bottomnav.setOnNavigationItemSelectedListener { item ->
 //            when (item.itemId) {
 //                R.id.home -> {
 //
@@ -97,18 +114,6 @@ class MainActivity : AppCompatActivity() {
 //                else -> false
 //            }
 //        }
-        addbutton.setOnClickListener{
-
-        if(isExpanded){
-            shrinkfab()
-        }
-        else{
-            expand()
-        }
-
-        }
-
-
 
     }
 
@@ -194,24 +199,10 @@ class MainActivity : AppCompatActivity() {
 //        replace(R.id.fragmentcon,fragment)
 //            commit()
 //    }
-//override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-//
-//    if (ev?.action == MotionEvent.ACTION_DOWN) {
-//
-//        if (isExpanded) {
-//            val outRect = Rect()
-//            fabConstraint.getGlobalVisibleRect(outRect)
-//            if (!outRect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
-//                shrinkfab()
-//            }
-//        }
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//    if(toogle.onOptionsItemSelected(item)){
+//        return true
 //    }
-//    return super.dispatchTouchEvent(ev)
-//}
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    if(toogle.onOptionsItemSelected(item)){
-        return true
-    }
-    return super.onOptionsItemSelected(item)
-    }
+//    return super.onOptionsItemSelected(item)
+//    }
 }
