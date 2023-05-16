@@ -4,10 +4,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.eventmatics.R
 
-class Budget : AppCompatActivity(R.layout.activity_budget) {
+class Task : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_budget)
-
+        setContentView(R.layout.activity_task)
     }
 }

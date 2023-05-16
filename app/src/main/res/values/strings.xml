@@ -15,4 +15,6 @@
     <string name="budget">Budget</string>
     <string name="guest">Guest</string>
     <string name="vendor">Vendor</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
 </resources>

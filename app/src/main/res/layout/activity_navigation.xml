@@ -7,12 +7,6 @@
     android:id="@+id/fabConstraint"
     android:layout_height="match_parent"
     tools:context=".Navigation.Navigation">
-    <View
-        android:id="@+id/transparentBg"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="#66000000"
-        android:visibility="invisible" />
 
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottomapp"
@@ -130,5 +124,19 @@
         app:layout_anchor="@id/taskfab"
         android:textSize="20sp"
         />
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/drawerlayout">
 
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navView"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/nav_header_menu"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"/>
+
+    </androidx.drawerlayout.widget.DrawerLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
