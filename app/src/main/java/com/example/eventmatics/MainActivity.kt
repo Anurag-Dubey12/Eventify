@@ -1,5 +1,6 @@
 package com.example.eventmatics
 
+import android.content.Intent
 import android.graphics.Rect
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -15,6 +16,11 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import com.example.eventmatics.Event_Activities.Budget
+import com.example.eventmatics.Event_Details_Activity.BudgetDetails
+import com.example.eventmatics.fragments.BudgetFragment
+import com.example.eventmatics.fragments.GuestFragment
+import com.example.eventmatics.fragments.VendorFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
@@ -26,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     private var isExpanded = false
     private lateinit var fabConstraint:CoordinatorLayout
     private lateinit var budgettv: TextView
+    lateinit var bottomnav: BottomNavigationView
     private lateinit var guesttv: TextView
     private lateinit var vendortv: TextView
     private lateinit var tasktv: TextView
@@ -34,7 +41,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var guestfab: FloatingActionButton
     lateinit var vendorfab: FloatingActionButton
     lateinit var taskfab: FloatingActionButton
-    lateinit var  fragcon:FrameLayout
+    lateinit var  fragmentcon:FrameLayout
 
 
      //Animation to make texview and Button to be Appear
@@ -58,7 +65,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        fabConstraint=findViewById(R.id.fabConstraint)
+        fragmentcon=findViewById(R.id.fragmentcon)
         budgettv = findViewById(R.id.budgettv)
         budgetfab = findViewById(R.id.budgetfab)
         guestfab = findViewById(R.id.guestfab)
@@ -72,7 +79,7 @@ class MainActivity : AppCompatActivity() {
         addbutton=findViewById(R.id.addbutton)
 
 
-        val bottomnav: BottomNavigationView =findViewById(R.id.bottomnav)
+        bottomnav=findViewById(R.id.bottomnav)
         bottomnav.background=null
         bottomnav.menu.getItem(2).isEnabled=false
         navigationDrawershow()
@@ -89,34 +96,49 @@ class MainActivity : AppCompatActivity() {
         } }
 
     private fun bottomNavigationclickListener() {
-        //        bottomnav.setOnNavigationItemSelectedListener { item ->
-//            when (item.itemId) {
-//                R.id.home -> {
-//
-//                    true
-//                }
-//                R.id.search -> {
-//
-//                    true
-//                }
-//                R.id.Profile -> {
-//                    // handle profile item click
-//                    true
-//                }
-//                R.id.setting -> {
-//                    // handle profile item click
-//                    true
-//                }
-//                R.id.Profile -> {
-//                    // handle profile item click
-//                    true
-//                }
-//                else -> false
-//            }
-//        }
+        val bugetfrag= BudgetFragment()
+        val vendorfrag=VendorFragment()
+        val guestfrag=GuestFragment()
+        bottomnav.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.home -> {
 
+                    true
+                }
+                R.id.budget -> {
+//                    Intent(this,Budget::class.java).also {
+//                        startActivity(it)
+//                    }
+                    currentfragment(bugetfrag)
+
+                    true
+                }
+                R.id.vendor -> {
+//                    Intent(this,Budget::class.java).also {
+//                        startActivity(it)
+//                    }
+                    currentfragment(vendorfrag)
+
+                    true
+                }
+                R.id.guest -> {
+//                    Intent(this,Budget::class.java).also {
+//                        startActivity(it)
+//                    }
+                    currentfragment(guestfrag)
+
+                    true
+                }
+
+                else -> false
+            }
+        }
+        budgetfab.setOnClickListener {
+            Intent(this, BudgetDetails::class.java).also {
+                startActivity(it)
+            }
+        }
     }
-
 
     //Navigation Drawer function
     private fun navigationDrawershow() {
@@ -194,11 +216,11 @@ class MainActivity : AppCompatActivity() {
         tasktv.startAnimation(tobottomfabanim)
         isExpanded = !isExpanded
     }
-//    private fun currentfragment(fragment:Fragment) =
-//        supportFragmentManager.beginTransaction().apply {
-//        replace(R.id.fragmentcon,fragment)
-//            commit()
-//    }
+    private fun currentfragment(fragment:Fragment) =
+        supportFragmentManager.beginTransaction().apply {
+        replace(R.id.fragmentcon,fragment)
+            commit()
+    }
 //    override fun onOptionsItemSelected(item: MenuItem): Boolean {
 //    if(toogle.onOptionsItemSelected(item)){
 //        return true

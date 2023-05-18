@@ -1,9 +1,157 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+android:layout_height="match_parent"
+    android:layout_width="match_parent">
+<RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Event_Details_Activity.BudgetDetails">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+   <include
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       layout="@layout/budget_menu"/>
+   <LinearLayout
+       android:layout_marginTop="75sp"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:orientation="vertical"
+       >
+      <TextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="@string/budget_details"
+          android:textSize="20sp"
+          android:textColor="@color/light_purple"
+          android:layout_marginBottom="15sp"
+          />
+      <TextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="@string/name"
+          android:textSize="20sp"
+          />
+      <EditText
+          android:id="@+id/NameET"
+          android:layout_width="match_parent"
+          android:layout_height="35sp"
+          android:background="@drawable/valueediteffect"
+          android:layout_marginBottom="10sp"
+          />
+      <TextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="@string/Category"
+          android:textSize="20sp"
+          android:layout_marginBottom="10sp"
+          />
+     <androidx.appcompat.widget.AppCompatButton
+         android:id="@+id/category_button"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:drawableEnd="@drawable/drop_arrow"
+         android:background="@drawable/category_button"
+         android:text="Select A Category"
+         android:layout_marginBottom="10sp"
+
+         />
+      <TextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="@string/note"
+          android:textSize="20sp"
+          android:layout_marginBottom="10sp"
+          />
+      <EditText
+          android:id="@+id/NoteET"
+          android:layout_width="match_parent"
+          android:layout_height="35sp"
+          android:background="@drawable/valueediteffect"
+          android:layout_marginBottom="10sp"
+          />
+      <TextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="@string/estimated_amount"
+          android:textSize="20sp"
+          android:layout_marginBottom="10sp"
+          />
+      <EditText
+          android:id="@+id/Estimated_Amount"
+          android:layout_width="match_parent"
+          android:layout_height="35sp"
+          android:inputType="numberDecimal"
+          android:background="@drawable/valueediteffect"
+          android:layout_marginBottom="10sp"
+          />
+       <TextView
+           android:id="@+id/Balancetv"
+           android:layout_width="match_parent"
+           android:layout_height="40sp"
+           android:text="@string/balance"
+           android:textSize="20sp"
+           android:background="@drawable/valueediteffect"
+           android:drawableEnd="@drawable/drop_arrow"
+           />
+       <TextView
+           android:id="@+id/RemainingET"
+           android:layout_width="match_parent"
+           android:layout_height="35sp"
+           android:visibility="gone"
+           android:textSize="20sp"
+           android:text="@string/pending"
+           android:background="@drawable/valueediteffect"
+           />
+       <TextView
+           android:id="@+id/PaidET"
+           android:layout_width="match_parent"
+           android:layout_height="35sp"
+           android:text="@string/paid"
+           android:visibility="gone"
+           android:background="@drawable/valueediteffect"
+           android:textSize="20sp"
+
+           />
+<LinearLayout
+    android:layout_marginTop="10sp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+       <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="35sp"
+           android:textSize="20sp"
+           android:text="Payments"
+           android:textColor="@color/light_purple"
+           />
+    <ImageView
+        android:id="@+id/PaymentAdd"
+        android:layout_width="30sp"
+        android:layout_height="30sp"
+        android:src="@drawable/add"
+        android:layout_marginLeft="260sp"
+        />
+
+</LinearLayout>
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:orientation="vertical">
+       <androidx.recyclerview.widget.RecyclerView
+           android:id="@+id/paymenttrans"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"/>
+           <View
+               android:layout_width="300dp"
+               android:layout_height="1dp"
+               android:background="#58F4DD"
+               android:layout_gravity="center"
+               />
+
+       </LinearLayout>
+   </LinearLayout>
+</RelativeLayout>
+</ScrollView>

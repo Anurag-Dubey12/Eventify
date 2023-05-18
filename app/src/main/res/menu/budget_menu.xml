@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-<item android:id="@+id/backarrow"
-    android:icon="@drawable/back_arrow"
-    android:title="Back"
-    />
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/Check"
         android:title="Submit"
         android:icon="@drawable/check"
+        app:showAsAction="always"
         />
 </menu>

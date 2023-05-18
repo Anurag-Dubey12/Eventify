@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:id="@+id/fabConstraint"
     android:layout_height="match_parent"
-    >
+    tools:context=".Navigation.navigation">
 
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottomapp"
@@ -125,8 +125,8 @@
         android:textSize="20sp"
         />
     <androidx.drawerlayout.widget.DrawerLayout
-        android:layout_width="390dp"
-        android:layout_height="630sp"
+        android:layout_width="390sp"
+        android:layout_height="650sp"
         android:id="@+id/drawerlayout">
 
         <com.google.android.material.navigation.NavigationView
