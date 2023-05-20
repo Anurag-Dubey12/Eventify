@@ -4,10 +4,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
 android:layout_height="match_parent"
+    android:background="#DEF4F4"
     android:layout_width="match_parent">
 <RelativeLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     tools:context=".Event_Details_Activity.BudgetDetails">
 
    <include
@@ -40,7 +41,7 @@ android:layout_height="match_parent"
           android:layout_height="35sp"
           android:background="@drawable/valueediteffect"
           android:layout_marginBottom="10sp"
-          />
+          android:inputType="text" />
       <TextView
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
@@ -54,7 +55,7 @@ android:layout_height="match_parent"
          android:layout_height="wrap_content"
          android:drawableEnd="@drawable/drop_arrow"
          android:background="@drawable/category_button"
-         android:text="Select A Category"
+         android:text="@string/select_a_category"
          android:layout_marginBottom="10sp"
 
          />
@@ -94,8 +95,7 @@ android:layout_height="match_parent"
            android:text="@string/balance"
            android:textSize="20sp"
            android:background="@drawable/valueediteffect"
-           android:drawableEnd="@drawable/drop_arrow"
-           />
+           app:drawableEndCompat="@drawable/drop_arrow" />
        <TextView
            android:id="@+id/RemainingET"
            android:layout_width="match_parent"
@@ -124,7 +124,7 @@ android:layout_height="match_parent"
            android:layout_width="wrap_content"
            android:layout_height="35sp"
            android:textSize="20sp"
-           android:text="Payments"
+           android:text="@string/payments"
            android:textColor="@color/light_purple"
            />
     <ImageView
@@ -132,7 +132,7 @@ android:layout_height="match_parent"
         android:layout_width="30sp"
         android:layout_height="30sp"
         android:src="@drawable/add"
-        android:layout_marginLeft="260sp"
+        android:layout_marginStart="260sp"
         />
 
 </LinearLayout>

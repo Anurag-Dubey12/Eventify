@@ -10,7 +10,7 @@ import android.widget.TextView
 import com.example.eventmatics.R
 import com.example.eventmatics.data_class.SpinnerItem
 
-class BudgetCategoryAdapter(context: Context, items: List<SpinnerItem>) :
+class CategoryAdapter(context: Context, items: List<SpinnerItem>) :
     ArrayAdapter<SpinnerItem>(context, 0, items) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {

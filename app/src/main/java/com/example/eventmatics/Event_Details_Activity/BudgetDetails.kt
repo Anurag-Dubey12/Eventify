@@ -8,38 +8,29 @@ import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.ListView
-import android.widget.PopupWindow
-import android.widget.Spinner
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.Toolbar
-import com.example.eventmatics.Adapter.BudgetCategoryAdapter
-//import com.example.eventmatics.Adapter.BudgetCategoryAdapter
-import com.example.eventmatics.MainActivity
+import androidx.fragment.app.FragmentManager
+import com.example.eventmatics.Adapter.CategoryAdapter
 import com.example.eventmatics.R
 import com.example.eventmatics.data_class.SpinnerItem
-import com.google.android.material.button.MaterialButton
+import com.example.eventmatics.fragments.BudgetFragment
 
-class BudgetDetails : AppCompatActivity(R.layout.activity_budget_details) {
+class BudgetDetails : AppCompatActivity() {
     lateinit var  balanceET: TextView
     lateinit var remainingET: TextView
     lateinit var EstimatedEt: EditText
+    var fragmentManager:FragmentManager=supportFragmentManager
     lateinit var PaymentAdd:ImageView
     lateinit var paidET: TextView
-    lateinit var spinner: Spinner
-lateinit var categoryButton: AppCompatButton
-    lateinit var categoryPopupWindow: PopupWindow
+    lateinit var categoryButton: AppCompatButton
 
     val spinnerItems = listOf(
-        SpinnerItem(R.drawable.home, "Accessories"),
+        SpinnerItem(R.drawable.budget_bottom_nav, "Accessories"),
         SpinnerItem(R.drawable.home, "Accommodation"),
         SpinnerItem(R.drawable.home, "Attire & accessories"),
         SpinnerItem(R.drawable.home, "Ceremony"),
@@ -72,23 +63,27 @@ lateinit var categoryButton: AppCompatButton
         estimatedAmountcalculate()
     }
 
-    private fun addpaymenttran() {
 
-    }
 
     private fun estimatedAmountcalculate() {
-         balanceET = findViewById(R.id.Balancetv)
         EstimatedEt = findViewById(R.id.Estimated_Amount)
+         balanceET = findViewById(R.id.Balancetv)
          remainingET = findViewById(R.id.RemainingET)
          paidET= findViewById(R.id.PaidET)
 
-        balanceET.setOnClickListener {view->
-
+        val initialres=R.drawable.drop_arrow
+        balanceET.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,initialres,0)
+        balanceET.setOnClickListener {
             if(remainingET.visibility==View.GONE){
+            val newdrawable=R.drawable.up_arrow
+                balanceET.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,newdrawable,0)
+
                 remainingET.visibility=View.VISIBLE
                 paidET.visibility=View.VISIBLE
             }
             else{
+                val newdrawable=R.drawable.drop_arrow
+                balanceET.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,newdrawable,0)
                 remainingET.visibility=View.GONE
                 paidET.visibility=View.GONE
             }
@@ -112,7 +107,7 @@ lateinit var categoryButton: AppCompatButton
 
     @SuppressLint("MissingInflatedId")
     private fun showCategoryPopup() {
-        val spinnerAdapter = BudgetCategoryAdapter(this, spinnerItems)
+        val spinnerAdapter = CategoryAdapter(this, spinnerItems)
         val dialogBuilder = AlertDialog.Builder(this)
             .setTitle("Select Category")
             .setAdapter(spinnerAdapter) { _, position ->
@@ -125,6 +120,10 @@ lateinit var categoryButton: AppCompatButton
 
         val dialog = dialogBuilder.create()
         dialog.show()
+    }
+    private fun addpaymenttran() {
+        val bottomsheet=BudgetFragment()
+        bottomsheet.show(fragmentManager,"bottomsheet")
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

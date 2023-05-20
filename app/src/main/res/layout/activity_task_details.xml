@@ -1,9 +1,151 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Event_Details_Activity.TaskDetails">
+    android:layout_width="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context=".Event_Details_Activity.TaskDetails">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <include
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/budget_menu"/>
+        <LinearLayout
+            android:layout_marginTop="75sp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/name"
+                android:textSize="20sp"
+                />
+            <EditText
+                android:id="@+id/TaskNameET"
+                android:layout_width="match_parent"
+                android:layout_height="35sp"
+                android:background="@drawable/valueediteffect"
+                android:layout_marginBottom="10sp"
+                android:inputType="text" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/Category"
+                android:textSize="20sp"
+                android:layout_marginBottom="10sp"
+                />
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/Taskcategory_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/drop_arrow"
+                android:background="@drawable/category_button"
+                android:text="@string/select_a_category"
+                android:layout_marginBottom="10sp"
+
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/note"
+                android:textSize="20sp"
+                android:layout_marginBottom="10sp"
+                />
+            <EditText
+                android:id="@+id/TaskNoteET"
+                android:layout_width="match_parent"
+                android:layout_height="35sp"
+                android:background="@drawable/valueediteffect"
+                android:layout_marginBottom="10sp"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Task Status"
+                android:textSize="20sp"
+                android:layout_marginBottom="10sp"
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10sp"
+                android:layout_marginBottom="10sp"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/TaskPendingbut"
+                    android:layout_width="190dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10sp"
+                    android:background="@drawable/addpaymentbutton"
+                    android:text="@string/taskpending" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/Taskcombut"
+                    android:layout_width="190dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/addpaymentbutton"
+                    android:text="@string/completed" />
+
+            </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/date"
+                android:textSize="20sp"
+                />
+            <TextView
+                android:id="@+id/taskdate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/calender"
+                android:background="@drawable/valueediteffect"
+                android:textSize="20sp"
+                />
+
+            <LinearLayout
+                android:layout_marginTop="10sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="35sp"
+                    android:textSize="20sp"
+                    android:text="@string/subtasks"
+                    android:textColor="@color/light_purple"
+                    />
+                <ImageView
+                    android:id="@+id/TaskAdd"
+                    android:layout_width="30sp"
+                    android:layout_height="30sp"
+                    android:src="@drawable/add"
+                    android:layout_marginStart="260sp"
+                    />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/subtaskrcv"
+                    android:layout_width="match_parent"
+                    android:layout_height="190sp"/>
+                <View
+                    android:layout_width="300dp"
+                    android:layout_height="1dp"
+                    android:background="#58F4DD"
+                    android:layout_gravity="center"
+                    />
+
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
+</ScrollView>

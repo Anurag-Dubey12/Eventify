@@ -18,6 +18,9 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.example.eventmatics.Event_Activities.Budget
 import com.example.eventmatics.Event_Details_Activity.BudgetDetails
+import com.example.eventmatics.Event_Details_Activity.GuestDetails
+import com.example.eventmatics.Event_Details_Activity.TaskDetails
+import com.example.eventmatics.Event_Details_Activity.VendorDetails
 import com.example.eventmatics.fragments.BudgetFragment
 import com.example.eventmatics.fragments.GuestFragment
 import com.example.eventmatics.fragments.VendorFragment
@@ -138,6 +141,17 @@ class MainActivity : AppCompatActivity() {
                 startActivity(it)
             }
         }
+        guestfab.setOnClickListener {
+            Intent(this, GuestDetails::class.java).also {
+                startActivity(it)
+            }}
+
+        vendorfab.setOnClickListener {
+            Intent(this,VendorDetails::class.java).also { startActivity(it) }
+        }
+        taskfab.setOnClickListener {
+            Intent(this,TaskDetails::class.java).also { startActivity(it) }
+        }
     }
 
     //Navigation Drawer function
@@ -153,7 +167,7 @@ class MainActivity : AppCompatActivity() {
         // Set the item click listener for the NavigationView
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.item1 -> {
+                R.id.home -> {
                     Toast.makeText(applicationContext, "You clicked item 1", Toast.LENGTH_SHORT).show()
 //                    drawerLayout.closeDrawers() // Close the navigation drawer
                     true

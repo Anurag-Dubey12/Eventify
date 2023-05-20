@@ -6,4 +6,209 @@
     android:layout_height="match_parent"
     tools:context=".Event_Activities.Guest">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15sp"
+                android:text="@string/companion_details"
+                android:textColor="@color/light_purple"
+                android:textSize="20sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5sp"
+                android:layout_marginBottom="10sp"
+                android:text="@string/name"
+                android:textSize="20sp" />
+
+            <EditText
+                android:id="@+id/GuestNameEt"
+                android:layout_width="400sp"
+                android:layout_height="35sp"
+                android:layout_marginStart="5sp"
+                android:layout_marginBottom="10sp"
+                android:background="@drawable/valueediteffect" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10sp"
+                android:layout_marginBottom="10sp"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/Malebut"
+                    android:layout_width="190dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10sp"
+                    android:background="@drawable/addpaymentbutton"
+                    android:text="@string/male" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/femalebut"
+                    android:layout_width="190dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/addpaymentbutton"
+                    android:text="@string/female" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10sp"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/Adultbut"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="15sp"
+                    android:layout_weight="1"
+                    android:background="@drawable/addpaymentbutton"
+                    android:text="@string/adult" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/ChildBut"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="15sp"
+                    android:layout_weight="1"
+                    android:background="@drawable/addpaymentbutton"
+                    android:text="@string/child" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/Babybut"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/addpaymentbutton"
+                    android:text="@string/baby" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5sp"
+                android:layout_marginBottom="10sp"
+                android:text="@string/note"
+                android:textSize="20sp" />
+
+            <EditText
+                android:id="@+id/GuestNoteET"
+                android:layout_width="400sp"
+                android:layout_height="35sp"
+                android:layout_marginStart="5sp"
+                android:layout_marginBottom="10sp"
+                android:background="@drawable/valueediteffect" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5sp"
+                            android:layout_marginBottom="10sp"
+                            android:layout_marginEnd="210sp"
+                            android:text="@string/contacts_details"
+                            android:textColor="@color/light_purple"
+                            android:textSize="20sp"
+                            />
+                        <ImageView
+                            android:id="@+id/contactviewtv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/drop_arrow"
+
+                            />
+                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/GuestPhonetv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5sp"
+                        android:layout_marginBottom="10sp"
+                        android:text="@string/phone_number"
+                        android:textSize="20sp"
+                        />
+
+                    <EditText
+                        android:id="@+id/GuestPhoneEt"
+                        android:layout_width="400sp"
+                        android:layout_height="35sp"
+                        android:layout_marginStart="5sp"
+                        android:layout_marginBottom="10sp"
+                        android:background="@drawable/valueediteffect"
+                        android:drawableEnd="@drawable/call" />
+
+                    <TextView
+                        android:id="@+id/GuestEmailtv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5sp"
+                        android:layout_marginBottom="10sp"
+                        android:text="@string/email_id"
+                        android:textSize="20sp"
+
+                        />
+
+                    <EditText
+                        android:id="@+id/GuestEmailEt"
+                        android:layout_width="400sp"
+                        android:layout_height="35sp"
+                        android:layout_marginStart="5sp"
+                        android:layout_marginBottom="10sp"
+                        android:background="@drawable/valueediteffect"
+                        android:drawableEnd="@drawable/email"
+                        android:inputType="textEmailAddress" />
+
+                    <TextView
+                        android:id="@+id/GuestAddressstv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5sp"
+                        android:layout_marginBottom="10sp"
+                        android:text="@string/address"
+                        android:textSize="20sp"
+
+                        />
+
+                    <EditText
+                        android:id="@+id/GuestAddresssEt"
+                        android:layout_width="400sp"
+                        android:layout_height="35sp"
+                        android:layout_marginStart="5sp"
+                        android:layout_marginBottom="15sp"
+                        android:background="@drawable/valueediteffect"
+                        android:drawableEnd="@drawable/location" />
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/compsubmitbut"
+                        android:layout_width="220sp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/compasubmit"
+                        android:background="@drawable/addpaymentbutton"
+                        android:layout_gravity="center_horizontal"
+                        />
+                </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

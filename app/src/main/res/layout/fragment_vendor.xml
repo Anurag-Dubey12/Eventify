@@ -1,14 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.VendorFragment">
+    android:orientation="vertical"
+    android:background="@drawable/bottomsheetdesign"
+    android:padding="16dp">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:text="@string/name"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:layout_marginBottom="10sp"
+        />
 
-</FrameLayout>
+    <EditText
+        android:id="@+id/editTextName"
+        android:layout_width="match_parent"
+        android:layout_height="30sp"
+        android:background="@drawable/valueediteffect"
+        android:hint="Enter Name"
+        android:layout_marginBottom="10sp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/amount"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:layout_marginBottom="10sp"/>
+
+    <EditText
+        android:id="@+id/editTextAmount"
+        android:layout_width="match_parent"
+        android:layout_height="30sp"
+        android:background="@drawable/valueediteffect"
+        android:hint="@string/amount"
+        android:layout_marginBottom="10sp"
+        android:inputType="numberDecimal" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/payment_status"
+        android:textSize="18sp"
+        android:textColor="@color/black"
+        android:layout_marginBottom="10sp"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10sp"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/vendorbuttonPending"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/addpaymentbutton"
+            android:layout_weight="1"
+            android:layout_marginRight="15sp"
+            android:text="Pending" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/vendorbuttonPaid"
+            android:layout_width="0dp"
+            android:background="@drawable/addpaymentbutton"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Paid" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/expired_date"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        android:layout_marginBottom="10sp"/>
+
+    <EditText
+        android:id="@+id/editTextDate"
+        android:layout_width="match_parent"
+        android:layout_height="30sp"
+        android:textColor="@color/black"
+        android:background="@drawable/valueediteffect"
+        android:layout_marginBottom="10sp"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/buttonSubmit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/addpaymentbutton"
+        android:text="Submit"
+        android:layout_marginBottom="10sp"/>
+
+</LinearLayout>

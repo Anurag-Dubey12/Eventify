@@ -1,12 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-<item
-    android:id="@+id/item1"
-    android:title="iten1"/>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn = "navigation_view">
+
+    <group
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/home"
+            android:title="Home"/>
+
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/add"
+            android:title="Settings"/>
+
+        <item
+            android:id="@+id/nav_share"
+            android:icon="@drawable/setting"
+            android:title="Share"/>
+
+        <item
+            android:id="@+id/nav_about"
+            android:icon="@drawable/drop_arrow"
+            android:title="About Us"/>
+    </group>
     <item
-        android:id="@+id/item2"
-        android:title="iten2"/>
-    <item
-        android:id="@+id/item3"
-        android:title="iten3"/>
+        android:title="">
+
+        <menu>
+            <item
+                android:id="@+id/nav_logout"
+                android:icon="@drawable/search"
+                android:title="Logout"/>
+        </menu>
+
+    </item>
+
 </menu>
