@@ -64,7 +64,6 @@ class VendorDetails : AppCompatActivity() {
         setSupportActionBar(vendortoolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-
         vendorNameET = findViewById(R.id.VendorNameET)
         categoryButton = findViewById(R.id.vendorcategory_button)
         vendorNoteET = findViewById(R.id.VendorNoteET)
@@ -83,27 +82,19 @@ class VendorDetails : AppCompatActivity() {
         vendorAddressET = findViewById(R.id.VendorAddresssEt)
         paymentAdd = findViewById(R.id.PaymentAdd)
         vendorpaymentTransRecyclerView = findViewById(R.id.vendorpaymenttrans)
-
-
         paymentAdd.setOnClickListener {
             showpaymentsheet()
         }
-
         categoryButton.setOnClickListener {
             showvendorcategory()
         }
         vendorViewTV.setOnClickListener {
             infoshow()
         }
-
         estimatedAmountcalculate()
-
-
     }
 
     private fun infoshow() {
-
-
 
         if(vendorPhoneTV.visibility== View.VISIBLE && vendorPhoneET.visibility== View.VISIBLE && vendorEmailTV.visibility== View.VISIBLE &&
             vendorEmailET.visibility== View.VISIBLE && vendorWebsiteTV.visibility== View.VISIBLE && vendorWebsiteET.visibility== View.VISIBLE &&

@@ -4,11 +4,15 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+
 import androidx.appcompat.widget.AppCompatButton
+import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.Event_Activities.Guest
 import com.example.eventmatics.R
@@ -36,6 +40,12 @@ class GuestDetails : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_guest_details)
+        val vendortoolbar: Toolbar =findViewById(R.id.vendortoolbar)
+        setSupportActionBar(vendortoolbar)
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+
         guestNameEt = findViewById(R.id.GuestNameEt)
         maleButton = findViewById(R.id.Malebut)
         femaleButton =findViewById(R.id.femalebut)
@@ -88,4 +98,18 @@ class GuestDetails : AppCompatActivity() {
             guestAddresssEt.visibility=View.VISIBLE
         }
     }
-}
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.guest_vendor_menu,menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId){
+            android.R.id.home->{
+                onBackPressed()
+                true
+            }
+        else->super.onOptionsItemSelected(item)
+    }
+}}

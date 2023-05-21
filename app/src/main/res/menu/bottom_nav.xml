@@ -2,28 +2,29 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/home"
-        android:title="Home"
+        android:title="@string/home"
         android:icon="@drawable/home"
         />
     <item
+        android:id="@+id/placeholder"
+        android:title="@string/task_list"
+        android:icon="@drawable/task"
+        />
+    <item
         android:id="@+id/budget"
-        android:title="budget"
+        android:title="@string/menubudget"
         android:icon="@drawable/budget_bottom_nav"
         />
     <item
-        android:id="@+id/placeholder"
-        android:title=""
-        />
-    <item
         android:id="@+id/guest"
-        android:title="Guest"
+        android:title="@string/Menuguest"
         android:icon="@drawable/guest_bottom_nav"
         />
 
 
     <item
         android:id="@+id/vendor"
-        android:title="Vendor"
+        android:title="@string/menuvendor"
         android:icon="@drawable/market"
         />
 </menu>

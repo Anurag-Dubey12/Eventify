@@ -99,6 +99,7 @@ class BudgetDetails : AppCompatActivity() {
                 val balancepretext=balanceET.text
                 balanceET.text="Balance:${EstimatedEt.text}"
 
+
             }
 
         })
@@ -113,7 +114,7 @@ class BudgetDetails : AppCompatActivity() {
             .setAdapter(spinnerAdapter) { _, position ->
                 val selectedItem = spinnerItems[position]
                categoryButton.text=selectedItem.text
-//                categoryButton.setCompoundDrawablesWithIntrinsicBounds(selectedItem.imageResId, 0, 0, 0)
+                categoryButton.setCompoundDrawablesWithIntrinsicBounds( 0, 0,selectedItem.imageres, 0)
 
             }
             .setNegativeButton("Cancel", null)
