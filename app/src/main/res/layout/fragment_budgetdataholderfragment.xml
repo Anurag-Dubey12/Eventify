@@ -1,12 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".budgetdataholderfragment">
-    <TextView
-        android:layout_width="wrap_content"
+    tools:context=".FragemntDataHolder.Budgetdataholderfragment">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginBottom="10sp"
+        android:background="@drawable/valueediteffect"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_margin="10sp"
+    android:layout_height="wrap_content">
+    <ImageView
+        android:id="@+id/imagedataholder"
+        android:layout_width="54sp"
+        android:layout_height="54sp"
+        android:src="@drawable/add"
         />
-</FrameLayout>
+   <LinearLayout
+       android:id="@+id/Basic_info"
+       android:layout_width="200sp"
+       android:layout_height="wrap_content"
+       android:layout_toRightOf="@id/imagedataholder"
+       android:orientation="vertical">
+       <TextView
+           android:id="@+id/eventnamedata"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="Name:New"
+           />
+       <TextView
+           android:id="@+id/Pending_Amount"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="Pending:500"
+           />
+       <TextView
+           android:id="@+id/Trans_info"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="Paid"
+           />
+   </LinearLayout>
+    <LinearLayout
+        android:id="@+id/payment_info"
+        android:layout_width="200sp"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/Basic_info"
+        android:gravity="right"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/total_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="50"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            />
+        <TextView
+            android:id="@+id/Paid_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Paid:50.00"
+            />
+        <TextView
+            android:id="@+id/paymnet_done_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Payment:1/2"
+            />
+    </LinearLayout>
+</RelativeLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

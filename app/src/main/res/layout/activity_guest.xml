@@ -35,7 +35,7 @@
                 android:textSize="20sp" />
 
             <EditText
-                android:id="@+id/GuestNameEt"
+                android:id="@+id/comGuestNameEt"
                 android:layout_width="400sp"
                 android:layout_height="35sp"
                 android:layout_marginStart="5sp"
@@ -50,7 +50,7 @@
                 android:orientation="horizontal">
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/Malebut"
+                    android:id="@+id/comMalebut"
                     android:layout_width="190dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10sp"
@@ -58,12 +58,11 @@
                     android:text="@string/male" />
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/femalebut"
+                    android:id="@+id/comfemalebut"
                     android:layout_width="190dp"
                     android:layout_height="wrap_content"
                     android:background="@drawable/addpaymentbutton"
                     android:text="@string/female" />
-
             </LinearLayout>
 
             <LinearLayout
@@ -73,7 +72,7 @@
                 android:orientation="horizontal">
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/Adultbut"
+                    android:id="@+id/comAdultbut"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="15sp"
@@ -82,7 +81,7 @@
                     android:text="@string/adult" />
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/ChildBut"
+                    android:id="@+id/comChildBut"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="15sp"
@@ -91,7 +90,7 @@
                     android:text="@string/child" />
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/Babybut"
+                    android:id="@+id/comBabybut"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -108,12 +107,19 @@
                 android:textSize="20sp" />
 
             <EditText
-                android:id="@+id/GuestNoteET"
+                android:id="@+id/comGuestNoteET"
                 android:layout_width="400sp"
                 android:layout_height="35sp"
                 android:layout_marginStart="5sp"
                 android:layout_marginBottom="10sp"
                 android:background="@drawable/valueediteffect" />
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:cardElevation="10sp"
+                android:elevation="10sp"
+                >
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -141,7 +147,7 @@
                             />
                     </LinearLayout>
                     <TextView
-                        android:id="@+id/GuestPhonetv"
+                        android:id="@+id/comGuestPhonetv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5sp"
@@ -149,18 +155,28 @@
                         android:text="@string/phone_number"
                         android:textSize="20sp"
                         />
-
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
                     <EditText
-                        android:id="@+id/GuestPhoneEt"
-                        android:layout_width="400sp"
+                        android:id="@+id/comGuestPhoneEt"
+                        android:layout_width="370sp"
                         android:layout_height="35sp"
                         android:layout_marginStart="5sp"
                         android:layout_marginBottom="10sp"
                         android:background="@drawable/valueediteffect"
-                        android:drawableEnd="@drawable/call" />
+                        />
+                        <ImageView
+                            android:id="@+id/contactview"
+                            android:layout_width="30sp"
+                            android:layout_height="40sp"
+                            android:src="@drawable/contact"
+                            />
 
+                    </LinearLayout>
                     <TextView
-                        android:id="@+id/GuestEmailtv"
+                        android:id="@+id/comGuestEmailtv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5sp"
@@ -171,7 +187,7 @@
                         />
 
                     <EditText
-                        android:id="@+id/GuestEmailEt"
+                        android:id="@+id/comGuestEmailEt"
                         android:layout_width="400sp"
                         android:layout_height="35sp"
                         android:layout_marginStart="5sp"
@@ -181,18 +197,17 @@
                         android:inputType="textEmailAddress" />
 
                     <TextView
-                        android:id="@+id/GuestAddressstv"
+                        android:id="@+id/comGuestAddressstv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5sp"
                         android:layout_marginBottom="10sp"
                         android:text="@string/address"
                         android:textSize="20sp"
-
                         />
 
                     <EditText
-                        android:id="@+id/GuestAddresssEt"
+                        android:id="@+id/comGuestAddresssEt"
                         android:layout_width="400sp"
                         android:layout_height="35sp"
                         android:layout_marginStart="5sp"
@@ -209,6 +224,7 @@
                         />
                 </LinearLayout>
 
+            </androidx.cardview.widget.CardView>
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

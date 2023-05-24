@@ -65,13 +65,14 @@
                 android:textSize="20sp"
                 android:layout_marginBottom="10sp"
                 />
+
             <EditText
                 android:id="@+id/VendorNoteET"
                 android:layout_width="match_parent"
                 android:layout_height="35sp"
-                android:background="@drawable/valueediteffect"
                 android:layout_marginBottom="10sp"
-                />
+                android:background="@drawable/valueediteffect" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

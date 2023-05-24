@@ -1,6 +1,8 @@
 package com.example.eventmatics.Event_Details_Activity
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -15,12 +17,16 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.Adapter.CategoryAdapter
+import com.example.eventmatics.Adapter.PaymentActivity
 import com.example.eventmatics.R
+import com.example.eventmatics.data_class.Paymentinfo
 import com.example.eventmatics.data_class.SpinnerItem
 import com.example.eventmatics.fragments.BudgetFragment
 
-class BudgetDetails : AppCompatActivity() {
+class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener {
     lateinit var  balanceET: TextView
     lateinit var remainingET: TextView
     lateinit var EstimatedEt: EditText
@@ -28,6 +34,12 @@ class BudgetDetails : AppCompatActivity() {
     lateinit var PaymentAdd:ImageView
     lateinit var paidET: TextView
     lateinit var categoryButton: AppCompatButton
+    lateinit var sharedPreferences: SharedPreferences
+
+    lateinit var recyclerView :RecyclerView
+    lateinit var  adapter:PaymentActivity
+    lateinit var paymentList: MutableList<Paymentinfo>
+
 
     val spinnerItems = listOf(
         SpinnerItem(R.drawable.budget_bottom_nav, "Accessories"),
@@ -47,7 +59,10 @@ class BudgetDetails : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_budget_details)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
+
+
         setSupportActionBar(toolbar)
+        recyclerView = findViewById(R.id.paymenttrans)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         PaymentAdd=findViewById(R.id.PaymentAdd)
@@ -60,9 +75,16 @@ class BudgetDetails : AppCompatActivity() {
             addpaymenttran()
         }
 
-        estimatedAmountcalculate()
-    }
+        paymentList= mutableListOf()
+        adapter=PaymentActivity(paymentList)
+        recyclerView.adapter=adapter
+        recyclerView.layoutManager = LinearLayoutManager(this)
 
+
+        estimatedAmountcalculate()
+
+
+    }
 
 
     private fun estimatedAmountcalculate() {
@@ -75,7 +97,7 @@ class BudgetDetails : AppCompatActivity() {
         balanceET.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,initialres,0)
         balanceET.setOnClickListener {
             if(remainingET.visibility==View.GONE){
-            val newdrawable=R.drawable.up_arrow
+                val newdrawable=R.drawable.up_arrow
                 balanceET.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,newdrawable,0)
 
                 remainingET.visibility=View.VISIBLE
@@ -98,10 +120,7 @@ class BudgetDetails : AppCompatActivity() {
             override fun afterTextChanged(edit: Editable?) {
                 val balancepretext=balanceET.text
                 balanceET.text="Balance:${EstimatedEt.text}"
-
-
             }
-
         })
 
     }
@@ -124,7 +143,13 @@ class BudgetDetails : AppCompatActivity() {
     }
     private fun addpaymenttran() {
         val bottomsheet=BudgetFragment()
+        bottomsheet.setUserDataListener(this)
         bottomsheet.show(fragmentManager,"bottomsheet")
+    }
+
+    override fun onUserDataEntered(userData: Paymentinfo) {
+        paymentList.add(userData)
+        adapter.notifyDataSetChanged()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

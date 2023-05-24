@@ -1,30 +1,22 @@
 package com.example.eventmatics
 
 import android.content.Intent
-import android.graphics.Rect
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.MenuItem
-import android.view.MotionEvent
-import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.FrameLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import com.example.eventmatics.Event_Activities.Budget
 import com.example.eventmatics.Event_Details_Activity.BudgetDetails
 import com.example.eventmatics.Event_Details_Activity.GuestDetails
 import com.example.eventmatics.Event_Details_Activity.TaskDetails
 import com.example.eventmatics.Event_Details_Activity.VendorDetails
-import com.example.eventmatics.fragments.BudgetFragment
-import com.example.eventmatics.fragments.GuestFragment
-import com.example.eventmatics.fragments.VendorFragment
+import com.example.eventmatics.FragemntDataHolder.Budgetdataholderfragment
+import com.example.eventmatics.FragemntDataHolder.Guestdataholder
+import com.example.eventmatics.FragemntDataHolder.Taskdataholder
+import com.example.eventmatics.FragemntDataHolder.Vendordataholder
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
@@ -34,6 +26,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var navView: NavigationView
     lateinit var toogle:ActionBarDrawerToggle
     lateinit var bottomnav: BottomNavigationView
+    lateinit var Newfab:FloatingActionButton
 
 
     //Animation to make texview and Button to be Appear
@@ -58,6 +51,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         navView= findViewById(R.id.navView)
         drawerLayout=findViewById(R.id.drawerlayout)
+        Newfab=findViewById(R.id.fab)
 
 
         bottomnav = findViewById(R.id.bottomnav)
@@ -72,28 +66,43 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun bottomNavigationclickListener() {
-        val bugetfrag= budgetdataholderfragment()
-        val vendorfrag=VendorFragment()
-        val guestfrag=GuestFragment()
+        val bugetfrag= Budgetdataholderfragment()
+        val vendorfrag=Vendordataholder()
+        val Taskfrag=Taskdataholder()
+        val Guestfrag=Guestdataholder()
+
         bottomnav.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.home -> {
                     true
                 }
+                R.id.Task -> {
+                    currentfragment(Taskfrag)
+                    Newfab.setOnClickListener {
+                        Intent(this,TaskDetails::class.java).also { startActivity(it) }
+                    }
+                    true
+                }
                 R.id.budget -> {
                     currentfragment(bugetfrag)
-
+                    Newfab.setOnClickListener {
+                        Intent(this,BudgetDetails::class.java).also { startActivity(it) }
+                    }
                     true
                 }
                 R.id.vendor -> {
                     currentfragment(vendorfrag)
-
+                    Newfab.setOnClickListener {
+                        Intent(this,VendorDetails::class.java).also { startActivity(it) }
+                    }
                     true
                 }
                 R.id.guest -> {
 
-                    currentfragment(guestfrag)
-
+                    currentfragment(Guestfrag)
+                    Newfab.setOnClickListener {
+                        Intent(this,GuestDetails::class.java).also { startActivity(it) }
+                    }
                     true
                 }
                 else -> false

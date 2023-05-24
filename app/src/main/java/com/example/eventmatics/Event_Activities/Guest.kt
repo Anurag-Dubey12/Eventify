@@ -1,9 +1,12 @@
 package com.example.eventmatics.Event_Activities
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.ContentResolver
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
@@ -13,63 +16,106 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
 
 class Guest : AppCompatActivity() {
-    private lateinit var guestNameEt: EditText
-    private lateinit var maleButton: AppCompatButton
-    private lateinit var femaleButton: AppCompatButton
-    private lateinit var adultButton: AppCompatButton
-    private lateinit var childButton: AppCompatButton
-    private lateinit var babyButton: AppCompatButton
-    private lateinit var guestNoteEt: EditText
-    private lateinit var contactviewtv: ImageView
-    private lateinit var guestPhoneEt: EditText
-    private lateinit var guestPhonetv: TextView
-    private lateinit var guestEmailEt: EditText
-    private lateinit var guestEmailtv: TextView
-    private lateinit var guestAddresssEt: EditText
-    private lateinit var guestAddressstv: TextView
+    private lateinit var comguestNameEt: EditText
+    private lateinit var commaleButton: AppCompatButton
+    private lateinit var comfemaleButton: AppCompatButton
+    private lateinit var comadultButton: AppCompatButton
+    private lateinit var comchildButton: AppCompatButton
+    private lateinit var combabyButton: AppCompatButton
+    private lateinit var comguestNoteEt: EditText
+    private lateinit var comcontactviewtv: ImageView
+    private lateinit var comcontacttake: ImageView
+    private lateinit var comguestPhoneEt: EditText
+    private lateinit var comguestPhonetv: TextView
+    private lateinit var comguestEmailEt: EditText
+    private lateinit var comguestEmailtv: TextView
+    private lateinit var comguestAddresssEt: EditText
+    private lateinit var comguestAddressstv: TextView
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_guest)
-        guestNameEt = findViewById(R.id.GuestNameEt)
-        maleButton = findViewById(R.id.Malebut)
-        femaleButton =findViewById(R.id.femalebut)
-        adultButton = findViewById(R.id.Adultbut)
-        contactviewtv=findViewById(R.id.contactviewtv)
-        childButton = findViewById(R.id.ChildBut)
-        babyButton = findViewById(R.id.Babybut)
-        guestNoteEt =findViewById(R.id.GuestNoteET)
+        comguestNameEt = findViewById(R.id.comGuestNameEt)
+        commaleButton = findViewById(R.id.comMalebut)
+        comfemaleButton =findViewById(R.id.comfemalebut)
+        comadultButton = findViewById(R.id.comAdultbut)
+        comcontactviewtv=findViewById(R.id.contactviewtv)
+        comcontacttake=findViewById(R.id.contactview)
+        comchildButton = findViewById(R.id.comChildBut)
+        combabyButton = findViewById(R.id.comBabybut)
+        comguestNoteEt =findViewById(R.id.comGuestNoteET)
 
-        guestPhoneEt = findViewById(R.id.GuestPhoneEt)
-        guestEmailEt = findViewById(R.id.GuestEmailEt)
-        guestAddresssEt = findViewById(R.id.GuestAddresssEt)
-        guestPhonetv=findViewById(R.id.GuestPhonetv)
-        guestEmailtv=findViewById(R.id.GuestEmailtv)
-        guestAddressstv=findViewById(R.id.GuestAddressstv)
+        comguestPhoneEt = findViewById(R.id.comGuestPhoneEt)
+        comguestEmailEt = findViewById(R.id.comGuestEmailEt)
+        comguestAddresssEt = findViewById(R.id.comGuestAddresssEt)
+        comguestPhonetv=findViewById(R.id.comGuestPhonetv)
+        comguestEmailtv=findViewById(R.id.comGuestEmailtv)
+        comguestAddressstv=findViewById(R.id.comGuestAddressstv)
 
-        contactviewtv.setOnClickListener {
+        comcontactviewtv.setOnClickListener {
             guestinfoview()
         }
+        comcontacttake.setOnClickListener {
+            takecontactinfo()
         }
+        }
+
+    private fun takecontactinfo() {
+    Intent(Intent.ACTION_PICK).also {
+        it.type=ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE
+        startActivityForResult(it,901)
+    }
+
+    }
+
 
     private fun guestinfoview() {
-        if(guestPhonetv.visibility== View.VISIBLE && guestEmailtv.visibility== View.VISIBLE && guestAddressstv.visibility== View.VISIBLE &&
-            guestPhoneEt.visibility== View.VISIBLE && guestEmailEt.visibility== View.VISIBLE && guestAddresssEt.visibility== View.VISIBLE){
+        if(comguestPhonetv.visibility== View.VISIBLE && comguestEmailtv.visibility== View.VISIBLE && comguestAddressstv.visibility== View.VISIBLE &&
+            comguestPhoneEt.visibility== View.VISIBLE && comguestEmailEt.visibility== View.VISIBLE && comguestAddresssEt.visibility== View.VISIBLE){
 
-            guestPhonetv.visibility= View.GONE
-            guestEmailtv.visibility= View.GONE
-            guestAddressstv.visibility= View.GONE
-            guestPhoneEt.visibility= View.GONE
-            guestEmailEt.visibility= View.GONE
-            guestAddresssEt.visibility= View.GONE
+            comguestPhonetv.visibility= View.GONE
+            comguestEmailtv.visibility= View.GONE
+            comguestAddressstv.visibility= View.GONE
+            comguestPhoneEt.visibility= View.GONE
+            comguestEmailEt.visibility= View.GONE
+            comguestAddresssEt.visibility= View.GONE
         }
         else{
-            guestPhonetv.visibility= View.VISIBLE
-            guestEmailtv.visibility= View.VISIBLE
-            guestAddressstv.visibility= View.VISIBLE
-            guestPhoneEt.visibility= View.VISIBLE
-            guestEmailEt.visibility= View.VISIBLE
-            guestAddresssEt.visibility= View.VISIBLE
+            comguestPhonetv.visibility= View.VISIBLE
+            comguestEmailtv.visibility= View.VISIBLE
+            comguestAddressstv.visibility= View.VISIBLE
+            comguestPhoneEt.visibility= View.VISIBLE
+            comguestEmailEt.visibility= View.VISIBLE
+            comguestAddresssEt.visibility= View.VISIBLE
         }
     }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK && requestCode == 901) {
+            val contactUri = data?.data ?: return
+            val contactInfo = arrayOf(
+                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                ContactsContract.CommonDataKinds.Phone.NUMBER
+            )
+
+            val contentResolver: ContentResolver = applicationContext.contentResolver
+            val cursor = contentResolver.query(contactUri, contactInfo, null, null, null)
+
+            cursor?.let {
+                if (it.moveToFirst()) {
+                    val nameIndex = it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
+                    val numberIndex = it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+
+                    val contactName = it.getString(nameIndex)
+                    val contactNumber = it.getString(numberIndex)
+
+                    comguestNameEt.setText(contactName)
+                    comguestPhoneEt.setText(contactNumber)
+                }
+                it.close()
+            }
+        }
     }
+
+
+}

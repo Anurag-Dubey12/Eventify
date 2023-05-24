@@ -1,7 +1,11 @@
 package com.example.eventmatics.Event_Details_Activity
 
+import android.app.Activity
+import android.content.ContentResolver
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
@@ -11,6 +15,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentManager
@@ -192,7 +197,41 @@ class VendorDetails : AppCompatActivity() {
                 onBackPressed()
                 true
             }
+            R.id.contacts->{
+                Intent(Intent.ACTION_PICK).also {
+                    it.type=ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE
+                   startActivityForResult(it,400)
+                }
+                true
+            }
             else->super.onOptionsItemSelected(item)
+        }
+    }
+
+    //retrive the contact from the device
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode==Activity.RESULT_OK &&requestCode== 400){
+            var contacturi=data?.data ?:return
+            var contactinfo= arrayOf(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                                                 ContactsContract.CommonDataKinds.Phone.NUMBER)
+
+            var contentResolver:ContentResolver=applicationContext.contentResolver
+
+            var cursor=contentResolver.query(contacturi,contactinfo,null,null,null)
+
+            cursor?.let {
+                if(it.moveToFirst()){
+                    var nameindex=cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
+                    var numberindex=cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+
+                    var contactname=it.getString(nameindex)
+                    var contactnumber=it.getString(numberindex)
+
+                    vendorNameET.setText(contactname)
+                    vendorPhoneET.setText(contactnumber)
+                }
+            }
         }
     }
 

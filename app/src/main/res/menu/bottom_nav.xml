@@ -6,7 +6,7 @@
         android:icon="@drawable/home"
         />
     <item
-        android:id="@+id/placeholder"
+        android:id="@+id/Task"
         android:title="@string/task_list"
         android:icon="@drawable/task"
         />

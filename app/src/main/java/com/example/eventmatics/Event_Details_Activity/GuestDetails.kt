@@ -1,9 +1,12 @@
 package com.example.eventmatics.Event_Details_Activity
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.ContentResolver
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -73,9 +76,6 @@ class GuestDetails : AppCompatActivity() {
                 startActivity(it)
             }
         }
-
-
-
     }
 
     private fun guestinfoview() {
@@ -98,18 +98,53 @@ class GuestDetails : AppCompatActivity() {
             guestAddresssEt.visibility=View.VISIBLE
         }
     }
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.guest_vendor_menu,menu)
         return super.onCreateOptionsMenu(menu)
     }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId){
             android.R.id.home->{
                 onBackPressed()
                 true
             }
+            R.id.contacts->{
+                Intent(Intent.ACTION_PICK).also {
+                    it.type=ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE
+                    startActivityForResult(it,900)
+                }
+                true
+            }
         else->super.onOptionsItemSelected(item)
     }
-}}
+}
+
+    //retriveing the contact name and number form the device
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK && requestCode == 900) {
+            val contactUri = data?.data ?: return
+            val contactInfo = arrayOf(
+                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                ContactsContract.CommonDataKinds.Phone.NUMBER
+            )
+
+            val contentResolver: ContentResolver = applicationContext.contentResolver
+            val cursor = contentResolver.query(contactUri, contactInfo, null, null, null)
+
+            cursor?.let {
+                if (it.moveToFirst()) {
+                    val nameIndex = it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
+                    val numberIndex = it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+
+                    val contactName = it.getString(nameIndex)
+                    val contactNumber = it.getString(numberIndex)
+
+                    guestNameEt.setText(contactName)
+                    guestPhoneEt.setText(contactNumber)
+                }
+                it.close()
+            }
+        }
+    }
+}
