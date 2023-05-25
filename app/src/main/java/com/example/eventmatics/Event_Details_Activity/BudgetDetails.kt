@@ -16,6 +16,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.isEmpty
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -34,8 +35,6 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener {
     lateinit var PaymentAdd:ImageView
     lateinit var paidET: TextView
     lateinit var categoryButton: AppCompatButton
-    lateinit var sharedPreferences: SharedPreferences
-
     lateinit var recyclerView :RecyclerView
     lateinit var  adapter:PaymentActivity
     lateinit var paymentList: MutableList<Paymentinfo>
@@ -75,8 +74,15 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener {
             addpaymenttran()
         }
 
+        if(recyclerView.isEmpty()){
+
+        }
+        //recyclerview code
+// Initialize an empty mutable list to store payment information
         paymentList= mutableListOf()
+        // Initialize the adapter with the empty payment list
         adapter=PaymentActivity(paymentList)
+        // Set the adapter for the RecyclerView
         recyclerView.adapter=adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -141,14 +147,18 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener {
         val dialog = dialogBuilder.create()
         dialog.show()
     }
+
+    // Function to add a payment transaction
     private fun addpaymenttran() {
         val bottomsheet=BudgetFragment()
+        // Set the UserDataListener to the BudgetFragment
         bottomsheet.setUserDataListener(this)
         bottomsheet.show(fragmentManager,"bottomsheet")
     }
-
+// Implementation of the UserDataListener interface
     override fun onUserDataEntered(userData: Paymentinfo) {
-        paymentList.add(userData)
+    // Add the entered payment data to the paymentList
+    paymentList.add(userData)
         adapter.notifyDataSetChanged()
     }
 

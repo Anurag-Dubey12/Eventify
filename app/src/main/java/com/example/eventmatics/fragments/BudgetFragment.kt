@@ -24,12 +24,14 @@ class BudgetFragment : BottomSheetDialogFragment() {
     private lateinit var buttonPaid: Button
     private lateinit var etDate: EditText
     private lateinit var buttonSubmit: Button
+
+    // Define an interface to communicate data to the parent activity or fragment
     interface UserDataListener {
         fun onUserDataEntered(userData: Paymentinfo)
     }
 
     private var userDataListener: UserDataListener? = null
-
+    // Setter method for the UserDataListener
     fun setUserDataListener(listener: UserDataListener) {
         userDataListener = listener
     }
@@ -47,30 +49,38 @@ class BudgetFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // Initialize views
+
         etName = view.findViewById(R.id.editTextName)
         etAmount = view.findViewById(R.id.editTextAmount)
         buttonPending = view.findViewById(R.id.buttonPending)
         buttonPaid = view.findViewById(R.id.buttonPaid)
         etDate = view.findViewById(R.id.editTextDate)
         buttonSubmit = view.findViewById(R.id.buttonSubmit)
+        // Set click listener for the "Pending" button
+
         buttonPending.setOnClickListener {
             buttonPending.isSelected = true
             buttonPaid.isSelected = false
         }
+        // Set click listener for the "Paid" button
 
         buttonPaid.setOnClickListener {
             buttonPending.isSelected = false
             buttonPaid.isSelected = true
         }
+        // Set click listener for the "Submit" button
+
         buttonSubmit.setOnClickListener {
             val name = etName.text.toString()
             val amount = etAmount.text.toString().toFloat()
             val paymentStatus = if (buttonPending.isSelected) "Pending" else "Paid"
             val date = etDate.text.toString()
-
+            // Created a Paymentinfo object with the entered data
             val userData = Paymentinfo(name, amount, paymentStatus, date)
+            // Pass the userData object to the listener
             userDataListener?.onUserDataEntered(userData)
-
+            // Close the BottomSheetDialogFragment
             dismiss()
         }
 

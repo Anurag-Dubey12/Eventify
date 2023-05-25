@@ -17,22 +17,22 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/budgetPaymentName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="16sp"
-            android:text="Payment_name"
-            />
-        <TextView
-            android:id="@+id/budgetpaymentdate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="16sp"
-            android:text="paymentdate"
-            />
+            <TextView
+                android:id="@+id/budgetPaymentName"
+                android:layout_width="150sp"
+                android:layout_height="50sp"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:text="Payment_name"
+                />
+            <TextView
+                android:id="@+id/budgetpaymentdate"
+                android:layout_width="150sp"
+                android:layout_height="50sp"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:text="paymentdate"
+                />
         </LinearLayout>
         <LinearLayout
             android:layout_toRightOf="@id/payment_info"
@@ -42,8 +42,8 @@
 
             <TextView
                 android:id="@+id/budgetpaymentamount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="150sp"
+                android:layout_height="50sp"
                 android:textStyle="bold"
                 android:textSize="16sp"
                 android:text="Payment Amount"

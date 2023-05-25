@@ -59,7 +59,6 @@ class Guest : AppCompatActivity() {
             takecontactinfo()
         }
         }
-
     private fun takecontactinfo() {
     Intent(Intent.ACTION_PICK).also {
         it.type=ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE

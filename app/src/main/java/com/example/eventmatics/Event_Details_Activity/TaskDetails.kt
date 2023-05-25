@@ -10,11 +10,14 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.eventmatics.Adapter.TaskAdapter
 import com.example.eventmatics.R
+import com.example.eventmatics.data_class.Subtask_info
 import com.example.eventmatics.fragments.TaskFragment
 
-class TaskDetails : AppCompatActivity() {
+class TaskDetails : AppCompatActivity(),TaskFragment.UserDataListener {
     val fragmentManager:FragmentManager=supportFragmentManager
     lateinit var TaskNameET:EditText
     lateinit var TaskNoteET:EditText
@@ -24,6 +27,8 @@ class TaskDetails : AppCompatActivity() {
     lateinit var TaskCombut:AppCompatButton
     lateinit var TaskAdd:ImageView
     lateinit var subtaskrcv:RecyclerView
+    lateinit var adapter:TaskAdapter
+    lateinit var Tasklist:MutableList<Subtask_info>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,18 +45,27 @@ class TaskDetails : AppCompatActivity() {
         TaskPendingbut=findViewById(R.id.TaskPendingbut)
         TaskCombut=findViewById(R.id.Taskcombut)
         TaskAdd=findViewById(R.id.TaskAdd)
-        subtaskrcv=findViewById(R.id.subtaskrcv)
-
 
         TaskAdd.setOnClickListener {
             subtaskadd()
         }
+        //Recyccler view code
+        subtaskrcv=findViewById(R.id.subtaskrcv)
+        Tasklist= mutableListOf()
+        adapter= TaskAdapter(Tasklist)
+        subtaskrcv.adapter=adapter
+        subtaskrcv.layoutManager=LinearLayoutManager(this)
 
     }
 
     private fun subtaskadd() {
         val bottomsheet=TaskFragment()
+        bottomsheet.setUserEnterDataListener(this)
         bottomsheet.show(fragmentManager,"bottomsheet")
+    }
+    override fun onUserDataEnter(userdata: Subtask_info) {
+        Tasklist.add(userdata)
+        adapter.notifyDataSetChanged()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -68,4 +82,6 @@ class TaskDetails : AppCompatActivity() {
          else->super.onOptionsItemSelected(item)
         }
     }
+
+
 }

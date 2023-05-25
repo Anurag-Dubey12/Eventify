@@ -15,17 +15,19 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.Adapter.CategoryAdapter
+import com.example.eventmatics.Adapter.PaymentActivity
 import com.example.eventmatics.R
+import com.example.eventmatics.data_class.Paymentinfo
 import com.example.eventmatics.data_class.SpinnerItem
 import com.example.eventmatics.fragments.VendorFragment
 
-class VendorDetails : AppCompatActivity() {
+class VendorDetails : AppCompatActivity(),VendorFragment.UserDataListener {
 
     val fragmentmanager:FragmentManager=supportFragmentManager
     private lateinit var vendorNameET: EditText
@@ -46,6 +48,8 @@ class VendorDetails : AppCompatActivity() {
     private lateinit var vendorAddressET: EditText
     private lateinit var paymentAdd: ImageView
     private lateinit var vendorpaymentTransRecyclerView: RecyclerView
+    private lateinit var paymentlist:MutableList<Paymentinfo>
+    private lateinit var paymentActivity: PaymentActivity
 
     val spinnerItems = listOf(
         SpinnerItem(R.drawable.budget_bottom_nav, "Accessories"),
@@ -86,7 +90,14 @@ class VendorDetails : AppCompatActivity() {
         vendorAddressTV = findViewById(R.id.VendorAddressstv)
         vendorAddressET = findViewById(R.id.VendorAddresssEt)
         paymentAdd = findViewById(R.id.PaymentAdd)
+
+            //Recylerview code
         vendorpaymentTransRecyclerView = findViewById(R.id.vendorpaymenttrans)
+        paymentlist= mutableListOf()
+        paymentActivity= PaymentActivity(paymentlist)
+        vendorpaymentTransRecyclerView.adapter=paymentActivity
+        vendorpaymentTransRecyclerView.layoutManager=LinearLayoutManager(this)
+
         paymentAdd.setOnClickListener {
             showpaymentsheet()
         }
@@ -127,7 +138,6 @@ class VendorDetails : AppCompatActivity() {
         }
 
     }
-
     private fun showvendorcategory() {
         val spinneritem=CategoryAdapter(this,spinnerItems)
 
@@ -184,7 +194,14 @@ class VendorDetails : AppCompatActivity() {
     }
     private fun showpaymentsheet() {
         val vendorbottom=VendorFragment()
+        vendorbottom.setUserDataListener(this)
         vendorbottom.show(fragmentmanager,"bottomsheet")
+    }
+
+    override fun onUserDataEntered(userData: Paymentinfo) {
+        // Add the entered payment data to the paymentList
+        paymentlist.add(userData)
+        paymentActivity.notifyDataSetChanged()
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.guest_vendor_menu,menu)
@@ -234,5 +251,7 @@ class VendorDetails : AppCompatActivity() {
             }
         }
     }
+
+
 
 }
