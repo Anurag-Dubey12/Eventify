@@ -1,4 +1,4 @@
-package com.example.eventmatics.loginActivity
+package com.example.eventmatics.Login_Activity
 
 import android.app.ProgressDialog
 import android.content.Intent

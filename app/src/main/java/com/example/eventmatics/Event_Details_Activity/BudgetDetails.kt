@@ -27,7 +27,7 @@ import com.example.eventmatics.data_class.Paymentinfo
 import com.example.eventmatics.data_class.SpinnerItem
 import com.example.eventmatics.fragments.BudgetFragment
 
-class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener {
+class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,BudgetFragment.PendingAmountListener,BudgetFragment.PaidAmountListener {
     lateinit var  balanceET: TextView
     lateinit var remainingET: TextView
     lateinit var EstimatedEt: EditText
@@ -99,6 +99,7 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener {
          remainingET = findViewById(R.id.RemainingET)
          paidET= findViewById(R.id.PaidET)
 
+
         val initialres=R.drawable.drop_arrow
         balanceET.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,initialres,0)
         balanceET.setOnClickListener {
@@ -125,10 +126,9 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener {
 
             override fun afterTextChanged(edit: Editable?) {
                 val balancepretext=balanceET.text
-                balanceET.text="Balance:${EstimatedEt.text}"
+                balanceET.text="Balance:+${EstimatedEt.text}"
             }
         })
-
     }
 
     @SuppressLint("MissingInflatedId")
@@ -153,6 +153,8 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener {
         val bottomsheet=BudgetFragment()
         // Set the UserDataListener to the BudgetFragment
         bottomsheet.setUserDataListener(this)
+        bottomsheet.pendingamountlistner = this
+        bottomsheet.paidamountlistner = this
         bottomsheet.show(fragmentManager,"bottomsheet")
     }
 // Implementation of the UserDataListener interface
@@ -177,4 +179,24 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener {
         menuInflater.inflate(R.menu.budget_menu,menu)
         return super.onCreateOptionsMenu(menu)
     }
+    override fun onPendingAmountSelected(amount: Float) {
+        val displayText = "Pending: $amount"
+        remainingET.text = displayText
+        val total_amount=EstimatedEt.text.toString().toFloat()
+        val final_amount=total_amount-amount
+        val balanceamount="Balance:$final_amount"
+        balanceET.text=balanceamount
+    }
+    override fun onPaidAmountSelected(amount: Float) {
+        val displayText = "Paid: $amount"
+        paidET.text = displayText
+        val balanceString = balanceET.text.toString()
+        val balanceNumericString = balanceString.substringAfterLast(":")
+        val totalAmount = balanceNumericString.toFloat()
+        val finalAmount = totalAmount - amount
+        val balanceAmount = "Balance: $finalAmount"
+        balanceET.text = balanceAmount
+    }
+
+
 }

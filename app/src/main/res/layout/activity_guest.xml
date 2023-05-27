@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Event_Activities.Guest">
+    tools:context=".Event_Extra_info_Activities.Guest">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -48,19 +48,19 @@
                 android:layout_marginBottom="10sp"
                 android:orientation="horizontal">
 
-                <androidx.appcompat.widget.AppCompatButton
+                <Button
                     android:id="@+id/comMalebut"
                     android:layout_width="190dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10sp"
-                    android:background="@drawable/addpaymentbutton"
+                    android:background="@drawable/buttondesign"
                     android:text="@string/male" />
 
-                <androidx.appcompat.widget.AppCompatButton
+                <Button
                     android:id="@+id/comfemalebut"
                     android:layout_width="190dp"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/addpaymentbutton"
+                    android:background="@drawable/buttondesign"
                     android:text="@string/female" />
             </LinearLayout>
 
@@ -70,7 +70,7 @@
                 android:layout_marginBottom="10sp"
                 android:orientation="horizontal">
 
-                <androidx.appcompat.widget.AppCompatButton
+                <Button
                     android:id="@+id/comAdultbut"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -79,7 +79,7 @@
                     android:background="@drawable/addpaymentbutton"
                     android:text="@string/adult" />
 
-                <androidx.appcompat.widget.AppCompatButton
+                <Button
                     android:id="@+id/comChildBut"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -88,7 +88,7 @@
                     android:background="@drawable/addpaymentbutton"
                     android:text="@string/child" />
 
-                <androidx.appcompat.widget.AppCompatButton
+                <Button
                     android:id="@+id/comBabybut"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

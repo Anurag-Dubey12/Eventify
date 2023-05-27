@@ -1,4 +1,4 @@
-package com.example.eventmatics.Event_Activities
+package com.example.eventmatics.Event_Extra_info_Activities
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -8,11 +8,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
-import androidx.recyclerview.widget.RecyclerView
+import androidx.core.content.ContextCompat
 import com.example.eventmatics.R
 
 class Guest : AppCompatActivity() {
@@ -64,7 +65,11 @@ class Guest : AppCompatActivity() {
         it.type=ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE
         startActivityForResult(it,901)
     }
+    }
 
+    fun setButtonBackground(button: Button, isSelected: Boolean) {
+        val backgroundColor = if (isSelected) R.color.light_blue else R.color.white
+        button.backgroundTintList = ContextCompat.getColorStateList(this, backgroundColor)
     }
 
 

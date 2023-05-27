@@ -1,4 +1,4 @@
-package com.example.eventmatics.Event_Activities
+package com.example.eventmatics.Event_Extra_info_Activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

@@ -27,7 +27,7 @@ import com.example.eventmatics.data_class.Paymentinfo
 import com.example.eventmatics.data_class.SpinnerItem
 import com.example.eventmatics.fragments.VendorFragment
 
-class VendorDetails : AppCompatActivity(),VendorFragment.UserDataListener {
+class VendorDetails : AppCompatActivity(),VendorFragment.UserDataListener,VendorFragment.PaidAmountListener,VendorFragment.PendingAmountlistener {
 
     val fragmentmanager:FragmentManager=supportFragmentManager
     private lateinit var vendorNameET: EditText
@@ -195,6 +195,8 @@ class VendorDetails : AppCompatActivity(),VendorFragment.UserDataListener {
     private fun showpaymentsheet() {
         val vendorbottom=VendorFragment()
         vendorbottom.setUserDataListener(this)
+        vendorbottom.paidAmountListener=this
+        vendorbottom.pendingAmountlistener=this
         vendorbottom.show(fragmentmanager,"bottomsheet")
     }
 
@@ -214,6 +216,7 @@ class VendorDetails : AppCompatActivity(),VendorFragment.UserDataListener {
                 onBackPressed()
                 true
             }
+            //Accessing Contact
             R.id.contacts->{
                 Intent(Intent.ACTION_PICK).also {
                     it.type=ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE
@@ -252,6 +255,28 @@ class VendorDetails : AppCompatActivity(),VendorFragment.UserDataListener {
         }
     }
 
+    override fun onPendingAmountSelected(amount: Float) {
+        val displayamount = "Pending: $amount"
+        vendorRemainingET.text = displayamount
 
+        var balanceamount = vendorBalanceTV.text.toString()
+        balanceamount = balanceamount.substringAfterLast(":") // Remove the "Balance:" prefix
+        val balance = balanceamount.toFloat()
 
+        val newBalanceAmount = balance - amount
+        val finalAmount = "Balance: $newBalanceAmount"
+        vendorBalanceTV.text = finalAmount
+    }
+    override fun onPaidAmountSelected(amount: Float) {
+        val displayamount = "Paid: $amount"
+        vendorPaidET.text = displayamount
+
+        var balanceamount = vendorBalanceTV.text.toString()
+        balanceamount = balanceamount.substringAfterLast(":") // Remove the "Balance:" prefix
+        val totalAmount = balanceamount.toFloat()
+
+        val newBalanceAmount = totalAmount - amount
+        val finalAmount = "Balance: $newBalanceAmount"
+        vendorBalanceTV.text = finalAmount
+    }
 }

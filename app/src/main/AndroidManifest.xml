@@ -27,25 +27,25 @@
             android:name=".Event_Details_Activity.GuestDetails"
             android:exported="false" />
         <activity
-            android:name=".Event_Activities.Task"
+            android:name=".Event_Extra_info_Activities.Task"
             android:exported="false" />
         <activity
             android:name=".Event_Details_Activity.VendorDetails"
             android:exported="false" />
         <activity
-            android:name=".Event_Activities.Budget"
+            android:name=".Event_Extra_info_Activities.Budget"
             android:exported="false" />
         <activity
-            android:name=".Event_Activities.Guest"
+            android:name=".Event_Extra_info_Activities.Guest"
             android:exported="false" />
         <activity
-            android:name=".Event_Activities.Vendor"
+            android:name=".Event_Extra_info_Activities.Vendor"
             android:exported="false" />
         <activity
             android:name=".EventAdd"
             android:exported="false" />
         <activity
-            android:name=".loginActivity.signin_account"
+            android:name=".Login_Activity.signin_account"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -54,7 +54,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".loginActivity.account_creat"
+            android:name=".Login_Activity.account_creat"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

@@ -13,10 +13,10 @@ import com.example.eventmatics.Event_Details_Activity.BudgetDetails
 import com.example.eventmatics.Event_Details_Activity.GuestDetails
 import com.example.eventmatics.Event_Details_Activity.TaskDetails
 import com.example.eventmatics.Event_Details_Activity.VendorDetails
-import com.example.eventmatics.FragemntDataHolder.Budgetdataholderfragment
-import com.example.eventmatics.FragemntDataHolder.Guestdataholder
-import com.example.eventmatics.FragemntDataHolder.Taskdataholder
-import com.example.eventmatics.FragemntDataHolder.Vendordataholder
+import com.example.eventmatics.Event_Data_Holder.Budgetdataholderfragment
+import com.example.eventmatics.Event_Data_Holder.Guestdataholder
+import com.example.eventmatics.Event_Data_Holder.Taskdataholder
+import com.example.eventmatics.Event_Data_Holder.Vendordataholder
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView

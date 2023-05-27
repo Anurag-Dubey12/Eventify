@@ -17,7 +17,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.RecyclerView
-import com.example.eventmatics.Event_Activities.Guest
+import com.example.eventmatics.Event_Extra_info_Activities.Guest
 import com.example.eventmatics.R
 
 class GuestDetails : AppCompatActivity() {
