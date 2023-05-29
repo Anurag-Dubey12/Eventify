@@ -13,6 +13,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import com.example.eventmatics.R
 
@@ -60,13 +61,13 @@ class Guest : AppCompatActivity() {
             takecontactinfo()
         }
         }
+
     private fun takecontactinfo() {
     Intent(Intent.ACTION_PICK).also {
         it.type=ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE
         startActivityForResult(it,901)
     }
     }
-
     fun setButtonBackground(button: Button, isSelected: Boolean) {
         val backgroundColor = if (isSelected) R.color.light_blue else R.color.white
         button.backgroundTintList = ContextCompat.getColorStateList(this, backgroundColor)
@@ -119,7 +120,7 @@ class Guest : AppCompatActivity() {
                 it.close()
             }
         }
-    }
 
+    }
 
 }

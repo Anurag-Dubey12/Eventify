@@ -53,14 +53,14 @@
                     android:layout_width="190dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10sp"
-                    android:background="@drawable/buttondesign"
+                    android:background="@drawable/addpaymentbutton"
                     android:text="@string/male" />
 
                 <Button
                     android:id="@+id/comfemalebut"
                     android:layout_width="190dp"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/buttondesign"
+                    android:background="@drawable/addpaymentbutton"
                     android:text="@string/female" />
             </LinearLayout>
 

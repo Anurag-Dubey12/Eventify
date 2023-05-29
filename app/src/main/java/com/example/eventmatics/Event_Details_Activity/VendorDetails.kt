@@ -47,7 +47,7 @@ class VendorDetails : AppCompatActivity(),VendorFragment.UserDataListener,Vendor
     private lateinit var vendorAddressTV: TextView
     private lateinit var vendorAddressET: EditText
     private lateinit var paymentAdd: ImageView
-    private lateinit var vendorpaymentTransRecyclerView: RecyclerView
+    private lateinit var vendorpaymentTransRecyclerView:RecyclerView
     private lateinit var paymentlist:MutableList<Paymentinfo>
     private lateinit var paymentActivity: PaymentActivity
 
@@ -256,17 +256,18 @@ class VendorDetails : AppCompatActivity(),VendorFragment.UserDataListener,Vendor
     }
 
     override fun onPendingAmountSelected(amount: Float) {
-        val displayamount = "Pending: $amount"
-        vendorRemainingET.text = displayamount
+        val displayAmount = "Pending: $amount"
+        vendorRemainingET.text = displayAmount
 
-        var balanceamount = vendorBalanceTV.text.toString()
-        balanceamount = balanceamount.substringAfterLast(":") // Remove the "Balance:" prefix
-        val balance = balanceamount.toFloat()
-
-        val newBalanceAmount = balance - amount
-        val finalAmount = "Balance: $newBalanceAmount"
-        vendorBalanceTV.text = finalAmount
+        val balance = vendorBalanceTV.text.toString()
+        if (!balance.isNullOrEmpty()) {
+            val balanceAmount = balance.substringAfterLast(":").toFloat()
+            val newBalanceAmount = balanceAmount - amount
+            val finalAmount = "Pending: $newBalanceAmount"
+            vendorBalanceTV.text = finalAmount
+        }
     }
+
     override fun onPaidAmountSelected(amount: Float) {
         val displayamount = "Paid: $amount"
         vendorPaidET.text = displayamount

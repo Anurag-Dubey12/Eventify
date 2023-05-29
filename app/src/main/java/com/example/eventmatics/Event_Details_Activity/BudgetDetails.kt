@@ -1,8 +1,6 @@
 package com.example.eventmatics.Event_Details_Activity
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -13,10 +11,10 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.isEmpty
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,11 +24,18 @@ import com.example.eventmatics.R
 import com.example.eventmatics.data_class.Paymentinfo
 import com.example.eventmatics.data_class.SpinnerItem
 import com.example.eventmatics.fragments.BudgetFragment
+import com.google.firebase.FirebaseApp
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,BudgetFragment.PendingAmountListener,BudgetFragment.PaidAmountListener {
+
+   lateinit var nameEditText:EditText
     lateinit var  balanceET: TextView
     lateinit var remainingET: TextView
     lateinit var EstimatedEt: EditText
+    lateinit var NoteET: EditText
     var fragmentManager:FragmentManager=supportFragmentManager
     lateinit var PaymentAdd:ImageView
     lateinit var paidET: TextView
@@ -39,9 +44,8 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,Budge
     lateinit var  adapter:PaymentActivity
     lateinit var paymentList: MutableList<Paymentinfo>
 
-
     val spinnerItems = listOf(
-        SpinnerItem(R.drawable.budget_bottom_nav, "Accessories"),
+        SpinnerItem(R.drawable.home, "Accessories"),
         SpinnerItem(R.drawable.home, "Accommodation"),
         SpinnerItem(R.drawable.home, "Attire & accessories"),
         SpinnerItem(R.drawable.home, "Ceremony"),
@@ -58,15 +62,25 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,Budge
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_budget_details)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
-
-
         setSupportActionBar(toolbar)
-        recyclerView = findViewById(R.id.paymenttrans)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        //Id's
+        nameEditText = findViewById(R.id.NameET)
+        EstimatedEt = findViewById(R.id.Estimated_Amount)
+        NoteET = findViewById(R.id.NoteET)
+        balanceET = findViewById(R.id.Balancetv)
+        remainingET = findViewById(R.id.RemainingET)
+        paidET= findViewById(R.id.PaidET)
+        recyclerView = findViewById(R.id.paymenttrans)
         PaymentAdd=findViewById(R.id.PaymentAdd)
-
         categoryButton = findViewById(R.id.category_button)
+
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+        FirebaseApp.initializeApp(this)
+
+
+
         categoryButton.setOnClickListener {
             showCategoryPopup()
         }
@@ -74,9 +88,6 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,Budge
             addpaymenttran()
         }
 
-        if(recyclerView.isEmpty()){
-
-        }
         //recyclerview code
 // Initialize an empty mutable list to store payment information
         paymentList= mutableListOf()
@@ -94,10 +105,7 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,Budge
 
 
     private fun estimatedAmountcalculate() {
-        EstimatedEt = findViewById(R.id.Estimated_Amount)
-         balanceET = findViewById(R.id.Balancetv)
-         remainingET = findViewById(R.id.RemainingET)
-         paidET= findViewById(R.id.PaidET)
+
 
 
         val initialres=R.drawable.drop_arrow
@@ -120,10 +128,8 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,Budge
         EstimatedEt.addTextChangedListener(object:TextWatcher{
             override fun beforeTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             }
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             }
-
             override fun afterTextChanged(edit: Editable?) {
                 val balancepretext=balanceET.text
                 balanceET.text="Balance:+${EstimatedEt.text}"
@@ -170,7 +176,45 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,Budge
                onBackPressed()
                 true
             }
+          R.id.Check->{
+              AddValueToDataBase()
+              true
+          }
             else->super.onOptionsItemSelected(item)
+        }
+
+    }
+
+    private fun AddValueToDataBase() {
+        val name=nameEditText.text.toString()
+        val amount=EstimatedEt.text.toString()
+        val note = NoteET.text.toString()
+//        val balance = balanceET.text.toString().toFloat()
+//        val remaining = remainingET.text.toString().toFloat()
+//        val paid = paidET.text.toString().toFloat()
+
+        if (name.isEmpty()  ){
+            nameEditText.error = "Please enter a name"
+            return
+        }
+        if (amount.isEmpty()){
+            EstimatedEt.error = "Please enter an amount"
+            return
+        }
+        val db=FirebaseDatabase.getInstance().reference
+        val newdata=db.child("data").push()
+
+        val data=HashMap<String,Any>()
+        data["name"]=name
+        data["amount"]=amount
+        data["note"]=note
+
+        newdata.setValue(data).addOnSuccessListener {
+            Toast.makeText(this@BudgetDetails,"Added Details",Toast.LENGTH_SHORT).show()
+
+                }.addOnFailureListener {
+            Toast.makeText(this@BudgetDetails,"Something went wrong",Toast.LENGTH_SHORT).show()
+
         }
 
     }
@@ -187,6 +231,7 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,Budge
         val balanceamount="Balance:$final_amount"
         balanceET.text=balanceamount
     }
+
     override fun onPaidAmountSelected(amount: Float) {
         val displayText = "Paid: $amount"
         paidET.text = displayText

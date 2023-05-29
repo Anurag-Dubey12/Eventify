@@ -10,26 +10,26 @@ import android.provider.ContactsContract
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
-
-import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.Event_Extra_info_Activities.Guest
 import com.example.eventmatics.R
 
 class GuestDetails : AppCompatActivity() {
     private lateinit var guestNameEt: EditText
-    private lateinit var maleButton: AppCompatButton
-    private lateinit var femaleButton: AppCompatButton
-    private lateinit var adultButton: AppCompatButton
-    private lateinit var childButton: AppCompatButton
-    private lateinit var babyButton: AppCompatButton
+    private lateinit var maleButton:Button
+    private lateinit var femaleButton:  Button
+    private lateinit var adultButton:  Button
+    private lateinit var childButton:  Button
+    private lateinit var babyButton:  Button
     private lateinit var guestNoteEt: EditText
-    private lateinit var invitationSentButton: AppCompatButton
-    private lateinit var notSentButton: AppCompatButton
+    private lateinit var invitationSentButton:  Button
+    private lateinit var notSentButton:  Button
     private lateinit var contactviewtv: ImageView
     private lateinit var guestPhoneEt: EditText
     private lateinit var guestPhonetv: TextView
@@ -146,5 +146,9 @@ class GuestDetails : AppCompatActivity() {
                 it.close()
             }
         }
+    }
+    fun setButtonBackground(button: Button, isSelected: Boolean) {
+        val backgroundColor = if (isSelected) R.color.light_blue else R.color.white
+        button.backgroundTintList = ContextCompat.getColorStateList(this, backgroundColor)
     }
 }
