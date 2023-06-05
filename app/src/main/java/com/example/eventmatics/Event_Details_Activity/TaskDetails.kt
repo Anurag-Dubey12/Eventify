@@ -1,5 +1,6 @@
 package com.example.eventmatics.Event_Details_Activity
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -79,8 +80,25 @@ class TaskDetails : AppCompatActivity(),TaskFragment.UserDataListener {
                 onBackPressed()
                 true
             }
+            R.id.Check->{
+                addvaluetodatabase()
+                true
+            }
          else->super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun addvaluetodatabase(){
+        val name=TaskNameET.text.toString()
+        val note = TaskNoteET.text.toString()
+
+        val data=Subtask_info(name)
+
+        Intent().also {
+            it.putExtra("name",name)
+            it.putExtra("note",note)
+        }
+        finish()
     }
 
 

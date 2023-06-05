@@ -6,15 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
     <FrameLayout
         android:id="@+id/fragmentcon"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-    </ScrollView>
 <include
     android:id="@+id/navlayoutholder"
     layout="@layout/activity_navigation"

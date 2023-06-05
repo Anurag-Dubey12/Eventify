@@ -3,17 +3,16 @@ package com.example.eventmatics
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import com.example.eventmatics.data_class.BudgetDataHolderData
+import com.example.eventmatics.Event_Data_Holder.Budgetdataholderfragment
 import com.example.eventmatics.Event_Details_Activity.BudgetDetails
 import com.example.eventmatics.Event_Details_Activity.GuestDetails
 import com.example.eventmatics.Event_Details_Activity.TaskDetails
 import com.example.eventmatics.Event_Details_Activity.VendorDetails
-import com.example.eventmatics.Event_Data_Holder.Budgetdataholderfragment
 import com.example.eventmatics.Event_Data_Holder.Guestdataholder
 import com.example.eventmatics.Event_Data_Holder.Taskdataholder
 import com.example.eventmatics.Event_Data_Holder.Vendordataholder
@@ -30,21 +29,21 @@ class MainActivity : AppCompatActivity() {
 
 
     //Animation to make texview and Button to be Appear
-    private val frombottomfabanim: Animation by lazy {
-        AnimationUtils.loadAnimation(this, R.anim.from_bottom_fab)
-    }
-
-    private val tobottomfabanim: Animation by lazy {
-        AnimationUtils.loadAnimation(this, R.anim.to_bottom_fab)
-    }
-
-    private val rotateclock: Animation by lazy {
-        AnimationUtils.loadAnimation(this, R.anim.rotate_clock_wise)
-    }
-
-    private val anticlockwise: Animation by lazy {
-        AnimationUtils.loadAnimation(this, R.anim.rotate_anticlock_wise)
-    }
+//    private val frombottomfabanim: Animation by lazy {
+//        AnimationUtils.loadAnimation(this, R.anim.from_bottom_fab)
+//    }
+//
+//    private val tobottomfabanim: Animation by lazy {
+//        AnimationUtils.loadAnimation(this, R.anim.to_bottom_fab)
+//    }
+//
+//    private val rotateclock: Animation by lazy {
+//        AnimationUtils.loadAnimation(this, R.anim.rotate_clock_wise)
+//    }
+//
+//    private val anticlockwise: Animation by lazy {
+//        AnimationUtils.loadAnimation(this, R.anim.rotate_anticlock_wise)
+//    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,8 +59,6 @@ class MainActivity : AppCompatActivity() {
         navigationDrawershow()
 
         bottomNavigationclickListener()
-
-
     }
 
 
@@ -86,7 +83,9 @@ class MainActivity : AppCompatActivity() {
                 R.id.budget -> {
                     currentfragment(bugetfrag)
                     Newfab.setOnClickListener {
-                        Intent(this,BudgetDetails::class.java).also { startActivity(it) }
+                        Intent(this,BudgetDetails::class.java).also {
+//                            startActivityForResult(it,100)
+                        startActivity(it)}
                     }
                     true
                 }
@@ -137,4 +136,17 @@ class MainActivity : AppCompatActivity() {
         }
 
 }
-}
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == 100 && resultCode == RESULT_OK) {
+            val name = data?.getStringExtra("name")
+            val pending = data?.getStringExtra("pending")
+            val transInfo = data?.getStringExtra("transInfo")
+            val totalamt = data?.getStringExtra("totalamt")
+            val paidamt = data?.getStringExtra("paidamt")
+
+                }
+            }
+        }

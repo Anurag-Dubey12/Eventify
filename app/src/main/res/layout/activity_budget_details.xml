@@ -48,13 +48,16 @@ android:layout_height="match_parent"
           android:textSize="20sp"
           android:layout_marginBottom="10sp"
           />
-     <androidx.appcompat.widget.AppCompatButton
-         android:id="@+id/category_button"
+     <TextView
+         android:id="@+id/categoryselection"
          android:layout_width="match_parent"
          android:layout_height="wrap_content"
          android:drawableEnd="@drawable/drop_arrow"
          android:background="@drawable/category_button"
          android:text="@string/select_a_category"
+         android:textSize="16sp"
+         android:textColor="@color/black"
+         android:textStyle="bold"
          android:layout_marginBottom="10sp"
 
          />
