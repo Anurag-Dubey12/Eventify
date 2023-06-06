@@ -192,28 +192,10 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,
             EstimatedEt.error = "Please enter an amount"
             return
         }
-//        val intent = Intent()
-//        intent.putExtra("name", name)
-//        intent.putExtra("pending", pending)
-//        intent.putExtra("totalamt", totalamt)
-//        intent.putExtra("paidamt", paidamt)
-//        setResult(Activity.RESULT_OK, intent)
-//        finish()
-
-//        val budgetData = BudgetDataHolderData(name, pending, totalamt, paidamt)
-//
-//        var intent=Intent(this,MainActivity::class.java)
-//        intent.putExtra(Budgetdataholderfragment.BUDGET_DATA_EXTRA, budgetData)
-//        setResult(RESULT_OK, intent)
-        val data = BudgetDataHolderData(name, pending, totalamt, paidamt)
-
-//        val intent = Intent(this, MainActivity::class.java)
-        val bundle = Bundle()
-        bundle.putParcelable("budgetData", data)
-
-        val intent = Intent()
-        intent.putExtras(bundle)
-        setResult(RESULT_OK, intent)
+        val data=BudgetDataHolderData(name,pending,totalamt,paidamt)
+        val intent=Intent(this,MainActivity::class.java)
+        intent.putExtra("data",data)
+        startActivity(intent)
         Toast.makeText(this, "Your data has been added successfully.", Toast.LENGTH_SHORT).show()
         finish()
     }

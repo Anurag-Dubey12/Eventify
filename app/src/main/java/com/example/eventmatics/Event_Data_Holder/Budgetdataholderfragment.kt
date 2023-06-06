@@ -22,10 +22,19 @@ class Budgetdataholderfragment : Fragment() {
     private lateinit var budgetdataAdapter: BudgetDataHolderAdapter
     private lateinit var recyclerView: RecyclerView
     private lateinit var budgetList: MutableList<BudgetDataHolderData>
-    lateinit var Newfab:FloatingActionButton
     companion object {
         const val BUDGET_ACTIVITY_REQUEST_CODE = 1
-        const val BUDGET_DATA_EXTRA = "budget_data"
+//        const val BUDGET_DATA_EXTRA = "budget_data"
+
+        fun newInstance(data: BudgetDataHolderData):Budgetdataholderfragment{
+            val fragment=Budgetdataholderfragment()
+            val bundle=Bundle().apply {
+            putParcelable("data", data)
+            }
+            fragment.arguments=bundle
+            return fragment
+
+        }
     }
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
@@ -34,9 +43,15 @@ class Budgetdataholderfragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view= inflater.inflate(R.layout.fragment_budgetdataholderfragment2, container, false)
-        Newfab=view.findViewById(R.id.fab)
+
         recyclerView = view.findViewById(R.id.recyclerView)
-        budgetList = mutableListOf()
+
+        val data = arguments?.getParcelable<BudgetDataHolderData>("data")
+
+        budgetList = mutableListOf<BudgetDataHolderData>()
+        data?.let {
+            budgetList.add(it)
+        }
         budgetdataAdapter = BudgetDataHolderAdapter(budgetList)
         recyclerView.adapter = budgetdataAdapter
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -45,24 +60,5 @@ class Budgetdataholderfragment : Fragment() {
         return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        Newfab.setOnClickListener {
-            Intent(requireContext(), BudgetDetails::class.java).also {
-                startActivityForResult(it,BUDGET_ACTIVITY_REQUEST_CODE)
-//                startActivity(it)
-            }
-        }
-    }
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == RESULT_OK && requestCode == BUDGET_ACTIVITY_REQUEST_CODE) {
-            val bundle = data?.extras
-            val budgetData = bundle?.getParcelable<BudgetDataHolderData>("budgetData")
-            if (budgetData != null) {
-                budgetList.add(budgetData)
-                budgetdataAdapter.notifyDataSetChanged()
-            }
-        }
-    }
+
 }
