@@ -1,5 +1,6 @@
 package com.example.eventmatics
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -25,100 +26,16 @@ class MainActivity : AppCompatActivity() {
     lateinit var navView: NavigationView
     lateinit var toogle:ActionBarDrawerToggle
     lateinit var bottomnav: BottomNavigationView
-    lateinit var Newfab:FloatingActionButton
-
-
-    //Animation to make texview and Button to be Appear
-//    private val frombottomfabanim: Animation by lazy {
-//        AnimationUtils.loadAnimation(this, R.anim.from_bottom_fab)
-//    }
-//
-//    private val tobottomfabanim: Animation by lazy {
-//        AnimationUtils.loadAnimation(this, R.anim.to_bottom_fab)
-//    }
-//
-//    private val rotateclock: Animation by lazy {
-//        AnimationUtils.loadAnimation(this, R.anim.rotate_clock_wise)
-//    }
-//
-//    private val anticlockwise: Animation by lazy {
-//        AnimationUtils.loadAnimation(this, R.anim.rotate_anticlock_wise)
-//    }
-
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         navView= findViewById(R.id.navView)
         drawerLayout=findViewById(R.id.drawerlayout)
-        Newfab=findViewById(R.id.fab)
-
-
-        bottomnav = findViewById(R.id.bottomnav)
-        bottomnav.background = null
-//        bottomnav.menu.getItem(2).isEnabled = false
         navigationDrawershow()
-        budgetdata()
-        bottomNavigationclickListener()
+
     }
 
-
-    private fun bottomNavigationclickListener() {
-        val bugetfrag = Budgetdataholderfragment()
-        val vendorfrag = Vendordataholder()
-        val Taskfrag = Taskdataholder()
-        val Guestfrag = Guestdataholder()
-
-        bottomnav.setOnNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.home -> {
-                    // Replace the fragment without setting a click listener for FloatingActionButton
-                    currentfragment(bugetfrag)
-                    true
-                }
-                R.id.Task -> {
-                    currentfragment(Taskfrag)
-                    true
-                }
-                R.id.budget -> {
-                    currentfragment(bugetfrag)
-                    true
-                }
-                R.id.vendor -> {
-                    currentfragment(vendorfrag)
-                    true
-                }
-                R.id.guest -> {
-                    currentfragment(Guestfrag)
-                    true
-                }
-                else -> false
-            }
-        }
-
-        // Set click listener for FloatingActionButton outside of the switch case
-        Newfab.setOnClickListener {
-            val selectedItem = bottomnav.selectedItemId
-            when (selectedItem) {
-                R.id.Task -> {
-                    Intent(this, TaskDetails::class.java).also { startActivity(it) }
-                }
-                R.id.budget -> {
-                    Intent(this, BudgetDetails::class.java).also { startActivity(it) }
-                }
-                R.id.vendor -> {
-                    Intent(this, VendorDetails::class.java).also { startActivity(it) }
-                }
-                R.id.guest -> {
-                    Intent(this, GuestDetails::class.java).also { startActivity(it) }
-                }
-            }
-        }
-    }
-
-    private fun currentfragment(fragment: Fragment) =supportFragmentManager.beginTransaction().apply{
-        replace(R.id.fragmentcon,fragment)
-        commit()
-    }
 //    //Navigation Drawer function
     private fun navigationDrawershow() {
         // Set up the ActionBarDrawerToggle
@@ -142,27 +59,4 @@ class MainActivity : AppCompatActivity() {
         }
 
 }
-
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//
-//        if (requestCode == 100 && resultCode == RESULT_OK) {
-//            val name = data?.getStringExtra("name")
-//            val pending = data?.getStringExtra("pending")
-//            val transInfo = data?.getStringExtra("transInfo")
-//            val totalamt = data?.getStringExtra("totalamt")
-//            val paidamt = data?.getStringExtra("paidamt")
-//
-//                }
-//            }
-
-    fun budgetdata(){
-        val data = intent?.getParcelableExtra<BudgetDataHolderData>("data")
-//        val fragment = Budgetdataholderfragment.newInstance(data!!)
-        if (data != null) {
-            val fragment = Budgetdataholderfragment.newInstance(data)
-            currentfragment(fragment)
-        }
-
-    }
         }

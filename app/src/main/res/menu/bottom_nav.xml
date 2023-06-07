@@ -5,26 +5,31 @@
         android:title="@string/home"
         android:icon="@drawable/home"
         />
-    <item
-        android:id="@+id/Task"
-        android:title="@string/task_list"
-        android:icon="@drawable/task"
-        />
-    <item
-        android:id="@+id/budget"
-        android:title="@string/menubudget"
-        android:icon="@drawable/budget_bottom_nav"
-        />
-    <item
-        android:id="@+id/guest"
-        android:title="@string/Menuguest"
-        android:icon="@drawable/guest_bottom_nav"
-        />
+<!--    <item-->
+<!--        android:id="@+id/Task"-->
+<!--        android:title="@string/task_list"-->
+<!--        android:icon="@drawable/task"-->
+<!--        />-->
+<!--    <item-->
+<!--        android:id="@+id/budget"-->
+<!--        android:title="@string/menubudget"-->
+<!--        android:icon="@drawable/budget_bottom_nav"-->
+<!--        />-->
+<!--    <item-->
+<!--        android:id="@+id/guest"-->
+<!--        android:title="@string/Menuguest"-->
+<!--        android:icon="@drawable/guest_bottom_nav"-->
+<!--        />-->
 
 
-    <item
-        android:id="@+id/vendor"
-        android:title="@string/menuvendor"
-        android:icon="@drawable/market"
-        />
+<!--    <item-->
+<!--        android:id="@+id/vendor"-->
+<!--        android:title="@string/menuvendor"-->
+<!--        android:icon="@drawable/market"-->
+<!--        />-->
+        <item
+            android:id="@+id/bottomnav_settings"
+            android:title="@string/Setting"
+            android:icon="@drawable/setting"
+            />
 </menu>

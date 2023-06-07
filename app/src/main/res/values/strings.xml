@@ -60,4 +60,5 @@
     <string name="menubudget">Budget</string>
     <string name="Menuguest">Guest</string>
     <string name="menuvendor">Vendor</string>
+    <string name="Setting">Setting\n</string>
 </resources>
