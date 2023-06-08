@@ -22,6 +22,7 @@ import com.example.eventmatics.Event_Data_Holder.BudgetDataHolderActivity
 import com.example.eventmatics.Event_Data_Holder.GuestDataHolderActivity
 import com.example.eventmatics.Event_Data_Holder.TaskDataHolderActivity
 import com.example.eventmatics.Event_Data_Holder.VendorDataHolderActivity
+import com.example.eventmatics.Login_Activity.Profile
 import com.example.eventmatics.Login_Activity.signin_account
 import com.example.eventmatics.Navigation.Settings
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -63,26 +64,6 @@ class MainActivity : AppCompatActivity() {
         budgetShowTextView = findViewById(R.id.Budgetshow)
         pendingAmountShowTextView = findViewById(R.id.PendingAmountshow)
         paidAmountShowTextView = findViewById(R.id.PaidAmountshow)
-
-//        menuAdapter = object : ArrayAdapter<String>(this, R.layout.drawer_layout, menuItems) {
-//            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-//                val view: View = convertView ?: LayoutInflater.from(context).inflate(R.layout.drawer_layout, parent, false)
-//
-//                val menuItemTextView = view.findViewById<TextView>(R.id.menu_title)
-//                val menuItemImageView = view.findViewById<ImageView>(R.id.menu_icon)
-//
-//                menuItemTextView.text = menuItems[position]
-//                menuItemImageView.setImageResource(menuIcons[position])
-//                return view
-//            }
-//        }
-
-//        menuListView.adapter = menuAdapter
-//        val toggle = ActionBarDrawerToggle(
-//            this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close
-//        )
-//        drawerLayout.addDrawerListener(toggle)
-//        toggle.syncState()
 
         taskImageButton.setOnClickListener {
             Intent(this,TaskDataHolderActivity::class.java).also {
@@ -148,6 +129,11 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.nav_settings->{
                     Intent(this,Settings::class.java).also { startActivity(it) }
+                    true
+                }
+                R.id.nav_profile->{
+                    Intent(this,Profile::class.java).also { startActivity(it) }
+
                     true
                 }
                 R.id.nav_logout->{
