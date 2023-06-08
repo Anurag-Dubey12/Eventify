@@ -1,7 +1,6 @@
 package com.example.eventmatics.Event_Details_Activity
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -17,12 +16,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.Adapter.CategoryAdapter
 import com.example.eventmatics.Adapter.PaymentActivity
-import com.example.eventmatics.Event_Data_Holder.Budgetdataholderfragment
 import com.example.eventmatics.MainActivity
 import com.example.eventmatics.R
 import com.example.eventmatics.data_class.BudgetDataHolderData

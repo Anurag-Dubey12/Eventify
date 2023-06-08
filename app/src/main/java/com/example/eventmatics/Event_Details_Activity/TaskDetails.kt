@@ -14,8 +14,10 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.Adapter.TaskAdapter
+import com.example.eventmatics.Event_Data_Holder.TaskDataHolderActivity
 import com.example.eventmatics.R
 import com.example.eventmatics.data_class.Subtask_info
+import com.example.eventmatics.data_class.TaskDataHolder
 import com.example.eventmatics.fragments.TaskFragment
 
 class TaskDetails : AppCompatActivity(),TaskFragment.UserDataListener {
@@ -92,11 +94,11 @@ class TaskDetails : AppCompatActivity(),TaskFragment.UserDataListener {
         val name=TaskNameET.text.toString()
         val note = TaskNoteET.text.toString()
 
-        val data=Subtask_info(name)
+//        val data=TaskDataHolder(name,note,"12","2")
 
-        Intent().also {
-            it.putExtra("name",name)
-            it.putExtra("note",note)
+        Intent(this,TaskDataHolderActivity::class.java).also {
+            it.putExtra("name",TaskNameET.text.toString())
+            it.putExtra("note",TaskNoteET.text.toString())
         }
         finish()
     }

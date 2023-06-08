@@ -52,7 +52,7 @@ class VendorDetails : AppCompatActivity(),VendorFragment.UserDataListener,Vendor
     private lateinit var paymentActivity: PaymentActivity
 
     val spinnerItems = listOf(
-        SpinnerItem(R.drawable.budget_bottom_nav, "Accessories"),
+        SpinnerItem(R.drawable.home, "Accessories"),
         SpinnerItem(R.drawable.home, "Accommodation"),
         SpinnerItem(R.drawable.home, "Attire & accessories"),
         SpinnerItem(R.drawable.home, "Ceremony"),

@@ -30,9 +30,9 @@ class GuestCompanionApdater(private val GuestList:List<GuestCompanion>):Recycler
     }
     inner class GuestViewHolder(itemview:View):RecyclerView.ViewHolder(itemview){
         val guestimage:ImageView=itemview.findViewById(R.id.guestimg)
-        val guestname:TextView=itemView.findViewById(R.id.guestname)
+//        val guestname:TextView=itemView.findViewById(R.id.guestname)
         fun bind(Guest:GuestCompanion){
-            guestname.text = Guest.name
+//            guestname.text = Guest.name
 
             Glide.with(itemView)
                 .load(Guest.guestImg)
