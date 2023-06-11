@@ -22,13 +22,14 @@ class TaskDataHolderActivity : AppCompatActivity() {
     private lateinit var adapter: TaskDataHolderData
     private lateinit var paymentList: MutableList<TaskDataHolder>
     private lateinit var recyclerView: RecyclerView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_data_holder)
         recyclerView = findViewById(R.id.TaskDatarec)
-        taskAdd=findViewById(R.id.taskAdd)
+        taskAdd=findViewById(R.id.fab)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
-        bottomnav=findViewById(R.id.bottomnav)
+        bottomnav=findViewById(R.id.bottomNavigationView)
         bottomnav.background=null
 
         //Action Bar

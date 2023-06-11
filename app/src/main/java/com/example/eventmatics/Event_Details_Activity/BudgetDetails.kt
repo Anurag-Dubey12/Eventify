@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Parcelable
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
@@ -20,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.Adapter.CategoryAdapter
 import com.example.eventmatics.Adapter.PaymentActivity
+import com.example.eventmatics.Event_Data_Holder.BudgetDataHolderActivity
 import com.example.eventmatics.MainActivity
 import com.example.eventmatics.R
 import com.example.eventmatics.data_class.BudgetDataHolderData
@@ -31,9 +33,7 @@ import com.google.firebase.database.FirebaseDatabase
 
 class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,
     BudgetFragment.PendingAmountListener,BudgetFragment.PaidAmountListener
-
 {
-
    lateinit var nameEditText:EditText
     lateinit var  balanceET: TextView
     lateinit var remainingET: TextView
@@ -98,7 +98,6 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,
         recyclerView.adapter=adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
         estimatedAmountcalculate()
-
     }
 
     private fun estimatedAmountcalculate() {
@@ -175,6 +174,14 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,
             else->super.onOptionsItemSelected(item)
         }
     }
+    interface onDataSend{
+        fun onDataEnter(name:String,pending:String,totalamt:String,paidamount:String)
+    }
+    var ondatasend:onDataSend?=null
+
+    fun setondatasendlistener(listener:onDataSend){
+        ondatasend=listener
+    }
     private fun AddValueToDataBase() {
         val name = nameEditText.text.toString()
         val totalamt = EstimatedEt.text.toString()
@@ -189,10 +196,8 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,
             EstimatedEt.error = "Please enter an amount"
             return
         }
-        val data=BudgetDataHolderData(name,pending,totalamt,paidamt)
-        val intent=Intent(this,MainActivity::class.java)
-        intent.putExtra("data",data)
-        startActivity(intent)
+        ondatasend?.onDataEnter(name,pending,paidamt,paidamt)
+
         Toast.makeText(this, "Your data has been added successfully.", Toast.LENGTH_SHORT).show()
         finish()
     }

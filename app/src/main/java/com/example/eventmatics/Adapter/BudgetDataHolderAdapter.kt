@@ -1,9 +1,7 @@
 package com.example.eventmatics.Adapter
-
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
@@ -28,7 +26,6 @@ class BudgetDataHolderAdapter(private val budgetList: List<BudgetDataHolderData>
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val eventNameTextView: TextView = itemView.findViewById(R.id.text_event_name)
         private val pendingAmountTextView: TextView = itemView.findViewById(R.id.text_pending_amount)
-        private val transactionInfoTextView: TextView = itemView.findViewById(R.id.text_transaction_info)
         private val totalAmountTextView: TextView = itemView.findViewById(R.id.text_total_amount)
         private val paidAmountTextView: TextView = itemView.findViewById(R.id.text_paid_amount)
 

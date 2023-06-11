@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view"
     >
+<group>
 
     <item
         android:id="@+id/nav_settings"
@@ -12,16 +13,12 @@
         android:id="@+id/nav_pdf"
         android:icon="@drawable/pdfreport"
         android:title="@string/pdf_report" />
-<!--    <item-->
-<!--        android:id="@+id/synch"-->
-<!--        android:icon="@drawable/ic_baseline_sync_24"-->
-<!--        android:title="Synch" />-->
-<!--    <item-->
-<!--        android:id="@+id/trash"-->
-<!--        android:icon="@drawable/"-->
-<!--        android:title="Trash" />-->
-
-
+    <item
+        android:id="@+id/nav_manage_event"
+        android:icon="@drawable/event"
+        android:title="Manage Event" />
+</group>
+    <group>
 
     <item android:title="@string/user_information">
         <menu>
@@ -36,6 +33,8 @@
                 android:title="@string/logout" />
         </menu>
     </item>
+    </group>
+    <group>
 
     <item android:title="@string/communicate">
         <menu>
@@ -57,4 +56,5 @@
                 android:title="@string/telegram" />
         </menu>
     </item>
+    </group>
 </menu>
