@@ -193,7 +193,7 @@ class VendorDetails : AppCompatActivity(),VendorFragment.UserDataListener,Vendor
 
     }
     private fun showpaymentsheet() {
-        val vendorbottom=VendorFragment()
+        val vendorbottom=VendorFragment(fragmentmanager)
         vendorbottom.setUserDataListener(this)
         vendorbottom.paidAmountListener=this
         vendorbottom.pendingAmountlistener=this

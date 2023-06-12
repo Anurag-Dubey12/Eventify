@@ -15,6 +15,25 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Eventmatics"
         tools:targetApi="31">
+        <receiver
+            android:name=".EventWidget"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/event_widget_info" />
+        </receiver>
+
+        <activity
+            android:name=".EventWidgetConfigureActivity"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".NavigationDrawer.SettingActivity"
             android:exported="false" />

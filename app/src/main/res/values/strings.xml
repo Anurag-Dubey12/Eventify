@@ -74,4 +74,8 @@
     <string name="telegram">Telegram</string>
     <string name="settings">Settings</string>
     <string name="pdf_report">Pdf Report</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="configure">Configure</string>
+    <string name="add_widget">Add widget</string>
+    <string name="app_widget_description">This is an app widget description</string>
 </resources>

@@ -8,6 +8,7 @@ import kotlinx.parcelize.Parcelize
 data class BudgetDataHolderData(
     val eventName: String,
     val pending: String,
-    val amount: String,
-    val paidAmount: String
+    val amount: Float,
+    val paidAmount: String,
+    val traninfo:String
 ):Parcelable

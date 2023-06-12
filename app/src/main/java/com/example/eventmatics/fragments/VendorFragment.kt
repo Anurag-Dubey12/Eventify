@@ -6,18 +6,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentManager
 import com.example.eventmatics.R
 import com.example.eventmatics.data_class.Paymentinfo
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.datepicker.MaterialDatePicker
+import java.util.Calendar
 
-class VendorFragment : BottomSheetDialogFragment() {
+class VendorFragment(private var fragmentManager:FragmentManager) : BottomSheetDialogFragment() {
     private lateinit var editTextName: EditText
     private lateinit var editTextAmount: EditText
     private lateinit var vendorButtonPending: AppCompatButton
     private lateinit var vendorButtonPaid: AppCompatButton
-    private lateinit var editTextDate: EditText
+    private lateinit var vendorexpireDate: TextView
     private lateinit var buttonSubmit: AppCompatButton
 
     interface PendingAmountlistener{
@@ -54,7 +58,7 @@ class VendorFragment : BottomSheetDialogFragment() {
         editTextAmount = view.findViewById(R.id.editTextAmount)
         vendorButtonPending = view.findViewById(R.id.vendorbuttonPending)
         vendorButtonPaid = view.findViewById(R.id.vendorbuttonPaid)
-        editTextDate = view.findViewById(R.id.editTextDate)
+        vendorexpireDate = view.findViewById(R.id.editTextDate)
         buttonSubmit = view.findViewById(R.id.buttonSubmit)
 
         //VendorPending amount listener to pass the amount value and changing button backgriund on click
@@ -71,11 +75,14 @@ class VendorFragment : BottomSheetDialogFragment() {
             val amount=editTextAmount.text.toString().toFloat()
             paidAmountListener?.onPaidAmountSelected(amount)
         }
+        vendorexpireDate.setOnClickListener {
+            showDatePicker()
+        }
         buttonSubmit.setOnClickListener {
             val name=editTextName.text.toString()
             val amount=editTextAmount.text.toString().toFloat()
             val paymentStatus = if (vendorButtonPending.isSelected) "Pending" else "Paid"
-            val date=editTextDate.text.toString()
+            val date=vendorexpireDate.text.toString()
 
             val userdata=Paymentinfo(name, amount, date)
 //When the user clicks the buttonSubmit, the onClick listener is triggered.
@@ -86,6 +93,31 @@ class VendorFragment : BottomSheetDialogFragment() {
             dismiss()
         }
     }
+
+    private fun showDatePicker() {
+        val calendar = Calendar.getInstance()
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val month = calendar.get(Calendar.MONTH)
+        val year = calendar.get(Calendar.YEAR)
+
+        val datePicker = MaterialDatePicker.Builder.datePicker()
+            .setTitleText("Select Date")
+            .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+            .build()
+
+        datePicker.addOnPositiveButtonClickListener { selectedDate ->
+            val selectedCalendar = Calendar.getInstance()
+            selectedCalendar.timeInMillis = selectedDate
+            val selectedDay = selectedCalendar.get(Calendar.DAY_OF_MONTH)
+            val selectedMonth = selectedCalendar.get(Calendar.MONTH)
+            val selectedYear = selectedCalendar.get(Calendar.YEAR)
+            val formattedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
+            vendorexpireDate.setText(formattedDate)
+        }
+
+        datePicker.show(fragmentManager, "datePicker")
+    }
+
     fun setButtonBackground(button:Button,isSelected:Boolean){
         var backgroundcolor=if(isSelected) R.color.light_blue else R.color.white
         button.backgroundTintList=ContextCompat.getColorStateList(requireContext(),backgroundcolor)

@@ -1,6 +1,9 @@
 package com.example.eventmatics
 
 import android.annotation.SuppressLint
+import android.app.PendingIntent
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -8,6 +11,7 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -56,6 +60,7 @@ class MainActivity : AppCompatActivity(),EventAdding.EventAddingListener {
     private lateinit var pendingAmountShowTextView: TextView
     private lateinit var paidAmountShowTextView: TextView
     private lateinit var eventaddbut: AppCompatButton
+    private lateinit var widgetButton: Button
 
     lateinit var adapter:EventLayoutAdapter
     lateinit var eventdata:MutableList<Eventlayourdata>
@@ -81,6 +86,7 @@ class MainActivity : AppCompatActivity(),EventAdding.EventAddingListener {
         budgetShowTextView = findViewById(R.id.Budgetshow)
         pendingAmountShowTextView = findViewById(R.id.PendingAmountshow)
         paidAmountShowTextView = findViewById(R.id.PaidAmountshow)
+         widgetButton = findViewById(R.id.widgetbutton)
 
 
         val actionBarDrawerToggle = ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close)
@@ -146,6 +152,10 @@ class MainActivity : AppCompatActivity(),EventAdding.EventAddingListener {
             eventadding.setEventAddingListener(this)
             eventadding.show()
         }
+        widgetButton.setOnClickListener {
+            // Call a function to add the widget
+            addWidgetToHomeScreen()
+        }
         navigationDrawershow()
     }
 
@@ -156,8 +166,26 @@ class MainActivity : AppCompatActivity(),EventAdding.EventAddingListener {
             super.onBackPressed()
         }
     }
+    private fun addWidgetToHomeScreen() {
+        val context = applicationContext
+        val appWidgetManager = AppWidgetManager.getInstance(context)
+        val myWidgetProvider = ComponentName(context, EventWidget::class.java)
 
-//    //Navigation Drawer function
+        // Check if the widget is already added
+        if (appWidgetManager.isRequestPinAppWidgetSupported) {
+            val successCallback = PendingIntent.getBroadcast(
+                context,
+                0,
+                Intent(context, EventWidget::class.java),
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+            appWidgetManager.requestPinAppWidget(myWidgetProvider, null, successCallback)
+        } else {
+        }
+    }
+
+
+    //Navigation Drawer function
     private fun navigationDrawershow() {
         // Set the item click listener for the NavigationView
         navView.setNavigationItemSelectedListener { menuItem ->
@@ -208,7 +236,6 @@ class MainActivity : AppCompatActivity(),EventAdding.EventAddingListener {
             }
             else{
                 Toast.makeText(this,"Something went wrong",Toast.LENGTH_SHORT).show()
-
             }
         }
 
@@ -221,7 +248,6 @@ class MainActivity : AppCompatActivity(),EventAdding.EventAddingListener {
 
         }else{
             Toast.makeText(this,"Something went wrong",Toast.LENGTH_SHORT).show()
-
         }
     }
 

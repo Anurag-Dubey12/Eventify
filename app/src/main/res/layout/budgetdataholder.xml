@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     >
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -40,7 +40,6 @@
                     android:id="@+id/text_transaction_info"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Transaction Info"
                     android:textSize="14sp" />
 
             </LinearLayout>

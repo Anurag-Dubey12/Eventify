@@ -104,6 +104,7 @@
                 android:id="@+id/taskdate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:hint="Select Your Task Date"
                 android:drawableEnd="@drawable/calender"
                 android:background="@drawable/valueediteffect"
                 android:textSize="20sp"

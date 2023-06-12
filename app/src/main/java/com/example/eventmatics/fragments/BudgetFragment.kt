@@ -1,25 +1,27 @@
 package com.example.eventmatics.fragments
 
-import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentManager
 import com.example.eventmatics.R
 import com.example.eventmatics.data_class.Paymentinfo
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.datepicker.MaterialDatePicker
+import java.util.Calendar
 
-class BudgetFragment : BottomSheetDialogFragment() {
+class BudgetFragment( private val fragmentManager: FragmentManager) : BottomSheetDialogFragment() {
     private lateinit var etName: EditText
     private lateinit var etAmount: EditText
     private lateinit var buttonPending: Button
     private lateinit var buttonPaid: Button
-    private lateinit var etDate: EditText
+    private lateinit var etDate: TextView
     private lateinit var buttonSubmit: Button
 
    interface PendingAmountListener{
@@ -66,7 +68,9 @@ class BudgetFragment : BottomSheetDialogFragment() {
         // Set click listener for the "Pending" button
 
 
-
+        etDate.setOnClickListener {
+            showDatePicker()
+        }
         buttonPending.setOnClickListener {
             setButtonBackground(buttonPending,true)
             setButtonBackground(buttonPaid,false)
@@ -98,7 +102,24 @@ class BudgetFragment : BottomSheetDialogFragment() {
 
 
     }
+    private fun showDatePicker() {
+        val datePicker = MaterialDatePicker.Builder.datePicker()
+            .setTitleText("Select Date")
+            .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+            .build()
 
+        datePicker.addOnPositiveButtonClickListener { selectedDate ->
+            val selectedCalendar = Calendar.getInstance()
+            selectedCalendar.timeInMillis = selectedDate
+            val selectedDay = selectedCalendar.get(Calendar.DAY_OF_MONTH)
+            val selectedMonth = selectedCalendar.get(Calendar.MONTH)
+            val selectedYear = selectedCalendar.get(Calendar.YEAR)
+            val formattedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
+            etDate.setText(formattedDate)
+        }
+
+        datePicker.show(fragmentManager, "datePicker")
+    }
 
     fun setButtonBackground(button: Button, isSelected: Boolean) {
         val backgroundColor = if (isSelected) R.color.light_blue else R.color.white

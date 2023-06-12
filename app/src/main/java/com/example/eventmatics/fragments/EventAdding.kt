@@ -69,7 +69,7 @@ class EventAdding(context: Context, private val fragmentManager: FragmentManager
             .setTimeFormat(TimeFormat.CLOCK_12H)
             .setHour(hour)
             .setMinute(minute)
-            .setTitleText("Select Time")
+            .setTitleText("Select Event Time")
             .build()
 
         timePicker.addOnPositiveButtonClickListener {
@@ -91,7 +91,6 @@ class EventAdding(context: Context, private val fragmentManager: FragmentManager
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setTitleText("Select Date")
             .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
-
             .build()
 
         datePicker.addOnPositiveButtonClickListener { selectedDate ->
@@ -100,7 +99,6 @@ class EventAdding(context: Context, private val fragmentManager: FragmentManager
             val selectedDay = selectedCalendar.get(Calendar.DAY_OF_MONTH)
             val selectedMonth = selectedCalendar.get(Calendar.MONTH)
             val selectedYear = selectedCalendar.get(Calendar.YEAR)
-
             val formattedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
             eventDate.setText(formattedDate)
         }

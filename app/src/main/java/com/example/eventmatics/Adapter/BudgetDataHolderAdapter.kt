@@ -8,6 +8,11 @@ import com.example.eventmatics.R
 import com.example.eventmatics.data_class.BudgetDataHolderData
 
 class BudgetDataHolderAdapter(private val budgetList: List<BudgetDataHolderData>) : RecyclerView.Adapter<BudgetDataHolderAdapter.ViewHolder>() {
+    private var filteredList: MutableList<BudgetDataHolderData> = mutableListOf()
+
+    init {
+        filteredList.addAll(budgetList)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.budgetdataholder, parent, false)
@@ -22,18 +27,25 @@ class BudgetDataHolderAdapter(private val budgetList: List<BudgetDataHolderData>
     override fun getItemCount(): Int {
         return budgetList.size
     }
+    fun updateList(filteredList: MutableList<BudgetDataHolderData>) {
+        this.filteredList.clear()
+        this.filteredList.addAll(filteredList)
+        notifyDataSetChanged()
+    }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val eventNameTextView: TextView = itemView.findViewById(R.id.text_event_name)
         private val pendingAmountTextView: TextView = itemView.findViewById(R.id.text_pending_amount)
         private val totalAmountTextView: TextView = itemView.findViewById(R.id.text_total_amount)
         private val paidAmountTextView: TextView = itemView.findViewById(R.id.text_paid_amount)
+        private val transinfo:TextView=itemView.findViewById(R.id.text_transaction_info)
 
         fun bind(item: BudgetDataHolderData) {
             eventNameTextView.text = item.eventName
             pendingAmountTextView.text = "Pending Amount: ${item.pending}"
             totalAmountTextView.text = "Total Amount: ${item.amount}"
             paidAmountTextView.text = "Paid Amount: ${item.paidAmount}"
+            transinfo.text=item.traninfo
         }
     }
 }

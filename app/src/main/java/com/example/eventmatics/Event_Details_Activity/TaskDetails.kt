@@ -19,6 +19,8 @@ import com.example.eventmatics.R
 import com.example.eventmatics.data_class.Subtask_info
 import com.example.eventmatics.data_class.TaskDataHolder
 import com.example.eventmatics.fragments.TaskFragment
+import com.google.android.material.datepicker.MaterialDatePicker
+import java.util.Calendar
 
 class TaskDetails : AppCompatActivity(),TaskFragment.UserDataListener {
     val fragmentManager:FragmentManager=supportFragmentManager
@@ -58,6 +60,29 @@ class TaskDetails : AppCompatActivity(),TaskFragment.UserDataListener {
         adapter= TaskAdapter(Tasklist)
         subtaskrcv.adapter=adapter
         subtaskrcv.layoutManager=LinearLayoutManager(this)
+
+        taskdate.setOnClickListener {
+            showdatepicker()
+        }
+    }
+
+    private fun showdatepicker() {
+
+        val datepicker=MaterialDatePicker.Builder.datePicker()
+            .setTitleText("Select Task Date")
+            .setSelection(MaterialDatePicker.thisMonthInUtcMilliseconds())
+            .build()
+
+        datepicker.addOnPositiveButtonClickListener {selectedDate->
+            val selectedCalendar = Calendar.getInstance()
+            selectedCalendar.timeInMillis = selectedDate
+            val selectedDay = selectedCalendar.get(Calendar.DAY_OF_MONTH)
+            val selectedMonth = selectedCalendar.get(Calendar.MONTH)
+            val selectedYear = selectedCalendar.get(Calendar.YEAR)
+            val formattedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
+            taskdate.setText(formattedDate)
+        }
+        datepicker.show(fragmentManager, "datePicker")
 
     }
 

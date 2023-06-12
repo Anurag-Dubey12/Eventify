@@ -148,7 +148,7 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,
     }
     // Function to add a payment transaction
     private fun addpaymenttran() {
-        val bottomsheet=BudgetFragment()
+        val bottomsheet=BudgetFragment(fragmentManager)
         // Set the UserDataListener to the BudgetFragment
         bottomsheet.setUserDataListener(this)
         bottomsheet.pendingamountlistner = this
