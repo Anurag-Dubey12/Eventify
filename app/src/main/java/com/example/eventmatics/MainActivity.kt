@@ -61,7 +61,6 @@ class MainActivity : AppCompatActivity(),EventAdding.EventAddingListener {
     private lateinit var paidAmountShowTextView: TextView
     private lateinit var eventaddbut: AppCompatButton
     private lateinit var widgetButton: Button
-
     lateinit var adapter:EventLayoutAdapter
     lateinit var eventdata:MutableList<Eventlayourdata>
     @SuppressLint("MissingInflatedId")
@@ -86,8 +85,7 @@ class MainActivity : AppCompatActivity(),EventAdding.EventAddingListener {
         budgetShowTextView = findViewById(R.id.Budgetshow)
         pendingAmountShowTextView = findViewById(R.id.PendingAmountshow)
         paidAmountShowTextView = findViewById(R.id.PaidAmountshow)
-         widgetButton = findViewById(R.id.widgetbutton)
-
+        widgetButton = findViewById(R.id.widgetbutton)
 
         val actionBarDrawerToggle = ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close)
         drawerLayout.addDrawerListener(actionBarDrawerToggle)
@@ -98,6 +96,7 @@ class MainActivity : AppCompatActivity(),EventAdding.EventAddingListener {
         adapter=EventLayoutAdapter(eventdata)
         eventRecyclerView.adapter=adapter
         eventRecyclerView.layoutManager=LinearLayoutManager(this)
+
 
         taskImageButton.setOnClickListener {
             Intent(this,TaskDataHolderActivity::class.java).also {
@@ -158,7 +157,6 @@ class MainActivity : AppCompatActivity(),EventAdding.EventAddingListener {
         }
         navigationDrawershow()
     }
-
     override fun onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
@@ -290,5 +288,4 @@ class MainActivity : AppCompatActivity(),EventAdding.EventAddingListener {
         adapter.notifyDataSetChanged()
         budgetShowTextView.text=budget+"$"
     }
-
 }

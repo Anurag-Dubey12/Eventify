@@ -13,12 +13,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.Adapter.BudgetDataHolderAdapter
 import com.example.eventmatics.Event_Details_Activity.BudgetDetails
+import com.example.eventmatics.MainActivity
 import com.example.eventmatics.R
 import com.example.eventmatics.data_class.BudgetDataHolderData
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class BudgetDataHolderActivity : AppCompatActivity(),BudgetDetails.onDataSend {
+class BudgetDataHolderActivity : AppCompatActivity(){
     private lateinit var recyclerView: RecyclerView
     lateinit var budgetAdd: FloatingActionButton
     lateinit var bottomnav: BottomNavigationView
@@ -39,17 +40,22 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDetails.onDataSend {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val budgetDetails=BudgetDetails()
-        budgetDetails.setondatasendlistener(this)
         budgetlist= mutableListOf()
-        adapter= BudgetDataHolderAdapter( budgetlist)
+//        adapter= BudgetDataHolderAdapter( budgetlist)
         recyclerView.layoutManager=LinearLayoutManager(this)
-        recyclerView.adapter=adapter
+//        recyclerView.adapter=adapter
 
-        budgetlist.add(BudgetDataHolderData("ANurag","155", 2000F,"200","Paid"))
-        budgetlist.add(BudgetDataHolderData("burag","155",200f,"200","Paid"))
-        budgetlist.add(BudgetDataHolderData("ANurag","155",100f,"200","Pending"))
-        budgetlist.add(BudgetDataHolderData("ANurag","155",4000f,"200","Pending"))
-        filteredList.addAll(budgetlist)
+        val dataitem=intent.getParcelableArrayListExtra<BudgetDataHolderData>("dataitem")
+        if(dataitem!=null){
+            adapter=BudgetDataHolderAdapter(dataitem)
+            recyclerView.adapter=adapter
+        }
+//
+//        budgetlist.add(BudgetDataHolderData("ANurag","155", 2000F,"200","Paid"))
+//        budgetlist.add(BudgetDataHolderData("burag","155",200f,"200","Paid"))
+//        budgetlist.add(BudgetDataHolderData("ANurag","155",100f,"200","Pending"))
+//        budgetlist.add(BudgetDataHolderData("ANurag","155",4000f,"200","Pending"))
+//        filteredList.addAll(budgetlist)
 
         budgetAdd.setOnClickListener {
             Intent(this,BudgetDetails::class.java).also { startActivity(it) }
@@ -67,8 +73,6 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDetails.onDataSend {
                 else -> false
             }
         }
-
-
     }
     @SuppressLint("MissingInflatedId")
     private fun showFilterOptions() {
@@ -84,6 +88,7 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDetails.onDataSend {
 
         val dialog = dialogBuilder.create()
         dialog.show()
+
 
         showAll.setOnClickListener {
             filteredList.clear()
@@ -107,7 +112,6 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDetails.onDataSend {
         }
     }
 
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId){
             android.R.id.home->{
@@ -116,12 +120,6 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDetails.onDataSend {
             }
             else->super.onOptionsItemSelected(item)
         }
-    }
-
-    override fun onDataEnter(name: String, pending: String, totalamt: String, paidamount: String) {
-//        val data = BudgetDataHolderData(name, pending, totalamt, paidamount)
-//        budgetlist.add(data)
-        adapter.notifyDataSetChanged()
     }
     private fun showSortOptions() {
         val dialogBuilder = AlertDialog.Builder(this)

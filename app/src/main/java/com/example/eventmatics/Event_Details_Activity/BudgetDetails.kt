@@ -30,6 +30,7 @@ import com.example.eventmatics.data_class.SpinnerItem
 import com.example.eventmatics.fragments.BudgetFragment
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 
 class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,
     BudgetFragment.PendingAmountListener,BudgetFragment.PaidAmountListener
@@ -46,6 +47,8 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,
     lateinit var recyclerView :RecyclerView
     lateinit var  adapter:PaymentActivity
     lateinit var paymentList: MutableList<Paymentinfo>
+    private val dataItems = mutableListOf<BudgetDataHolderData>()
+    private lateinit var dbRef: FirebaseFirestore
 
     val spinnerItems = listOf(
         SpinnerItem(R.drawable.home, "Accessories"),
@@ -81,7 +84,7 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,
 
         FirebaseDatabase.getInstance().setPersistenceEnabled(true)
         FirebaseApp.initializeApp(this)
-
+        dbRef= FirebaseFirestore.getInstance()
         categoryselection.setOnClickListener {
             showCategoryPopup()
         }
@@ -174,17 +177,17 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,
             else->super.onOptionsItemSelected(item)
         }
     }
-    interface onDataSend{
-        fun onDataEnter(name:String,pending:String,totalamt:String,paidamount:String)
-    }
-    var ondatasend:onDataSend?=null
-
-    fun setondatasendlistener(listener:onDataSend){
-        ondatasend=listener
-    }
+//    interface onDataSend{
+//        fun onDataEnter(name:String,pending:String,totalamt:String,paidamount:String)
+//    }
+//    var ondatasend:onDataSend?=null
+//
+//    fun setondatasendlistener(listener:onDataSend){
+//        ondatasend=listener
+//    }
     private fun AddValueToDataBase() {
         val name = nameEditText.text.toString()
-        val totalamt = EstimatedEt.text.toString()
+        val totalamt = EstimatedEt.text.toString().toFloat()
         val paidamt = paidET.text.toString()
         val pending = remainingET.text.toString()
 //        val transInfo = if (balanceET.text.toString().toInt() == 0) "Paid" else "Pending"
@@ -192,14 +195,32 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,
             nameEditText.error = "Please enter a name"
             return
         }
-        if (totalamt.isEmpty()) {
+        if (totalamt==0f) {
             EstimatedEt.error = "Please enter an amount"
             return
         }
-        ondatasend?.onDataEnter(name,pending,paidamt,paidamt)
+    dataItems.add(BudgetDataHolderData(name,pending,totalamt,paidamt,"Pending"))
+    val eventname=intent.getStringExtra("eventname")
+    val budgetdata=dbRef.collection("eventsdata")
+        .document("budget")
 
-        Toast.makeText(this, "Your data has been added successfully.", Toast.LENGTH_SHORT).show()
-        finish()
+    budgetdata.set(
+        hashMapOf(
+            "name" to name,
+            "total" to totalamt,
+            "paid" to paidamt,
+            "pending" to pending
+        )
+    ).addOnSuccessListener {
+    finish()
+    Toast.makeText(this, "Your data has been added successfully.", Toast.LENGTH_SHORT).show()
+    }
+        .addOnFailureListener {
+            Toast.makeText(this,"Something went wrong",Toast.LENGTH_SHORT).show()
+
+        }
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -214,7 +235,6 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,
         val balanceamount="Balance:$final_amount"
         balanceET.text=balanceamount
     }
-
     override fun onPaidAmountSelected(amount: Float) {
         val displayText = "Paid: $amount"
         paidET.text = displayText
