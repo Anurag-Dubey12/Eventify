@@ -56,9 +56,9 @@ class EventAdding(context: Context, private val fragmentManager: FragmentManager
             val eventTimeText = eventTime.text.toString()
             val eventBudgetText = eventBudget.text.toString()
             eventAddingListener?.onEventCreated(eventNameText, eventDateText, eventTimeText,eventBudgetText)
-
-//            Intent().also { it.putExtra("eventname",eventNameText) }
-            val eventdocument=dbRef.collection("eventsdata")
+            val intent=Intent()
+            intent.putExtra("eventname",eventName.text.toString())
+            val eventdocument=dbRef.collection("$eventNameText")
                 .document("Event")
 
             eventdocument.set(

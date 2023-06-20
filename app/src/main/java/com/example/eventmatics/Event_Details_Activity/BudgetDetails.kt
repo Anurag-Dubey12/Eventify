@@ -177,14 +177,6 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,
             else->super.onOptionsItemSelected(item)
         }
     }
-//    interface onDataSend{
-//        fun onDataEnter(name:String,pending:String,totalamt:String,paidamount:String)
-//    }
-//    var ondatasend:onDataSend?=null
-//
-//    fun setondatasendlistener(listener:onDataSend){
-//        ondatasend=listener
-//    }
     private fun AddValueToDataBase() {
         val name = nameEditText.text.toString()
         val totalamt = EstimatedEt.text.toString().toFloat()
@@ -201,9 +193,8 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,
         }
     dataItems.add(BudgetDataHolderData(name,pending,totalamt,paidamt,"Pending"))
     val eventname=intent.getStringExtra("eventname")
-    val budgetdata=dbRef.collection("eventsdata")
+    val budgetdata=dbRef.collection("$eventname")
         .document("budget")
-
     budgetdata.set(
         hashMapOf(
             "name" to name,
@@ -214,13 +205,11 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,
     ).addOnSuccessListener {
     finish()
     Toast.makeText(this, "Your data has been added successfully.", Toast.LENGTH_SHORT).show()
+
     }
         .addOnFailureListener {
             Toast.makeText(this,"Something went wrong",Toast.LENGTH_SHORT).show()
-
         }
-
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

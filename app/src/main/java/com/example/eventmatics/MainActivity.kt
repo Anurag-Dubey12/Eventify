@@ -7,9 +7,11 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.icu.text.SimpleDateFormat
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.View
 import android.widget.Button
 import android.widget.FrameLayout
@@ -41,11 +43,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import java.util.Calendar
+import java.util.Locale
 
 class MainActivity : AppCompatActivity(),EventAdding.EventAddingListener {
         lateinit var drawerLayout: DrawerLayout
     lateinit var navView: NavigationView
     lateinit var toogle:ActionBarDrawerToggle
+    private var countDownTimer:CountDownTimer?=null
     private lateinit var eventRecyclerView: RecyclerView
     private lateinit var taskImageButton: ImageButton
     private lateinit var budgetImageButton: ImageButton
@@ -55,6 +60,7 @@ class MainActivity : AppCompatActivity(),EventAdding.EventAddingListener {
     private lateinit var budgetInfoCardView: CardView
     private lateinit var budgetShowTextView: TextView
     private lateinit var Eventshow: TextView
+    private lateinit var EventTimerDisplay: TextView
     private lateinit var crossimg: ImageView
     private lateinit var eventshowhide: LinearLayout
     private lateinit var pendingAmountShowTextView: TextView
@@ -73,6 +79,7 @@ class MainActivity : AppCompatActivity(),EventAdding.EventAddingListener {
         navView= findViewById(R.id.navView)
         eventRecyclerView = findViewById(R.id.Eventrec)
         taskImageButton = findViewById(R.id.task)
+        EventTimerDisplay = findViewById(R.id.EventTimer)
         crossimg = findViewById(R.id.crossimg)
         eventaddbut = findViewById(R.id.eventaddbut)
         budgetImageButton = findViewById(R.id.budget)
@@ -276,16 +283,36 @@ class MainActivity : AppCompatActivity(),EventAdding.EventAddingListener {
         }
     }
 
-    override fun onEventCreated(
-        eventName: String,
-        eventDate: String,
-        eventTime: String,
-        budget: String
-    ) {
-        val data=Eventlayourdata(eventName,eventDate,eventTime)
+    override fun onEventCreated(eventName: String, eventDate: String, eventTime: String, budget: String) {
+        val data = Eventlayourdata(eventName, eventDate, eventTime)
         eventdata.add(data)
-        Eventshow.text=eventName
+        Eventshow.text = eventName
         adapter.notifyDataSetChanged()
-        budgetShowTextView.text=budget+"$"
+        budgetShowTextView.text = budget
+
+        // Calculate remaining time until the event date
+        val currentDate = Calendar.getInstance().time
+        val eventDateTime = SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.getDefault()).parse("$eventDate $eventTime")
+        val remainingTimeInMillis = eventDateTime.time - currentDate.time
+
+        // Start the countdown timer
+        countDownTimer = object : CountDownTimer(remainingTimeInMillis, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                val days = millisUntilFinished / (24 * 60 * 60 * 1000)
+                val hours = (millisUntilFinished % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)
+                val minutes = (millisUntilFinished % (60 * 60 * 1000)) / (60 * 1000)
+                val seconds = (millisUntilFinished % (60 * 1000)) / 1000
+                val remainingTime = String.format("%02d:%02d:%02d:%02d", days, hours, minutes, seconds)
+                EventTimerDisplay.text = remainingTime
+            }
+            override fun onFinish() {
+                EventTimerDisplay.text = "Event Started"
+            }
+        }.start()
     }
+    override fun onDestroy() {
+        super.onDestroy()
+        countDownTimer?.cancel()
+    }
+
 }
