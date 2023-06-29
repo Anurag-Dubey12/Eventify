@@ -1,10 +1,8 @@
 package com.example.eventmatics.Event_Details_Activity
 
-import android.annotation.SuppressLint
-import android.content.Intent
+
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Parcelable
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
@@ -13,7 +11,6 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentManager
@@ -21,8 +18,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.Adapter.CategoryAdapter
 import com.example.eventmatics.Adapter.PaymentActivity
-import com.example.eventmatics.Event_Data_Holder.BudgetDataHolderActivity
-import com.example.eventmatics.MainActivity
 import com.example.eventmatics.R
 import com.example.eventmatics.data_class.BudgetDataHolderData
 import com.example.eventmatics.data_class.Paymentinfo
@@ -128,13 +123,10 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             }
             override fun afterTextChanged(edit: Editable?) {
-                val balancepretext=balanceET.text
                 balanceET.text="Balance:+${EstimatedEt.text}"
             }
         })
     }
-
-    @SuppressLint("MissingInflatedId")
     private fun showCategoryPopup() {
         val spinnerAdapter = CategoryAdapter(this, spinnerItems)
         val dialogBuilder = AlertDialog.Builder(this)
@@ -147,7 +139,6 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,
             .setNegativeButton("Cancel", null)
         val dialog = dialogBuilder.create()
         dialog.show()
-
     }
     // Function to add a payment transaction
     private fun addpaymenttran() {
@@ -192,24 +183,23 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,
             return
         }
     dataItems.add(BudgetDataHolderData(name,pending,totalamt,paidamt,"Pending"))
-    val eventname=intent.getStringExtra("eventname")
-    val budgetdata=dbRef.collection("$eventname")
-        .document("budget")
-    budgetdata.set(
-        hashMapOf(
-            "name" to name,
-            "total" to totalamt,
-            "paid" to paidamt,
-            "pending" to pending
-        )
-    ).addOnSuccessListener {
-    finish()
-    Toast.makeText(this, "Your data has been added successfully.", Toast.LENGTH_SHORT).show()
-
-    }
-        .addOnFailureListener {
-            Toast.makeText(this,"Something went wrong",Toast.LENGTH_SHORT).show()
-        }
+    val eventname=intent.getStringExtra("eventname").toString()
+    val budgetcollection=dbRef.collection(eventname)
+//    val budgetdata= hashMapOf(
+//            "name" to name,
+//            "total" to totalamt,
+//            "paid" to paidamt,
+//            "pending" to pending
+//
+//    )
+//        budgetcollection.add(budgetdata)
+//            .addOnSuccessListener {
+//                finish()
+//                Toast.makeText(this, "Your data has been added successfully.", Toast.LENGTH_SHORT).show()
+//            }
+//            .addOnFailureListener {
+//                Toast.makeText(this,"Something went wrong",Toast.LENGTH_SHORT).show()
+//            }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -234,6 +224,4 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,
         val balanceAmount = "Balance: $finalAmount"
         balanceET.text = balanceAmount
     }
-
-
 }

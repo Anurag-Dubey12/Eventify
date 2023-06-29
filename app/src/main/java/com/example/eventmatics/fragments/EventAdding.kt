@@ -1,30 +1,28 @@
 package com.example.eventmatics.fragments
 
 import android.annotation.SuppressLint
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
-import android.media.metrics.Event
 import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
-import androidx.annotation.StyleRes
 import androidx.appcompat.app.AppCompatDialog
 import androidx.fragment.app.FragmentManager
-import com.example.eventmatics.Database_DataClass.EventDatabase
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.example.eventmatics.R
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
+import com.example.eventmatics.SQLiteDatabase.Dataclass.Events
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.Calendar
 
-class EventAdding(context: Context, private val fragmentManager: FragmentManager) : AppCompatDialog(context) {
+class EventAdding(context: Context, private val fragmentManager: FragmentManager
+) : AppCompatDialog(context) {
     private lateinit var eventName: TextInputEditText
     private lateinit var eventDate: TextInputEditText
     private lateinit var eventTime: TextInputEditText
@@ -43,6 +41,7 @@ class EventAdding(context: Context, private val fragmentManager: FragmentManager
         val window = window
         window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         dbRef=FirebaseFirestore.getInstance()
+        //SQLite Database
 
         eventDate.setOnClickListener {
         showDatePicker()
@@ -55,26 +54,16 @@ class EventAdding(context: Context, private val fragmentManager: FragmentManager
             val eventDateText = eventDate.text.toString()
             val eventTimeText = eventTime.text.toString()
             val eventBudgetText = eventBudget.text.toString()
+            val dbname = eventNameText
+            val databaseHelper = LocalDatabase(context, dbname)
             eventAddingListener?.onEventCreated(eventNameText, eventDateText, eventTimeText,eventBudgetText)
             val intent=Intent()
             intent.putExtra("eventname",eventName.text.toString())
-            val eventdocument=dbRef.collection("$eventNameText")
-                .document("Event")
 
-            eventdocument.set(
-                hashMapOf(
-                    "name" to eventNameText,
-                    "date" to eventDateText,
-                    "time" to eventTimeText,
-                    "budget" to eventBudgetText
-                )
-            ).addOnSuccessListener {
-                Toast.makeText(context, "Event created successfully", Toast.LENGTH_SHORT).show()
-                dismiss()
-            }
-                .addOnFailureListener {
-                    Toast.makeText(context,"Something went wrong",Toast.LENGTH_SHORT).show()
-                }
+            val event=Events(1,eventNameText,eventDateText,eventTimeText,eventBudgetText)
+            databaseHelper.createEvent(event)
+            Toast.makeText(context, "Event created successfully", Toast.LENGTH_SHORT).show()
+            dismiss()
         }
     }
 
