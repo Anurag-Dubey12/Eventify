@@ -241,6 +241,27 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         db.close()
         return events
     }
+    //Getting Specific data
+    @SuppressLint("Range")
+    fun getEventData(eventId: Int): Events? {
+        val db = readableDatabase
+        val query = "SELECT * FROM $TABLE_Event WHERE $COLUMN_ID = $eventId"
+        val cursor = db.rawQuery(query, null)
+        var event: Events? = null
+
+        if (cursor.moveToFirst()) {
+            val eventName = cursor.getString(cursor.getColumnIndex(Event_Name))
+            val eventDate = cursor.getString(cursor.getColumnIndex(Event_Date))
+            val eventTime = cursor.getString(cursor.getColumnIndex(Event_Time))
+            val eventBudget = cursor.getString(cursor.getColumnIndex(Event_Budget))
+
+            event = Events(eventId.toLong(), eventName, eventDate, eventTime, eventBudget)
+        }
+
+        cursor.close()
+        return event
+    }
+
 
     // Update an event
     fun updateEvent(event: Events): Int {
@@ -272,6 +293,8 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         db.close()
         return rowsAffected
     }
+
+
 
     //Task Function
     fun createTask(task: Task): Long {
@@ -313,6 +336,28 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         db.close()
         return tasks
     }
+    //Getting Specific data from Task
+    @SuppressLint("Range")
+    fun getTaskData(taskId: Int): Task? {
+        val db = readableDatabase
+        val query = "SELECT * FROM $TABLE_TASK WHERE $COLUMN_ID = $taskId"
+        val cursor = db.rawQuery(query, null)
+        var task: Task? = null
+
+        if (cursor.moveToFirst()) {
+            val taskName = cursor.getString(cursor.getColumnIndex(Task_Name))
+            val taskCategory = cursor.getString(cursor.getColumnIndex(Task_Category))
+            val taskNote = cursor.getString(cursor.getColumnIndex(Task_Note))
+            val taskStatus = cursor.getString(cursor.getColumnIndex(Task_Status))
+            val taskDate = cursor.getString(cursor.getColumnIndex(Task_Date))
+
+            task = Task(taskId.toLong(), taskName, taskCategory, taskNote, taskStatus, taskDate)
+        }
+
+        cursor.close()
+        return task
+    }
+
 
     // Update a task
     fun updateTask(task: Task): Int {
@@ -361,6 +406,29 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         val id = db.insert(TABLE_BUDGET, null, values)
         db.close()
         return id
+    }
+    //Getting Specific data for budget
+    @SuppressLint("Range")
+    fun getBudgetData(budgetId: Int): Budget? {
+        val db = readableDatabase
+        val query = "SELECT * FROM $TABLE_BUDGET WHERE $COLUMN_ID = $budgetId"
+        val cursor = db.rawQuery(query, null)
+        var budget: Budget? = null
+
+        if (cursor.moveToFirst()) {
+            val budgetName = cursor.getString(cursor.getColumnIndex(Budget_Name))
+            val budgetCategory = cursor.getString(cursor.getColumnIndex(Budget_Category))
+            val budgetNote = cursor.getString(cursor.getColumnIndex(Budget_Note))
+            val budgetEstimated = cursor.getString(cursor.getColumnIndex(Budget_Estimated))
+            val budgetBalance = cursor.getString(cursor.getColumnIndex(Budget_Balance))
+            val budgetPending = cursor.getString(cursor.getColumnIndex(Budget_Pending))
+            val budgetPaid = cursor.getString(cursor.getColumnIndex(Budget_Paid))
+
+            budget = Budget(budgetId.toLong(), budgetName, budgetCategory, budgetNote, budgetEstimated, budgetBalance, budgetPending, budgetPaid)
+        }
+
+        cursor.close()
+        return budget
     }
 
     // Get all budgets
@@ -471,6 +539,31 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         db.close()
         return guests
     }
+    //Getting Specific data from Guest
+    @SuppressLint("Range")
+    fun getGuestData(guestId: Int): Guest? {
+        val db = readableDatabase
+        val query = "SELECT * FROM $TABLE_GUEST WHERE $COLUMN_ID = $guestId"
+        val cursor = db.rawQuery(query, null)
+        var guest: Guest? = null
+
+        if (cursor.moveToFirst()) {
+            val guestName = cursor.getString(cursor.getColumnIndex(Guest_Name))
+            val guestGender = cursor.getString(cursor.getColumnIndex(Guest_Gender))
+            val guestType = cursor.getString(cursor.getColumnIndex(Guest_Type))
+            val guestNote = cursor.getString(cursor.getColumnIndex(Guest_Note))
+            val guestStatus = cursor.getString(cursor.getColumnIndex(Guest_Status))
+            val guestContact = cursor.getString(cursor.getColumnIndex(Guest_Contact))
+            val guestEmail = cursor.getString(cursor.getColumnIndex(Guest_Email))
+            val guestAddress = cursor.getString(cursor.getColumnIndex(Guest_Address))
+
+            guest = Guest(guestId.toLong(), guestName, guestGender, guestType, guestNote, guestStatus, guestContact, guestEmail, guestAddress)
+        }
+
+        cursor.close()
+        return guest
+    }
+
 
     // Update a guest
     fun updateGuest(guest: Guest): Int {
@@ -507,7 +600,6 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         return rowsAffected
     }
 
-    // Create new vendor
     // Create new vendor
     fun createVendor(vendor: Vendor): Long {
         val db = writableDatabase
@@ -557,6 +649,32 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         cursor?.close()
         db.close()
         return vendors
+    }
+    //Getting Specific Data from Vendor
+    @SuppressLint("Range")
+    fun getVendorData(vendorId: Int): Vendor? {
+        val db = readableDatabase
+        val query = "SELECT * FROM $TABLE_VENDOR WHERE $COLUMN_ID = $vendorId"
+        val cursor = db.rawQuery(query, null)
+        var vendor: Vendor? = null
+
+        if (cursor.moveToFirst()) {
+            val id = cursor.getLong(cursor.getColumnIndex(COLUMN_ID))
+            val name = cursor.getString(cursor.getColumnIndex(Vendor_Name))
+            val category = cursor.getString(cursor.getColumnIndex(Vendor_Category))
+            val note = cursor.getString(cursor.getColumnIndex(Vendor_Note))
+            val estimated = cursor.getString(cursor.getColumnIndex(Vendor_Estimated))
+            val balance = cursor.getString(cursor.getColumnIndex(Vendor_Balance))
+            val pending = cursor.getString(cursor.getColumnIndex(Vendor_Pending))
+            val paid = cursor.getString(cursor.getColumnIndex(Vendor_Paid))
+            val phoneNumber = cursor.getString(cursor.getColumnIndex(Vendor_PhoneNumber))
+            val emailId = cursor.getString(cursor.getColumnIndex(Vendor_EmailId))
+            val website = cursor.getString(cursor.getColumnIndex(Vendor_Website))
+            val vendor = Vendor(id, name, category, note, estimated, balance, pending, paid, phoneNumber, emailId, website)
+        }
+
+        cursor.close()
+        return vendor
     }
 
     // Update a vendor

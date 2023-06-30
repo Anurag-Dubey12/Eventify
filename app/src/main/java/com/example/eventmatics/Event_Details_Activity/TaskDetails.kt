@@ -5,11 +5,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -61,9 +63,22 @@ class TaskDetails : AppCompatActivity(),TaskFragment.UserDataListener {
         subtaskrcv.adapter=adapter
         subtaskrcv.layoutManager=LinearLayoutManager(this)
 
+        TaskPendingbut.setOnClickListener {
+            setButtonBackground(TaskPendingbut,true)
+            setButtonBackground(TaskCombut,false)
+        }
+        TaskCombut.setOnClickListener {
+            setButtonBackground(TaskPendingbut,false)
+            setButtonBackground(TaskCombut,true)
+        }
         taskdate.setOnClickListener {
             showdatepicker()
         }
+    }
+
+    fun setButtonBackground(button: Button, isSelected:Boolean){
+        val BackgroundColor=if(isSelected) R.color.light_blue else R.color.white
+        button.backgroundTintList=ContextCompat.getColorStateList(this,BackgroundColor)
     }
 
     private fun showdatepicker() {

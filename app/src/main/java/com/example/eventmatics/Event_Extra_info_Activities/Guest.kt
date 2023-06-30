@@ -54,6 +54,31 @@ class Guest : AppCompatActivity() {
         comguestEmailtv=findViewById(R.id.comGuestEmailtv)
         comguestAddressstv=findViewById(R.id.comGuestAddressstv)
 
+        commaleButton.setOnClickListener {
+            setButtonBackground(commaleButton,true)
+            setButtonBackground(comfemaleButton,false)
+        }
+        comfemaleButton.setOnClickListener {
+            setButtonBackground(commaleButton,false)
+            setButtonBackground(comfemaleButton,true)
+        }
+        comadultButton.setOnClickListener {
+            setButtonBackground(comadultButton,true)
+            setButtonBackground(comchildButton,false)
+            setButtonBackground(combabyButton,false)
+        }
+        comchildButton.setOnClickListener {
+            setButtonBackground(comadultButton,false)
+            setButtonBackground(comchildButton,true)
+            setButtonBackground(combabyButton,false)
+        }
+        combabyButton.setOnClickListener {
+            setButtonBackground(comadultButton,false)
+            setButtonBackground(comchildButton,false)
+            setButtonBackground(combabyButton,true)
+        }
+
+
         comcontactviewtv.setOnClickListener {
             guestinfoview()
         }
@@ -61,7 +86,6 @@ class Guest : AppCompatActivity() {
             takecontactinfo()
         }
         }
-
     private fun takecontactinfo() {
     Intent(Intent.ACTION_PICK).also {
         it.type=ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE

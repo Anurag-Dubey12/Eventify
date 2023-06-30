@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Intent
+import android.database.Cursor
 import android.icu.text.SimpleDateFormat
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -34,6 +35,11 @@ import com.example.eventmatics.Event_Data_Holder.VendorDataHolderActivity
 import com.example.eventmatics.Login_Activity.signin_account
 import com.example.eventmatics.NavigationDrawer.ProfileActivity
 import com.example.eventmatics.NavigationDrawer.SettingActivity
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseSingleton
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseSingleton.databaseHelper
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseSingleton.databaseName
+import com.example.eventmatics.SQLiteDatabase.Dataclass.Events
 import com.example.eventmatics.data_class.Eventlayourdata
 import com.example.eventmatics.fragments.EventAdding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -64,9 +70,9 @@ class MainActivity : AppCompatActivity(),EventAdding.EventAddingListener {
     private lateinit var paidAmountShowTextView: TextView
     private lateinit var eventaddbut: AppCompatButton
     private lateinit var widgetButton: Button
-    lateinit var adapter:EventLayoutAdapter
-    lateinit var eventdata:MutableList<Eventlayourdata>
-
+//    lateinit var adapter:EventLayoutAdapter
+//    lateinit var eventdata:MutableList<Events>
+val eventList = mutableListOf<Events>()
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,32 +103,29 @@ class MainActivity : AppCompatActivity(),EventAdding.EventAddingListener {
         actionBarDrawerToggle.syncState()
 
 
-        //Event data Recycler view
-        eventdata= mutableListOf()
-        adapter=EventLayoutAdapter(eventdata)
-        eventRecyclerView.adapter=adapter
-        eventRecyclerView.layoutManager=LinearLayoutManager(this)
+    //Event data Recycler view
+////        eventdata= mutableListOf()
+//        val eventList = databaseHelper.getEventData(1)
+//        adapter = EventLayoutAdapter(eventList)
+//        eventRecyclerView.adapter=adapter
+//        eventRecyclerView.layoutManager=LinearLayoutManager(this)
 
         taskImageButton.setOnClickListener {
             Intent(this,TaskDataHolderActivity::class.java).also {
                 startActivity(it)
-            }
-        }
+            } }
         budgetImageButton.setOnClickListener {
             Intent(this, BudgetDataHolderActivity::class.java).also {
                 startActivity(it)
-            }
-        }
+            } }
         guestImageButton.setOnClickListener {
             Intent(this,GuestDataHolderActivity::class.java).also {
                 startActivity(it)
-            }
-        }
+            } }
         vendorImageButton.setOnClickListener {
             Intent(this,VendorDataHolderActivity::class.java).also {
                 startActivity(it)
-            }
-        }
+            } }
         Eventshow.setOnClickListener {
             if (eventshowhide.visibility== View.GONE && eventRecyclerView.visibility==View.GONE){
                 eventshowhide.visibility=View.VISIBLE
@@ -160,8 +163,34 @@ class MainActivity : AppCompatActivity(),EventAdding.EventAddingListener {
             // Call a function to add the widget
             addWidgetToHomeScreen()
         }
+//        showEventData()
         navigationDrawershow()
     }
+
+    @SuppressLint("Range")
+//    private fun showEventData() {
+//        databaseHelper = LocalDatabase(this, DatabaseSingleton.retrieveDatabaseName())
+//        val eventList = ArrayList<Events>()
+//
+//        val cursor: Cursor = databaseHelper.getEventData()
+//        while (cursor.moveToNext()) {
+//            val eventId = cursor.getInt(cursor.getColumnIndex("id"))
+//            val eventName = cursor.getString(cursor.getColumnIndex("Event_Name"))
+//            val eventDate = cursor.getString(cursor.getColumnIndex("Event_Date"))
+//            val eventTime = cursor.getString(cursor.getColumnIndex("Event_Time"))
+//
+//            val event = Events(eventId.toLong(), eventName, eventDate, eventTime, "4000")
+//            eventList.add(event)
+//        }
+//
+//        cursor.close()
+//
+//        val adapter = EventLayoutAdapter(eventList)
+//        eventRecyclerView.adapter = adapter
+//        eventRecyclerView.layoutManager = LinearLayoutManager(this)
+//    }
+
+
     override fun onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
@@ -281,11 +310,14 @@ class MainActivity : AppCompatActivity(),EventAdding.EventAddingListener {
         }
     }
 
+    @SuppressLint("Range")
     override fun onEventCreated(eventName: String, eventDate: String, eventTime: String, budget: String) {
-        val data = Eventlayourdata(eventName, eventDate, eventTime)
-        eventdata.add(data)
+//        val data = Eventlayourdata(eventName, eventDate, eventTime)
+
+
+//        eventdata.add(data)
         Eventshow.text = eventName
-        adapter.notifyDataSetChanged()
+//        adapter.notifyDataSetChanged()
         budgetShowTextView.text = budget
 
         // Calculate remaining time until the event date

@@ -68,6 +68,38 @@ class GuestDetails : AppCompatActivity() {
         guestEmailtv=findViewById(R.id.GuestEmailtv)
         guestAddressstv=findViewById(R.id.GuestAddressstv)
 
+
+        maleButton.setOnClickListener {
+            setButtonBackground(maleButton,true)
+            setButtonBackground(femaleButton,false)
+        }
+        femaleButton.setOnClickListener {
+            setButtonBackground(maleButton,false)
+            setButtonBackground(femaleButton,true)
+        }
+        adultButton.setOnClickListener {
+            setButtonBackground(adultButton,true)
+            setButtonBackground(babyButton,false)
+            setButtonBackground(childButton,false)
+        }
+        babyButton.setOnClickListener {
+            setButtonBackground(adultButton,false)
+            setButtonBackground(babyButton,true)
+            setButtonBackground(childButton,false)
+        }
+        childButton.setOnClickListener {
+            setButtonBackground(adultButton,false)
+            setButtonBackground(babyButton,false)
+            setButtonBackground(childButton,true)
+        }
+        invitationSentButton.setOnClickListener {
+            setButtonBackground(invitationSentButton,true)
+            setButtonBackground(notSentButton,false)
+        }
+        notSentButton.setOnClickListener {
+            setButtonBackground(invitationSentButton,false)
+            setButtonBackground(notSentButton,true)
+        }
         contactviewtv.setOnClickListener {
             guestinfoview()
         }
@@ -77,6 +109,7 @@ class GuestDetails : AppCompatActivity() {
             }
         }
     }
+
 
     private fun guestinfoview() {
         if(guestPhonetv.visibility== View.VISIBLE && guestEmailtv.visibility== View.VISIBLE && guestAddressstv.visibility== View.VISIBLE &&

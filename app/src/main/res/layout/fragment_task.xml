@@ -55,7 +55,7 @@
                 android:layout_marginBottom="10sp"
                 android:orientation="horizontal">
 
-                <androidx.appcompat.widget.AppCompatButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/subtaskpendingbut"
                     android:layout_width="190dp"
                     android:layout_height="wrap_content"
@@ -63,7 +63,7 @@
                     android:background="@drawable/addpaymentbutton"
                     android:text="@string/taskpending" />
 
-                <androidx.appcompat.widget.AppCompatButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/subtaskcombut"
                     android:layout_width="190dp"
                     android:layout_height="wrap_content"

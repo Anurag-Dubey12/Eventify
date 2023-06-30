@@ -1,6 +1,5 @@
 package com.example.eventmatics.Event_Details_Activity
 
-
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -11,6 +10,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentManager
@@ -19,6 +19,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.Adapter.CategoryAdapter
 import com.example.eventmatics.Adapter.PaymentActivity
 import com.example.eventmatics.R
+import com.example.eventmatics.SQLiteDatabase.Dataclass.Budget
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseSingleton
 import com.example.eventmatics.data_class.BudgetDataHolderData
 import com.example.eventmatics.data_class.Paymentinfo
 import com.example.eventmatics.data_class.SpinnerItem
@@ -28,9 +30,8 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 
 class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,
-    BudgetFragment.PendingAmountListener,BudgetFragment.PaidAmountListener
-{
-   lateinit var nameEditText:EditText
+    BudgetFragment.PendingAmountListener,BudgetFragment.PaidAmountListener {
+    lateinit var nameEditText:EditText
     lateinit var  balanceET: TextView
     lateinit var remainingET: TextView
     lateinit var EstimatedEt: EditText
@@ -42,8 +43,6 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,
     lateinit var recyclerView :RecyclerView
     lateinit var  adapter:PaymentActivity
     lateinit var paymentList: MutableList<Paymentinfo>
-    private val dataItems = mutableListOf<BudgetDataHolderData>()
-    private lateinit var dbRef: FirebaseFirestore
 
     val spinnerItems = listOf(
         SpinnerItem(R.drawable.home, "Accessories"),
@@ -77,9 +76,6 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,
         PaymentAdd=findViewById(R.id.PaymentAdd)
         categoryselection = findViewById(R.id.categoryselection)
 
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
-        FirebaseApp.initializeApp(this)
-        dbRef= FirebaseFirestore.getInstance()
         categoryselection.setOnClickListener {
             showCategoryPopup()
         }
@@ -171,37 +167,26 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,
     private fun AddValueToDataBase() {
         val name = nameEditText.text.toString()
         val totalamt = EstimatedEt.text.toString().toFloat()
+        val Totalamount=totalamt.toString()
         val paidamt = paidET.text.toString()
+        val note=NoteET.text.toString()
+        val category=categoryselection.text.toString()
+        val balance=balanceET.text.toString()
         val pending = remainingET.text.toString()
-//        val transInfo = if (balanceET.text.toString().toInt() == 0) "Paid" else "Pending"
+
         if (name.isEmpty()) {
             nameEditText.error = "Please enter a name"
-            return
-        }
+            return }
         if (totalamt==0f) {
             EstimatedEt.error = "Please enter an amount"
-            return
-        }
-    dataItems.add(BudgetDataHolderData(name,pending,totalamt,paidamt,"Pending"))
-    val eventname=intent.getStringExtra("eventname").toString()
-    val budgetcollection=dbRef.collection(eventname)
-//    val budgetdata= hashMapOf(
-//            "name" to name,
-//            "total" to totalamt,
-//            "paid" to paidamt,
-//            "pending" to pending
-//
-//    )
-//        budgetcollection.add(budgetdata)
-//            .addOnSuccessListener {
-//                finish()
-//                Toast.makeText(this, "Your data has been added successfully.", Toast.LENGTH_SHORT).show()
-//            }
-//            .addOnFailureListener {
-//                Toast.makeText(this,"Something went wrong",Toast.LENGTH_SHORT).show()
-//            }
-    }
+            return }
 
+        val databaseHelper = DatabaseSingleton.databaseHelper
+        val budget=Budget(1,name,category,note,Totalamount,balance,pending,paidamt)
+        databaseHelper.createBudget(budget)
+        Toast.makeText(this, "Budegt Added successfully", Toast.LENGTH_SHORT).show()
+        finish()
+    }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.budget_menu,menu)
         return super.onCreateOptionsMenu(menu)

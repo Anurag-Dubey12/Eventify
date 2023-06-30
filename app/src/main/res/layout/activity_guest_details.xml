@@ -54,12 +54,14 @@
                     android:layout_width="190dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10sp"
+                    android:textColor="@color/black"
                     android:background="@drawable/addpaymentbutton"
                     android:text="@string/male" />
 
                 <Button
                     android:id="@+id/femalebut"
                     android:layout_width="190dp"
+                    android:textColor="@color/black"
                     android:layout_height="wrap_content"
                     android:background="@drawable/addpaymentbutton"
                     android:text="@string/female" />
@@ -77,6 +79,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="15sp"
+                    android:textColor="@color/black"
                     android:layout_weight="1"
                     android:background="@drawable/addpaymentbutton"
                     android:text="@string/adult" />
@@ -87,6 +90,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="15sp"
                     android:layout_weight="1"
+                    android:textColor="@color/black"
                     android:background="@drawable/addpaymentbutton"
                     android:text="@string/child" />
 
@@ -95,6 +99,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:textColor="@color/black"
                     android:background="@drawable/addpaymentbutton"
                     android:text="@string/baby" />
             </LinearLayout>
@@ -127,6 +132,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="15sp"
                     android:layout_weight="1"
+                    android:textColor="@color/black"
                     android:background="@drawable/addpaymentbutton"
                     android:text="@string/invitation_sent" />
 
@@ -135,6 +141,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:textColor="@color/black"
                     android:background="@drawable/addpaymentbutton"
                     android:text="@string/not_sent" />
 

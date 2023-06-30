@@ -78,19 +78,21 @@
                 android:layout_marginBottom="10sp"
                 android:orientation="horizontal">
 
-                <androidx.appcompat.widget.AppCompatButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/TaskPendingbut"
-                    android:layout_width="190dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10sp"
-                    android:background="@drawable/addpaymentbutton"
+                    android:layout_weight="1"
+                    android:textColor="@color/black"
                     android:text="@string/taskpending" />
 
-                <androidx.appcompat.widget.AppCompatButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/Taskcombut"
-                    android:layout_width="190dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:textColor="@color/black"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/addpaymentbutton"
                     android:text="@string/completed" />
 
             </LinearLayout>

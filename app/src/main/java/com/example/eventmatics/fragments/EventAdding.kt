@@ -13,6 +13,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseSingleton
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseSingleton.databaseHelper
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Events
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.TextInputEditText
@@ -54,11 +56,16 @@ class EventAdding(context: Context, private val fragmentManager: FragmentManager
             val eventDateText = eventDate.text.toString()
             val eventTimeText = eventTime.text.toString()
             val eventBudgetText = eventBudget.text.toString()
-            val dbname = eventNameText
-            val databaseHelper = LocalDatabase(context, dbname)
+
+            DatabaseSingleton.databaseName = "${eventNameText}"
+            DatabaseSingleton.initDatabaseName(eventNameText)
+            DatabaseSingleton.databaseHelper = LocalDatabase(context,
+                DatabaseSingleton.databaseName!!
+            )
+
+//            val dbname = eventNameText
+//            val databaseHelper = LocalDatabase(context, dbname)
             eventAddingListener?.onEventCreated(eventNameText, eventDateText, eventTimeText,eventBudgetText)
-            val intent=Intent()
-            intent.putExtra("eventname",eventName.text.toString())
 
             val event=Events(1,eventNameText,eventDateText,eventTimeText,eventBudgetText)
             databaseHelper.createEvent(event)
@@ -101,9 +108,9 @@ class EventAdding(context: Context, private val fragmentManager: FragmentManager
     }
     private fun showDatePicker() {
         val calendar = Calendar.getInstance()
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
-        val month = calendar.get(Calendar.MONTH)
-        val year = calendar.get(Calendar.YEAR)
+//        val day = calendar.get(Calendar.DAY_OF_MONTH)
+//        val month = calendar.get(Calendar.MONTH)
+//        val year = calendar.get(Calendar.YEAR)
 
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setTitleText("Select Date")
