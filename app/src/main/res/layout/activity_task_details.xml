@@ -48,7 +48,6 @@
                 android:background="@drawable/category_button"
                 android:text="@string/select_a_category"
                 android:layout_marginBottom="10sp"
-
                 />
             <TextView
                 android:layout_width="match_parent"
@@ -94,7 +93,6 @@
                     android:textColor="@color/black"
                     android:layout_height="wrap_content"
                     android:text="@string/completed" />
-
             </LinearLayout>
             <TextView
                 android:layout_width="match_parent"

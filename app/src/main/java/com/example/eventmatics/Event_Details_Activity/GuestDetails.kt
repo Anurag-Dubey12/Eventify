@@ -22,12 +22,8 @@ import com.example.eventmatics.R
 
 class GuestDetails : AppCompatActivity() {
     private lateinit var guestNameEt: EditText
-    private lateinit var maleButton:Button
-    private lateinit var femaleButton:  Button
-    private lateinit var adultButton:  Button
-    private lateinit var childButton:  Button
-    private lateinit var babyButton:  Button
     private lateinit var guestNoteEt: EditText
+    private lateinit var TotalFamilyMember: EditText
     private lateinit var invitationSentButton:  Button
     private lateinit var notSentButton:  Button
     private lateinit var contactviewtv: ImageView
@@ -37,61 +33,28 @@ class GuestDetails : AppCompatActivity() {
     private lateinit var guestEmailtv: TextView
     private lateinit var guestAddresssEt: EditText
     private lateinit var guestAddressstv: TextView
-    private lateinit var guestAdd: ImageView
-    private lateinit var paymentTransRecyclerView: RecyclerView
-    @SuppressLint("MissingInflatedId")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_guest_details)
         val vendortoolbar: Toolbar =findViewById(R.id.vendortoolbar)
         setSupportActionBar(vendortoolbar)
-
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
 
         guestNameEt = findViewById(R.id.GuestNameEt)
-        maleButton = findViewById(R.id.Malebut)
-        femaleButton =findViewById(R.id.femalebut)
-        adultButton = findViewById(R.id.Adultbut)
         contactviewtv=findViewById(R.id.contactviewtv)
-        childButton = findViewById(R.id.ChildBut)
-        babyButton = findViewById(R.id.Babybut)
         guestNoteEt =findViewById(R.id.GuestNoteET)
+        TotalFamilyMember =findViewById(R.id.TotalFamilyMember)
         invitationSentButton = findViewById(R.id.Invitaionsentbut)
         notSentButton = findViewById(R.id.NotSentBut)
         guestPhoneEt = findViewById(R.id.GuestPhoneEt)
         guestEmailEt = findViewById(R.id.GuestEmailEt)
         guestAddresssEt = findViewById(R.id.GuestAddresssEt)
-        guestAdd = findViewById(R.id.GuestAdd)
-        paymentTransRecyclerView =findViewById(R.id.paymenttrans)
         guestPhonetv=findViewById(R.id.GuestPhonetv)
         guestEmailtv=findViewById(R.id.GuestEmailtv)
         guestAddressstv=findViewById(R.id.GuestAddressstv)
 
-
-        maleButton.setOnClickListener {
-            setButtonBackground(maleButton,true)
-            setButtonBackground(femaleButton,false)
-        }
-        femaleButton.setOnClickListener {
-            setButtonBackground(maleButton,false)
-            setButtonBackground(femaleButton,true)
-        }
-        adultButton.setOnClickListener {
-            setButtonBackground(adultButton,true)
-            setButtonBackground(babyButton,false)
-            setButtonBackground(childButton,false)
-        }
-        babyButton.setOnClickListener {
-            setButtonBackground(adultButton,false)
-            setButtonBackground(babyButton,true)
-            setButtonBackground(childButton,false)
-        }
-        childButton.setOnClickListener {
-            setButtonBackground(adultButton,false)
-            setButtonBackground(babyButton,false)
-            setButtonBackground(childButton,true)
-        }
         invitationSentButton.setOnClickListener {
             setButtonBackground(invitationSentButton,true)
             setButtonBackground(notSentButton,false)
@@ -102,11 +65,6 @@ class GuestDetails : AppCompatActivity() {
         }
         contactviewtv.setOnClickListener {
             guestinfoview()
-        }
-        guestAdd.setOnClickListener {
-            Intent(this,Guest::class.java).also {
-                startActivity(it)
-            }
         }
     }
 

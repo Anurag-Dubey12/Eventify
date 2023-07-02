@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.database.Cursor
 import android.icu.text.SimpleDateFormat
@@ -49,7 +50,7 @@ import com.google.firebase.auth.FirebaseAuth
 import java.util.Calendar
 import java.util.Locale
 
-class MainActivity : AppCompatActivity(),EventAdding.EventAddingListener {
+class MainActivity : AppCompatActivity() {
         lateinit var drawerLayout: DrawerLayout
     lateinit var navView: NavigationView
     lateinit var toogle:ActionBarDrawerToggle
@@ -70,9 +71,6 @@ class MainActivity : AppCompatActivity(),EventAdding.EventAddingListener {
     private lateinit var paidAmountShowTextView: TextView
     private lateinit var eventaddbut: AppCompatButton
     private lateinit var widgetButton: Button
-//    lateinit var adapter:EventLayoutAdapter
-//    lateinit var eventdata:MutableList<Events>
-val eventList = mutableListOf<Events>()
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,13 +100,6 @@ val eventList = mutableListOf<Events>()
         drawerLayout.addDrawerListener(actionBarDrawerToggle)
         actionBarDrawerToggle.syncState()
 
-
-    //Event data Recycler view
-////        eventdata= mutableListOf()
-//        val eventList = databaseHelper.getEventData(1)
-//        adapter = EventLayoutAdapter(eventList)
-//        eventRecyclerView.adapter=adapter
-//        eventRecyclerView.layoutManager=LinearLayoutManager(this)
 
         taskImageButton.setOnClickListener {
             Intent(this,TaskDataHolderActivity::class.java).also {
@@ -156,39 +147,62 @@ val eventList = mutableListOf<Events>()
         }
         eventaddbut.setOnClickListener {
             val eventadding=EventAdding(this,supportFragmentManager)
-            eventadding.setEventAddingListener(this)
             eventadding.show()
         }
         widgetButton.setOnClickListener {
             // Call a function to add the widget
             addWidgetToHomeScreen()
         }
-//        showEventData()
+        showEventData()
         navigationDrawershow()
     }
 
+    // Function to get shared preference value
+    fun getSharedPreference(context: Context, key: String): String? {
+        val sharedPref = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
+        return sharedPref.getString(key, null)
+    }
+
     @SuppressLint("Range")
-//    private fun showEventData() {
-//        databaseHelper = LocalDatabase(this, DatabaseSingleton.retrieveDatabaseName())
-//        val eventList = ArrayList<Events>()
-//
-//        val cursor: Cursor = databaseHelper.getEventData()
-//        while (cursor.moveToNext()) {
-//            val eventId = cursor.getInt(cursor.getColumnIndex("id"))
-//            val eventName = cursor.getString(cursor.getColumnIndex("Event_Name"))
-//            val eventDate = cursor.getString(cursor.getColumnIndex("Event_Date"))
-//            val eventTime = cursor.getString(cursor.getColumnIndex("Event_Time"))
-//
-//            val event = Events(eventId.toLong(), eventName, eventDate, eventTime, "4000")
-//            eventList.add(event)
-//        }
-//
-//        cursor.close()
-//
-//        val adapter = EventLayoutAdapter(eventList)
-//        eventRecyclerView.adapter = adapter
-//        eventRecyclerView.layoutManager = LinearLayoutManager(this)
-//    }
+    private fun showEventData() {
+        val databasename=getSharedPreference(this,"databasename").toString()
+        val databasehelper = LocalDatabase(this, databasename)
+        val eventList = databasehelper.getAllEvents()
+        val Eventtimer=databasehelper.getEventData(1)
+        if(Eventtimer!=null){
+            Eventshow.text=Eventtimer.name
+            budgetShowTextView.text=Eventtimer.budget
+            // Calculate remaining time until the event date
+            val eventDate=Eventtimer.Date
+            val eventTime=Eventtimer.time
+            val currentDate = Calendar.getInstance().time
+            val eventDateTime = SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.getDefault()).parse("$eventDate $eventTime")
+            val remainingTimeInMillis = eventDateTime.time - currentDate.time
+
+            // Start the countdown timer
+            countDownTimer = object : CountDownTimer(remainingTimeInMillis, 1000) {
+                override fun onTick(millisUntilFinished: Long) {
+                    val days = millisUntilFinished / (24 * 60 * 60 * 1000)
+                    val hours = (millisUntilFinished % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)
+                    val minutes = (millisUntilFinished % (60 * 60 * 1000)) / (60 * 1000)
+                    val seconds = (millisUntilFinished % (60 * 1000)) / 1000
+                    val remainingTime = String.format("%02d:%02d:%02d:%02d", days, hours, minutes, seconds)
+                    EventTimerDisplay.text = remainingTime
+                }
+                override fun onFinish() {
+                    EventTimerDisplay.text = "Event Started"
+                }
+            }.start()
+        }
+        else{
+            Toast.makeText(this,"Event Not Found",Toast.LENGTH_SHORT).show()
+        }
+        val adapter = EventLayoutAdapter(eventList)
+        eventRecyclerView.adapter = adapter
+        eventRecyclerView.layoutManager = LinearLayoutManager(this)
+        adapter.notifyDataSetChanged()
+    }
+
 
 
     override fun onBackPressed() {
@@ -310,36 +324,6 @@ val eventList = mutableListOf<Events>()
         }
     }
 
-    @SuppressLint("Range")
-    override fun onEventCreated(eventName: String, eventDate: String, eventTime: String, budget: String) {
-//        val data = Eventlayourdata(eventName, eventDate, eventTime)
-
-
-//        eventdata.add(data)
-        Eventshow.text = eventName
-//        adapter.notifyDataSetChanged()
-        budgetShowTextView.text = budget
-
-        // Calculate remaining time until the event date
-        val currentDate = Calendar.getInstance().time
-        val eventDateTime = SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.getDefault()).parse("$eventDate $eventTime")
-        val remainingTimeInMillis = eventDateTime.time - currentDate.time
-
-        // Start the countdown timer
-        countDownTimer = object : CountDownTimer(remainingTimeInMillis, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-                val days = millisUntilFinished / (24 * 60 * 60 * 1000)
-                val hours = (millisUntilFinished % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)
-                val minutes = (millisUntilFinished % (60 * 60 * 1000)) / (60 * 1000)
-                val seconds = (millisUntilFinished % (60 * 1000)) / 1000
-                val remainingTime = String.format("%02d:%02d:%02d:%02d", days, hours, minutes, seconds)
-                EventTimerDisplay.text = remainingTime
-            }
-            override fun onFinish() {
-                EventTimerDisplay.text = "Event Started"
-            }
-        }.start()
-    }
     override fun onDestroy() {
         super.onDestroy()
         countDownTimer?.cancel()

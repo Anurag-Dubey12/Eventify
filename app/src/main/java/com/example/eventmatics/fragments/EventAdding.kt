@@ -3,6 +3,8 @@ package com.example.eventmatics.fragments
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
+import android.database.Cursor
 import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.Button
@@ -57,32 +59,22 @@ class EventAdding(context: Context, private val fragmentManager: FragmentManager
             val eventTimeText = eventTime.text.toString()
             val eventBudgetText = eventBudget.text.toString()
 
-            DatabaseSingleton.databaseName = "${eventNameText}"
-            DatabaseSingleton.initDatabaseName(eventNameText)
-            DatabaseSingleton.databaseHelper = LocalDatabase(context,
-                DatabaseSingleton.databaseName!!
-            )
 
-//            val dbname = eventNameText
-//            val databaseHelper = LocalDatabase(context, dbname)
-            eventAddingListener?.onEventCreated(eventNameText, eventDateText, eventTimeText,eventBudgetText)
-
+            val databaseHelper=LocalDatabase(context,eventNameText)
             val event=Events(1,eventNameText,eventDateText,eventTimeText,eventBudgetText)
             databaseHelper.createEvent(event)
+            saveToSharedPreferences(context,"databasename",eventNameText)
             Toast.makeText(context, "Event created successfully", Toast.LENGTH_SHORT).show()
             dismiss()
         }
     }
-
-    interface EventAddingListener {
-        fun onEventCreated(eventName: String, eventDate: String, eventTime: String,budget:String)
+    fun saveToSharedPreferences(context: Context, key: String, value: String) {
+        val sharedPreferences = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
+        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+        editor.putString(key, value)
+        editor.apply()
     }
 
-    private var eventAddingListener: EventAddingListener? = null
-
-    fun setEventAddingListener(listener: EventAddingListener) {
-        eventAddingListener = listener
-    }
     private fun showTimePicker() {
         val calendar = Calendar.getInstance()
         val hour = calendar.get(Calendar.HOUR_OF_DAY)

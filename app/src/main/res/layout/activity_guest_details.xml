@@ -16,8 +16,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-<include
-    layout="@layout/guest_vendor_toolbar"/>
+            <include
+                layout="@layout/guest_vendor_toolbar"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -45,63 +45,79 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10sp"
                 android:layout_marginBottom="10sp"
                 android:orientation="horizontal">
 
-                <Button
-                    android:id="@+id/Malebut"
-                    android:layout_width="190dp"
+                <TextView
+                    android:layout_width="0sp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10sp"
+                    android:textSize="18sp"
+                    android:layout_weight="1"
                     android:textColor="@color/black"
-                    android:background="@drawable/addpaymentbutton"
-                    android:text="@string/male" />
+                    android:text="@string/Family_Member" />
 
-                <Button
-                    android:id="@+id/femalebut"
-                    android:layout_width="190dp"
-                    android:textColor="@color/black"
+                <EditText
+                    android:id="@+id/TotalFamilyMember"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/addpaymentbutton"
-                    android:text="@string/female" />
-
+                    android:textColor="@color/black"
+                    android:inputType="number"
+                    android:layout_weight="1"
+                    android:background="@drawable/valueediteffect"
+                    android:hint="@string/Total_Number" />
             </LinearLayout>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10sp"
                 android:orientation="horizontal">
 
-                <Button
-                    android:id="@+id/Adultbut"
+                <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="15sp"
                     android:textColor="@color/black"
                     android:layout_weight="1"
-                    android:background="@drawable/addpaymentbutton"
-                    android:text="@string/adult" />
+                    android:textSize="18sp"
+                    android:text="@string/Male" />
 
-                <Button
-                    android:id="@+id/ChildBut"
+                <EditText
+                    android:id="@+id/FeMaleNumber"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="15sp"
                     android:layout_weight="1"
                     android:textColor="@color/black"
-                    android:background="@drawable/addpaymentbutton"
-                    android:text="@string/child" />
+                    android:background="@drawable/valueediteffect"
+                    android:hint="@string/Male_Number" />
 
-                <Button
-                    android:id="@+id/Babybut"
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10sp"
+                android:orientation="horizontal">
+
+                <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="15sp"
+                    android:textColor="@color/black"
+                    android:layout_weight="1"
+                    android:textSize="18sp"
+                    android:text="@string/Female" />
+
+                <EditText
+                    android:id="@+id/MaleNumber"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="15sp"
                     android:layout_weight="1"
                     android:textColor="@color/black"
-                    android:background="@drawable/addpaymentbutton"
-                    android:text="@string/baby" />
+                    android:background="@drawable/valueediteffect"
+                    android:hint="@string/Female_Number" />
+
             </LinearLayout>
 
             <TextView
@@ -166,19 +182,24 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5sp"
                         android:layout_marginBottom="10sp"
-                        android:layout_marginEnd="210sp"
+                        android:layout_weight="1"
                         android:text="@string/contacts_details"
                         android:textColor="@color/light_purple"
                         android:textSize="20sp"
                         />
                         <ImageView
                             android:id="@+id/contactviewtv"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="50sp"
+                            android:layout_height="50sp"
                             android:src="@drawable/drop_arrow"
 
                             />
                     </LinearLayout>
+                    <View
+                        android:layout_width="300dp"
+                        android:layout_height="1dp"
+                        android:layout_gravity="center"
+                        android:background="#101212" />
                     <TextView
                         android:id="@+id/GuestPhonetv"
                         android:layout_width="match_parent"
@@ -188,7 +209,6 @@
                         android:text="@string/phone_number"
                         android:textSize="20sp"
                         />
-
                     <EditText
                         android:id="@+id/GuestPhoneEt"
                         android:layout_width="400sp"
@@ -227,7 +247,6 @@
                         android:layout_marginBottom="10sp"
                         android:text="@string/address"
                         android:textSize="20sp"
-
                         />
 
                     <EditText
@@ -241,44 +260,6 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10sp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="35sp"
-                    android:text="@string/companions"
-                    android:textColor="@color/light_purple"
-                    android:textSize="20sp" />
-
-                <ImageView
-                    android:id="@+id/GuestAdd"
-                    android:layout_width="30sp"
-                    android:layout_height="30sp"
-                    android:layout_marginLeft="260sp"
-                    android:src="@drawable/add" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/paymenttrans"
-                    android:layout_width="match_parent"
-                    android:layout_height="190sp" />
-
-                <View
-                    android:layout_width="300dp"
-                    android:layout_height="1dp"
-                    android:layout_gravity="center"
-                    android:background="#58F4DD" />
-            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
