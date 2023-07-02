@@ -24,7 +24,7 @@ import com.example.eventmatics.fragments.TaskFragment
 import com.google.android.material.datepicker.MaterialDatePicker
 import java.util.Calendar
 
-class TaskDetails : AppCompatActivity(),TaskFragment.UserDataListener {
+class TaskDetails : AppCompatActivity(){
     val fragmentManager:FragmentManager=supportFragmentManager
     lateinit var TaskNameET:EditText
     lateinit var TaskNoteET:EditText
@@ -32,10 +32,8 @@ class TaskDetails : AppCompatActivity(),TaskFragment.UserDataListener {
     lateinit var category_button:AppCompatButton
     lateinit var TaskPendingbut:AppCompatButton
     lateinit var TaskCombut:AppCompatButton
-    lateinit var TaskAdd:ImageView
-    lateinit var subtaskrcv:RecyclerView
-    lateinit var adapter:TaskAdapter
-    lateinit var Tasklist:MutableList<Subtask_info>
+//    lateinit var TaskAdd:ImageView
+//    lateinit var subtaskrcv:RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,17 +49,13 @@ class TaskDetails : AppCompatActivity(),TaskFragment.UserDataListener {
         category_button=findViewById(R.id.Taskcategory_button)
         TaskPendingbut=findViewById(R.id.TaskPendingbut)
         TaskCombut=findViewById(R.id.Taskcombut)
-        TaskAdd=findViewById(R.id.TaskAdd)
+//        TaskAdd=findViewById(R.id.TaskAdd)
 
-        TaskAdd.setOnClickListener {
-            subtaskadd()
-        }
+//        TaskAdd.setOnClickListener {
+//            subtaskadd()
+//        }
         //Recyccler view code
-        subtaskrcv=findViewById(R.id.subtaskrcv)
-        Tasklist= mutableListOf()
-        adapter= TaskAdapter(Tasklist)
-        subtaskrcv.adapter=adapter
-        subtaskrcv.layoutManager=LinearLayoutManager(this)
+//        subtaskrcv=findViewById(R.id.subtaskrcv)
 
         TaskPendingbut.setOnClickListener {
             setButtonBackground(TaskPendingbut,true)
@@ -101,16 +95,11 @@ class TaskDetails : AppCompatActivity(),TaskFragment.UserDataListener {
 
     }
 
-    private fun subtaskadd() {
-        val bottomsheet=TaskFragment()
-        bottomsheet.setUserEnterDataListener(this)
-        bottomsheet.show(fragmentManager,"bottomsheet")
-    }
-    override fun onUserDataEnter(userdata: Subtask_info) {
-        Tasklist.add(userdata)
-        adapter.notifyDataSetChanged()
-    }
-
+//    private fun subtaskadd() {
+//        val bottomsheet=TaskFragment()
+//        bottomsheet.setUserEnterDataListener(this)
+//        bottomsheet.show(fragmentManager,"bottomsheet")
+//    }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.budget_menu,menu)
         return super.onCreateOptionsMenu(menu)

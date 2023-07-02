@@ -29,20 +29,17 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 
-class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,
-    BudgetFragment.PendingAmountListener,BudgetFragment.PaidAmountListener {
+class BudgetDetails : AppCompatActivity(){
     lateinit var nameEditText:EditText
     lateinit var  balanceET: TextView
-    lateinit var remainingET: TextView
+//    lateinit var remainingET: TextView
     lateinit var EstimatedEt: EditText
     lateinit var NoteET: EditText
     var fragmentManager:FragmentManager=supportFragmentManager
-    lateinit var PaymentAdd:ImageView
-    lateinit var paidET: TextView
+//    lateinit var PaymentAdd:ImageView
+//    lateinit var paidET: TextView
     lateinit var categoryselection: TextView
     lateinit var recyclerView :RecyclerView
-    lateinit var  adapter:PaymentActivity
-    lateinit var paymentList: MutableList<Paymentinfo>
 
     val spinnerItems = listOf(
         SpinnerItem(R.drawable.home, "Accessories"),
@@ -70,59 +67,47 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,
         EstimatedEt = findViewById(R.id.Estimated_Amount)
         NoteET = findViewById(R.id.NoteET)
         balanceET = findViewById(R.id.Balancetv)
-        remainingET = findViewById(R.id.RemainingET)
-        paidET= findViewById(R.id.PaidET)
-        recyclerView = findViewById(R.id.paymenttrans)
-        PaymentAdd=findViewById(R.id.PaymentAdd)
+//        remainingET = findViewById(R.id.RemainingET)
+//        paidET= findViewById(R.id.PaidET)
+//        recyclerView = findViewById(R.id.paymenttrans)
+//        PaymentAdd=findViewById(R.id.PaymentAdd)
         categoryselection = findViewById(R.id.categoryselection)
 
         categoryselection.setOnClickListener {
             showCategoryPopup()
         }
-        PaymentAdd.setOnClickListener {
-            addpaymenttran()
-        }
-
-        //recyclerview code
-        // Initialize an empty mutable list to store payment information
-        paymentList= mutableListOf()
-        // Initialize the adapter with the empty payment list
-        adapter=PaymentActivity(paymentList)
-        // Set the adapter for the RecyclerView
-        recyclerView.adapter=adapter
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        estimatedAmountcalculate()
+//        estimatedAmountcalculate()
     }
 
-    private fun estimatedAmountcalculate() {
-        val initialres=R.drawable.drop_arrow
-        balanceET.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,initialres,0)
-      //Changing The Visibility of Remaining and Paid textview when Balance textview is clicked
-        balanceET.setOnClickListener {
-            if(remainingET.visibility==View.GONE){
-                val newdrawable=R.drawable.up_arrow
-                balanceET.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,newdrawable,0)
-
-                remainingET.visibility=View.VISIBLE
-                paidET.visibility=View.VISIBLE
-            }
-            else{
-                val newdrawable=R.drawable.drop_arrow
-                balanceET.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,newdrawable,0)
-                remainingET.visibility=View.GONE
-                paidET.visibility=View.GONE
-            }
-        }
-        EstimatedEt.addTextChangedListener(object:TextWatcher{
-            override fun beforeTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-            override fun afterTextChanged(edit: Editable?) {
-                balanceET.text="Balance:+${EstimatedEt.text}"
-            }
-        })
-    }
+//    private fun estimatedAmountcalculate() {
+//        val initialres=R.drawable.drop_arrow
+//        balanceET.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,initialres,0)
+//      //Changing The Visibility of Remaining and Paid textview when Balance textview is clicked
+//        balanceET.setOnClickListener {
+//            if(remainingET.visibility==View.GONE){
+//                val newdrawable=R.drawable.up_arrow
+//                balanceET.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,newdrawable,0)
+//
+//                remainingET.visibility=View.VISIBLE
+//                paidET.visibility=View.VISIBLE
+//            }
+//            else{
+//                val newdrawable=R.drawable.drop_arrow
+//                balanceET.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,newdrawable,0)
+//                remainingET.visibility=View.GONE
+//                paidET.visibility=View.GONE
+//            }
+//        }
+//        EstimatedEt.addTextChangedListener(object:TextWatcher{
+//            override fun beforeTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+//            }
+//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+//            }
+//            override fun afterTextChanged(edit: Editable?) {
+//                balanceET.text="Balance:+${EstimatedEt.text}"
+//            }
+//        })
+//    }
     private fun showCategoryPopup() {
         val spinnerAdapter = CategoryAdapter(this, spinnerItems)
         val dialogBuilder = AlertDialog.Builder(this)
@@ -137,20 +122,14 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,
         dialog.show()
     }
     // Function to add a payment transaction
-    private fun addpaymenttran() {
-        val bottomsheet=BudgetFragment(fragmentManager)
-        // Set the UserDataListener to the BudgetFragment
-        bottomsheet.setUserDataListener(this)
-        bottomsheet.pendingamountlistner = this
-        bottomsheet.paidamountlistner = this
-        bottomsheet.show(fragmentManager,"bottomsheet")
-    }
-// Implementation of the UserDataListener interface
-    override fun onUserDataEntered(userData: Paymentinfo) {
-    // Add the entered payment data to the paymentList
-    paymentList.add(userData)
-    adapter.notifyDataSetChanged()
-}
+//    private fun addpaymenttran() {
+//        val bottomsheet=BudgetFragment(fragmentManager)
+//        // Set the UserDataListener to the BudgetFragment
+//        bottomsheet.setUserDataListener(this)
+//        bottomsheet.pendingamountlistner = this
+//        bottomsheet.paidamountlistner = this
+//        bottomsheet.show(fragmentManager,"bottomsheet")
+//    }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return  when(item.itemId){
             android.R.id.home->{
@@ -168,11 +147,11 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,
         val name = nameEditText.text.toString()
         val totalamt = EstimatedEt.text.toString().toFloat()
         val Totalamount=totalamt.toString()
-        val paidamt = paidET.text.toString()
+//        val paidamt = paidET.text.toString()
         val note=NoteET.text.toString()
         val category=categoryselection.text.toString()
         val balance=balanceET.text.toString()
-        val pending = remainingET.text.toString()
+//        val pending = remainingET.text.toString()
 
         if (name.isEmpty()) {
             nameEditText.error = "Please enter a name"
@@ -182,7 +161,7 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,
             return }
 
         val databaseHelper = DatabaseSingleton.databaseHelper
-        val budget=Budget(1,name,category,note,Totalamount,balance,pending,paidamt)
+        val budget=Budget(1,name,category,note,Totalamount,balance,"","")
         databaseHelper.createBudget(budget)
         Toast.makeText(this, "Budegt Added successfully", Toast.LENGTH_SHORT).show()
         finish()
@@ -191,22 +170,22 @@ class BudgetDetails : AppCompatActivity(), BudgetFragment.UserDataListener,
         menuInflater.inflate(R.menu.budget_menu,menu)
         return super.onCreateOptionsMenu(menu)
     }
-    override fun onPendingAmountSelected(amount: Float) {
-        val displayText = "Pending: $amount"
-        remainingET.text = displayText
-        val total_amount=EstimatedEt.text.toString().toFloat()
-        val final_amount=total_amount-amount
-        val balanceamount="Balance:$final_amount"
-        balanceET.text=balanceamount
-    }
-    override fun onPaidAmountSelected(amount: Float) {
-        val displayText = "Paid: $amount"
-        paidET.text = displayText
-        val balanceString = balanceET.text.toString()
-        val balanceNumericString = balanceString.substringAfter(":").trim() // Extract numeric part of the string
-        val totalAmount = balanceNumericString.toFloat()
-        val finalAmount = totalAmount - amount
-        val balanceAmount = "Balance: $finalAmount"
-        balanceET.text = balanceAmount
-    }
+//    override fun onPendingAmountSelected(amount: Float) {
+//        val displayText = "Pending: $amount"
+//        remainingET.text = displayText
+//        val total_amount=EstimatedEt.text.toString().toFloat()
+//        val final_amount=total_amount-amount
+//        val balanceamount="Balance:$final_amount"
+//        balanceET.text=balanceamount
+//    }
+//    override fun onPaidAmountSelected(amount: Float) {
+//        val displayText = "Paid: $amount"
+//        paidET.text = displayText
+//        val balanceString = balanceET.text.toString()
+//        val balanceNumericString = balanceString.substringAfter(":").trim() // Extract numeric part of the string
+//        val totalAmount = balanceNumericString.toFloat()
+//        val finalAmount = totalAmount - amount
+//        val balanceAmount = "Balance: $finalAmount"
+//        balanceET.text = balanceAmount
+//    }
 }

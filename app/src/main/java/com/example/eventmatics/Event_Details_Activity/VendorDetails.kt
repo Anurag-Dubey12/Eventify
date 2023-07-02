@@ -27,16 +27,16 @@ import com.example.eventmatics.data_class.Paymentinfo
 import com.example.eventmatics.data_class.SpinnerItem
 import com.example.eventmatics.fragments.VendorFragment
 
-class VendorDetails : AppCompatActivity(),VendorFragment.UserDataListener,VendorFragment.PaidAmountListener,VendorFragment.PendingAmountlistener {
+class VendorDetails : AppCompatActivity(){
 
-    val fragmentmanager:FragmentManager=supportFragmentManager
+//    val fragmentmanager:FragmentManager=supportFragmentManager
     private lateinit var vendorNameET: EditText
     private lateinit var categoryButton: Button
     private lateinit var vendorNoteET: EditText
     private lateinit var vendorEstimatedAmount: EditText
     private lateinit var vendorBalanceTV: TextView
-    private lateinit var vendorRemainingET: TextView
-    private lateinit var vendorPaidET: TextView
+//    private lateinit var vendorRemainingET: TextView
+//    private lateinit var vendorPaidET: TextView
     private lateinit var vendorViewTV: ImageView
     private lateinit var vendorPhoneTV: TextView
     private lateinit var vendorPhoneET: EditText
@@ -46,10 +46,6 @@ class VendorDetails : AppCompatActivity(),VendorFragment.UserDataListener,Vendor
     private lateinit var vendorWebsiteET: EditText
     private lateinit var vendorAddressTV: TextView
     private lateinit var vendorAddressET: EditText
-    private lateinit var paymentAdd: ImageView
-    private lateinit var vendorpaymentTransRecyclerView:RecyclerView
-    private lateinit var paymentlist:MutableList<Paymentinfo>
-    private lateinit var paymentActivity: PaymentActivity
 
     val spinnerItems = listOf(
         SpinnerItem(R.drawable.home, "Accessories"),
@@ -78,8 +74,8 @@ class VendorDetails : AppCompatActivity(),VendorFragment.UserDataListener,Vendor
         vendorNoteET = findViewById(R.id.VendorNoteET)
         vendorEstimatedAmount = findViewById(R.id.VendorEstimated_Amount)
         vendorBalanceTV = findViewById(R.id.VendorBalancetv)
-        vendorRemainingET = findViewById(R.id.VendorRemainingET)
-        vendorPaidET = findViewById(R.id.VendorPaidET)
+//        vendorRemainingET = findViewById(R.id.VendorRemainingET)
+//        vendorPaidET = findViewById(R.id.VendorPaidET)
         vendorViewTV = findViewById(R.id.Vendorviewtv)
         vendorPhoneTV = findViewById(R.id.VendorPhonetv)
         vendorPhoneET = findViewById(R.id.VendortPhoneEt)
@@ -89,25 +85,21 @@ class VendorDetails : AppCompatActivity(),VendorFragment.UserDataListener,Vendor
         vendorWebsiteET = findViewById(R.id.VendorwebsiteEt)
         vendorAddressTV = findViewById(R.id.VendorAddressstv)
         vendorAddressET = findViewById(R.id.VendorAddresssEt)
-        paymentAdd = findViewById(R.id.PaymentAdd)
+//        paymentAdd = findViewById(R.id.PaymentAdd)
 
             //Recylerview code
-        vendorpaymentTransRecyclerView = findViewById(R.id.vendorpaymenttrans)
-        paymentlist= mutableListOf()
-        paymentActivity= PaymentActivity(paymentlist)
-        vendorpaymentTransRecyclerView.adapter=paymentActivity
-        vendorpaymentTransRecyclerView.layoutManager=LinearLayoutManager(this)
+//        vendorpaymentTransRecyclerView = findViewById(R.id.vendorpaymenttrans)
 
-        paymentAdd.setOnClickListener {
-            showpaymentsheet()
-        }
+//        paymentAdd.setOnClickListener {
+//            showpaymentsheet()
+//        }
         categoryButton.setOnClickListener {
             showvendorcategory()
         }
         vendorViewTV.setOnClickListener {
             infoshow()
         }
-        estimatedAmountcalculate()
+//        estimatedAmountcalculate()
     }
 
     private fun infoshow() {
@@ -152,59 +144,59 @@ class VendorDetails : AppCompatActivity(),VendorFragment.UserDataListener,Vendor
         dialog.show()
 
     }
-    private fun estimatedAmountcalculate() {
+//    private fun estimatedAmountcalculate() {
+//
+//        //calculation of Estimated amount with remaing and paid amount
+//        vendorEstimatedAmount = findViewById(R.id.VendorEstimated_Amount)
+//        vendorBalanceTV = findViewById(R.id.VendorBalancetv)
+//        vendorRemainingET = findViewById(R.id.VendorRemainingET)
+//        vendorPaidET= findViewById(R.id.VendorPaidET)
+//
+//        val initialres=R.drawable.drop_arrow
+//        vendorBalanceTV.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,initialres,0)
+//        vendorBalanceTV.setOnClickListener {
+//            if(vendorRemainingET.visibility==View.GONE){
+//                val newdrawable=R.drawable.up_arrow
+//                vendorBalanceTV.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,newdrawable,0)
+//
+//                vendorRemainingET.visibility=View.VISIBLE
+//                vendorPaidET.visibility=View.VISIBLE
+//            }
+//            else{
+//                val newdrawable=R.drawable.drop_arrow
+//                vendorBalanceTV.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,newdrawable,0)
+//                vendorRemainingET.visibility=View.GONE
+//                vendorPaidET.visibility=View.GONE
+//            }
+//        }
+//        vendorEstimatedAmount.addTextChangedListener(object: TextWatcher {
+//            override fun beforeTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+//            }
+//
+//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+//            }
+//
+//            override fun afterTextChanged(edit: Editable?) {
+//                vendorBalanceTV.text="Balance:${vendorEstimatedAmount.text}"
+//
+//            }
+//
+//        })
+//
+//    }
+//    private fun showpaymentsheet() {
+//        val vendorbottom=VendorFragment(fragmentmanager)
+//        vendorbottom.setUserDataListener(this)
+//        vendorbottom.paidAmountListener=this
+//        vendorbottom.pendingAmountlistener=this
+//        vendorbottom.show(fragmentmanager,"bottomsheet")
+//    }
 
-        //calculation of Estimated amount with remaing and paid amount
-        vendorEstimatedAmount = findViewById(R.id.VendorEstimated_Amount)
-        vendorBalanceTV = findViewById(R.id.VendorBalancetv)
-        vendorRemainingET = findViewById(R.id.VendorRemainingET)
-        vendorPaidET= findViewById(R.id.VendorPaidET)
-
-        val initialres=R.drawable.drop_arrow
-        vendorBalanceTV.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,initialres,0)
-        vendorBalanceTV.setOnClickListener {
-            if(vendorRemainingET.visibility==View.GONE){
-                val newdrawable=R.drawable.up_arrow
-                vendorBalanceTV.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,newdrawable,0)
-
-                vendorRemainingET.visibility=View.VISIBLE
-                vendorPaidET.visibility=View.VISIBLE
-            }
-            else{
-                val newdrawable=R.drawable.drop_arrow
-                vendorBalanceTV.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,newdrawable,0)
-                vendorRemainingET.visibility=View.GONE
-                vendorPaidET.visibility=View.GONE
-            }
-        }
-        vendorEstimatedAmount.addTextChangedListener(object: TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-
-            override fun afterTextChanged(edit: Editable?) {
-                vendorBalanceTV.text="Balance:${vendorEstimatedAmount.text}"
-
-            }
-
-        })
-
-    }
-    private fun showpaymentsheet() {
-        val vendorbottom=VendorFragment(fragmentmanager)
-        vendorbottom.setUserDataListener(this)
-        vendorbottom.paidAmountListener=this
-        vendorbottom.pendingAmountlistener=this
-        vendorbottom.show(fragmentmanager,"bottomsheet")
-    }
-
-    override fun onUserDataEntered(userData: Paymentinfo) {
-        // Add the entered payment data to the paymentList
-        paymentlist.add(userData)
-        paymentActivity.notifyDataSetChanged()
-    }
+//    override fun onUserDataEntered(userData: Paymentinfo) {
+//        // Add the entered payment data to the paymentList
+//        paymentlist.add(userData)
+//        paymentActivity.notifyDataSetChanged()
+//    }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.guest_vendor_menu,menu)
         return super.onCreateOptionsMenu(menu)
@@ -255,29 +247,29 @@ class VendorDetails : AppCompatActivity(),VendorFragment.UserDataListener,Vendor
         }
     }
 
-    override fun onPendingAmountSelected(amount: Float) {
-        val displayAmount = "Pending: $amount"
-        vendorRemainingET.text = displayAmount
-
-        val balance = vendorBalanceTV.text.toString()
-        if (!balance.isNullOrEmpty()) {
-            val balanceAmount = balance.substringAfterLast(":").toFloat()
-            val newBalanceAmount = balanceAmount - amount
-            val finalAmount = "Pending: $newBalanceAmount"
-            vendorBalanceTV.text = finalAmount
-        }
-    }
-
-    override fun onPaidAmountSelected(amount: Float) {
-        val displayamount = "Paid: $amount"
-        vendorPaidET.text = displayamount
-
-        var balanceamount = vendorBalanceTV.text.toString()
-        balanceamount = balanceamount.substringAfterLast(":") // Remove the "Balance:" prefix
-        val totalAmount = balanceamount.toFloat()
-
-        val newBalanceAmount = totalAmount - amount
-        val finalAmount = "Balance: $newBalanceAmount"
-        vendorBalanceTV.text = finalAmount
-    }
+//    override fun onPendingAmountSelected(amount: Float) {
+//        val displayAmount = "Pending: $amount"
+//        vendorRemainingET.text = displayAmount
+//
+//        val balance = vendorBalanceTV.text.toString()
+//        if (!balance.isNullOrEmpty()) {
+//            val balanceAmount = balance.substringAfterLast(":").toFloat()
+//            val newBalanceAmount = balanceAmount - amount
+//            val finalAmount = "Pending: $newBalanceAmount"
+//            vendorBalanceTV.text = finalAmount
+//        }
+//    }
+//
+//    override fun onPaidAmountSelected(amount: Float) {
+//        val displayamount = "Paid: $amount"
+//        vendorPaidET.text = displayamount
+//
+//        var balanceamount = vendorBalanceTV.text.toString()
+//        balanceamount = balanceamount.substringAfterLast(":") // Remove the "Balance:" prefix
+//        val totalAmount = balanceamount.toFloat()
+//
+//        val newBalanceAmount = totalAmount - amount
+//        val finalAmount = "Balance: $newBalanceAmount"
+//        vendorBalanceTV.text = finalAmount
+//    }
 }
