@@ -59,10 +59,21 @@ class EventAdding(context: Context, private val fragmentManager: FragmentManager
             val eventTimeText = eventTime.text.toString()
             val eventBudgetText = eventBudget.text.toString()
 
+            val event=Events(0,eventNameText,eventDateText,eventTimeText,eventBudgetText)
 
-            val databaseHelper=LocalDatabase(context,eventNameText)
-            val event=Events(1,eventNameText,eventDateText,eventTimeText,eventBudgetText)
-            databaseHelper.createEvent(event)
+            dbRef.collection(eventNameText).document(eventNameText)
+                .set(event)
+                .addOnSuccessListener {
+                    Toast.makeText(context, "Event created successfully", Toast.LENGTH_SHORT).show()
+                    dismiss()
+
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(context, "Failed to create event: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+
+//            val databaseHelper=LocalDatabase(context,eventNameText)
+//            databaseHelper.createEvent(event)
             saveToSharedPreferences(context,"databasename",eventNameText)
             Toast.makeText(context, "Event created successfully", Toast.LENGTH_SHORT).show()
             dismiss()

@@ -35,11 +35,11 @@ class BudgetDetails : AppCompatActivity(){
 //    lateinit var remainingET: TextView
     lateinit var EstimatedEt: EditText
     lateinit var NoteET: EditText
-    var fragmentManager:FragmentManager=supportFragmentManager
+//    var fragmentManager:FragmentManager=supportFragmentManager
 //    lateinit var PaymentAdd:ImageView
 //    lateinit var paidET: TextView
     lateinit var categoryselection: TextView
-    lateinit var recyclerView :RecyclerView
+//    lateinit var recyclerView :RecyclerView
 
     val spinnerItems = listOf(
         SpinnerItem(R.drawable.home, "Accessories"),

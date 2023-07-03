@@ -28,6 +28,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.eventmatics.Adapter.EventLayoutAdapter
 import com.example.eventmatics.Event_Data_Holder.BudgetDataHolderActivity
 import com.example.eventmatics.Event_Data_Holder.GuestDataHolderActivity
@@ -47,6 +48,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import java.util.Calendar
 import java.util.Locale
 
@@ -71,6 +73,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var paidAmountShowTextView: TextView
     private lateinit var eventaddbut: AppCompatButton
     private lateinit var widgetButton: Button
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+
+//    private lateinit var dbRef: FirebaseFirestore
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,6 +87,8 @@ class MainActivity : AppCompatActivity() {
         navView= findViewById(R.id.navView)
         eventRecyclerView = findViewById(R.id.Eventrec)
         taskImageButton = findViewById(R.id.task)
+        swipeRefreshLayout= findViewById(R.id.swipeRefreshLayout)
+
         EventTimerDisplay = findViewById(R.id.EventTimer)
         crossimg = findViewById(R.id.crossimg)
         eventaddbut = findViewById(R.id.eventaddbut)
@@ -99,7 +107,7 @@ class MainActivity : AppCompatActivity() {
         val actionBarDrawerToggle = ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close)
         drawerLayout.addDrawerListener(actionBarDrawerToggle)
         actionBarDrawerToggle.syncState()
-
+//        dbRef=FirebaseFirestore.getInstance()
 
         taskImageButton.setOnClickListener {
             Intent(this,TaskDataHolderActivity::class.java).also {
@@ -153,15 +161,48 @@ class MainActivity : AppCompatActivity() {
             // Call a function to add the widget
             addWidgetToHomeScreen()
         }
+        swipeRefreshLayout.setOnRefreshListener {
+            showEventData()
+        }
+
         showEventData()
         navigationDrawershow()
     }
+
+//    private fun showEventData() {
+//        fetchEvents { events ->
+//            val adapter = EventLayoutAdapter(events)
+//            eventRecyclerView.adapter = adapter
+//            eventRecyclerView.layoutManager = LinearLayoutManager(this)
+//            adapter.notifyDataSetChanged()
+//        }
+//
+//
+//    }
+
 
     // Function to get shared preference value
     fun getSharedPreference(context: Context, key: String): String? {
         val sharedPref = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
         return sharedPref.getString(key, null)
     }
+
+//    fun fetchEvents(completion:(List<Events>)->Unit){
+//        val databasename=getSharedPreference(this,"databasename").toString()
+//        dbRef.collection(databasename)
+//            .get()
+//            .addOnSuccessListener { result->
+//                val events= mutableListOf<Events>()
+//                for(document in result){
+//                    val event=document.toObject(Events::class.java)
+//                    events.add(event)
+//                }
+//                completion(events)
+//            }
+//            .addOnFailureListener { e ->
+//                // Error fetching events
+//                completion(emptyList())
+//            }
 
     @SuppressLint("Range")
     private fun showEventData() {
