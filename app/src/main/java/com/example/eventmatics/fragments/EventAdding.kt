@@ -22,6 +22,8 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.Calendar
 
@@ -32,7 +34,11 @@ class EventAdding(context: Context, private val fragmentManager: FragmentManager
     private lateinit var eventTime: TextInputEditText
     private lateinit var eventBudget: TextInputEditText
     private lateinit var createButton: Button
-    private lateinit var dbRef: FirebaseFirestore
+    private lateinit var dbRef: DatabaseReference
+
+    init {
+        dbRef = FirebaseDatabase.getInstance().reference
+    }
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +50,7 @@ class EventAdding(context: Context, private val fragmentManager: FragmentManager
         createButton = findViewById(R.id.eventcreatebut)!!
         val window = window
         window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        dbRef=FirebaseFirestore.getInstance()
+//        dbRef=FirebaseFirestore.getInstance()
         //SQLite Database
 
         eventDate.setOnClickListener {
@@ -60,25 +66,33 @@ class EventAdding(context: Context, private val fragmentManager: FragmentManager
             val eventBudgetText = eventBudget.text.toString()
 
             val event=Events(0,eventNameText,eventDateText,eventTimeText,eventBudgetText)
+//            dbRef.child(eventNameText)
+//                .child("Events")
+//                .setValue(event)
+//                .addOnSuccessListener {
+//                    Toast.makeText(context, "Event created successfully", Toast.LENGTH_SHORT).show()
+//                    dismiss()
+//                }
+//                .addOnFailureListener { e ->
+//                    Toast.makeText(context, "Failed to create event: ${e.message}", Toast.LENGTH_SHORT).show()
+//                }
 
-            dbRef.collection(eventNameText).document(eventNameText)
-                .set(event)
-                .addOnSuccessListener {
-                    Toast.makeText(context, "Event created successfully", Toast.LENGTH_SHORT).show()
-                    dismiss()
-
-                }
-                .addOnFailureListener { e ->
-                    Toast.makeText(context, "Failed to create event: ${e.message}", Toast.LENGTH_SHORT).show()
-                }
-
-//            val databaseHelper=LocalDatabase(context,eventNameText)
-//            databaseHelper.createEvent(event)
+            val databaseHelper=LocalDatabase(context,eventNameText)
+            databaseHelper.createEvent(event)
             saveToSharedPreferences(context,"databasename",eventNameText)
             Toast.makeText(context, "Event created successfully", Toast.LENGTH_SHORT).show()
+            eventAddingListener?.onEventCreated(eventNameText)
             dismiss()
         }
     }
+    interface EventAddingListener {
+        fun onEventCreated(eventName: String)
+    }
+    private var eventAddingListener: EventAddingListener? = null
+    fun setEventAddingListener(listener: EventAddingListener) {
+        eventAddingListener = listener
+    }
+
     fun saveToSharedPreferences(context: Context, key: String, value: String) {
         val sharedPreferences = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
         val editor: SharedPreferences.Editor = sharedPreferences.edit()

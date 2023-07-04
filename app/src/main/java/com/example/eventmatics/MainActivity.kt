@@ -48,6 +48,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.Calendar
 import java.util.Locale
@@ -75,7 +79,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var widgetButton: Button
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
-//    private lateinit var dbRef: FirebaseFirestore
+//    val database = FirebaseDatabase.getInstance()
+//    val dbRef = database.reference
+
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,7 +114,6 @@ class MainActivity : AppCompatActivity() {
         drawerLayout.addDrawerListener(actionBarDrawerToggle)
         actionBarDrawerToggle.syncState()
 //        dbRef=FirebaseFirestore.getInstance()
-
         taskImageButton.setOnClickListener {
             Intent(this,TaskDataHolderActivity::class.java).also {
                 startActivity(it)
@@ -158,27 +163,54 @@ class MainActivity : AppCompatActivity() {
             eventadding.show()
         }
         widgetButton.setOnClickListener {
-            // Call a function to add the widget
             addWidgetToHomeScreen()
         }
+
         swipeRefreshLayout.setOnRefreshListener {
-            showEventData()
+            val databasename=getSharedPreference(this,"databasename").toString()
+            val databasehelper = LocalDatabase(this, databasename)
+            val eventList = databasehelper.getAllEvents()
+            val Eventtimer=databasehelper.getEventData(1)
+            if(Eventtimer!=null){
+                Eventshow.text=Eventtimer.name
+                budgetShowTextView.text=Eventtimer.budget
+                // Calculate remaining time until the event date
+                val eventDate=Eventtimer.Date
+                val eventTime=Eventtimer.time
+                val currentDate = Calendar.getInstance().time
+                val eventDateTime = SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.getDefault()).parse("$eventDate $eventTime")
+                val remainingTimeInMillis = eventDateTime.time - currentDate.time
+
+                // Start the countdown timer
+                countDownTimer = object : CountDownTimer(remainingTimeInMillis, 1000) {
+                    override fun onTick(millisUntilFinished: Long) {
+                        val days = millisUntilFinished / (24 * 60 * 60 * 1000)
+                        val hours = (millisUntilFinished % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)
+                        val minutes = (millisUntilFinished % (60 * 60 * 1000)) / (60 * 1000)
+                        val seconds = (millisUntilFinished % (60 * 1000)) / 1000
+                        val remainingTime = String.format("%02d:%02d:%02d:%02d", days, hours, minutes, seconds)
+                        EventTimerDisplay.text = remainingTime
+                    }
+                    override fun onFinish() {
+                        EventTimerDisplay.text = "Event Started"
+                    }
+                }.start()
+            }
+            else{
+                Toast.makeText(this,"Event Not Found",Toast.LENGTH_SHORT).show()
+            }
+            val adapter = EventLayoutAdapter(eventList)
+            eventRecyclerView.adapter = adapter
+            eventRecyclerView.layoutManager = LinearLayoutManager(this)
+            adapter.notifyDataSetChanged()
+            swipeRefreshLayout.isRefreshing=false
         }
 
         showEventData()
         navigationDrawershow()
     }
 
-//    private fun showEventData() {
-//        fetchEvents { events ->
-//            val adapter = EventLayoutAdapter(events)
-//            eventRecyclerView.adapter = adapter
-//            eventRecyclerView.layoutManager = LinearLayoutManager(this)
-//            adapter.notifyDataSetChanged()
-//        }
-//
-//
-//    }
+
 
 
     // Function to get shared preference value
@@ -186,24 +218,34 @@ class MainActivity : AppCompatActivity() {
         val sharedPref = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
         return sharedPref.getString(key, null)
     }
-
-//    fun fetchEvents(completion:(List<Events>)->Unit){
+    //Firebase Data Fetch Code
+//    private fun showEventData() {
+//        val eventList: MutableList<Events> = mutableListOf()
+//
 //        val databasename=getSharedPreference(this,"databasename").toString()
-//        dbRef.collection(databasename)
-//            .get()
-//            .addOnSuccessListener { result->
-//                val events= mutableListOf<Events>()
-//                for(document in result){
-//                    val event=document.toObject(Events::class.java)
-//                    events.add(event)
+//        dbRef.child(databasename)
+//            .child("Events")
+//            .addListenerForSingleValueEvent(object : ValueEventListener {
+//                override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                    if (dataSnapshot.exists()) {
+//                        for (snapshot in dataSnapshot.children) {
+//                            val event = snapshot.getValue(Events::class.java)
+//                            event?.let { eventList.add(it) }
+//                        }
+//                        // Set up the RecyclerView adapter
+//                        val adapter = EventLayoutAdapter(eventList)
+//                        eventRecyclerView.adapter = adapter
+//                        eventRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
+//                    } else {
+//                        // Data does not exist
+//                    }
 //                }
-//                completion(events)
-//            }
-//            .addOnFailureListener { e ->
-//                // Error fetching events
-//                completion(emptyList())
-//            }
-
+//
+//                override fun onCancelled(databaseError: DatabaseError) {
+//                    // Error occurred while fetching the data
+//                }
+//            })
+//    }
     @SuppressLint("Range")
     private fun showEventData() {
         val databasename=getSharedPreference(this,"databasename").toString()
@@ -369,5 +411,6 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
         countDownTimer?.cancel()
     }
+
 
 }
