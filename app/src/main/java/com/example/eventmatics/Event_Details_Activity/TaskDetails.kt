@@ -1,26 +1,24 @@
 package com.example.eventmatics.Event_Details_Activity
 
-import android.content.Intent
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.eventmatics.Adapter.TaskAdapter
-import com.example.eventmatics.Event_Data_Holder.TaskDataHolderActivity
+import com.example.eventmatics.Adapter.CategoryAdapter
 import com.example.eventmatics.R
-import com.example.eventmatics.data_class.Subtask_info
-import com.example.eventmatics.data_class.TaskDataHolder
-import com.example.eventmatics.fragments.TaskFragment
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
+import com.example.eventmatics.SQLiteDatabase.Dataclass.Task
+import com.example.eventmatics.data_class.SpinnerItem
 import com.google.android.material.datepicker.MaterialDatePicker
 import java.util.Calendar
 
@@ -32,8 +30,20 @@ class TaskDetails : AppCompatActivity(){
     lateinit var category_button:AppCompatButton
     lateinit var TaskPendingbut:AppCompatButton
     lateinit var TaskCombut:AppCompatButton
-//    lateinit var TaskAdd:ImageView
-//    lateinit var subtaskrcv:RecyclerView
+    val spinnerItems = listOf(
+        SpinnerItem("Accessories"),
+        SpinnerItem( "Accommodation"),
+        SpinnerItem( "Attire & accessories"),
+        SpinnerItem( "Ceremony"),
+        SpinnerItem( "Flower & Decor"),
+        SpinnerItem( "Health & Beauty"),
+        SpinnerItem( "Jewelry"),
+        SpinnerItem( "Miscellaneous"),
+        SpinnerItem( "Music & Show"),
+        SpinnerItem( "Photo & Video"),
+        SpinnerItem( "Reception"),
+        SpinnerItem( "Transportation")
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,13 +59,7 @@ class TaskDetails : AppCompatActivity(){
         category_button=findViewById(R.id.Taskcategory_button)
         TaskPendingbut=findViewById(R.id.TaskPendingbut)
         TaskCombut=findViewById(R.id.Taskcombut)
-//        TaskAdd=findViewById(R.id.TaskAdd)
 
-//        TaskAdd.setOnClickListener {
-//            subtaskadd()
-//        }
-        //Recyccler view code
-//        subtaskrcv=findViewById(R.id.subtaskrcv)
 
         TaskPendingbut.setOnClickListener {
             setButtonBackground(TaskPendingbut,true)
@@ -68,6 +72,22 @@ class TaskDetails : AppCompatActivity(){
         taskdate.setOnClickListener {
             showdatepicker()
         }
+        category_button.setOnClickListener {
+            ShowTaskCategory()
+        }
+    }
+
+    private fun ShowTaskCategory() {
+        val spinnerAdapter = CategoryAdapter(this, spinnerItems)
+        val dialogBuilder = AlertDialog.Builder(this)
+            .setTitle("Select Category")
+            .setAdapter(spinnerAdapter) { _, position ->
+                val selectedItem = spinnerItems[position]
+                category_button.text=selectedItem.text
+            }
+            .setNegativeButton("Cancel", null)
+        val dialog = dialogBuilder.create()
+        dialog.show()
     }
 
     fun setButtonBackground(button: Button, isSelected:Boolean){
@@ -95,11 +115,6 @@ class TaskDetails : AppCompatActivity(){
 
     }
 
-//    private fun subtaskadd() {
-//        val bottomsheet=TaskFragment()
-//        bottomsheet.setUserEnterDataListener(this)
-//        bottomsheet.show(fragmentManager,"bottomsheet")
-//    }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.budget_menu,menu)
         return super.onCreateOptionsMenu(menu)
@@ -119,18 +134,28 @@ class TaskDetails : AppCompatActivity(){
         }
     }
 
+    fun getSharedPreference(context: Context, key: String): String?{
+        val sharedvalue=context.getSharedPreferences("Database",Context.MODE_PRIVATE)
+        return sharedvalue.getString(key,null)
+    }
     private fun addvaluetodatabase(){
-        val name=TaskNameET.text.toString()
-        val note = TaskNoteET.text.toString()
-
-//        val data=TaskDataHolder(name,note,"12","2")
-
-        Intent(this,TaskDataHolderActivity::class.java).also {
-            it.putExtra("name",TaskNameET.text.toString())
-            it.putExtra("note",TaskNoteET.text.toString())
+        val databasename=getSharedPreference(this,"databasename").toString()
+        val Db=LocalDatabase(this,databasename)
+        val taskname=TaskNameET.text.toString()
+        val category=category_button.text.toString()
+        val TaskNoteET=TaskNoteET.text.toString()
+        val taskdate=taskdate.text.toString()
+        var Task_Status=""
+        if(TaskPendingbut.isSelected){
+            Task_Status="Pending"
         }
+        if(TaskCombut.isSelected){
+             Task_Status="Completed"
+        }
+        val Task=Task(0,taskname,category,TaskNoteET,Task_Status,taskdate)
+        Db.createTask(Task)
+        Toast.makeText(this, "Task Added successfully", Toast.LENGTH_SHORT).show()
+
         finish()
     }
-
-
 }

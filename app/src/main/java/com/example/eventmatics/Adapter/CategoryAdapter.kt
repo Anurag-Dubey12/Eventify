@@ -21,8 +21,6 @@ class CategoryAdapter(context: Context, items: List<SpinnerItem>) :
 
         val imageView: ImageView = view.findViewById(R.id.category_icon)
         val textView: TextView = view.findViewById(R.id.category_name)
-
-        imageView.setImageResource(item?.imageres ?: R.drawable.home) // Set a default image resource
         textView.text = item?.text
 
         return view

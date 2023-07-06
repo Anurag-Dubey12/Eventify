@@ -35,8 +35,6 @@ class VendorDetails : AppCompatActivity(){
     private lateinit var vendorNoteET: EditText
     private lateinit var vendorEstimatedAmount: EditText
     private lateinit var vendorBalanceTV: TextView
-//    private lateinit var vendorRemainingET: TextView
-//    private lateinit var vendorPaidET: TextView
     private lateinit var vendorViewTV: ImageView
     private lateinit var vendorPhoneTV: TextView
     private lateinit var vendorPhoneET: EditText
@@ -48,18 +46,18 @@ class VendorDetails : AppCompatActivity(){
     private lateinit var vendorAddressET: EditText
 
     val spinnerItems = listOf(
-        SpinnerItem(R.drawable.home, "Accessories"),
-        SpinnerItem(R.drawable.home, "Accommodation"),
-        SpinnerItem(R.drawable.home, "Attire & accessories"),
-        SpinnerItem(R.drawable.home, "Ceremony"),
-        SpinnerItem(R.drawable.home, "Flower & Decor"),
-        SpinnerItem(R.drawable.home, "Health & Beauty"),
-        SpinnerItem(R.drawable.home, "Jewelry"),
-        SpinnerItem(R.drawable.home, "Miscellaneous"),
-        SpinnerItem(R.drawable.home, "Music & Show"),
-        SpinnerItem(R.drawable.home, "Photo & Video"),
-        SpinnerItem(R.drawable.home, "Reception"),
-        SpinnerItem(R.drawable.home, "Transportation")
+        SpinnerItem("Accessories"),
+        SpinnerItem( "Accommodation"),
+        SpinnerItem( "Attire & accessories"),
+        SpinnerItem( "Ceremony"),
+        SpinnerItem( "Flower & Decor"),
+        SpinnerItem( "Health & Beauty"),
+        SpinnerItem( "Jewelry"),
+        SpinnerItem( "Miscellaneous"),
+        SpinnerItem( "Music & Show"),
+        SpinnerItem( "Photo & Video"),
+        SpinnerItem( "Reception"),
+        SpinnerItem( "Transportation")
     )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,8 +72,6 @@ class VendorDetails : AppCompatActivity(){
         vendorNoteET = findViewById(R.id.VendorNoteET)
         vendorEstimatedAmount = findViewById(R.id.VendorEstimated_Amount)
         vendorBalanceTV = findViewById(R.id.VendorBalancetv)
-//        vendorRemainingET = findViewById(R.id.VendorRemainingET)
-//        vendorPaidET = findViewById(R.id.VendorPaidET)
         vendorViewTV = findViewById(R.id.Vendorviewtv)
         vendorPhoneTV = findViewById(R.id.VendorPhonetv)
         vendorPhoneET = findViewById(R.id.VendortPhoneEt)
@@ -85,21 +81,26 @@ class VendorDetails : AppCompatActivity(){
         vendorWebsiteET = findViewById(R.id.VendorwebsiteEt)
         vendorAddressTV = findViewById(R.id.VendorAddressstv)
         vendorAddressET = findViewById(R.id.VendorAddresssEt)
-//        paymentAdd = findViewById(R.id.PaymentAdd)
 
-            //Recylerview code
-//        vendorpaymentTransRecyclerView = findViewById(R.id.vendorpaymenttrans)
-
-//        paymentAdd.setOnClickListener {
-//            showpaymentsheet()
-//        }
         categoryButton.setOnClickListener {
             showvendorcategory()
         }
         vendorViewTV.setOnClickListener {
             infoshow()
         }
-//        estimatedAmountcalculate()
+        vendorEstimatedAmount.addTextChangedListener(object: TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+
+            override fun afterTextChanged(edit: Editable?) {
+                vendorBalanceTV.text="Balance:${vendorEstimatedAmount.text}"
+
+            }
+
+        })
     }
 
     private fun infoshow() {
@@ -144,59 +145,6 @@ class VendorDetails : AppCompatActivity(){
         dialog.show()
 
     }
-//    private fun estimatedAmountcalculate() {
-//
-//        //calculation of Estimated amount with remaing and paid amount
-//        vendorEstimatedAmount = findViewById(R.id.VendorEstimated_Amount)
-//        vendorBalanceTV = findViewById(R.id.VendorBalancetv)
-//        vendorRemainingET = findViewById(R.id.VendorRemainingET)
-//        vendorPaidET= findViewById(R.id.VendorPaidET)
-//
-//        val initialres=R.drawable.drop_arrow
-//        vendorBalanceTV.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,initialres,0)
-//        vendorBalanceTV.setOnClickListener {
-//            if(vendorRemainingET.visibility==View.GONE){
-//                val newdrawable=R.drawable.up_arrow
-//                vendorBalanceTV.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,newdrawable,0)
-//
-//                vendorRemainingET.visibility=View.VISIBLE
-//                vendorPaidET.visibility=View.VISIBLE
-//            }
-//            else{
-//                val newdrawable=R.drawable.drop_arrow
-//                vendorBalanceTV.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,newdrawable,0)
-//                vendorRemainingET.visibility=View.GONE
-//                vendorPaidET.visibility=View.GONE
-//            }
-//        }
-//        vendorEstimatedAmount.addTextChangedListener(object: TextWatcher {
-//            override fun beforeTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-//            }
-//
-//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-//            }
-//
-//            override fun afterTextChanged(edit: Editable?) {
-//                vendorBalanceTV.text="Balance:${vendorEstimatedAmount.text}"
-//
-//            }
-//
-//        })
-//
-//    }
-//    private fun showpaymentsheet() {
-//        val vendorbottom=VendorFragment(fragmentmanager)
-//        vendorbottom.setUserDataListener(this)
-//        vendorbottom.paidAmountListener=this
-//        vendorbottom.pendingAmountlistener=this
-//        vendorbottom.show(fragmentmanager,"bottomsheet")
-//    }
-
-//    override fun onUserDataEntered(userData: Paymentinfo) {
-//        // Add the entered payment data to the paymentList
-//        paymentlist.add(userData)
-//        paymentActivity.notifyDataSetChanged()
-//    }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.guest_vendor_menu,menu)
         return super.onCreateOptionsMenu(menu)

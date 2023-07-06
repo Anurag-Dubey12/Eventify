@@ -1,14 +1,15 @@
 package com.example.eventmatics.Adapter
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
-import com.example.eventmatics.data_class.BudgetDataHolderData
+import com.example.eventmatics.SQLiteDatabase.Dataclass.Budget
 
-class BudgetDataHolderAdapter(private val budgetList: List<BudgetDataHolderData>) : RecyclerView.Adapter<BudgetDataHolderAdapter.ViewHolder>() {
-    private var filteredList: MutableList<BudgetDataHolderData> = mutableListOf()
+class BudgetDataHolderAdapter(private val budgetList: List<Budget>) : RecyclerView.Adapter<BudgetDataHolderAdapter.ViewHolder>() {
+    private var filteredList: MutableList<Budget> = mutableListOf()
 
     init {
         filteredList.addAll(budgetList)
@@ -27,7 +28,8 @@ class BudgetDataHolderAdapter(private val budgetList: List<BudgetDataHolderData>
     override fun getItemCount(): Int {
         return budgetList.size
     }
-    fun updateList(filteredList: MutableList<BudgetDataHolderData>) {
+
+    fun updateList(filteredList: MutableList<Budget>) {
         this.filteredList.clear()
         this.filteredList.addAll(filteredList)
         notifyDataSetChanged()
@@ -35,17 +37,10 @@ class BudgetDataHolderAdapter(private val budgetList: List<BudgetDataHolderData>
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val eventNameTextView: TextView = itemView.findViewById(R.id.text_event_name)
-        private val pendingAmountTextView: TextView = itemView.findViewById(R.id.text_pending_amount)
-        private val totalAmountTextView: TextView = itemView.findViewById(R.id.text_total_amount)
-        private val paidAmountTextView: TextView = itemView.findViewById(R.id.text_paid_amount)
-        private val transinfo:TextView=itemView.findViewById(R.id.text_transaction_info)
-
-        fun bind(item: BudgetDataHolderData) {
-            eventNameTextView.text = item.eventName
-            pendingAmountTextView.text = "Pending Amount: ${item.pending}"
-            totalAmountTextView.text = "Total Amount: ${item.amount}"
-            paidAmountTextView.text = "Paid Amount: ${item.paidAmount}"
-            transinfo.text=item.traninfo
+        private val total_amount: TextView = itemView.findViewById(R.id.text_total_amount)
+        fun bind(item: Budget) {
+            eventNameTextView.text = item.name
+            total_amount.text=item.estimatedAmount
         }
     }
 }

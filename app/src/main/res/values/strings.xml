@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Eventmatics</string>
+    <string name="app_name">Eventify</string>
     <string name="welcome_back_sir">Welcome Back Sir!</string>
     <string name="app_logo">App logo</string>
     <string name="email_address">Email Address</string>
@@ -87,4 +87,8 @@
     <string name="task_name">Task Name</string>
     <string name="vendor_name">Vendor Name</string>
     <string name="contact_details">Contact Details</string>
+    <string name="total_amount">Total Amount</string>
+    <string name="paid_amount">Paid Amount</string>
+    <string name="more">More</string>
+    <string name="budget_title">Budget Title</string>
 </resources>

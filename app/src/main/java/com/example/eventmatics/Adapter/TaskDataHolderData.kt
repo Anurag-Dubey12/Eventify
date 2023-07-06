@@ -6,9 +6,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
-import com.example.eventmatics.data_class.TaskDataHolder
+import com.example.eventmatics.SQLiteDatabase.Dataclass.Task
 
-class TaskDataHolderData(private val dataList: List<TaskDataHolder>) :
+class TaskDataHolderData(private val dataList: List<Task>) :
     RecyclerView.Adapter<TaskDataHolderData.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -25,18 +25,15 @@ class TaskDataHolderData(private val dataList: List<TaskDataHolder>) :
     override fun getItemCount(): Int {
         return dataList.size
     }
-
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val taskNameTextView: TextView = itemView.findViewById(R.id.Taskname)
         private val taskInfoTextView: TextView = itemView.findViewById(R.id.Task_info_show)
         private val taskDateTextView: TextView = itemView.findViewById(R.id.task_date)
-        private val subtaskInfoTextView: TextView = itemView.findViewById(R.id.subtask_info)
 
-        fun bind(data: TaskDataHolder) {
+        fun bind(data: Task) {
             taskNameTextView.text = data.taskName
-            taskInfoTextView.text = data.taskInfo
+            taskInfoTextView.text = data.taskStatus
             taskDateTextView.text = data.taskDate
-            subtaskInfoTextView.text = data.subtaskInfo
         }
     }
 }

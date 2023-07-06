@@ -1,6 +1,7 @@
 package com.example.eventmatics.Event_Data_Holder
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -11,10 +12,13 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.eventmatics.Adapter.BudgetDataHolderAdapter
 import com.example.eventmatics.Event_Details_Activity.BudgetDetails
 import com.example.eventmatics.MainActivity
 import com.example.eventmatics.R
+import com.example.eventmatics.SQLiteDatabase.Dataclass.Budget
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.data_class.BudgetDataHolderData
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -24,14 +28,17 @@ class BudgetDataHolderActivity : AppCompatActivity(){
     lateinit var budgetAdd: FloatingActionButton
     lateinit var bottomnav: BottomNavigationView
     lateinit var adapter:BudgetDataHolderAdapter
-    lateinit var budgetlist:MutableList<BudgetDataHolderData>
-    private var filteredList: MutableList<BudgetDataHolderData> = mutableListOf()
+    lateinit var budgetlist:MutableList<Budget>
+    private var filteredList: MutableList<Budget> = mutableListOf()
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_budget_data_holder)
         recyclerView = findViewById(R.id.BudgetDatarec)
         budgetAdd=findViewById(R.id.fab)
+        swipeRefreshLayout= findViewById(R.id.swipeRefreshLayout)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         bottomnav=findViewById(R.id.bottomNavigationView)
         bottomnav.background=null
@@ -39,27 +46,26 @@ class BudgetDataHolderActivity : AppCompatActivity(){
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val budgetDetails=BudgetDetails()
+//        val budgetDetails=BudgetDetails()
         budgetlist= mutableListOf()
 //        adapter= BudgetDataHolderAdapter( budgetlist)
         recyclerView.layoutManager=LinearLayoutManager(this)
 //        recyclerView.adapter=adapter
 
-        val dataitem=intent.getParcelableArrayListExtra<BudgetDataHolderData>("dataitem")
-        if(dataitem!=null){
-            adapter=BudgetDataHolderAdapter(dataitem)
-            recyclerView.adapter=adapter
-        }
-//
-//        budgetlist.add(BudgetDataHolderData("ANurag","155", 2000F,"200","Paid"))
-//        budgetlist.add(BudgetDataHolderData("burag","155",200f,"200","Paid"))
-//        budgetlist.add(BudgetDataHolderData("ANurag","155",100f,"200","Pending"))
-//        budgetlist.add(BudgetDataHolderData("ANurag","155",4000f,"200","Pending"))
-//        filteredList.addAll(budgetlist)
-
         budgetAdd.setOnClickListener {
             Intent(this,BudgetDetails::class.java).also { startActivity(it) }
         }
+
+        swipeRefreshLayout.setOnRefreshListener {
+            val databasename=getSharedPreference(this,"databasename").toString()
+            val databasehelper = LocalDatabase(this, databasename)
+            val BudgetList = databasehelper.getAllBudgets()
+            if(BudgetList!=null){
+                adapter = BudgetDataHolderAdapter(BudgetList)
+                recyclerView.adapter = adapter
+                recyclerView.layoutManager = LinearLayoutManager(this)
+                swipeRefreshLayout.isRefreshing=false
+        }}
         bottomnav.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.sort -> {
@@ -73,7 +79,23 @@ class BudgetDataHolderActivity : AppCompatActivity(){
                 else -> false
             }
         }
+        showbudgetlist()
     }
+    fun getSharedPreference(context: Context, key: String): String? {
+        val sharedPref = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
+        return sharedPref.getString(key, null)
+    }
+    private fun showbudgetlist() {
+        val databasename=getSharedPreference(this,"databasename").toString()
+        val databasehelper = LocalDatabase(this, databasename)
+        val BudgetList = databasehelper.getAllBudgets()
+        if(BudgetList!=null){
+            adapter = BudgetDataHolderAdapter(BudgetList)
+            recyclerView.adapter = adapter
+            recyclerView.layoutManager = LinearLayoutManager(this)
+        }
+    }
+
     @SuppressLint("MissingInflatedId")
     private fun showFilterOptions() {
         val dialogBuilder = AlertDialog.Builder(this)
@@ -97,19 +119,19 @@ class BudgetDataHolderActivity : AppCompatActivity(){
             dialog.dismiss()
         }
 
-        pendingOnly.setOnClickListener {
-            filteredList.clear()
-            filteredList.addAll(budgetlist.filter { it.traninfo == "Pending" })
-            adapter.updateList(filteredList)
-            dialog.dismiss()
-        }
-
-        paidOnly.setOnClickListener {
-            filteredList.clear()
-            filteredList.addAll(budgetlist.filter { it.traninfo == "Paid" })
-            adapter.updateList(filteredList)
-            dialog.dismiss()
-        }
+//        pendingOnly.setOnClickListener {
+//            filteredList.clear()
+//            filteredList.addAll(budgetlist.filter { it.traninfo == "Pending" })
+//            adapter.updateList(filteredList)
+//            dialog.dismiss()
+//        }
+//
+//        paidOnly.setOnClickListener {
+//            filteredList.clear()
+//            filteredList.addAll(budgetlist.filter { it.traninfo == "Paid" })
+//            adapter.updateList(filteredList)
+//            dialog.dismiss()
+//        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -137,25 +159,25 @@ class BudgetDataHolderActivity : AppCompatActivity(){
         dialog.show()
 
         nameAscending.setOnClickListener {
-            budgetlist.sortBy { it.eventName }
+            budgetlist.sortBy { it.name }
             adapter.notifyDataSetChanged()
             dialog.dismiss()
         }
 
         nameDescending.setOnClickListener {
-            budgetlist.sortByDescending { it.eventName }
+            budgetlist.sortByDescending { it.name }
             adapter.notifyDataSetChanged()
             dialog.dismiss()
         }
 
         amountAscending.setOnClickListener {
-            budgetlist.sortBy { it.amount }
+            budgetlist.sortBy { it.estimatedAmount }
             adapter.notifyDataSetChanged()
             dialog.dismiss()
         }
 
         amountDescending.setOnClickListener {
-            budgetlist.sortByDescending { it.amount }
+            budgetlist.sortByDescending { it.estimatedAmount }
             adapter.notifyDataSetChanged()
             dialog.dismiss()
         }

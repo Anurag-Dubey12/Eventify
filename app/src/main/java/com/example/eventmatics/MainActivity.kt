@@ -94,7 +94,6 @@ class MainActivity : AppCompatActivity() {
         eventRecyclerView = findViewById(R.id.Eventrec)
         taskImageButton = findViewById(R.id.task)
         swipeRefreshLayout= findViewById(R.id.swipeRefreshLayout)
-
         EventTimerDisplay = findViewById(R.id.EventTimer)
         crossimg = findViewById(R.id.crossimg)
         eventaddbut = findViewById(R.id.eventaddbut)
@@ -210,42 +209,10 @@ class MainActivity : AppCompatActivity() {
         navigationDrawershow()
     }
 
-
-
-
-    // Function to get shared preference value
     fun getSharedPreference(context: Context, key: String): String? {
         val sharedPref = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
         return sharedPref.getString(key, null)
     }
-    //Firebase Data Fetch Code
-//    private fun showEventData() {
-//        val eventList: MutableList<Events> = mutableListOf()
-//
-//        val databasename=getSharedPreference(this,"databasename").toString()
-//        dbRef.child(databasename)
-//            .child("Events")
-//            .addListenerForSingleValueEvent(object : ValueEventListener {
-//                override fun onDataChange(dataSnapshot: DataSnapshot) {
-//                    if (dataSnapshot.exists()) {
-//                        for (snapshot in dataSnapshot.children) {
-//                            val event = snapshot.getValue(Events::class.java)
-//                            event?.let { eventList.add(it) }
-//                        }
-//                        // Set up the RecyclerView adapter
-//                        val adapter = EventLayoutAdapter(eventList)
-//                        eventRecyclerView.adapter = adapter
-//                        eventRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
-//                    } else {
-//                        // Data does not exist
-//                    }
-//                }
-//
-//                override fun onCancelled(databaseError: DatabaseError) {
-//                    // Error occurred while fetching the data
-//                }
-//            })
-//    }
     @SuppressLint("Range")
     private fun showEventData() {
         val databasename=getSharedPreference(this,"databasename").toString()
