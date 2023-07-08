@@ -1,13 +1,14 @@
 package com.example.eventmatics.SQLiteDatabase.Dataclass
 
 data class Guest(
-    val id: Long,           // Primary Key
+    val id: Long,
     val name: String,
-    val gender: String,
-    val type: String,
+    val totalFamilyMembers: Int,
+    val maleNumber: Int,
+    val femaleNumber: Int,
     val note: String,
-    val status: String,
-    val contact: String,
+    val isInvitationSent: String,
+    val phoneNumber: String,
     val email: String,
     val address: String
 )

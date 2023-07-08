@@ -16,13 +16,8 @@
            android:layout_width="match_parent"
            android:layout_height="match_parent"
            android:orientation="horizontal">
-           <ImageView
-               android:id="@+id/guestimg"
-               android:layout_width="60sp"
-               android:layout_height="60sp"
-               />
            <TextView
-               android:id="@+id/guestcomname"
+               android:id="@+id/guestname"
                android:layout_width="match_parent"
                android:layout_height="50sp"
                android:textSize="20sp"

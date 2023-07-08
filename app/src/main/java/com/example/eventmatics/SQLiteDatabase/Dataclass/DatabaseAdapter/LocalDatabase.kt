@@ -18,10 +18,10 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         private const val DATABASE_VERSION = 1
         // Table names
         private const val TABLE_Event = "Event"
-        private const val TABLE_TASK = "task"
-        private const val TABLE_VENDOR = "vendor"
-        private const val TABLE_GUEST = "guest"
-        private const val TABLE_BUDGET = "budget"
+        private const val TABLE_TASK = "Task"
+        private const val TABLE_VENDOR = "Vendor"
+        private const val TABLE_GUEST = "Guest"
+        private const val TABLE_BUDGET = "Budget"
 
         // Common column names
         private const val COLUMN_ID = "id"
@@ -52,13 +52,14 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
 
         //Guest Column Name
         private const val Guest_Name = "Guest_Name"
-        private const val Guest_Gender = "Guest_Gender"
-        private const val Guest_Type = "Guest_Type"
-        private const val Guest_Note = "Guest_Note"
-        private const val Guest_Status = "Guest_Status"
-        private const val Guest_Contact = "Guest_Contact"
-        private const val Guest_Email = "Guest_Email"
-        private const val Guest_Address = "Guest_Address"
+        private const val TOTAL_FAMILY_MEMBERS = "total_family_members"
+        private const val MALE_NUMBER = "male_number"
+        private const val FEMALE_NUMBER = "female_number"
+        private const val NOTE = "note"
+        private const val GUEST_STATUS = "guest_status"
+        private const val GUEST_CONTACT = "guest_contact"
+        private const val GUEST_EMAIL = "guest_email"
+        private const val GUEST_ADDRESS = "guest_address"
 
         //Vendor Column Name
         private const val Vendor_Name = "Vendor_Name"
@@ -71,6 +72,7 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         private const val Vendor_PhoneNumber = "Vendor_PhoneNumber"
         private const val Vendor_EmailId = "Vendor_EmailId"
         private const val Vendor_Website = "Vendor_Website"
+        private const val Vendor_Address = "Vendor_Address"
 
     }
     override fun onCreate(db: SQLiteDatabase?) {
@@ -104,20 +106,22 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
                 "$Vendor_Paid TEXT," +
                 "$Vendor_PhoneNumber TEXT," +
                 "$Vendor_EmailId TEXT," +
-                "$Vendor_Website TEXT" +
+                "$Vendor_Website TEXT," +
+                "$Vendor_Address TEXT" +
                 ")"
         db?.execSQL(createVendorTableQuery)
 
         val createGuestTableQuery = "CREATE TABLE $TABLE_GUEST (" +
                 "$COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "$Guest_Name TEXT," +
-                "$Guest_Gender TEXT," +
-                "$Guest_Type TEXT," +
-                "$Guest_Note TEXT," +
-                "$Guest_Status TEXT," +
-                "$Guest_Contact TEXT," +
-                "$Guest_Email TEXT," +
-                "$Guest_Address TEXT" +
+                "$TOTAL_FAMILY_MEMBERS INTEGER," +
+                "$MALE_NUMBER INTEGER," +
+                "$FEMALE_NUMBER INTEGER," +
+                "$NOTE TEXT," +
+                "$GUEST_STATUS TEXT," +
+                "$GUEST_CONTACT TEXT," +
+                "$GUEST_EMAIL TEXT," +
+                "$GUEST_ADDRESS TEXT" +
                 ")"
         db?.execSQL(createGuestTableQuery)
 
@@ -177,13 +181,14 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
             val createGuestTableQuery = "CREATE TABLE $TABLE_GUEST (" +
                     "$COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "$Guest_Name TEXT," +
-                    "$Guest_Gender TEXT," +
-                    "$Guest_Type TEXT," +
-                    "$Guest_Note TEXT," +
-                    "$Guest_Status TEXT," +
-                    "$Guest_Contact TEXT," +
-                    "$Guest_Email TEXT," +
-                    "$Guest_Address TEXT" +
+                    "$TOTAL_FAMILY_MEMBERS INTEGER," +
+                    "$MALE_NUMBER INTEGER," +
+                    "$FEMALE_NUMBER INTEGER," +
+                    "$NOTE TEXT," +
+                    "$GUEST_STATUS TEXT," +
+                    "$GUEST_CONTACT TEXT," +
+                    "$GUEST_EMAIL TEXT," +
+                    "$GUEST_ADDRESS TEXT" +
                     ")"
             db?.execSQL(createGuestTableQuery)
         }
@@ -200,9 +205,9 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
                     "$Vendor_Paid TEXT," +
                     "$Vendor_PhoneNumber TEXT," +
                     "$Vendor_EmailId TEXT," +
-                    "$Vendor_Website TEXT" +
+                    "$Vendor_Website TEXT," +
+                    "$Vendor_Address TEXT" +
                     ")"
-            db?.execSQL(createVendorTableQuery)
         }
         onCreate(db)
     }
@@ -498,13 +503,14 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         val db = writableDatabase
         val values = ContentValues().apply {
             put(Guest_Name, guest.name)
-            put(Guest_Gender, guest.gender)
-            put(Guest_Type, guest.type)
-            put(Guest_Note, guest.note)
-            put(Guest_Status, guest.status)
-            put(Guest_Contact, guest.contact)
-            put(Guest_Email, guest.email)
-            put(Guest_Address, guest.address)
+            put(TOTAL_FAMILY_MEMBERS, guest.totalFamilyMembers)
+            put(MALE_NUMBER, guest.maleNumber)
+            put(FEMALE_NUMBER, guest.femaleNumber)
+            put(NOTE, guest.note)
+            put(GUEST_STATUS, guest.isInvitationSent)
+            put(GUEST_CONTACT, guest.phoneNumber)
+            put(GUEST_EMAIL, guest.email)
+            put(GUEST_ADDRESS, guest.address)
         }
         val id = db.insert(TABLE_GUEST, null, values)
         db.close()
@@ -518,19 +524,20 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         val selectQuery = "SELECT * FROM $TABLE_GUEST"
         val db = readableDatabase
         val cursor: Cursor? = db.rawQuery(selectQuery, null)
-        cursor?.let {
+        cursor?.use {
             if (it.moveToFirst()) {
                 do {
                     val id = it.getLong(it.getColumnIndex(COLUMN_ID))
                     val name = it.getString(it.getColumnIndex(Guest_Name))
-                    val gender = it.getString(it.getColumnIndex(Guest_Gender))
-                    val type = it.getString(it.getColumnIndex(Guest_Type))
-                    val note = it.getString(it.getColumnIndex(Guest_Note))
-                    val status = it.getString(it.getColumnIndex(Guest_Status))
-                    val contact = it.getString(it.getColumnIndex(Guest_Contact))
-                    val email = it.getString(it.getColumnIndex(Guest_Email))
-                    val address = it.getString(it.getColumnIndex(Guest_Address))
-                    val guest = Guest(id, name, gender, type, note, status, contact, email, address)
+                    val totalFamilyMembers = it.getInt(it.getColumnIndex(TOTAL_FAMILY_MEMBERS))
+                    val maleNumber = it.getInt(it.getColumnIndex(MALE_NUMBER))
+                    val femaleNumber = it.getInt(it.getColumnIndex(FEMALE_NUMBER))
+                    val note = it.getString(it.getColumnIndex(NOTE))
+                    val status = it.getString(it.getColumnIndex(GUEST_STATUS))
+                    val contact = it.getString(it.getColumnIndex(GUEST_CONTACT))
+                    val email = it.getString(it.getColumnIndex(GUEST_EMAIL))
+                    val address = it.getString(it.getColumnIndex(GUEST_ADDRESS))
+                    val guest = Guest(id, name, totalFamilyMembers, maleNumber, femaleNumber, note, status, contact, email, address)
                     guests.add(guest)
                 } while (it.moveToNext())
             }
@@ -539,6 +546,7 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         db.close()
         return guests
     }
+
     //Getting Specific data from Guest
     @SuppressLint("Range")
     fun getGuestData(guestId: Int): Guest? {
@@ -549,20 +557,23 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
 
         if (cursor.moveToFirst()) {
             val guestName = cursor.getString(cursor.getColumnIndex(Guest_Name))
-            val guestGender = cursor.getString(cursor.getColumnIndex(Guest_Gender))
-            val guestType = cursor.getString(cursor.getColumnIndex(Guest_Type))
-            val guestNote = cursor.getString(cursor.getColumnIndex(Guest_Note))
-            val guestStatus = cursor.getString(cursor.getColumnIndex(Guest_Status))
-            val guestContact = cursor.getString(cursor.getColumnIndex(Guest_Contact))
-            val guestEmail = cursor.getString(cursor.getColumnIndex(Guest_Email))
-            val guestAddress = cursor.getString(cursor.getColumnIndex(Guest_Address))
+            val totalFamilyMembers = cursor.getInt(cursor.getColumnIndex(TOTAL_FAMILY_MEMBERS))
+            val maleNumber = cursor.getInt(cursor.getColumnIndex(MALE_NUMBER))
+            val femaleNumber = cursor.getInt(cursor.getColumnIndex(FEMALE_NUMBER))
+            val guestNote = cursor.getString(cursor.getColumnIndex(NOTE))
+            val guestStatus = cursor.getString(cursor.getColumnIndex(GUEST_STATUS))
+            val guestContact = cursor.getString(cursor.getColumnIndex(GUEST_CONTACT))
+            val guestEmail = cursor.getString(cursor.getColumnIndex(GUEST_EMAIL))
+            val guestAddress = cursor.getString(cursor.getColumnIndex(GUEST_ADDRESS))
 
-            guest = Guest(guestId.toLong(), guestName, guestGender, guestType, guestNote, guestStatus, guestContact, guestEmail, guestAddress)
+            guest = Guest(guestId.toLong(), guestName, totalFamilyMembers, maleNumber, femaleNumber, guestNote, guestStatus, guestContact, guestEmail, guestAddress)
         }
 
         cursor.close()
+        db.close()
         return guest
     }
+
 
 
     // Update a guest
@@ -570,13 +581,14 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         val db = writableDatabase
         val values = ContentValues().apply {
             put(Guest_Name, guest.name)
-            put(Guest_Gender, guest.gender)
-            put(Guest_Type, guest.type)
-            put(Guest_Note, guest.note)
-            put(Guest_Status, guest.status)
-            put(Guest_Contact, guest.contact)
-            put(Guest_Email, guest.email)
-            put(Guest_Address, guest.address)
+            put(TOTAL_FAMILY_MEMBERS, guest.totalFamilyMembers)
+            put(MALE_NUMBER, guest.maleNumber)
+            put(FEMALE_NUMBER, guest.femaleNumber)
+            put(NOTE, guest.note)
+            put(GUEST_STATUS, guest.isInvitationSent)
+            put(GUEST_CONTACT, guest.phoneNumber)
+            put(GUEST_EMAIL, guest.email)
+            put(GUEST_ADDRESS, guest.address)
         }
         val rowsAffected = db.update(
             TABLE_GUEST,
@@ -587,6 +599,7 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         db.close()
         return rowsAffected
     }
+
 
     // Delete a guest
     fun deleteGuest(guest: Guest): Int {
@@ -614,6 +627,7 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
             put(Vendor_PhoneNumber, vendor.phonenumber)
             put(Vendor_EmailId, vendor.emailid)
             put(Vendor_Website, vendor.website)
+            put(Vendor_Address, vendor.address)
         }
         val id = db.insert(TABLE_VENDOR, null, values)
         db.close()
@@ -641,7 +655,8 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
                     val phoneNumber = it.getString(it.getColumnIndex(Vendor_PhoneNumber))
                     val emailId = it.getString(it.getColumnIndex(Vendor_EmailId))
                     val website = it.getString(it.getColumnIndex(Vendor_Website))
-                    val vendor = Vendor(id, name, category, note, estimated, balance, pending, paid, phoneNumber, emailId, website)
+                    val Address = cursor.getString(cursor.getColumnIndex(Vendor_Address))
+                    val vendor = Vendor(id, name, category, note, estimated, balance, pending, paid, phoneNumber, emailId, website,Address)
                     vendors.add(vendor)
                 } while (it.moveToNext())
             }
@@ -670,7 +685,8 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
             val phoneNumber = cursor.getString(cursor.getColumnIndex(Vendor_PhoneNumber))
             val emailId = cursor.getString(cursor.getColumnIndex(Vendor_EmailId))
             val website = cursor.getString(cursor.getColumnIndex(Vendor_Website))
-            val vendor = Vendor(id, name, category, note, estimated, balance, pending, paid, phoneNumber, emailId, website)
+            val Address = cursor.getString(cursor.getColumnIndex(Vendor_Address))
+            val vendor = Vendor(id, name, category, note, estimated, balance, pending, paid, phoneNumber, emailId, website,Address)
         }
 
         cursor.close()
@@ -691,6 +707,7 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
             put(Vendor_PhoneNumber, vendor.phonenumber)
             put(Vendor_EmailId, vendor.emailid)
             put(Vendor_Website, vendor.website)
+            put(Vendor_Address, vendor.address)
         }
         val rowsAffected = db.update(
             TABLE_VENDOR,

@@ -1,26 +1,34 @@
 package com.example.eventmatics.Event_Data_Holder
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.provider.ContactsContract
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.example.eventmatics.Adapter.VendorDataHolderClass
 import com.example.eventmatics.Event_Details_Activity.GuestDetails
 import com.example.eventmatics.Event_Details_Activity.VendorDetails
 import com.example.eventmatics.R
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class VendorDataHolderActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     lateinit var vendorAdd: FloatingActionButton
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
     lateinit var bottomnav: BottomNavigationView
+    lateinit var adapter:VendorDataHolderClass
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,8 +58,44 @@ class VendorDataHolderActivity : AppCompatActivity() {
                 else -> false
             }
         }
+        swipeRefreshLayout=findViewById(R.id.swipeRefreshLayout)
+        swipeRefreshLayout.setOnRefreshListener {
+            Handler().postDelayed({
+                val databasename=getSharedPreference(this,"databasename").toString()
+                val db=LocalDatabase(this,databasename)
+                val vendorlist=db.getAllVendors()
+                if(vendorlist!=null){
+                    adapter=VendorDataHolderClass(vendorlist)
+                    recyclerView.adapter=adapter
+                    recyclerView.layoutManager=LinearLayoutManager(this)
+                }
+                    swipeRefreshLayout.isRefreshing=false
+            },3000)
+        }
+        swipeRefreshLayout.setColorSchemeResources(
+            R.color.Coral,
+            R.color.Fuchsia,
+            R.color.Indigo
+        )
+        swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.Lemon_Chiffon)
+        swipeRefreshLayout.setProgressViewOffset(false, 0, 150)
+        showData()
     }
 
+    private fun showData() {
+        val databasename=getSharedPreference(this,"databasename").toString()
+        val db=LocalDatabase(this,databasename)
+        val vendorlist=db.getAllVendors()
+        if(vendorlist!=null){
+            adapter=VendorDataHolderClass(vendorlist)
+            recyclerView.adapter=adapter
+            recyclerView.layoutManager=LinearLayoutManager(this)
+        }
+    }
+    fun getSharedPreference(context: Context, key:String):String?{
+        val sharedvalue=context.getSharedPreferences("Database", Context.MODE_PRIVATE)
+        return sharedvalue.getString(key,null)
+    }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return  when(item.itemId){
             android.R.id.home->{

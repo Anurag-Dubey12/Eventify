@@ -8,18 +8,19 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.eventmatics.R
+import com.example.eventmatics.SQLiteDatabase.Dataclass.Guest
 import com.example.eventmatics.data_class.GuestCompanion
 
-class GuestCompanionApdater(private val GuestList:List<GuestCompanion>):RecyclerView.Adapter<GuestCompanionApdater.GuestViewHolder>() {
+class GuestApdater(private val GuestList:List<Guest>):RecyclerView.Adapter<GuestApdater.GuestViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): GuestCompanionApdater.GuestViewHolder {
+    ): GuestApdater.GuestViewHolder {
         val view=LayoutInflater.from(parent.context).inflate(R.layout.guestcompanionloadlayout,parent,false)
         return GuestViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: GuestCompanionApdater.GuestViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: GuestApdater.GuestViewHolder, position: Int) {
        val Guestlist=GuestList[position]
 
         holder.bind(Guestlist)
@@ -29,15 +30,10 @@ class GuestCompanionApdater(private val GuestList:List<GuestCompanion>):Recycler
         return GuestList.size
     }
     inner class GuestViewHolder(itemview:View):RecyclerView.ViewHolder(itemview){
-        val guestimage:ImageView=itemview.findViewById(R.id.guestimg)
+        val GuestName:TextView=itemview.findViewById(R.id.guestname)
 //        val guestname:TextView=itemView.findViewById(R.id.guestname)
-        fun bind(Guest:GuestCompanion){
-//            guestname.text = Guest.name
-
-            Glide.with(itemView)
-                .load(Guest.guestImg)
-                .into(guestimage)
-
+        fun bind(Guest:Guest){
+            GuestName.text=Guest.name
         }
     }
 

@@ -34,12 +34,9 @@ class TaskDataHolderActivity : AppCompatActivity() {
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         bottomnav=findViewById(R.id.bottomNavigationView)
         bottomnav.background=null
-
         //Action Bar
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-
 
         taskAdd.setOnClickListener {
             Intent(this,TaskDetails::class.java).also { startActivity(it) }
@@ -50,7 +47,6 @@ class TaskDataHolderActivity : AppCompatActivity() {
                     showSortOptions()
                     true
                 }
-
                 else -> false
             }
         }
@@ -67,8 +63,21 @@ class TaskDataHolderActivity : AppCompatActivity() {
                 swipeRefreshLayout.isRefreshing=false
             }
         }
-
+        showTaskData()
     }
+    private fun showTaskData() {
+        val databsename=getSharedPreference(this,"databasename").toString()
+        val db=LocalDatabase(this,databsename)
+        val tasklist=db.getAllTasks()
+        if(tasklist!=null){
+            //Recycler view
+            adapter = TaskDataHolderData(tasklist)
+            recyclerView?.adapter = adapter
+            recyclerView.layoutManager = LinearLayoutManager(this)
+            swipeRefreshLayout.isRefreshing=false
+        }
+    }
+
     fun getSharedPreference(context:Context,key:String):String?{
         val sharedvalue=context.getSharedPreferences("Database",Context.MODE_PRIVATE)
         return sharedvalue.getString(key,null)

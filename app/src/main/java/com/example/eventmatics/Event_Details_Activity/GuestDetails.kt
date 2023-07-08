@@ -3,6 +3,7 @@ package com.example.eventmatics.Event_Details_Activity
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ContentResolver
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -14,16 +15,19 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.RecyclerView
-import com.example.eventmatics.Event_Extra_info_Activities.Guest
 import com.example.eventmatics.R
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
+import com.example.eventmatics.SQLiteDatabase.Dataclass.Guest
 
 class GuestDetails : AppCompatActivity() {
     private lateinit var guestNameEt: EditText
     private lateinit var guestNoteEt: EditText
     private lateinit var TotalFamilyMember: EditText
+    private lateinit var FeMaleNumber: EditText
+    private lateinit var MaleNumber: EditText
     private lateinit var invitationSentButton:  Button
     private lateinit var notSentButton:  Button
     private lateinit var contactviewtv: ImageView
@@ -46,6 +50,8 @@ class GuestDetails : AppCompatActivity() {
         contactviewtv=findViewById(R.id.contactviewtv)
         guestNoteEt =findViewById(R.id.GuestNoteET)
         TotalFamilyMember =findViewById(R.id.TotalFamilyMember)
+        FeMaleNumber =findViewById(R.id.FeMaleNumber)
+        MaleNumber =findViewById(R.id.MaleNumber)
         invitationSentButton = findViewById(R.id.Invitaionsentbut)
         notSentButton = findViewById(R.id.NotSentBut)
         guestPhoneEt = findViewById(R.id.GuestPhoneEt)
@@ -106,9 +112,35 @@ class GuestDetails : AppCompatActivity() {
                 }
                 true
             }
+            R.id.Check->{
+                AddValueToDatabase()
+                true
+            }
         else->super.onOptionsItemSelected(item)
     }
 }
+
+    fun getSharedPreference(context: Context, key:String):String?{
+        val sharedValues=context.getSharedPreferences("Database",Context.MODE_PRIVATE)
+        return sharedValues.getString(key,null)
+    }
+    private fun AddValueToDatabase() {
+        val databasename=getSharedPreference(this,"databasename").toString()
+        val db=LocalDatabase(this,databasename)
+        val guestName = guestNameEt.text.toString()
+        val guestNote = guestNoteEt.text.toString()
+        val totalFamilyMembers = TotalFamilyMember.text.toString().toInt()
+        val FeMaleNumber = FeMaleNumber.text.toString().toInt()
+        val MaleNumber = MaleNumber.text.toString().toInt()
+        val guestPhone = guestPhoneEt.text.toString()
+        val guestEmail = guestEmailEt.text.toString()
+        val guestAddress = guestAddresssEt.text.toString()
+        val GuestList= Guest(1,guestName,totalFamilyMembers,MaleNumber,FeMaleNumber,guestNote, " ",
+        guestPhone,guestEmail,guestAddress)
+        db.createGuest(GuestList)
+        Toast.makeText(this, "Guest Added successfully", Toast.LENGTH_SHORT).show()
+        finish()
+    }
 
     //retriveing the contact name and number form the device
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

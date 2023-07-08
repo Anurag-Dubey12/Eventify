@@ -2,8 +2,8 @@ package com.example.eventmatics.Event_Details_Activity
 
 import android.app.Activity
 import android.content.ContentResolver
+import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.text.Editable
@@ -15,17 +15,15 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.FragmentManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.Adapter.CategoryAdapter
-import com.example.eventmatics.Adapter.PaymentActivity
 import com.example.eventmatics.R
-import com.example.eventmatics.data_class.Paymentinfo
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
+import com.example.eventmatics.SQLiteDatabase.Dataclass.Vendor
 import com.example.eventmatics.data_class.SpinnerItem
-import com.example.eventmatics.fragments.VendorFragment
 
 class VendorDetails : AppCompatActivity(){
 
@@ -91,15 +89,11 @@ class VendorDetails : AppCompatActivity(){
         vendorEstimatedAmount.addTextChangedListener(object: TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             }
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             }
-
             override fun afterTextChanged(edit: Editable?) {
                 vendorBalanceTV.text="Balance:${vendorEstimatedAmount.text}"
-
             }
-
         })
     }
 
@@ -149,7 +143,6 @@ class VendorDetails : AppCompatActivity(){
         menuInflater.inflate(R.menu.guest_vendor_menu,menu)
         return super.onCreateOptionsMenu(menu)
     }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return  when(item.itemId){
             android.R.id.home->{
@@ -162,11 +155,15 @@ class VendorDetails : AppCompatActivity(){
                     it.type=ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE
                    startActivityForResult(it,400)
                 }
-                true
+                    true
             }
+                R.id.Check->{
+                    AddvaluetoDatabase()
+                    true
+                }
             else->super.onOptionsItemSelected(item)
+            }
         }
-    }
 
     //retrive the contact from the device
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -187,37 +184,32 @@ class VendorDetails : AppCompatActivity(){
 
                     var contactname=it.getString(nameindex)
                     var contactnumber=it.getString(numberindex)
-
                     vendorNameET.setText(contactname)
                     vendorPhoneET.setText(contactnumber)
                 }
             }
         }
     }
+    fun getSharedPreference(context: Context,key:String):String?{
+        val sharedvalue=context.getSharedPreferences("Database",Context.MODE_PRIVATE)
+        return sharedvalue.getString(key,null)
+    }
+    private fun AddvaluetoDatabase() {
+        val vendorName = vendorNameET.text.toString()
+        val category = categoryButton.text.toString()
+        val vendorNote = vendorNoteET.text.toString()
+        val estimatedAmount = vendorEstimatedAmount.text.toString()
+        val vendorBalance = vendorBalanceTV.text.toString()
+        val vendorPhone = vendorPhoneET.text.toString()
+        val vendorEmail = vendorEmailET.text.toString()
+        val vendorWebsite = vendorWebsiteET.text.toString()
+        val vendorAddress = vendorAddressET.text.toString()
 
-//    override fun onPendingAmountSelected(amount: Float) {
-//        val displayAmount = "Pending: $amount"
-//        vendorRemainingET.text = displayAmount
-//
-//        val balance = vendorBalanceTV.text.toString()
-//        if (!balance.isNullOrEmpty()) {
-//            val balanceAmount = balance.substringAfterLast(":").toFloat()
-//            val newBalanceAmount = balanceAmount - amount
-//            val finalAmount = "Pending: $newBalanceAmount"
-//            vendorBalanceTV.text = finalAmount
-//        }
-//    }
-//
-//    override fun onPaidAmountSelected(amount: Float) {
-//        val displayamount = "Paid: $amount"
-//        vendorPaidET.text = displayamount
-//
-//        var balanceamount = vendorBalanceTV.text.toString()
-//        balanceamount = balanceamount.substringAfterLast(":") // Remove the "Balance:" prefix
-//        val totalAmount = balanceamount.toFloat()
-//
-//        val newBalanceAmount = totalAmount - amount
-//        val finalAmount = "Balance: $newBalanceAmount"
-//        vendorBalanceTV.text = finalAmount
-//    }
+        val databasename=getSharedPreference(this,"databasename").toString()
+        val vendor=Vendor(0,vendorName,category,vendorNote,estimatedAmount,vendorBalance,"","",vendorPhone,vendorEmail,vendorWebsite,vendorAddress)
+        val db=LocalDatabase(this,databasename)
+        db.createVendor(vendor)
+        Toast.makeText(this, "Vendor Added successfully", Toast.LENGTH_SHORT).show()
+        finish()
+    }
 }

@@ -116,7 +116,7 @@ class BudgetDetails : AppCompatActivity(){
         val db=LocalDatabase(this,databasename)
         val budget=Budget(id.toLong(),name,category,note,Totalamount,balance,"","")
         db.createBudget(budget)
-        Toast.makeText(this, "Budegt Added successfully", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Budget Added successfully", Toast.LENGTH_SHORT).show()
         finish()
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

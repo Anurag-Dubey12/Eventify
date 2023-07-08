@@ -5,11 +5,13 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
+import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -46,26 +48,33 @@ class BudgetDataHolderActivity : AppCompatActivity(){
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-//        val budgetDetails=BudgetDetails()
         budgetlist= mutableListOf()
-//        adapter= BudgetDataHolderAdapter( budgetlist)
-        recyclerView.layoutManager=LinearLayoutManager(this)
-//        recyclerView.adapter=adapter
 
         budgetAdd.setOnClickListener {
             Intent(this,BudgetDetails::class.java).also { startActivity(it) }
         }
 
         swipeRefreshLayout.setOnRefreshListener {
-            val databasename=getSharedPreference(this,"databasename").toString()
-            val databasehelper = LocalDatabase(this, databasename)
-            val BudgetList = databasehelper.getAllBudgets()
-            if(BudgetList!=null){
-                adapter = BudgetDataHolderAdapter(BudgetList)
-                recyclerView.adapter = adapter
-                recyclerView.layoutManager = LinearLayoutManager(this)
+            Handler().postDelayed({
+                val databasename=getSharedPreference(this,"databasename").toString()
+                val databasehelper = LocalDatabase(this, databasename)
+                val BudgetList = databasehelper.getAllBudgets()
+                if(BudgetList!=null){
+                    adapter = BudgetDataHolderAdapter(BudgetList)
+                    recyclerView.adapter = adapter
+                    recyclerView.layoutManager = LinearLayoutManager(this)
+            }
                 swipeRefreshLayout.isRefreshing=false
-        }}
+
+        },3000)
+        }
+        swipeRefreshLayout.setColorSchemeResources(
+            R.color.Coral,
+            R.color.Fuchsia,
+            R.color.Indigo
+        )
+        swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.Lemon_Chiffon)
+        swipeRefreshLayout.setProgressViewOffset(false, 0, 150)
         bottomnav.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.sort -> {

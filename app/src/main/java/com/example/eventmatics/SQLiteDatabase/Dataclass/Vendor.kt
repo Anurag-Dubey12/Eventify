@@ -11,5 +11,6 @@ data class Vendor(
     val paid: String ,
     val phonenumber:String,
     val emailid:String,
-    val website:String
+    val website:String,
+    val address:String
 )

@@ -8,4 +8,25 @@
     <color name="light_blue_200">#FF81D4FA</color>
     <color name="light_blue_600">#FF039BE5</color>
     <color name="light_blue_900">#FF01579B</color>
+    <color name="Electric_Blue">#00FFFF</color>
+    <color name="Coral">#FF7F50</color>
+    <color name="Magenta">#FF00FF</color>
+    <color name="Emerald_Green">#50C878</color>
+    <color name="Goldenrod">#DAA520</color>
+    <color name="Indigo">#4B0082</color>
+    <color name="Crimson">#DC143C</color>
+    <color name="Orchid">#DA70D6</color>
+    <color name="Teal">#008080</color>
+    <color name="Fuchsia">#FF00FF</color>
+    <color name="Light_Pink">#FFB6C1</color>
+    <color name="Lavender">#E6E6FA</color>
+    <color name="Peach_Puff">#FFDAB9</color>
+    <color name="Pale_Green">#98FB98</color>
+    <color name="Sky_Blue">#87CEEB</color>
+    <color name="Mint_Green">#98FF98</color>
+    <color name="Lemon_Chiffon">#FFFACD</color>
+    <color name="Periwinkle">#CCCCFF</color>
+    <color name="Aqua">#00FFFF</color>
+    <color name="Lavender_Blush">#FFF0F5</color>
+
 </resources>
