@@ -79,10 +79,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var widgetButton: Button
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
-//    val database = FirebaseDatabase.getInstance()
-//    val dbRef = database.reference
-
-
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -112,7 +108,7 @@ class MainActivity : AppCompatActivity() {
         val actionBarDrawerToggle = ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close)
         drawerLayout.addDrawerListener(actionBarDrawerToggle)
         actionBarDrawerToggle.syncState()
-//        dbRef=FirebaseFirestore.getInstance()
+
         taskImageButton.setOnClickListener {
             Intent(this,TaskDataHolderActivity::class.java).also {
                 startActivity(it)
@@ -165,6 +161,7 @@ class MainActivity : AppCompatActivity() {
             addWidgetToHomeScreen()
         }
 
+//        taskImageButton.tooltipText="Click To Add Task Value"
         swipeRefreshLayout.setOnRefreshListener {
             val databasename=getSharedPreference(this,"databasename").toString()
             val databasehelper = LocalDatabase(this, databasename)
@@ -204,6 +201,13 @@ class MainActivity : AppCompatActivity() {
             adapter.notifyDataSetChanged()
             swipeRefreshLayout.isRefreshing=false
         }
+        swipeRefreshLayout.setColorSchemeResources(
+            R.color.Coral,
+            R.color.Fuchsia,
+            R.color.Indigo
+        )
+        swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.Lemon_Chiffon)
+        swipeRefreshLayout.setProgressViewOffset(false, 0, 150)
 
         showEventData()
         navigationDrawershow()

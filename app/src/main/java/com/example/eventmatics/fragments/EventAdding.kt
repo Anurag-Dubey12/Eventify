@@ -8,6 +8,7 @@ import android.database.Cursor
 import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDialog
 import androidx.fragment.app.FragmentManager
@@ -34,11 +35,7 @@ class EventAdding(context: Context, private val fragmentManager: FragmentManager
     private lateinit var eventTime: TextInputEditText
     private lateinit var eventBudget: TextInputEditText
     private lateinit var createButton: Button
-    private lateinit var dbRef: DatabaseReference
 
-    init {
-        dbRef = FirebaseDatabase.getInstance().reference
-    }
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +47,6 @@ class EventAdding(context: Context, private val fragmentManager: FragmentManager
         createButton = findViewById(R.id.eventcreatebut)!!
         val window = window
         window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-//        dbRef=FirebaseFirestore.getInstance()
         //SQLite Database
 
         eventDate.setOnClickListener {
@@ -105,10 +101,6 @@ class EventAdding(context: Context, private val fragmentManager: FragmentManager
         timePicker.show(fragmentManager, "TAG_TIME_PICKER")
     }
     private fun showDatePicker() {
-        val calendar = Calendar.getInstance()
-//        val day = calendar.get(Calendar.DAY_OF_MONTH)
-//        val month = calendar.get(Calendar.MONTH)
-//        val year = calendar.get(Calendar.YEAR)
 
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setTitleText("Select Date")

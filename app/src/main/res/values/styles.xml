@@ -1,12 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <style name="Widget.Eventmatics.AppWidget.Container" parent="android:Widget">
-        <item name="android:id">@android:id/background</item>
-        <item name="android:background">?android:attr/colorBackground</item>
+    <style name="CustomDateTimePickerDialog" parent="ThemeOverlay.MaterialComponents.Dialog">
+        <item name="android:background">@color/Aqua</item>
+        <item name="android:windowBackground">@color/Sky_Blue</item>
+        <item name="android:windowMinWidthMajor">@dimen/custom_picker_width</item>
+        <item name="android:windowMinWidthMinor">@dimen/custom_picker_width</item>
+        <item name="android:windowAnimationStyle">@style/CustomPickerAnimation</item>
     </style>
 
-    <style name="Widget.Eventmatics.AppWidget.InnerView" parent="android:Widget">
-        <item name="android:background">?android:attr/colorBackground</item>
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
+    <style name="CustomPickerAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_in_bottom</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_bottom</item>
     </style>
+
 </resources>
