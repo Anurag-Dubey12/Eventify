@@ -41,16 +41,16 @@
             android:name=".NavigationDrawer.ProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".Event_Data_Holder.GuestDataHolderActivity"
+            android:name=".Events_Data_Holder_Activity.GuestDataHolderActivity"
             android:exported="false" />
         <activity
-            android:name=".Event_Data_Holder.VendorDataHolderActivity"
+            android:name=".Events_Data_Holder_Activity.VendorDataHolderActivity"
             android:exported="false" />
         <activity
-            android:name=".Event_Data_Holder.BudgetDataHolderActivity"
+            android:name=".Events_Data_Holder_Activity.BudgetDataHolderActivity"
             android:exported="false" />
         <activity
-            android:name=".Event_Data_Holder.TaskDataHolderActivity"
+            android:name=".Events_Data_Holder_Activity.TaskDataHolderActivity"
             android:exported="false" />
         <activity
             android:name=".Navigation.navigation"

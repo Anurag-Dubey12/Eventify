@@ -1,8 +1,10 @@
 package com.example.eventmatics.Event_Details_Activity
 
+import android.content.ContentValues.TAG
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
@@ -20,6 +22,8 @@ import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDat
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Task
 import com.example.eventmatics.data_class.SpinnerItem
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import java.util.Calendar
 
 class TaskDetails : AppCompatActivity(){
@@ -153,9 +157,21 @@ class TaskDetails : AppCompatActivity(){
              Task_Status="Completed"
         }
         val Task=Task(0,taskname,category,TaskNoteET,Task_Status,taskdate)
-        Db.createTask(Task)
-        Toast.makeText(this, "Task Added successfully", Toast.LENGTH_SHORT).show()
+//        Db.createTask(Task)
+        val db= Firebase.firestore
+        db.collection(databasename)
+            .document("Task")
+            .set(Task)
+            .addOnSuccessListener {
+                Toast.makeText(this, "Task Added successfully", Toast.LENGTH_SHORT).show()
+                finish()
+            }
+            .addOnFailureListener { e ->
+                // Error creating event
+                Toast.makeText(this, "Failed to create event", Toast.LENGTH_SHORT).show()
+                Log.e(TAG, "Error creating event", e)
+            }
+//        Toast.makeText(this, "Task Added successfully", Toast.LENGTH_SHORT).show()
 
-        finish()
     }
 }

@@ -1,11 +1,15 @@
 package com.example.eventmatics.fragments
 
 import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.database.Cursor
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
@@ -26,6 +30,8 @@ import com.google.android.material.timepicker.TimeFormat
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import java.util.Calendar
 
 class EventAdding(context: Context, private val fragmentManager: FragmentManager
@@ -47,8 +53,6 @@ class EventAdding(context: Context, private val fragmentManager: FragmentManager
         createButton = findViewById(R.id.eventcreatebut)!!
         val window = window
         window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        //SQLite Database
-
         eventDate.setOnClickListener {
         showDatePicker()
         }
@@ -64,6 +68,21 @@ class EventAdding(context: Context, private val fragmentManager: FragmentManager
             val event=Events(0,eventNameText,eventDateText,eventTimeText,eventBudgetText)
             val databaseHelper=LocalDatabase(context,eventNameText)
             databaseHelper.createEvent(event)
+            val db = Firebase.firestore
+            db.collection(eventNameText)
+                .document("Events")
+                .set(event)
+                .addOnSuccessListener {
+                    // Event created successfully
+                    Toast.makeText(context, "Event created successfully", Toast.LENGTH_SHORT).show()
+                    dismiss()
+                }
+                .addOnFailureListener { e ->
+                    // Error creating event
+                    Toast.makeText(context, "Failed to create event", Toast.LENGTH_SHORT).show()
+                    Log.e(TAG, "Error creating event", e)
+                }
+
             saveToSharedPreferences(context,"databasename",eventNameText)
             Toast.makeText(context, "Event created successfully", Toast.LENGTH_SHORT).show()
             dismiss()

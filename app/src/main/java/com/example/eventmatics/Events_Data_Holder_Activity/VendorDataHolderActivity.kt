@@ -1,4 +1,4 @@
-package com.example.eventmatics.Event_Data_Holder
+package com.example.eventmatics.Events_Data_Holder_Activity
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -14,57 +14,60 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.example.eventmatics.Adapter.GuestApdater
-import com.example.eventmatics.Event_Details_Activity.GuestDetails
+import com.example.eventmatics.Adapter.VendorDataHolderClass
+import com.example.eventmatics.Event_Details_Activity.VendorDetails
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class GuestDataHolderActivity : AppCompatActivity() {
+class VendorDataHolderActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
-    lateinit var guestAdd: FloatingActionButton
+    lateinit var vendorAdd: FloatingActionButton
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
     lateinit var bottomnav: BottomNavigationView
-    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    lateinit var adapter:VendorDataHolderClass
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_guest_data_holder)
-        recyclerView = findViewById(R.id.guestDatarec)
-        guestAdd=findViewById(R.id.fab)
+        setContentView(R.layout.activity_vendor_data_holder)
+        recyclerView = findViewById(R.id.vendorDatarec)
+        vendorAdd=findViewById(R.id.fab)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         bottomnav=findViewById(R.id.bottomNavigationView)
-        swipeRefreshLayout= findViewById(R.id.swipeRefreshLayout)
         bottomnav.background=null
         //Action Bar
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        guestAdd.setOnClickListener {
-            Intent(this,GuestDetails::class.java).also { startActivity(it) }
+        vendorAdd.setOnClickListener {
+            Intent(this, VendorDetails::class.java).also { startActivity(it) }
         }
+
         bottomnav.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.sort -> {
                     showSortOptions()
                     true
                 }
-
+                R.id.Filter -> {
+                    showfilteroption()
+                    true
+                }
                 else -> false
             }
         }
-        showData()
+        swipeRefreshLayout=findViewById(R.id.swipeRefreshLayout)
         swipeRefreshLayout.setOnRefreshListener {
             Handler().postDelayed({
                 val databasename=getSharedPreference(this,"databasename").toString()
                 val db=LocalDatabase(this,databasename)
-                val GuestList=db.getAllGuests()
-                if(GuestList!=null){
-                    val adapter=GuestApdater(GuestList)
+                val vendorlist=db.getAllVendors()
+                if(vendorlist!=null){
+                    adapter=VendorDataHolderClass(vendorlist)
                     recyclerView.adapter=adapter
                     recyclerView.layoutManager=LinearLayoutManager(this)
-                    adapter.notifyDataSetChanged()
                 }
-                swipeRefreshLayout.isRefreshing=false
+                    swipeRefreshLayout.isRefreshing=false
             },3000)
         }
         swipeRefreshLayout.setColorSchemeResources(
@@ -74,22 +77,38 @@ class GuestDataHolderActivity : AppCompatActivity() {
         )
         swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.Lemon_Chiffon)
         swipeRefreshLayout.setProgressViewOffset(false, 0, 150)
+        showData()
     }
-    fun getSharedPreference(context: Context, key: String): String? {
-        val sharedPref = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
-        return sharedPref.getString(key, null)
-    }
-    fun showData(){
+
+    private fun showData() {
         val databasename=getSharedPreference(this,"databasename").toString()
         val db=LocalDatabase(this,databasename)
-        val GuestList=db.getAllGuests()
-        if(GuestList!=null){
-            val adapter=GuestApdater(GuestList)
+        val vendorlist=db.getAllVendors()
+        if(vendorlist!=null){
+            adapter=VendorDataHolderClass(vendorlist)
             recyclerView.adapter=adapter
             recyclerView.layoutManager=LinearLayoutManager(this)
-            adapter.notifyDataSetChanged()
         }
     }
+    fun getSharedPreference(context: Context, key:String):String?{
+        val sharedvalue=context.getSharedPreferences("Database", Context.MODE_PRIVATE)
+        return sharedvalue.getString(key,null)
+    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return  when(item.itemId){
+            android.R.id.home->{
+                onBackPressed()
+                true
+            }
+
+            else->super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun showfilteroption() {
+
+    }
+
     private fun showSortOptions() {
         val dialogBuilder = AlertDialog.Builder(this)
         val view = LayoutInflater.from(this).inflate(R.layout.sortpopup, null)
@@ -106,37 +125,19 @@ class GuestDataHolderActivity : AppCompatActivity() {
         dialog.show()
 
         nameAscending.setOnClickListener {
-//            budgetlist.sortBy { it.eventName }
-//            adapter.notifyDataSetChanged()
             dialog.dismiss()
         }
 
         nameDescending.setOnClickListener {
-//            budgetlist.sortByDescending { it.eventName }
-//            adapter.notifyDataSetChanged()
             dialog.dismiss()
         }
 
         amountAscending.setOnClickListener {
-//            budgetlist.sortBy { it.amount }
-//            adapter.notifyDataSetChanged()
             dialog.dismiss()
         }
 
         amountDescending.setOnClickListener {
-//            budgetlist.sortByDescending { it.amount }
-//            adapter.notifyDataSetChanged()
             dialog.dismiss()
-        }
-    }
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return  when(item.itemId){
-            android.R.id.home->{
-                onBackPressed()
-                true
-            }
-
-            else->super.onOptionsItemSelected(item)
         }
     }
 }
