@@ -22,6 +22,8 @@ import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDat
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Task
 import com.example.eventmatics.data_class.SpinnerItem
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.util.Calendar
@@ -138,6 +140,7 @@ class TaskDetails : AppCompatActivity(){
         }
     }
 
+
     fun getSharedPreference(context: Context, key: String): String?{
         val sharedvalue=context.getSharedPreferences("Database",Context.MODE_PRIVATE)
         return sharedvalue.getString(key,null)
@@ -156,22 +159,11 @@ class TaskDetails : AppCompatActivity(){
         if(TaskCombut.isSelected){
              Task_Status="Completed"
         }
-        val Task=Task(0,taskname,category,TaskNoteET,Task_Status,taskdate)
-//        Db.createTask(Task)
-        val db= Firebase.firestore
-        db.collection(databasename)
-            .document("Task")
-            .set(Task)
-            .addOnSuccessListener {
-                Toast.makeText(this, "Task Added successfully", Toast.LENGTH_SHORT).show()
-                finish()
-            }
-            .addOnFailureListener { e ->
-                // Error creating event
-                Toast.makeText(this, "Failed to create event", Toast.LENGTH_SHORT).show()
-                Log.e(TAG, "Error creating event", e)
-            }
-//        Toast.makeText(this, "Task Added successfully", Toast.LENGTH_SHORT).show()
 
-    }
-}
+        val Task=Task(0,taskname,category,TaskNoteET,Task_Status,taskdate)
+        Db.createTask(Task)
+        Toast.makeText(this, "Task Added successfully", Toast.LENGTH_SHORT).show()
+
+        finish()
+
+}}

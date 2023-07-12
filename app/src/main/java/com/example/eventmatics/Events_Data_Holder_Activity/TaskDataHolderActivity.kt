@@ -23,6 +23,10 @@ import com.example.eventmatics.SQLiteDatabase.Dataclass.Events
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Task
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
@@ -33,7 +37,6 @@ class TaskDataHolderActivity : AppCompatActivity() {
     private lateinit var adapter: TaskDataHolderData
     private lateinit var recyclerView: RecyclerView
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    private val tasklist: MutableList<Task> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,97 +63,36 @@ class TaskDataHolderActivity : AppCompatActivity() {
             }
         }
         swipeRefreshLayout=findViewById(R.id.swipeRefreshLayout)
-//        swipeRefreshLayout.setOnRefreshListener {
-//            val databsename=getSharedPreference(this,"databasename").toString()
-//            val db=LocalDatabase(this,databsename)
-//            val tasklist=db.getAllTasks()
-//            if(tasklist!=null){
-//                //Recycler view
-//                adapter = TaskDataHolderData(tasklist)
-//                recyclerView?.adapter = adapter
-//                recyclerView.layoutManager = LinearLayoutManager(this)
-//                swipeRefreshLayout.isRefreshing=false
-//            }
-//        }
+
         swipeRefreshLayout.setOnRefreshListener {
-            Handler().postDelayed({
-                val databsename=getSharedPreference(this,"databasename").toString()
-
-                val db= Firebase.firestore
-                val documentref=db.collection(databsename).document("Task")
-                documentref.get()
-                    .addOnSuccessListener { document->
-                        if(document!=null && document.exists()){
-                            val task=document.toObject(Task::class.java)
-                            task?.let {
-                                tasklist.clear()
-                                tasklist.add(it)
-                                adapter.notifyDataSetChanged()
-                            }
-
-                        }
-                        else{
-                            Log.d(TAG, "Document not found")
-
-                        }
-                    }
-                    .addOnFailureListener { e ->
-                        // Error fetching event
-                        Log.e(TAG, "Error fetching event", e)
-                    }
+            val databsename=getSharedPreference(this,"databasename").toString()
+            val db=LocalDatabase(this,databsename)
+            val tasklist=db.getAllTasks()
+            if(tasklist!=null){
+                //Recycler view
+                adapter = TaskDataHolderData(tasklist)
+                recyclerView?.adapter = adapter
+                recyclerView.layoutManager = LinearLayoutManager(this)
                 swipeRefreshLayout.isRefreshing=false
-
-            },3000)
-
+            }
         }
-//        showTaskData()
-        fetchdata()
-    }
 
-    private fun fetchdata() {
-        val databsename = getSharedPreference(this, "databasename").toString()
-
-        val db = Firebase.firestore
-        val documentref = db.collection(databsename).document("Task")
-        documentref.get()
-            .addOnSuccessListener { document ->
-                if (document != null && document.exists()) {
-                    val task = document.toObject(Task::class.java)
-                    task?.let {
-                        tasklist.clear()
-                        tasklist.add(it)
-                        // Initialize the adapter if it is not already initialized
-                        if (!::adapter.isInitialized) {
-                            adapter = TaskDataHolderData(tasklist)
-                            recyclerView.adapter = adapter
-                            recyclerView.layoutManager = LinearLayoutManager(this)
-                        } else {
-                            adapter.notifyDataSetChanged()
-                        }
-                    }
-                } else {
-                    Log.d(TAG, "Document not found")
-                }
-            }
-            .addOnFailureListener { e ->
-                // Error fetching event
-                Log.e(TAG, "Error fetching event", e)
-            }
+        showTaskData()
     }
 
 
-//    private fun showTaskData() {
-//        val databsename=getSharedPreference(this,"databasename").toString()
-//        val db=LocalDatabase(this,databsename)
-//        val tasklist=db.getAllTasks()
-//        if(tasklist!=null){
-//            //Recycler view
-//            adapter = TaskDataHolderData(tasklist)
-//            recyclerView?.adapter = adapter
-//            recyclerView.layoutManager = LinearLayoutManager(this)
-//            swipeRefreshLayout.isRefreshing=false
-//        }
-//    }
+    private fun showTaskData() {
+        val databsename=getSharedPreference(this,"databasename").toString()
+        val db=LocalDatabase(this,databsename)
+        val tasklist=db.getAllTasks()
+        if(tasklist!=null){
+            //Recycler view
+            adapter = TaskDataHolderData(tasklist)
+            recyclerView?.adapter = adapter
+            recyclerView.layoutManager = LinearLayoutManager(this)
+            swipeRefreshLayout.isRefreshing=false
+        }
+    }
 
     fun getSharedPreference(context:Context,key:String):String?{
         val sharedvalue=context.getSharedPreferences("Database",Context.MODE_PRIVATE)
@@ -192,10 +134,6 @@ class TaskDataHolderActivity : AppCompatActivity() {
         return  when(item.itemId){
             android.R.id.home->{
                 onBackPressed()
-                true
-            }
-            R.id.Check->{
-//                AddTaskValue()
                 true
             }
             else->super.onOptionsItemSelected(item)

@@ -255,12 +255,13 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         var event: Events? = null
 
         if (cursor.moveToFirst()) {
+            val id=cursor.getLong(cursor.getColumnIndex(COLUMN_ID))
             val eventName = cursor.getString(cursor.getColumnIndex(Event_Name))
             val eventDate = cursor.getString(cursor.getColumnIndex(Event_Date))
             val eventTime = cursor.getString(cursor.getColumnIndex(Event_Time))
             val eventBudget = cursor.getString(cursor.getColumnIndex(Event_Budget))
 
-            event = Events(eventId.toLong(), eventName, eventDate, eventTime, eventBudget)
+            event = Events( id,eventName, eventDate, eventTime, eventBudget)
         }
 
         cursor.close()
@@ -268,7 +269,7 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
     }
 
 
-    // Update an event
+//     Update an event
     fun updateEvent(event: Events): Int {
         val db = writableDatabase
         val values = ContentValues().apply {
@@ -287,7 +288,7 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         return rowsAffected
     }
 
-    // Delete an event
+//     Delete an event
     fun deleteEvent(event: Events): Int {
         val db = writableDatabase
         val rowsAffected = db.delete(
@@ -332,7 +333,7 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
                     val note = it.getString(it.getColumnIndex(Task_Note))
                     val status = it.getString(it.getColumnIndex(Task_Status))
                     val date = it.getString(it.getColumnIndex(Task_Date))
-                    val task = Task(id, name, category, note, status, date)
+                    val task = Task( id,name, category, note, status, date)
                     tasks.add(task)
                 } while (it.moveToNext())
             }
@@ -350,13 +351,14 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         var task: Task? = null
 
         if (cursor.moveToFirst()) {
+            val id = cursor.getLong(cursor.getColumnIndex(COLUMN_ID))
             val taskName = cursor.getString(cursor.getColumnIndex(Task_Name))
             val taskCategory = cursor.getString(cursor.getColumnIndex(Task_Category))
             val taskNote = cursor.getString(cursor.getColumnIndex(Task_Note))
             val taskStatus = cursor.getString(cursor.getColumnIndex(Task_Status))
             val taskDate = cursor.getString(cursor.getColumnIndex(Task_Date))
 
-            task = Task(taskId.toLong(), taskName, taskCategory, taskNote, taskStatus, taskDate)
+            task = Task( id,taskName, taskCategory, taskNote, taskStatus, taskDate)
         }
 
         cursor.close()
@@ -364,7 +366,7 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
     }
 
 
-    // Update a task
+//     Update a task
     fun updateTask(task: Task): Int {
         val db = writableDatabase
         val values = ContentValues().apply {

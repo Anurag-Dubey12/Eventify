@@ -68,25 +68,13 @@ class EventAdding(context: Context, private val fragmentManager: FragmentManager
             val event=Events(0,eventNameText,eventDateText,eventTimeText,eventBudgetText)
             val databaseHelper=LocalDatabase(context,eventNameText)
             databaseHelper.createEvent(event)
-            val db = Firebase.firestore
-            db.collection(eventNameText)
-                .document("Events")
-                .set(event)
-                .addOnSuccessListener {
-                    // Event created successfully
-                    Toast.makeText(context, "Event created successfully", Toast.LENGTH_SHORT).show()
-                    dismiss()
-                }
-                .addOnFailureListener { e ->
-                    // Error creating event
-                    Toast.makeText(context, "Failed to create event", Toast.LENGTH_SHORT).show()
-                    Log.e(TAG, "Error creating event", e)
-                }
 
             saveToSharedPreferences(context,"databasename",eventNameText)
             Toast.makeText(context, "Event created successfully", Toast.LENGTH_SHORT).show()
             dismiss()
         }
+
+
     }
 
     fun saveToSharedPreferences(context: Context, key: String, value: String) {
@@ -132,7 +120,7 @@ class EventAdding(context: Context, private val fragmentManager: FragmentManager
             val selectedDay = selectedCalendar.get(Calendar.DAY_OF_MONTH)
             val selectedMonth = selectedCalendar.get(Calendar.MONTH)
             val selectedYear = selectedCalendar.get(Calendar.YEAR)
-            val formattedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
+            val formattedDate = "$selectedYear/${selectedMonth + 1}/$selectedDay"
             eventDate.setText(formattedDate)
         }
         datePicker.show(fragmentManager, "datePicker")

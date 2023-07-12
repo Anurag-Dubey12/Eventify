@@ -8,7 +8,4 @@ data class Events(
     val Date:String,
     val time:String,
     val budget:String
-){
-    constructor() : this(0,"", "", "", "")
-
-}
+)

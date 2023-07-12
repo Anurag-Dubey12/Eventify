@@ -7,6 +7,4 @@ data class Task(
     val taskNote: String,
     val taskStatus: String,
     val taskDate: String,
-){
-    constructor() : this(0,"", "", "", "","")
-}
+)

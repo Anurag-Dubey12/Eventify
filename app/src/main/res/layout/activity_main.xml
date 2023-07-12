@@ -39,16 +39,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
-            <TextView
-                android:id="@+id/EventTimer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:textAlignment="center"
-                android:textColor="@color/black"
-                android:background="@color/light_blue"
-                android:hint="Event Timer"/>
+                <TextView
+                    android:id="@+id/EventTimerDisplay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
+                    android:background="@color/light_blue"
+                    android:hint="Event Timer"/>
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
