@@ -160,8 +160,6 @@ class MainActivity : AppCompatActivity() {
         }
         eventaddbut.setOnClickListener {
             val eventadding=EventAdding(this,supportFragmentManager)
-//            eventadding.window?.setBackgroundDrawable(ColorDrawable(Color.YELLOW))
-
             eventadding.show()
         }
         widgetButton.setOnClickListener {
