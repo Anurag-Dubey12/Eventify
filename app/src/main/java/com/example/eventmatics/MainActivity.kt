@@ -40,6 +40,7 @@ import com.example.eventmatics.NavigationDrawer.ProfileActivity
 import com.example.eventmatics.NavigationDrawer.SettingActivity
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Events
+import com.example.eventmatics.fragments.AllDatabase
 import com.example.eventmatics.fragments.EventAdding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -333,7 +334,8 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_manage_event->{
-
+                    val EventName=AllDatabase(this)
+                    EventName.show()
                     true
                 }
                 else -> false

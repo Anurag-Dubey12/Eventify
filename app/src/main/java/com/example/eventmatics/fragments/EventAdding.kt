@@ -19,7 +19,9 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.eventmatics.R
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.DatabaseAdapter
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseNameHolder
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseSingleton
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseSingleton.databaseHelper
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Events
@@ -66,9 +68,11 @@ class EventAdding(context: Context, private val fragmentManager: FragmentManager
             val eventBudgetText = eventBudget.text.toString()
 
             val event=Events(0,eventNameText,eventDateText,eventTimeText,eventBudgetText)
+            val EventNameHolder=DatabaseNameHolder(0,eventNameText,eventDateText)
             val databaseHelper=LocalDatabase(context,eventNameText)
+            val EventDatabaseHelper=DatabaseAdapter(context,eventNameText)
             databaseHelper.createEvent(event)
-
+            EventDatabaseHelper.createDatabase(EventNameHolder)
             saveToSharedPreferences(context,"databasename",eventNameText)
             Toast.makeText(context, "Event created successfully", Toast.LENGTH_SHORT).show()
             dismiss()
