@@ -21,7 +21,11 @@ class EventLayoutAdapter(val eventdata:List<Events>,
     override fun onBindViewHolder(holder: EventViewHolder, position: Int) {
         val current=eventdata[position]
         holder.bind(current)
-        holder.itemView.setOnClickListener { onItemClickListener(position) }
+//        holder.itemView.setOnClickListener { onItemClickListener(position) }
+        holder.itemedit.setOnClickListener {
+            // Call the onItemClickListener and pass the position or any other relevant data.
+            onItemClickListener(position)
+        }
     }
 
 

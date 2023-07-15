@@ -139,17 +139,19 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        if(oldVersion<2){
-        db?.execSQL("DROP TABLE IF EXISTS $TABLE_Event")
-            val createEventTableQuery = "CREATE TABLE $TABLE_Event (" +
-                    "$COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    "$Event_Name TEXT," +
-                    "$Event_Date TEXT," +
-                    "$Event_Time TEXT," +
-                    "$Event_Budget TEXT" +
-                    ")"
-            db?.execSQL(createEventTableQuery)
-        }
+//        if(oldVersion<2){
+//        db?.execSQL("DROP TABLE IF EXISTS $TABLE_Event")
+//            val createEventTableQuery = "CREATE TABLE $TABLE_Event (" +
+//                    "$COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT," +
+//                    "$Event_Name TEXT," +
+//                    "$Event_Date TEXT," +
+//                    "$Event_Time TEXT," +
+//                    "$Event_Budget TEXT" +
+//                    ")"
+//            db?.execSQL(createEventTableQuery)
+//        }
+                db?.execSQL("DROP TABLE IF EXISTS $TABLE_Event")
+
         if(oldVersion<3){
             db?.execSQL("DROP TABLE IF EXISTS $TABLE_TASK")
             val createTaskTableQuery = "CREATE TABLE $TABLE_TASK (" +

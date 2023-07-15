@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.icu.text.SimpleDateFormat
@@ -46,19 +45,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import java.time.Duration
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
@@ -160,7 +147,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         eventaddbut.setOnClickListener {
-            val eventadding=EventAdding(this,supportFragmentManager)
+            val eventadding=EventAdding(this,supportFragmentManager,null)
             eventadding.show()
         }
         widgetButton.setOnClickListener {
@@ -200,10 +187,10 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this,"Event Not Found",Toast.LENGTH_SHORT).show()
                 }
                 val adapter = EventLayoutAdapter(eventList){ position ->
-                    Toast.makeText(this,"Your click $position",Toast.LENGTH_SHORT).show()
-                    val eventadding=EventAdding(this,supportFragmentManager)
-                    Intent().putExtra("Pos",position)
-                    eventadding.show()                }
+                    val eventadding=EventAdding(this,supportFragmentManager,position)
+//                    val bundle = Bundle()
+//                    bundle.putInt("Pos", position)
+                    eventadding.show()}
                 eventRecyclerView.adapter = adapter
                 eventRecyclerView.layoutManager = LinearLayoutManager(this)
                 adapter.notifyDataSetChanged()
@@ -276,9 +263,11 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Event Not Found", Toast.LENGTH_SHORT).show()
         }
 
-        val adapter = EventLayoutAdapter(eventList) { position ->
-            Toast.makeText(this, "Your click $position", Toast.LENGTH_SHORT).show()
-        }
+        val adapter = EventLayoutAdapter(eventList){ position ->
+            val eventadding=EventAdding(this,supportFragmentManager,position)
+//                    val bundle = Bundle()
+//                    bundle.putInt("Pos", position)
+            eventadding.show()}
         eventRecyclerView.adapter = adapter
         eventRecyclerView.layoutManager = LinearLayoutManager(this)
         adapter.notifyDataSetChanged()
