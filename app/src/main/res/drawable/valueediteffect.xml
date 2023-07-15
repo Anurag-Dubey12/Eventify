@@ -1,8 +1,23 @@
-<?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle">
-<!--    <solid android:color="#F8A81C"/>-->
-<!--    <size android:height="30dp" />-->
-    <stroke android:width="1sp" android:color="#58F4DD" />
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Outer glow stroke -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/transparent" />
+            <stroke
+                android:width="4dp"
+            android:color="@color/Lavender_Blush"
+            />
+        </shape>
+    </item>
 
-</shape>
+    <!-- Inner stroke -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/transparent" />
+            <stroke
+                android:width="1sp"
+            android:color="@color/Electric_Blue"
+            />
+        </shape>
+    </item>
+</layer-list>

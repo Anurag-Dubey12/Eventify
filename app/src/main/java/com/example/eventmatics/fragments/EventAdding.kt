@@ -43,8 +43,6 @@ class EventAdding(context: Context, private val fragmentManager: FragmentManager
     private lateinit var eventTime: TextInputEditText
     private lateinit var eventBudget: TextInputEditText
     private lateinit var createButton: Button
-
-    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.fragment_event_adding)
@@ -55,12 +53,9 @@ class EventAdding(context: Context, private val fragmentManager: FragmentManager
         createButton = findViewById(R.id.eventcreatebut)!!
         val window = window
         window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        eventDate.setOnClickListener {
-        showDatePicker()
-        }
-        eventTime.setOnClickListener {
-            showTimePicker()
-        }
+
+        eventDate.setOnClickListener { showDatePicker() }
+        eventTime.setOnClickListener { showTimePicker() }
         createButton.setOnClickListener {
             val eventNameText = eventName.text.toString()
             val eventDateText = eventDate.text.toString()
@@ -70,17 +65,15 @@ class EventAdding(context: Context, private val fragmentManager: FragmentManager
             val event=Events(0,eventNameText,eventDateText,eventTimeText,eventBudgetText)
             val EventNameHolder=DatabaseNameHolder(0,eventNameText,eventDateText)
             val databaseHelper=LocalDatabase(context,eventNameText)
-            val EventDatabaseHelper=DatabaseAdapter(context,eventNameText)
+//            val EventDatabaseHelper=DatabaseAdapter(context,eventNameText)
             databaseHelper.createEvent(event)
-            EventDatabaseHelper.createDatabase(EventNameHolder)
+//            EventDatabaseHelper.createDatabase(EventNameHolder)
             saveToSharedPreferences(context,"databasename",eventNameText)
             Toast.makeText(context, "Event created successfully", Toast.LENGTH_SHORT).show()
             dismiss()
         }
 
-
     }
-
     fun saveToSharedPreferences(context: Context, key: String, value: String) {
         val sharedPreferences = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
@@ -112,7 +105,7 @@ class EventAdding(context: Context, private val fragmentManager: FragmentManager
         timePicker.show(fragmentManager, "TAG_TIME_PICKER")
     }
     private fun showDatePicker() {
-
+        val calendar = Calendar.getInstance()
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setTitleText("Select Date")
             .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
@@ -124,7 +117,7 @@ class EventAdding(context: Context, private val fragmentManager: FragmentManager
             val selectedDay = selectedCalendar.get(Calendar.DAY_OF_MONTH)
             val selectedMonth = selectedCalendar.get(Calendar.MONTH)
             val selectedYear = selectedCalendar.get(Calendar.YEAR)
-            val formattedDate = "$selectedYear/${selectedMonth + 1}/$selectedDay"
+            val formattedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
             eventDate.setText(formattedDate)
         }
         datePicker.show(fragmentManager, "datePicker")

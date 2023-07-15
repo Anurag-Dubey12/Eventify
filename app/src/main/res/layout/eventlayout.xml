@@ -33,6 +33,11 @@
             android:textSize="20sp"
             android:layout_marginEnd="15dp"
             android:textColor="@color/black" />
+        <ImageView
+            android:id="@+id/itemedit"
+            android:layout_width="30sp"
+            android:layout_height="30sp"
+            android:src="@drawable/edit"/>
     </LinearLayout>
 
 </LinearLayout>

@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:logo="@drawable/back_arrow"
-        android:background="@color/light_purple"
+        android:background="@color/Lemon_Chiffon"
         android:title="Add Task"
         android:titleMarginStart="30sp"
  />
