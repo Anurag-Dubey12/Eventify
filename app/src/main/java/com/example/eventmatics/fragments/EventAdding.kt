@@ -46,6 +46,8 @@ class EventAdding(
         window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
         if (eventId != null) {
+
+
             // Retrieve data from SQLite using the eventId for editing
             val eventData = getEventDataFromSQLite(eventId)
             eventName.setText(eventData.name)
@@ -55,15 +57,52 @@ class EventAdding(
             eventBudget.setText(eventData.budget)
             createButton.visibility= View.GONE
             EditButton.visibility=View.VISIBLE
+//            EditButton.setOnClickListener {
+//                val databasename=getSharedPreference(context,"databasename").toString()
+//                val event=Events(0,eventName.toString(),eventDate.toString(),eventTime.toString(),eventBudget.toString())
+//                val databaseHelper=LocalDatabase(context,databasename)
+//                databaseHelper.updateEvent(event)
+//                Toast.makeText(context, "Event updated successfully", Toast.LENGTH_SHORT).show()
+//
+//                val previousEventName = getSharedPreference(context, "databasename").toString()
+//                val sharedPreferences = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
+//                val editor: SharedPreferences.Editor = sharedPreferences.edit()
+//                editor.remove(previousEventName)
+//                editor.apply()
+//
+//                saveToSharedPreferences(context,"databasename",eventName.toString())
+//
+//                dismiss()
+//            }
             EditButton.setOnClickListener {
-                val databasename=getSharedPreference(context,"databasename").toString()
-                val event=Events(0,eventName.toString(),eventDate.toString(),eventTime.toString(),eventBudget.toString())
-                val databaseHelper=LocalDatabase(context,databasename)
+                val eventNameText = eventName.text.toString()
+                val eventDateText = eventDate.text.toString()
+                val eventTimeText = eventTime.text.toString()
+                val eventBudgetText = eventBudget.text.toString()
+                val event = Events(0, eventNameText, eventDateText, eventTimeText, eventBudgetText)
+                val databaseHelper = LocalDatabase(context, eventNameText)
                 databaseHelper.updateEvent(event)
                 Toast.makeText(context, "Event updated successfully", Toast.LENGTH_SHORT).show()
-                saveToSharedPreferences(context,"databasename",eventName.toString())
+
+                // Remove the previous shared preference
+                val previousEventName = getSharedPreference(context, "databasename").toString()
+                val sharedPreferences = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
+                val editor: SharedPreferences.Editor = sharedPreferences.edit()
+                editor.remove(previousEventName)
+                editor.apply()
+
+                // Save the new shared preference
+                saveToSharedPreferences(context, "databasename", eventNameText)
+
+                // Set the updated values back to the TextInputEditText fields
+                eventName.setText(eventNameText)
+                eventDate.setText(eventDateText)
+                eventTime.setText(eventTimeText)
+                eventBudget.setText(eventBudgetText)
+
                 dismiss()
             }
+
         }
         eventDate.setOnClickListener { showDatePicker() }
         eventTime.setOnClickListener { showTimePicker() }
@@ -74,7 +113,6 @@ class EventAdding(
             val eventBudgetText = eventBudget.text.toString()
             val event=Events(0,eventNameText,eventDateText,eventTimeText,eventBudgetText)
             val databaseHelper=LocalDatabase(context,eventNameText)
-
 //            if (eventId != null) {
 //                // Updating an existing event
 //                databaseHelper.updateEvent(event)
@@ -87,8 +125,6 @@ class EventAdding(
             Toast.makeText(context, "Event created successfully", Toast.LENGTH_SHORT).show()
             saveToSharedPreferences(context,"databasename",eventNameText)
 //            }
-
-
             dismiss()
         }
 

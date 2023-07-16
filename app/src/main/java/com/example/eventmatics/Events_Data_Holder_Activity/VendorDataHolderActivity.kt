@@ -90,6 +90,18 @@ class VendorDataHolderActivity : AppCompatActivity() {
             recyclerView.layoutManager=LinearLayoutManager(this)
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        val databasename=getSharedPreference(this,"databasename").toString()
+        val db=LocalDatabase(this,databasename)
+        val vendorlist=db.getAllVendors()
+        if(vendorlist!=null){
+            adapter=VendorDataHolderClass(vendorlist)
+            recyclerView.adapter=adapter
+            recyclerView.layoutManager=LinearLayoutManager(this)
+        }
+    }
     fun getSharedPreference(context: Context, key:String):String?{
         val sharedvalue=context.getSharedPreferences("Database", Context.MODE_PRIVATE)
         return sharedvalue.getString(key,null)

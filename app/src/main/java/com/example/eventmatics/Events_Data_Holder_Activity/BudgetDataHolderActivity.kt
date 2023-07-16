@@ -102,6 +102,18 @@ class BudgetDataHolderActivity : AppCompatActivity(){
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        val databasename=getSharedPreference(this,"databasename").toString()
+        val databasehelper = LocalDatabase(this, databasename)
+        val BudgetList = databasehelper.getAllBudgets()
+        if(BudgetList!=null){
+            adapter = BudgetDataHolderAdapter(BudgetList)
+            recyclerView.adapter = adapter
+            recyclerView.layoutManager = LinearLayoutManager(this)
+        }
+    }
+
     @SuppressLint("MissingInflatedId")
     private fun showFilterOptions() {
         val dialogBuilder = AlertDialog.Builder(this)

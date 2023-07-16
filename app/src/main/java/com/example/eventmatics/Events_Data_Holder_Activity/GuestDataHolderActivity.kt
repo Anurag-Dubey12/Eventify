@@ -90,6 +90,19 @@ class GuestDataHolderActivity : AppCompatActivity() {
             adapter.notifyDataSetChanged()
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        val databasename=getSharedPreference(this,"databasename").toString()
+        val db=LocalDatabase(this,databasename)
+        val GuestList=db.getAllGuests()
+        if(GuestList!=null){
+            val adapter=GuestApdater(GuestList)
+            recyclerView.adapter=adapter
+            recyclerView.layoutManager=LinearLayoutManager(this)
+            adapter.notifyDataSetChanged()
+        }
+    }
     private fun showSortOptions() {
         val dialogBuilder = AlertDialog.Builder(this)
         val view = LayoutInflater.from(this).inflate(R.layout.sortpopup, null)

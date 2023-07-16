@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -70,7 +71,7 @@ class TaskDataHolderActivity : AppCompatActivity() {
             val tasklist=db.getAllTasks()
             if(tasklist!=null){
                 //Recycler view
-                adapter = TaskDataHolderData(tasklist)
+                adapter = TaskDataHolderData(this,tasklist)
                 recyclerView?.adapter = adapter
                 recyclerView.layoutManager = LinearLayoutManager(this)
                 swipeRefreshLayout.isRefreshing=false
@@ -80,14 +81,26 @@ class TaskDataHolderActivity : AppCompatActivity() {
         showTaskData()
     }
 
-
+    override fun onResume() {
+        super.onResume()
+        val databsename=getSharedPreference(this,"databasename").toString()
+        val db=LocalDatabase(this,databsename)
+        val tasklist=db.getAllTasks()
+        if(tasklist!=null){
+            //Recycler view
+            adapter = TaskDataHolderData(this,tasklist)
+            recyclerView?.adapter = adapter
+            recyclerView.layoutManager = LinearLayoutManager(this)
+            swipeRefreshLayout.isRefreshing=false
+        }
+    }
     private fun showTaskData() {
         val databsename=getSharedPreference(this,"databasename").toString()
         val db=LocalDatabase(this,databsename)
         val tasklist=db.getAllTasks()
         if(tasklist!=null){
             //Recycler view
-            adapter = TaskDataHolderData(tasklist)
+            adapter = TaskDataHolderData(this,tasklist)
             recyclerView?.adapter = adapter
             recyclerView.layoutManager = LinearLayoutManager(this)
             swipeRefreshLayout.isRefreshing=false

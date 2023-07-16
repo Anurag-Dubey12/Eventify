@@ -166,4 +166,10 @@ class TaskDetails : AppCompatActivity(){
 
         finish()
 
-}}
+}
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+    }
+}

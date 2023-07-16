@@ -8,7 +8,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Events
-import com.example.eventmatics.data_class.Eventlayourdata
 
 class EventLayoutAdapter(val eventdata:List<Events>,
                          private val onItemClickListener: (position: Int) -> Unit):RecyclerView.Adapter<EventLayoutAdapter.EventViewHolder>() {

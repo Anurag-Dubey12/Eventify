@@ -1,14 +1,19 @@
 package com.example.eventmatics.Adapter
 
+import android.content.Context
+import android.content.Intent
+import android.icu.text.Transliterator.Position
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView.OnItemClickListener
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.eventmatics.Event_Details_Activity.TaskDetails
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Task
 
-class TaskDataHolderData(private val dataList: List<Task>) :
+class TaskDataHolderData(private val context:Context,private val dataList: List<Task>) :
     RecyclerView.Adapter<TaskDataHolderData.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -20,6 +25,11 @@ class TaskDataHolderData(private val dataList: List<Task>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val data = dataList[position]
         holder.bind(data)
+        holder.itemView.setOnClickListener {
+            val intent= Intent(context,TaskDetails::class.java)
+            intent.putExtra("id",position)
+            context.startActivity(intent)
+        }
     }
 
     override fun getItemCount(): Int {
