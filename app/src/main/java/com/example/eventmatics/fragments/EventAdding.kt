@@ -2,6 +2,7 @@ package com.example.eventmatics.fragments
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.opengl.Visibility
 import android.os.Bundle
@@ -11,6 +12,7 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDialog
 import androidx.fragment.app.FragmentManager
+import com.example.eventmatics.MainActivity
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseNameHolder
@@ -122,6 +124,10 @@ class EventAdding(
 //            }
 //            else{
             databaseHelper.createEvent(event)
+            val dataAddedIntent = Intent("com.example.eventmatics.fragments")
+            context?.sendBroadcast(dataAddedIntent)
+            // Dismiss the dialog if needed
+            dismiss()
             Toast.makeText(context, "Event created successfully", Toast.LENGTH_SHORT).show()
             saveToSharedPreferences(context,"databasename",eventNameText)
 //            }

@@ -66,7 +66,22 @@ class TaskDetails : AppCompatActivity(){
         TaskPendingbut=findViewById(R.id.TaskPendingbut)
         TaskCombut=findViewById(R.id.Taskcombut)
 
+        val taskId = intent.getIntExtra("taskId", 1)
+        if (taskId != -1) {
 
+            val databasename = getSharedPreference(this, "databasename").toString()
+            val db = LocalDatabase(this, databasename)
+            val task = db.getTaskData(taskId)
+
+            if (task != null) {
+                // Update the fields in TaskDetails activity with the fetched data
+                TaskNameET.setText(task.taskName)
+                TaskNoteET.setText(task.taskNote)
+                taskdate.setText(task.taskDate)
+                // ...
+                // Update other fields accordingly
+            }
+        }
         TaskPendingbut.setOnClickListener {
             setButtonBackground(TaskPendingbut,true)
             setButtonBackground(TaskCombut,false)

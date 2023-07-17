@@ -26,8 +26,8 @@ class TaskDataHolderData(private val context:Context,private val dataList: List<
         val data = dataList[position]
         holder.bind(data)
         holder.itemView.setOnClickListener {
-            val intent= Intent(context,TaskDetails::class.java)
-            intent.putExtra("id",position)
+            val intent = Intent(context, TaskDetails::class.java).apply {
+                putExtra("taskId", data.id) }
             context.startActivity(intent)
         }
     }

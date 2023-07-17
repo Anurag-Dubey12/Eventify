@@ -3,15 +3,18 @@ package com.example.eventmatics
 import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
+import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.icu.text.SimpleDateFormat
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -70,8 +73,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var eventaddbut: AppCompatButton
     private lateinit var widgetButton: Button
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    private val eventList: MutableList<Events> = mutableListOf()
-    private lateinit var adapter:EventLayoutAdapter
+    private lateinit var dataAddedReceiver: BroadcastReceiver
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,6 +104,7 @@ class MainActivity : AppCompatActivity() {
         val actionBarDrawerToggle = ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close)
         drawerLayout.addDrawerListener(actionBarDrawerToggle)
         actionBarDrawerToggle.syncState()
+
 
         taskImageButton.setOnClickListener {
             Intent(this,TaskDataHolderActivity::class.java).also {
@@ -205,6 +209,26 @@ class MainActivity : AppCompatActivity() {
         )
         swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.Lemon_Chiffon)
         swipeRefreshLayout.setProgressViewOffset(false, 0, 150)
+
+        val filter=IntentFilter("com.example.eventmatics.fragments")
+        dataAddedReceiver=object :BroadcastReceiver(){
+            override fun onReceive(context: Context?, intent: Intent?) {
+                if(intent?.action=="com.example.eventmatics.fragments")
+                    swipeRefreshLayout.isRefreshing=true
+                showEventData()
+                swipeRefreshLayout.isRefreshing=false
+            }
+
+        }
+        registerReceiver(dataAddedReceiver, filter)
+
+        swipeRefreshLayout.post {
+            swipeRefreshLayout.isRefreshing = true
+            Handler(Looper.getMainLooper()).postDelayed({
+                showEventData()
+                swipeRefreshLayout.isRefreshing = false
+            }, 1000)
+        }
 //        showEventData()
         navigationDrawershow()
     }
@@ -218,117 +242,118 @@ class MainActivity : AppCompatActivity() {
         val sharedPref = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
         return sharedPref.getString(key, null)
     }
+    // Add this function in your MainActivity class
+
 
     @SuppressLint("Range")
-//     fun showEventData() {
-//        val databasename = getSharedPreference(this, "databasename").toString()
-//        val databasehelper = LocalDatabase(this, databasename)
-//        val eventList = databasehelper.getAllEvents()
-//        val Eventtimer = databasehelper.getEventData(1)
-//
-//        if (Eventtimer != null) {
-//            Eventshow.text = Eventtimer.name
-//            budgetShowTextView.text = Eventtimer.budget
-//
-//            // Calculate remaining time until the event date
-//            val eventDate = Eventtimer.Date
-//            val eventTime = Eventtimer.time
-//            val currentDate = Calendar.getInstance().time
-//            val eventDateTime = SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.getDefault()).parse("$eventDate $eventTime")
-//
-//            if (eventDateTime != null) {
-//                val remainingTimeInMillis = eventDateTime.time - currentDate.time
-//
-//                // Start the countdown timer
-//                countDownTimer?.cancel() // Cancel any existing timer to avoid overlapping
-//                countDownTimer = object : CountDownTimer(remainingTimeInMillis, 1000) {
-//                    override fun onTick(millisUntilFinished: Long) {
-//                        val days = millisUntilFinished / (24 * 60 * 60 * 1000)
-//                        val hours = (millisUntilFinished % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)
-//                        val minutes = (millisUntilFinished % (60 * 60 * 1000)) / (60 * 1000)
-//                        val seconds = (millisUntilFinished % (60 * 1000)) / 1000
-//                        val remainingTime = String.format("%02dd %02dh %02dm %02ds", days, hours, minutes, seconds)
-//                        EventTimerDisplay.text = remainingTime
-//
-//                    }
-//
-//                    override fun onFinish() {
-//                        EventTimerDisplay.text = "Event Started"
-//                    }
-//                }.start()
-//            } else {
-//                Log.e("CountdownError", "Error parsing event date and time.")
-//            }
-//        } else {
-//            Toast.makeText(this, "Event Not Found", Toast.LENGTH_SHORT).show()
-//        }
-//
-//        val adapter = EventLayoutAdapter(eventList){ position ->
-//            val eventadding=EventAdding(this,supportFragmentManager,position)
-////                    val bundle = Bundle()
-////                    bundle.putInt("Pos", position)
-//            eventadding.show()}
-//        eventRecyclerView.adapter = adapter
-//        eventRecyclerView.layoutManager = LinearLayoutManager(this)
-//        adapter.notifyDataSetChanged()
-//    }
+     fun showEventData() {
+        val databasename = getSharedPreference(this, "databasename").toString()
+        val databasehelper = LocalDatabase(this, databasename)
+        val eventList = databasehelper.getAllEvents()
+        val Eventtimer = databasehelper.getEventData(1)
 
-    override fun onResume() {
-        super.onResume()
-        Handler().postDelayed({
-            val databasename = getSharedPreference(this, "databasename").toString()
-            val databasehelper = LocalDatabase(this, databasename)
-            val eventList = databasehelper.getAllEvents()
-            val Eventtimer = databasehelper.getEventData(1)
+        if (Eventtimer != null) {
+            Eventshow.text = Eventtimer.name
+            budgetShowTextView.text = Eventtimer.budget
 
-            if (Eventtimer != null) {
-                Eventshow.text = Eventtimer.name
-                budgetShowTextView.text = Eventtimer.budget
+            // Calculate remaining time until the event date
+            val eventDate = Eventtimer.Date
+            val eventTime = Eventtimer.time
+            val currentDate = Calendar.getInstance().time
+            val eventDateTime = SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.getDefault()).parse("$eventDate $eventTime")
 
-                // Calculate remaining time until the event date
-                val eventDate = Eventtimer.Date
-                val eventTime = Eventtimer.time
-                val currentDate = Calendar.getInstance().time
-                val eventDateTime = SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.getDefault()).parse("$eventDate $eventTime")
+            if (eventDateTime != null) {
+                val remainingTimeInMillis = eventDateTime.time - currentDate.time
 
-                if (eventDateTime != null) {
-                    val remainingTimeInMillis = eventDateTime.time - currentDate.time
+                // Start the countdown timer
+                countDownTimer?.cancel() // Cancel any existing timer to avoid overlapping
+                countDownTimer = object : CountDownTimer(remainingTimeInMillis, 1000) {
+                    override fun onTick(millisUntilFinished: Long) {
+                        val days = millisUntilFinished / (24 * 60 * 60 * 1000)
+                        val hours = (millisUntilFinished % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)
+                        val minutes = (millisUntilFinished % (60 * 60 * 1000)) / (60 * 1000)
+                        val seconds = (millisUntilFinished % (60 * 1000)) / 1000
+                        val remainingTime = String.format("%02dd %02dh %02dm %02ds", days, hours, minutes, seconds)
+                        EventTimerDisplay.text = remainingTime
 
-                    // Start the countdown timer
-                    countDownTimer?.cancel() // Cancel any existing timer to avoid overlapping
-                    countDownTimer = object : CountDownTimer(remainingTimeInMillis, 1000) {
-                        override fun onTick(millisUntilFinished: Long) {
-                            val days = millisUntilFinished / (24 * 60 * 60 * 1000)
-                            val hours = (millisUntilFinished % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)
-                            val minutes = (millisUntilFinished % (60 * 60 * 1000)) / (60 * 1000)
-                            val seconds = (millisUntilFinished % (60 * 1000)) / 1000
-                            val remainingTime = String.format("%02dd %02dh %02dm %02ds", days, hours, minutes, seconds)
-                            EventTimerDisplay.text = remainingTime
+                    }
 
-                        }
-
-                        override fun onFinish() {
-                            EventTimerDisplay.text = "Event Started"
-                        }
-                    }.start()
-                } else {
-                    Log.e("CountdownError", "Error parsing event date and time.")
-                }
+                    override fun onFinish() {
+                        EventTimerDisplay.text = "Event Started"
+                    }
+                }.start()
             } else {
-                Toast.makeText(this, "Event Not Found", Toast.LENGTH_SHORT).show()
+                Log.e("CountdownError", "Error parsing event date and time.")
             }
+        } else {
+            Toast.makeText(this, "Event Not Found", Toast.LENGTH_SHORT).show()
+        }
 
-            val adapter = EventLayoutAdapter(eventList){ position ->
-                val eventadding=EventAdding(this,supportFragmentManager,position)
+        val adapter = EventLayoutAdapter(eventList){ position ->
+            val eventadding=EventAdding(this,supportFragmentManager,position)
 //                    val bundle = Bundle()
 //                    bundle.putInt("Pos", position)
-                eventadding.show()}
-            eventRecyclerView.adapter = adapter
-            eventRecyclerView.layoutManager = LinearLayoutManager(this)
-            adapter.notifyDataSetChanged()
-            swipeRefreshLayout.isRefreshing=false
-        },1000)
+            eventadding.show()}
+        eventRecyclerView.adapter = adapter
+        eventRecyclerView.layoutManager = LinearLayoutManager(this)
+        adapter.notifyDataSetChanged()
     }
+
+//    override fun onResume() {
+//        super.onResume()
+//            val databasename = getSharedPreference(this, "databasename").toString()
+//            val databasehelper = LocalDatabase(this, databasename)
+//            val eventList = databasehelper.getAllEvents()
+//            val Eventtimer = databasehelper.getEventData(1)
+//
+//            if (Eventtimer != null) {
+//                Eventshow.text = Eventtimer.name
+//                budgetShowTextView.text = Eventtimer.budget
+//
+//                // Calculate remaining time until the event date
+//                val eventDate = Eventtimer.Date
+//                val eventTime = Eventtimer.time
+//                val currentDate = Calendar.getInstance().time
+//                val eventDateTime = SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.getDefault()).parse("$eventDate $eventTime")
+//
+//                if (eventDateTime != null) {
+//                    val remainingTimeInMillis = eventDateTime.time - currentDate.time
+//
+//                    // Start the countdown timer
+//                    countDownTimer?.cancel() // Cancel any existing timer to avoid overlapping
+//                    countDownTimer = object : CountDownTimer(remainingTimeInMillis, 1000) {
+//                        override fun onTick(millisUntilFinished: Long) {
+//                            val days = millisUntilFinished / (24 * 60 * 60 * 1000)
+//                            val hours = (millisUntilFinished % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)
+//                            val minutes = (millisUntilFinished % (60 * 60 * 1000)) / (60 * 1000)
+//                            val seconds = (millisUntilFinished % (60 * 1000)) / 1000
+//                            val remainingTime = String.format("%02dd %02dh %02dm %02ds", days, hours, minutes, seconds)
+//                            EventTimerDisplay.text = remainingTime
+//
+//                        }
+//
+//                        override fun onFinish() {
+//                            EventTimerDisplay.text = "Event Started"
+//                        }
+//                    }.start()
+//                } else {
+//                    Log.e("CountdownError", "Error parsing event date and time.")
+//                }
+//            } else {
+//                Toast.makeText(this, "Event Not Found", Toast.LENGTH_SHORT).show()
+//            }
+//
+//            val adapter = EventLayoutAdapter(eventList){ position ->
+//                val eventadding=EventAdding(this,supportFragmentManager,position)
+////                    val bundle = Bundle()
+////                    bundle.putInt("Pos", position)
+//                eventadding.show()}
+//            eventRecyclerView.adapter = adapter
+//            eventRecyclerView.layoutManager = LinearLayoutManager(this)
+//            adapter.notifyDataSetChanged()
+////            swipeRefreshLayout.isRefreshing=false
+//
+//    }
 
 
     override fun onBackPressed() {
@@ -452,11 +477,9 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "WhatsApp is not installed on your device.", Toast.LENGTH_SHORT).show()
         }
     }
-
     override fun onDestroy() {
         super.onDestroy()
-        countDownTimer?.cancel()
+        // Unregister the broadcast receiver to avoid memory leaks
+        unregisterReceiver(dataAddedReceiver)
     }
-
-
 }
