@@ -228,7 +228,7 @@ class MainActivity : AppCompatActivity() {
             Handler(Looper.getMainLooper()).postDelayed({
                 showEventData()
                 swipeRefreshLayout.isRefreshing = false
-            }, 1000)
+            },1)
         }
         navigationDrawershow()
     }

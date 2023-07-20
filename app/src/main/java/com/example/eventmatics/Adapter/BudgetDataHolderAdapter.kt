@@ -36,11 +36,15 @@ class BudgetDataHolderAdapter(private val budgetList: List<Budget>) : RecyclerVi
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val eventNameTextView: TextView = itemView.findViewById(R.id.text_event_name)
+        private val Budget_title: TextView = itemView.findViewById(R.id.Budget_title)
+        private val Budget_Category: TextView = itemView.findViewById(R.id.Budget_Category)
         private val total_amount: TextView = itemView.findViewById(R.id.text_total_amount)
+        private val BudgetNote: TextView = itemView.findViewById(R.id.BudgetNote)
         fun bind(item: Budget) {
-            eventNameTextView.text = item.name
+            Budget_title.text = item.name
+            Budget_Category.text = item.category
             total_amount.text=item.estimatedAmount
+            BudgetNote.text = item.note
         }
     }
 }

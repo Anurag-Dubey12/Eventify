@@ -3,16 +3,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:cardCornerRadius="15sp"
+        app:cardElevation="5sp"
+        android:layout_marginBottom="10sp"
 >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-
+            <ImageView
+                android:layout_marginTop="5sp"
+                android:layout_width="65sp"
+                android:layout_height="65sp"
+                android:src="@drawable/budgetdata"
+                />
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -21,32 +29,24 @@
                 android:padding="16dp">
 
                 <TextView
-                    android:id="@+id/text_event_name"
+                    android:id="@+id/Budget_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Event Name"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/Budget_Category"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
-<!--                <TextView-->
-<!--                    android:id="@+id/text_pending_amount"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:text="Pending Amount"-->
-<!--                    android:textSize="14sp" />-->
-
-<!--                <TextView-->
-<!--                    android:id="@+id/text_transaction_info"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:textSize="14sp" />-->
-
             </LinearLayout>
 
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="#999999" />
+<!--            <View-->
+<!--                android:layout_width="1dp"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:background="#999999" />-->
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -59,39 +59,26 @@
                     android:id="@+id/text_total_amount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/total_amount"
                     android:textSize="16sp"
                     android:textStyle="bold" />
-
-<!--                <TextView-->
-<!--                    android:id="@+id/text_paid_amount"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:text="@string/paid_amount"-->
-<!--                    android:textSize="14sp" />-->
+                <TextView
+                    android:id="@+id/BudgetNote"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    android:textStyle="bold" />
             </LinearLayout>
 
         </LinearLayout>
-<!--        <LinearLayout-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:orientation="vertical"-->
-<!--            android:layout_gravity="center">-->
-<!--            -->
-<!--            <ImageView-->
-<!--                android:id="@+id/BudgetMoreInfo"-->
-<!--                android:layout_width="40sp"-->
-<!--                android:layout_height="40sp"-->
-<!--                android:layout_gravity="center"-->
-<!--                android:layout_marginTop="70sp"-->
-<!--                android:src="@drawable/drop_arrow"/>-->
-<!--            <TextView-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="@string/more"-->
-<!--                android:textSize="16sp" />-->
-<!--        </LinearLayout>-->
-
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"
+            />
     </androidx.cardview.widget.CardView>
+
+
 
 </RelativeLayout>

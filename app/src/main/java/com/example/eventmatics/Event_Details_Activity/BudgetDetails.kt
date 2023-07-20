@@ -11,6 +11,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.Toolbar
 import com.example.eventmatics.Adapter.CategoryAdapter
 import com.example.eventmatics.R
@@ -23,7 +24,7 @@ class BudgetDetails : AppCompatActivity(){
     lateinit var  balanceET: TextView
     lateinit var EstimatedEt: EditText
     lateinit var NoteET: EditText
-    lateinit var categoryselection: TextView
+    lateinit var categoryselection: AppCompatButton
 
     val spinnerItems = listOf(
         SpinnerItem("Accessories"),

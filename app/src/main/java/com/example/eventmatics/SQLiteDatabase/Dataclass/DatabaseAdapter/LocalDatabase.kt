@@ -302,8 +302,6 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         return rowsAffected
     }
 
-
-
     //Task Function
     fun createTask(task: Task): Long {
         val db = writableDatabase
