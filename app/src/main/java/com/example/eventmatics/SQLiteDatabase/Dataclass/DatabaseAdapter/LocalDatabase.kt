@@ -88,10 +88,10 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         val createTaskTableQuery = "CREATE TABLE $TABLE_TASK (" +
                 "$COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "$Task_Name TEXT," +
-                "$Task_Category TEXT," +
-                "$Task_Note TEXT," +
+                "$Task_Date TEXT," +
                 "$Task_Status TEXT," +
-                "$Task_Date TEXT" +
+                "$Task_Category TEXT," +
+                "$Task_Note TEXT" +
                 ")"
         db?.execSQL(createTaskTableQuery)
 
@@ -309,10 +309,10 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         val db = writableDatabase
         val values = ContentValues().apply {
             put(Task_Name, task.taskName)
-            put(Task_Category, task.category)
-            put(Task_Note, task.taskNote)
-            put(Task_Status, task.taskStatus)
             put(Task_Date, task.taskDate)
+            put(Task_Note, task.taskNote)
+            put(Task_Category, task.category)
+            put(Task_Status, task.taskStatus)
         }
         val id = db.insert(TABLE_TASK, null, values)
         db.close()
@@ -323,7 +323,7 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
     @SuppressLint("Range")
     fun getAllTasks(): List<Task> {
         val tasks = ArrayList<Task>()
-        val selectQuery = "SELECT * FROM $TABLE_TASK"
+        val selectQuery = "SELECT * FROM $TABLE_TASK ORDER BY $COLUMN_ID ASC"
         val db = readableDatabase
         val cursor: Cursor? = db.rawQuery(selectQuery, null)
         cursor?.let {
@@ -331,11 +331,11 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
                 do {
                     val id = it.getLong(it.getColumnIndex(COLUMN_ID))
                     val name = it.getString(it.getColumnIndex(Task_Name))
-                    val category = it.getString(it.getColumnIndex(Task_Category))
-                    val note = it.getString(it.getColumnIndex(Task_Note))
                     val status = it.getString(it.getColumnIndex(Task_Status))
                     val date = it.getString(it.getColumnIndex(Task_Date))
-                    val task = Task( id,name, category, note, status, date)
+                    val category = it.getString(it.getColumnIndex(Task_Category))
+                    val note = it.getString(it.getColumnIndex(Task_Note))
+                    val task = Task( id,name,status ,date,category, note )
                     tasks.add(task)
                 } while (it.moveToNext())
             }

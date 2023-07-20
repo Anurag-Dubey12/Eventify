@@ -27,7 +27,7 @@ class TaskDataHolderData(private val context:Context,private val dataList: List<
         holder.bind(data)
         holder.itemView.setOnClickListener {
             val intent = Intent(context, TaskDetails::class.java).apply {
-                putExtra("taskId", data.id) }
+                putExtra("taskId", position) }
             context.startActivity(intent)
         }
     }
@@ -39,11 +39,15 @@ class TaskDataHolderData(private val context:Context,private val dataList: List<
         private val taskNameTextView: TextView = itemView.findViewById(R.id.Taskname)
         private val taskInfoTextView: TextView = itemView.findViewById(R.id.Task_info_show)
         private val taskDateTextView: TextView = itemView.findViewById(R.id.task_date)
+        private val task_category: TextView = itemView.findViewById(R.id.task_category)
+        private val task_note: TextView = itemView.findViewById(R.id.task_note)
 
         fun bind(data: Task) {
             taskNameTextView.text = data.taskName
             taskInfoTextView.text = data.taskStatus
             taskDateTextView.text = data.taskDate
+            task_category.text = data.category
+            task_note.text = data.taskNote
         }
     }
 }

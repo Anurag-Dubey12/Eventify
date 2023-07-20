@@ -4,8 +4,10 @@ import android.app.ProgressDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import com.example.eventmatics.MainActivity
@@ -23,7 +25,7 @@ class signin_account : AppCompatActivity() {
     private lateinit var createacc:TextView
     private lateinit var firebaseauth: FirebaseAuth
     private lateinit var progressDialog: ProgressDialog
-    private lateinit var firebaseUser: FirebaseUser
+    private lateinit var rProgLayout: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +34,7 @@ class signin_account : AppCompatActivity() {
         alreadyPassfield = findViewById(R.id.alreadypassfield)
         createacc = findViewById(R.id.createaccount)
         loginButton = findViewById(R.id.login_button)
+        rProgLayout = findViewById(R.id.progressBar)
         googleLogin = findViewById(R.id.google_login)
         forgetpas = findViewById(R.id.forgetpass)
         firebaseauth=FirebaseAuth.getInstance()
@@ -50,19 +53,20 @@ class signin_account : AppCompatActivity() {
             if (email.isNotEmpty() && password.isNotEmpty()){
                 firebaseauth.signInWithEmailAndPassword(email,password).addOnCompleteListener {
                     if(it.isSuccessful){
+                        rProgLayout.visibility= View.VISIBLE
                         Intent(this,MainActivity::class.java).also {
                             startActivity(it)
                         }
                         Toast.makeText(this,"Welcome User!", Toast.LENGTH_SHORT).show()
                     }
                     else{
+                        rProgLayout.visibility= View.GONE
                         Toast.makeText(this,"Failed To Create", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
             forgetpas.setOnClickListener {
                 resetpassword()
-
             }
         }
         createacc.setOnClickListener {
@@ -106,10 +110,8 @@ class signin_account : AppCompatActivity() {
             }
             progressDialog.setMessage("Sending Mail")
             progressDialog.setCanceledOnTouchOutside(false)
+//            rProgLayout.visibility= View.VISIBLE
             progressDialog.show()
         }
     }
-
-
-
    }

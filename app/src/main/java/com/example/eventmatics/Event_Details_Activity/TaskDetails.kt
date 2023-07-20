@@ -66,22 +66,6 @@ class TaskDetails : AppCompatActivity(){
         TaskPendingbut=findViewById(R.id.TaskPendingbut)
         TaskCombut=findViewById(R.id.Taskcombut)
 
-        val taskId = intent.getIntExtra("taskId", 1)
-        if (taskId != -1) {
-
-            val databasename = getSharedPreference(this, "databasename").toString()
-            val db = LocalDatabase(this, databasename)
-            val task = db.getTaskData(taskId)
-
-            if (task != null) {
-                // Update the fields in TaskDetails activity with the fetched data
-                TaskNameET.setText(task.taskName)
-                TaskNoteET.setText(task.taskNote)
-                taskdate.setText(task.taskDate)
-                // ...
-                // Update other fields accordingly
-            }
-        }
         TaskPendingbut.setOnClickListener {
             setButtonBackground(TaskPendingbut,true)
             setButtonBackground(TaskCombut,false)
@@ -167,15 +151,14 @@ class TaskDetails : AppCompatActivity(){
         val category=category_button.text.toString()
         val TaskNoteET=TaskNoteET.text.toString()
         val taskdate=taskdate.text.toString()
-        var Task_Status=""
-        if(TaskPendingbut.isSelected){
-            Task_Status="Pending"
-        }
-        if(TaskCombut.isSelected){
-             Task_Status="Completed"
-        }
+        var taskStatus=""
 
-        val Task=Task(0,taskname,category,TaskNoteET,Task_Status,taskdate)
+        if (TaskPendingbut.isSelected) {
+            taskStatus = "Pending"
+        } else if (TaskCombut.isSelected) {
+            taskStatus = "Completed"
+        }
+        val Task=Task(0,taskname,category,TaskNoteET,taskStatus,taskdate)
         Db.createTask(Task)
         Toast.makeText(this, "Task Added successfully", Toast.LENGTH_SHORT).show()
 

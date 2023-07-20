@@ -207,9 +207,10 @@ class MainActivity : AppCompatActivity() {
             R.color.Fuchsia,
             R.color.Indigo
         )
-        swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.Lemon_Chiffon)
-        swipeRefreshLayout.setProgressViewOffset(false, 0, 150)
+        swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.Lavender_Blush)
+        swipeRefreshLayout.setProgressViewOffset(true, 0, 150)
 
+        //Event  Load instant code
         val filter=IntentFilter("com.example.eventmatics.fragments")
         dataAddedReceiver=object :BroadcastReceiver(){
             override fun onReceive(context: Context?, intent: Intent?) {
@@ -229,7 +230,6 @@ class MainActivity : AppCompatActivity() {
                 swipeRefreshLayout.isRefreshing = false
             }, 1000)
         }
-//        showEventData()
         navigationDrawershow()
     }
 //    private fun launchNewActivity(selectedItem: String) {
@@ -291,70 +291,11 @@ class MainActivity : AppCompatActivity() {
 
         val adapter = EventLayoutAdapter(eventList){ position ->
             val eventadding=EventAdding(this,supportFragmentManager,position)
-//                    val bundle = Bundle()
-//                    bundle.putInt("Pos", position)
             eventadding.show()}
         eventRecyclerView.adapter = adapter
         eventRecyclerView.layoutManager = LinearLayoutManager(this)
         adapter.notifyDataSetChanged()
     }
-
-//    override fun onResume() {
-//        super.onResume()
-//            val databasename = getSharedPreference(this, "databasename").toString()
-//            val databasehelper = LocalDatabase(this, databasename)
-//            val eventList = databasehelper.getAllEvents()
-//            val Eventtimer = databasehelper.getEventData(1)
-//
-//            if (Eventtimer != null) {
-//                Eventshow.text = Eventtimer.name
-//                budgetShowTextView.text = Eventtimer.budget
-//
-//                // Calculate remaining time until the event date
-//                val eventDate = Eventtimer.Date
-//                val eventTime = Eventtimer.time
-//                val currentDate = Calendar.getInstance().time
-//                val eventDateTime = SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.getDefault()).parse("$eventDate $eventTime")
-//
-//                if (eventDateTime != null) {
-//                    val remainingTimeInMillis = eventDateTime.time - currentDate.time
-//
-//                    // Start the countdown timer
-//                    countDownTimer?.cancel() // Cancel any existing timer to avoid overlapping
-//                    countDownTimer = object : CountDownTimer(remainingTimeInMillis, 1000) {
-//                        override fun onTick(millisUntilFinished: Long) {
-//                            val days = millisUntilFinished / (24 * 60 * 60 * 1000)
-//                            val hours = (millisUntilFinished % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)
-//                            val minutes = (millisUntilFinished % (60 * 60 * 1000)) / (60 * 1000)
-//                            val seconds = (millisUntilFinished % (60 * 1000)) / 1000
-//                            val remainingTime = String.format("%02dd %02dh %02dm %02ds", days, hours, minutes, seconds)
-//                            EventTimerDisplay.text = remainingTime
-//
-//                        }
-//
-//                        override fun onFinish() {
-//                            EventTimerDisplay.text = "Event Started"
-//                        }
-//                    }.start()
-//                } else {
-//                    Log.e("CountdownError", "Error parsing event date and time.")
-//                }
-//            } else {
-//                Toast.makeText(this, "Event Not Found", Toast.LENGTH_SHORT).show()
-//            }
-//
-//            val adapter = EventLayoutAdapter(eventList){ position ->
-//                val eventadding=EventAdding(this,supportFragmentManager,position)
-////                    val bundle = Bundle()
-////                    bundle.putInt("Pos", position)
-//                eventadding.show()}
-//            eventRecyclerView.adapter = adapter
-//            eventRecyclerView.layoutManager = LinearLayoutManager(this)
-//            adapter.notifyDataSetChanged()
-////            swipeRefreshLayout.isRefreshing=false
-//
-//    }
-
 
     override fun onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
