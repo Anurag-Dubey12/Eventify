@@ -34,11 +34,24 @@ class VendorDataHolderClass(private val vendorList:List<Vendor>): RecyclerView.A
         notifyDataSetChanged()
     }
     inner  class ViewHolder(itemview: View):RecyclerView.ViewHolder(itemview){
-        private val VendorName: TextView = itemView.findViewById(R.id.vendorname)
-        private val total_amount: TextView = itemView.findViewById(R.id.text_total_amount)
+        val vendorNameTextView: TextView = itemView.findViewById(R.id.Vendor_Name)
+        val budgetCategoryTextView: TextView = itemView.findViewById(R.id.Budget_Category)
+        val vendorPhoneTextView: TextView = itemView.findViewById(R.id.VendorPhone)
+        val vendorWebsiteTextView: TextView = itemView.findViewById(R.id.VendorWebsite)
+        val totalAmountTextView: TextView = itemView.findViewById(R.id.text_total_amount)
+        val vendorNoteTextView: TextView = itemView.findViewById(R.id.Vendor_Note)
+        val vendorEmailTextView: TextView = itemView.findViewById(R.id.Vendoremail)
+        val vendorAddressTextView: TextView = itemView.findViewById(R.id.VendorAddress)
         fun bind(vendor:Vendor){
-            VendorName.text=vendor.name
-            total_amount.text=vendor.estimatedAmount
+            vendorNameTextView.text=vendor.name
+            budgetCategoryTextView.text=vendor.category
+            vendorPhoneTextView.text=vendor.phonenumber
+            totalAmountTextView.text=vendor.balance
+            vendorWebsiteTextView.text=vendor.website
+            budgetCategoryTextView.text=vendor.category
+            vendorNoteTextView.text=vendor.note
+            vendorEmailTextView.text=vendor.emailid
+            vendorAddressTextView.text=vendor.address
         }
 
     }

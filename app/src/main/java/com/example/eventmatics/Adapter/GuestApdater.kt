@@ -28,7 +28,6 @@ class GuestApdater(private val GuestList:List<Guest>):RecyclerView.Adapter<Guest
     }
     inner class GuestViewHolder(itemview:View):RecyclerView.ViewHolder(itemview){
         val GuestName:TextView=itemview.findViewById(R.id.guestname)
-//        val guestname:TextView=itemView.findViewById(R.id.guestname)
         fun bind(Guest:Guest){
             GuestName.text=Guest.name
         }
