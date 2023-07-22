@@ -61,7 +61,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var budgetImageButton: ImageButton
     private lateinit var guestImageButton: ImageButton
     private lateinit var vendorImageButton: ImageButton
-//    private lateinit var taskRecyclerView: RecyclerView
     private lateinit var budgetInfoCardView: CardView
     private lateinit var budgetShowTextView: TextView
     private lateinit var Eventshow: TextView
