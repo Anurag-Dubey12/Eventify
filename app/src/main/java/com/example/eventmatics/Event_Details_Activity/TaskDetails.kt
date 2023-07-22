@@ -36,6 +36,7 @@ class TaskDetails : AppCompatActivity(){
     lateinit var category_button:AppCompatButton
     lateinit var TaskPendingbut:AppCompatButton
     lateinit var TaskCombut:AppCompatButton
+    var taskStatus:String=""
     val spinnerItems = listOf(
         SpinnerItem("Accessories"),
         SpinnerItem( "Accommodation"),
@@ -151,7 +152,7 @@ class TaskDetails : AppCompatActivity(){
         val category=category_button.text.toString()
         val TaskNoteET=TaskNoteET.text.toString()
         val taskdate=taskdate.text.toString()
-        var taskStatus=""
+
 
         if (TaskPendingbut.isSelected) {
             taskStatus = "Pending"
@@ -165,9 +166,4 @@ class TaskDetails : AppCompatActivity(){
         finish()
 
 }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-    }
 }

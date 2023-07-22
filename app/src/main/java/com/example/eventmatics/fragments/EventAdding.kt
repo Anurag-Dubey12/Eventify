@@ -110,9 +110,21 @@ class EventAdding(
         eventTime.setOnClickListener { showTimePicker() }
         createButton.setOnClickListener {
             val eventNameText = eventName.text.toString()
-            val eventDateText = eventDate.text.toString()
+            var eventDateText = eventDate.text.toString()
             val eventTimeText = eventTime.text.toString()
             val eventBudgetText = eventBudget.text.toString()
+            if(eventNameText.isEmpty()){
+                eventName.error="Enter Event Name"
+            }
+            if(eventDateText.isEmpty()){
+                eventDateText="Date is not Defined"
+            }
+            if(eventBudgetText.isEmpty()){
+                eventBudget.error="Enter Budget"
+            }
+            if(eventTimeText.isEmpty()){
+                eventTime.error="Select Time"
+            }
             val event=Events(0,eventNameText,eventDateText,eventTimeText,eventBudgetText)
             val databaseHelper=LocalDatabase(context,eventNameText)
 //            if (eventId != null) {
@@ -123,6 +135,7 @@ class EventAdding(
 //
 //            }
 //            else{
+
             databaseHelper.createEvent(event)
             val dataAddedIntent = Intent("com.example.eventmatics.fragments")
             context?.sendBroadcast(dataAddedIntent)

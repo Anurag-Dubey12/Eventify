@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var budgetImageButton: ImageButton
     private lateinit var guestImageButton: ImageButton
     private lateinit var vendorImageButton: ImageButton
-    private lateinit var taskRecyclerView: RecyclerView
+//    private lateinit var taskRecyclerView: RecyclerView
     private lateinit var budgetInfoCardView: CardView
     private lateinit var budgetShowTextView: TextView
     private lateinit var Eventshow: TextView
@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity() {
         guestImageButton = findViewById(R.id.Guest)
         vendorImageButton = findViewById(R.id.Vendor)
         Eventshow = findViewById(R.id.eventnameshow)
-        taskRecyclerView = findViewById(R.id.TaskRec)
+//        taskRecyclerView = findViewById(R.id.TaskRec)
         budgetInfoCardView = findViewById(R.id.budget_info)
         budgetShowTextView = findViewById(R.id.Budgetshow)
         pendingAmountShowTextView = findViewById(R.id.PendingAmountshow)
@@ -275,7 +275,6 @@ class MainActivity : AppCompatActivity() {
                         val seconds = (millisUntilFinished % (60 * 1000)) / 1000
                         val remainingTime = String.format("%02dd %02dh %02dm %02ds", days, hours, minutes, seconds)
                         EventTimerDisplay.text = remainingTime
-
                     }
 
                     override fun onFinish() {

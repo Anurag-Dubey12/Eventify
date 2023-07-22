@@ -15,8 +15,8 @@
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavigationView"
             android:layout_width="match_parent"
+            android:elevation="0sp"
             android:layout_height="wrap_content"
-            android:background="#FFFFFF"
             app:menu="@menu/eventbottom" />
 
     </com.google.android.material.bottomappbar.BottomAppBar>

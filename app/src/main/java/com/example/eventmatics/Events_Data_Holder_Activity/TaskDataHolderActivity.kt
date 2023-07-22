@@ -1,14 +1,14 @@
 package com.example.eventmatics.Events_Data_Holder_Activity
 
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.widget.TextView
+import androidx.annotation.NonNull
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -51,6 +51,14 @@ class TaskDataHolderActivity : AppCompatActivity() {
                 else -> false
             }
         }
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(@NonNull recyclerView: RecyclerView, dx: Int, dy: Int) {
+                // Check if the first visible item index is at the top
+                val isAtTop = recyclerView.canScrollVertically(-1)
+                swipeRefreshLayout.isEnabled =
+                    !isAtTop // Enable/disable the SwipeRefreshLayout based on scroll position
+            }
+        })
         swipeRefreshLayout=findViewById(R.id.swipeRefreshLayout)
 
         swipeRefreshLayout.setOnRefreshListener {
