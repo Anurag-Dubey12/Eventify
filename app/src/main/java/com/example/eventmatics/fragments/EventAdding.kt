@@ -47,9 +47,17 @@ class EventAdding(
         val window = window
         window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
+        val today = Calendar.getInstance()
+        val todayFormattedDate = "${today.get(Calendar.DAY_OF_MONTH)}/${today.get(Calendar.MONTH) + 1}/${today.get(Calendar.YEAR)}"
+        val todayFormattedTime = String.format(
+            "%02d:%02d:%02d",
+            today.get(Calendar.HOUR_OF_DAY),
+            today.get(Calendar.MINUTE),
+            today.get(Calendar.SECOND)
+        )
+        eventDate.setText(todayFormattedDate)
+        eventTime.setText(todayFormattedTime)
         if (eventId != null) {
-
-
             // Retrieve data from SQLite using the eventId for editing
             val eventData = getEventDataFromSQLite(eventId)
             eventName.setText(eventData.name)
@@ -59,23 +67,7 @@ class EventAdding(
             eventBudget.setText(eventData.budget)
             createButton.visibility= View.GONE
             EditButton.visibility=View.VISIBLE
-//            EditButton.setOnClickListener {
-//                val databasename=getSharedPreference(context,"databasename").toString()
-//                val event=Events(0,eventName.toString(),eventDate.toString(),eventTime.toString(),eventBudget.toString())
-//                val databaseHelper=LocalDatabase(context,databasename)
-//                databaseHelper.updateEvent(event)
-//                Toast.makeText(context, "Event updated successfully", Toast.LENGTH_SHORT).show()
-//
-//                val previousEventName = getSharedPreference(context, "databasename").toString()
-//                val sharedPreferences = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
-//                val editor: SharedPreferences.Editor = sharedPreferences.edit()
-//                editor.remove(previousEventName)
-//                editor.apply()
-//
-//                saveToSharedPreferences(context,"databasename",eventName.toString())
-//
-//                dismiss()
-//            }
+
             EditButton.setOnClickListener {
                 val eventNameText = eventName.text.toString()
                 val eventDateText = eventDate.text.toString()

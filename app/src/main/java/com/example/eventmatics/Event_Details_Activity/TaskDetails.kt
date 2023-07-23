@@ -4,6 +4,7 @@ import android.content.ContentValues.TAG
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -16,22 +17,30 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.example.eventmatics.Adapter.CategoryAdapter
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Task
+import com.example.eventmatics.SharedViewModel
 import com.example.eventmatics.data_class.SpinnerItem
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.itextpdf.text.Document
+import com.itextpdf.text.Paragraph
+import com.itextpdf.text.pdf.PdfWriter
+import java.io.File
+import java.io.FileOutputStream
 import java.util.Calendar
 
 class TaskDetails : AppCompatActivity(){
     val fragmentManager:FragmentManager=supportFragmentManager
     lateinit var TaskNameET:EditText
-    lateinit var TaskNoteET:EditText
+    lateinit var taskNote:EditText
     lateinit var taskdate:TextView
     lateinit var category_button:AppCompatButton
     lateinit var TaskPendingbut:AppCompatButton
@@ -61,11 +70,19 @@ class TaskDetails : AppCompatActivity(){
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         TaskNameET=findViewById(R.id.TaskNameET)
-        TaskNoteET=findViewById(R.id.TaskNoteET)
+        taskNote=findViewById(R.id.TaskNoteET)
         taskdate=findViewById(R.id.taskdate)
         category_button=findViewById(R.id.Taskcategory_button)
         TaskPendingbut=findViewById(R.id.TaskPendingbut)
         TaskCombut=findViewById(R.id.Taskcombut)
+
+        val selectedTask: Task? = intent.getParcelableExtra("selected_task")
+        if (selectedTask != null) {
+            TaskNameET.setText(selectedTask.taskName)
+            category_button.text = selectedTask.category
+            taskNote.setText(selectedTask.taskNote)
+            taskdate.setText(selectedTask.taskDate)
+        }
 
         TaskPendingbut.setOnClickListener {
             setButtonBackground(TaskPendingbut,true)
@@ -81,8 +98,10 @@ class TaskDetails : AppCompatActivity(){
         category_button.setOnClickListener {
             ShowTaskCategory()
         }
+        val today= Calendar.getInstance()
+        val formateddate="${today.get(Calendar.DAY_OF_MONTH)}/${today.get(Calendar.MONTH)+1}/${today.get(Calendar.YEAR)}"
+        taskdate.setText(formateddate)
     }
-
     private fun ShowTaskCategory() {
         val spinnerAdapter = CategoryAdapter(this, spinnerItems)
         val dialogBuilder = AlertDialog.Builder(this)
@@ -150,7 +169,7 @@ class TaskDetails : AppCompatActivity(){
         val Db=LocalDatabase(this,databasename)
         val taskname=TaskNameET.text.toString()
         val category=category_button.text.toString()
-        val TaskNoteET=TaskNoteET.text.toString()
+        val TaskNoteET=taskNote.text.toString()
         val taskdate=taskdate.text.toString()
 
 

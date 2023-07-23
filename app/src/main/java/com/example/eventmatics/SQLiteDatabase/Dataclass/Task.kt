@@ -1,5 +1,9 @@
 package com.example.eventmatics.SQLiteDatabase.Dataclass
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class Task(
     val id: Long,
     val taskName: String,
@@ -7,4 +11,4 @@ data class Task(
     val taskNote: String,
     val taskStatus: String,
     val taskDate: String,
-)
+) : Parcelable

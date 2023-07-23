@@ -226,7 +226,7 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         return id
     }
     @SuppressLint("Range")
-    fun getAllEvents(): List<Events> {
+    fun getAllEvents(): MutableList<Events> {
         val events = ArrayList<Events>()
         val selectQuery = "SELECT * FROM $TABLE_Event"
         val db = readableDatabase

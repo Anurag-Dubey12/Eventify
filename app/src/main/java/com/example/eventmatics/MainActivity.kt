@@ -8,6 +8,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
 import android.icu.text.SimpleDateFormat
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -48,11 +49,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import org.eazegraph.lib.charts.PieChart
+import org.eazegraph.lib.models.PieModel
 import java.util.Calendar
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
-        lateinit var drawerLayout: DrawerLayout
+    lateinit var drawerLayout: DrawerLayout
     lateinit var navView: NavigationView
     lateinit var toogle:ActionBarDrawerToggle
     private var countDownTimer:CountDownTimer?=null
@@ -73,7 +76,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var widgetButton: Button
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var dataAddedReceiver: BroadcastReceiver
-
+    private lateinit var piechart:PieChart
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,6 +96,7 @@ class MainActivity : AppCompatActivity() {
         guestImageButton = findViewById(R.id.Guest)
         vendorImageButton = findViewById(R.id.Vendor)
         Eventshow = findViewById(R.id.eventnameshow)
+        piechart = findViewById(R.id.piechart)
 //        taskRecyclerView = findViewById(R.id.TaskRec)
         budgetInfoCardView = findViewById(R.id.budget_info)
         budgetShowTextView = findViewById(R.id.Budgetshow)
@@ -105,22 +109,10 @@ class MainActivity : AppCompatActivity() {
         actionBarDrawerToggle.syncState()
 
 
-        taskImageButton.setOnClickListener {
-            Intent(this,TaskDataHolderActivity::class.java).also {
-                startActivity(it)
-            } }
-        budgetImageButton.setOnClickListener {
-            Intent(this, BudgetDataHolderActivity::class.java).also {
-                startActivity(it)
-            } }
-        guestImageButton.setOnClickListener {
-            Intent(this,GuestDataHolderActivity::class.java).also {
-                startActivity(it)
-            } }
-        vendorImageButton.setOnClickListener {
-            Intent(this,VendorDataHolderActivity::class.java).also {
-                startActivity(it)
-            } }
+        taskImageButton.setOnClickListener { Intent(this,TaskDataHolderActivity::class.java).also { startActivity(it) } }
+        budgetImageButton.setOnClickListener { Intent(this, BudgetDataHolderActivity::class.java).also { startActivity(it) } }
+        guestImageButton.setOnClickListener { Intent(this,GuestDataHolderActivity::class.java).also { startActivity(it) } }
+        vendorImageButton.setOnClickListener { Intent(this,VendorDataHolderActivity::class.java).also { startActivity(it) } }
         Eventshow.setOnClickListener {
             if (eventshowhide.visibility== View.GONE && eventRecyclerView.visibility==View.GONE){
                 eventshowhide.visibility=View.VISIBLE
@@ -141,21 +133,15 @@ class MainActivity : AppCompatActivity() {
                 eventRecyclerView.visibility=View.GONE
                 Eventshow.visibility=View.VISIBLE
                 eventaddbut.visibility=View.GONE
-            }
-            else{
+            } else{
                 eventshowhide.visibility=View.VISIBLE
                 eventRecyclerView.visibility=View.VISIBLE
                 eventaddbut.visibility=View.VISIBLE
                 Eventshow.visibility=View.GONE
-            }
-        }
-        eventaddbut.setOnClickListener {
-            val eventadding=EventAdding(this,supportFragmentManager,null)
-            eventadding.show()
-        }
-        widgetButton.setOnClickListener {
-            addWidgetToHomeScreen()
-        }
+            } }
+        eventaddbut.setOnClickListener { val eventadding=EventAdding(this,supportFragmentManager,null)
+            eventadding.show() }
+        widgetButton.setOnClickListener { addWidgetToHomeScreen() }
         swipeRefreshLayout.setOnRefreshListener {
             Handler().postDelayed({
                 val databasename=getSharedPreference(this,"databasename").toString()
@@ -165,6 +151,7 @@ class MainActivity : AppCompatActivity() {
                 if(Eventtimer!=null){
                     Eventshow.text=Eventtimer.name
                     budgetShowTextView.text=Eventtimer.budget
+
                     // Calculate remaining time until the event date
                     val eventDate=Eventtimer.Date
                     val eventTime=Eventtimer.time
@@ -191,21 +178,15 @@ class MainActivity : AppCompatActivity() {
                 }
                 val adapter = EventLayoutAdapter(eventList){ position ->
                     val eventadding=EventAdding(this,supportFragmentManager,position)
-//                    val bundle = Bundle()
-//                    bundle.putInt("Pos", position)
                     eventadding.show()}
                 eventRecyclerView.adapter = adapter
                 eventRecyclerView.layoutManager = LinearLayoutManager(this)
                 adapter.notifyDataSetChanged()
                 swipeRefreshLayout.isRefreshing=false
-            },3000)
+            },1)
         }
 
-        swipeRefreshLayout.setColorSchemeResources(
-            R.color.Coral,
-            R.color.Fuchsia,
-            R.color.Indigo
-        )
+        swipeRefreshLayout.setColorSchemeResources(R.color.Coral, R.color.Fuchsia, R.color.Indigo)
         swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.Lavender_Blush)
         swipeRefreshLayout.setProgressViewOffset(true, 0, 150)
 
@@ -218,9 +199,9 @@ class MainActivity : AppCompatActivity() {
                 showEventData()
                 swipeRefreshLayout.isRefreshing=false
             }
-
         }
         registerReceiver(dataAddedReceiver, filter)
+
 
         swipeRefreshLayout.post {
             swipeRefreshLayout.isRefreshing = true
@@ -254,7 +235,10 @@ class MainActivity : AppCompatActivity() {
         if (Eventtimer != null) {
             Eventshow.text = Eventtimer.name
             budgetShowTextView.text = Eventtimer.budget
-
+            val budget=Eventtimer.budget
+            piechart.addPieSlice(PieModel("Budget",budget.toFloat(),Color.parseColor("#959494")))
+            piechart.addPieSlice(PieModel("Budget",budget.toFloat(),Color.parseColor("#FF63A1")))
+            piechart.addPieSlice(PieModel("Budget",budget.toFloat(),Color.parseColor("#F6D661")))
             // Calculate remaining time until the event date
             val eventDate = Eventtimer.Date
             val eventTime = Eventtimer.time
@@ -292,6 +276,7 @@ class MainActivity : AppCompatActivity() {
             eventadding.show()}
         eventRecyclerView.adapter = adapter
         eventRecyclerView.layoutManager = LinearLayoutManager(this)
+
         adapter.notifyDataSetChanged()
     }
 

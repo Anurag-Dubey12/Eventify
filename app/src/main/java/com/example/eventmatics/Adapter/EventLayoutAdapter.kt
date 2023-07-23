@@ -9,14 +9,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Events
 
-class EventLayoutAdapter(val eventdata:List<Events>,
+class EventLayoutAdapter(val eventdata:MutableList<Events>,
                          private val onItemClickListener: (position: Int) -> Unit):RecyclerView.Adapter<EventLayoutAdapter.EventViewHolder>() {
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
         val view=LayoutInflater.from(parent.context).inflate(R.layout.eventlayout,parent,false)
         return EventViewHolder(view)
     }
-
+    fun removeItem(position: Int) {
+        eventdata.removeAt(position)
+        notifyItemRemoved(position)
+    }
     override fun onBindViewHolder(holder: EventViewHolder, position: Int) {
         val current=eventdata[position]
         holder.bind(current)

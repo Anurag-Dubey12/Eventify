@@ -8,27 +8,33 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.Event_Details_Activity.TaskDetails
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Task
+import com.example.eventmatics.SharedViewModel
 
-class TaskDataHolderData(private val context:Context,private val dataList: List<Task>) :
+class TaskDataHolderData(private val context:Context,private val dataList: List<Task>
+,     private val itemClickListener: OnItemClickListener
+) :
     RecyclerView.Adapter<TaskDataHolderData.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.taskdataholder, parent, false)
         return ViewHolder(view)
-    }
 
+    }
+    interface OnItemClickListener {
+        fun onItemClick(task: Task)
+    }
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val data = dataList[position]
         holder.bind(data)
         holder.itemView.setOnClickListener {
-            val intent = Intent(context, TaskDetails::class.java).apply {
-                putExtra("taskId", position) }
-            context.startActivity(intent)
+            itemClickListener.onItemClick(data)
         }
     }
 
@@ -41,13 +47,13 @@ class TaskDataHolderData(private val context:Context,private val dataList: List<
         private val taskDateTextView: TextView = itemView.findViewById(R.id.task_date)
         private val task_category: TextView = itemView.findViewById(R.id.task_category)
         private val task_note: TextView = itemView.findViewById(R.id.task_note)
-
         fun bind(data: Task) {
             taskNameTextView.text = data.taskName
             taskInfoTextView.text = data.taskStatus
-            taskDateTextView.text = data.taskDate
+            taskDateTextView.text = data.taskDate // Set the task date
             task_category.text = data.category
             task_note.text = data.taskNote
         }
+
     }
 }
