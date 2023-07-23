@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout android:layout_width="match_parent"
+
+<RelativeLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/swipeRefreshLayout"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".Events_Data_Holder_Activity.TaskDataHolderActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".Events_Data_Holder_Activity.TaskDataHolderActivity"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -17,14 +14,20 @@
         android:title="Add Task"
         android:titleMarginStart="30sp"
         />
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_below="@id/toolbar"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools">
     <androidx.recyclerview.widget.RecyclerView
         android:layout_below="@id/toolbar"
         android:id="@+id/vendorDatarec"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     <include
         android:id="@+id/TaskBottomnav"
         layout="@layout/eventbottomnav"
         />
 </RelativeLayout>
-</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

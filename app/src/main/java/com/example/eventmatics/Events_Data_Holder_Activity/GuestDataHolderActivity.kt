@@ -9,6 +9,7 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.widget.TextView
+import androidx.annotation.NonNull
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -65,7 +66,7 @@ class GuestDataHolderActivity : AppCompatActivity() {
                     adapter.notifyDataSetChanged()
                 }
                 swipeRefreshLayout.isRefreshing=false
-            },3000)
+            },1)
         }
         swipeRefreshLayout.setColorSchemeResources(
             R.color.Coral,
@@ -74,6 +75,15 @@ class GuestDataHolderActivity : AppCompatActivity() {
         )
         swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.Lemon_Chiffon)
         swipeRefreshLayout.setProgressViewOffset(false, 0, 150)
+
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(@NonNull recyclerView: RecyclerView, dx: Int, dy: Int) {
+                // Check if the first visible item index is at the top
+                val isAtTop = recyclerView.canScrollVertically(-1)
+                swipeRefreshLayout.isEnabled =
+                    !isAtTop // Enable/disable the SwipeRefreshLayout based on scroll position
+            }
+        })
     }
     fun getSharedPreference(context: Context, key: String): String? {
         val sharedPref = context.getSharedPreferences("Database", Context.MODE_PRIVATE)

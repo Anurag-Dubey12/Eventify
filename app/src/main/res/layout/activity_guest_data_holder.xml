@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/swipeRefreshLayout"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -18,14 +15,19 @@
         android:title="Add Task"
         android:titleMarginStart="30sp"
         />
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_below="@id/toolbar"
+        xmlns:android="http://schemas.android.com/apk/res/android">
     <androidx.recyclerview.widget.RecyclerView
         android:layout_below="@id/toolbar"
         android:id="@+id/guestDatarec"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     <include
         android:id="@+id/TaskBottomnav"
         layout="@layout/eventbottomnav"
         />
 </RelativeLayout>
-</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

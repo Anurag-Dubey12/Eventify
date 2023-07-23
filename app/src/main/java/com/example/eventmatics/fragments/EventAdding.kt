@@ -117,26 +117,23 @@ class EventAdding(
             if(eventTimeText.isEmpty()){
                 eventTime.error="Select Time"
             }
-            val event=Events(0,eventNameText,eventDateText,eventTimeText,eventBudgetText)
-            val databaseHelper=LocalDatabase(context,eventNameText)
-//            if (eventId != null) {
-//                // Updating an existing event
-//                databaseHelper.updateEvent(event)
-//                Toast.makeText(context, "Event updated successfully", Toast.LENGTH_SHORT).show()
-//                saveToSharedPreferences(context,"databasename",eventNameText)
-//
-//            }
-//            else{
+            if(eventNameText.isNotEmpty() && eventDateText.isNotEmpty() && eventBudgetText.isNotEmpty() && eventTimeText.isNotEmpty()){
+                val event=Events(0,eventNameText,eventDateText,eventTimeText,eventBudgetText)
+                val databaseHelper=LocalDatabase(context,eventNameText)
 
-            databaseHelper.createEvent(event)
-            val dataAddedIntent = Intent("com.example.eventmatics.fragments")
-            context?.sendBroadcast(dataAddedIntent)
-            // Dismiss the dialog if needed
-            dismiss()
-            Toast.makeText(context, "Event created successfully", Toast.LENGTH_SHORT).show()
-            saveToSharedPreferences(context,"databasename",eventNameText)
-//            }
-            dismiss()
+                databaseHelper.createEvent(event)
+                val dataAddedIntent = Intent("com.example.eventmatics.fragments")
+                context?.sendBroadcast(dataAddedIntent)
+                // Dismiss the dialog if needed
+                dismiss()
+                Toast.makeText(context, "Event created successfully", Toast.LENGTH_SHORT).show()
+                saveToSharedPreferences(context,"databasename",eventNameText)
+                dismiss()
+            }
+            else{
+                Toast.makeText(context,"Please check Field Properly",Toast.LENGTH_SHORT).show()
+            }
+
         }
 
     }

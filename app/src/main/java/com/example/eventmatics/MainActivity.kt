@@ -231,14 +231,18 @@ class MainActivity : AppCompatActivity() {
         val databasehelper = LocalDatabase(this, databasename)
         val eventList = databasehelper.getAllEvents()
         val Eventtimer = databasehelper.getEventData(1)
+        val budgettotdal=databasehelper.getTotalBudget()
+        if(budgettotdal!=null){
+            piechart.addPieSlice(PieModel("Budget",budgettotdal.toFloat(),Color.parseColor("#FF63A1")))
 
+        }
         if (Eventtimer != null) {
             Eventshow.text = Eventtimer.name
             budgetShowTextView.text = Eventtimer.budget
             val budget=Eventtimer.budget
             piechart.addPieSlice(PieModel("Budget",budget.toFloat(),Color.parseColor("#959494")))
-            piechart.addPieSlice(PieModel("Budget",budget.toFloat(),Color.parseColor("#FF63A1")))
-            piechart.addPieSlice(PieModel("Budget",budget.toFloat(),Color.parseColor("#F6D661")))
+
+//            piechart.addPieSlice(PieModel("Budget",budget.toFloat(),Color.parseColor("#F6D661")))
             // Calculate remaining time until the event date
             val eventDate = Eventtimer.Date
             val eventTime = Eventtimer.time

@@ -248,6 +248,8 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         db.close()
         return events
     }
+
+
     //Getting Specific data
     @SuppressLint("Range")
     fun getEventData(eventId: Int): Events? {
@@ -342,6 +344,7 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         db.close()
         return tasks
     }
+
     //Getting Specific data from Task
     @SuppressLint("Range")
     fun getTaskData(taskId: Int): Task? {
@@ -436,6 +439,20 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
 
         cursor.close()
         return budget
+    }
+    fun getTotalBudget(): Double {
+        var totalBudget = 0.0
+        val selectQuery = "SELECT SUM(CAST(${Budget_Estimated} AS REAL)) FROM $TABLE_BUDGET"
+        val db = readableDatabase
+        val cursor: Cursor? = db.rawQuery(selectQuery, null)
+        cursor?.let {
+            if (it.moveToFirst()) {
+                totalBudget = it.getDouble(0)
+            }
+        }
+        cursor?.close()
+        db.close()
+        return totalBudget
     }
 
     // Get all budgets

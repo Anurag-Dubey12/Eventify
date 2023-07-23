@@ -112,6 +112,7 @@
                 android:textIsSelectable="true"
                 android:inputType="numberDecimal"
                 android:hint="Budget"
+                android:maxLength="8"
                 android:layout_marginBottom="10sp"
                 android:textColorHint="@color/black"
                 tools:ignore="RtlSymmetry" />

@@ -9,6 +9,7 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.widget.TextView
+import androidx.annotation.NonNull
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -68,7 +69,7 @@ class VendorDataHolderActivity : AppCompatActivity() {
                     recyclerView.layoutManager=LinearLayoutManager(this)
                 }
                     swipeRefreshLayout.isRefreshing=false
-            },3000)
+            },1)
         }
         swipeRefreshLayout.setColorSchemeResources(
             R.color.Coral,
@@ -77,6 +78,13 @@ class VendorDataHolderActivity : AppCompatActivity() {
         )
         swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.Lemon_Chiffon)
         swipeRefreshLayout.setProgressViewOffset(false, 0, 150)
+        recyclerView.addOnScrollListener(object:RecyclerView.OnScrollListener(){
+            override fun onScrolled(@NonNull recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+            val isAtTop=recyclerView.canScrollVertically(-1)
+                swipeRefreshLayout.isEnabled=!isAtTop
+            }
+        })
         showData()
     }
 
