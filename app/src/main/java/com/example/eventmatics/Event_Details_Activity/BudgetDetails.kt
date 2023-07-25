@@ -25,7 +25,7 @@ class BudgetDetails : AppCompatActivity(){
     lateinit var  balanceET: TextView
     lateinit var EstimatedEt: EditText
     lateinit var NoteET: EditText
-    lateinit var categoryselection: AppCompatButton
+    lateinit var categoryselection: TextView
 
     val spinnerItems = listOf(
         SpinnerItem("Accessories"),
@@ -67,7 +67,14 @@ class BudgetDetails : AppCompatActivity(){
                 balanceET.text="Balance:+${EstimatedEt.text}"
             }
         })
-
+        val selected_item:Budget?=intent.getParcelableExtra("selected_item")
+        if (selected_item!=null){
+            nameEditText.setText(selected_item.name)
+            categoryselection.setText(selected_item.category)
+            NoteET.setText(selected_item.note)
+            balanceET.setText(selected_item.balance)
+            EstimatedEt.setText(selected_item.estimatedAmount)
+        }
 
     }
 
@@ -90,12 +97,42 @@ class BudgetDetails : AppCompatActivity(){
                 true
             }
           R.id.Check->{
+              val selected_item:Budget?=intent.getParcelableExtra("selected_item")
+              if (selected_item!=null){
+                  UpdateDatabase(selected_item.id)
+              }
+              else{
               AddValueToDataBase()
+              }
               true
           }
             else->super.onOptionsItemSelected(item)
         }
     }
+
+    private fun UpdateDatabase(id: Long) {
+        val name = nameEditText.text.toString()
+        val totalamt = EstimatedEt.text.toString().toFloat()
+        val Totalamount=totalamt.toString()
+        val note=NoteET.text.toString()
+        val category=categoryselection.text.toString()
+        val balance=balanceET.text.toString()
+
+        if (name.isEmpty()) {
+            nameEditText.error = "Please enter a name"
+            return }
+        if (totalamt==0f) {
+            EstimatedEt.error = "Please enter an amount"
+            return
+        }
+        val databasename=getSharedPreference(this,"databasename").toString()
+        val db=LocalDatabase(this,databasename)
+        val budget=Budget(id,name,category,note,Totalamount,balance,"","")
+        db.updateBudget(budget)
+        Toast.makeText(this, "Budget Updated successfully", Toast.LENGTH_SHORT).show()
+        finish()
+    }
+
     fun getSharedPreference(context: Context, key: String): String? {
         val sharedPref = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
         return sharedPref.getString(key, null)

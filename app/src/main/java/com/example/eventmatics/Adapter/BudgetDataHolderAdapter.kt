@@ -1,14 +1,19 @@
 package com.example.eventmatics.Adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Budget
+import com.example.eventmatics.SQLiteDatabase.Dataclass.Task
 
-class BudgetDataHolderAdapter(private val budgetList: List<Budget>) : RecyclerView.Adapter<BudgetDataHolderAdapter.ViewHolder>() {
+class BudgetDataHolderAdapter(private val context: Context, private val budgetList: List<Budget>
+, private val itemClickListener: OnItemClickListener
+) : RecyclerView.Adapter<BudgetDataHolderAdapter.ViewHolder>() {
     private var filteredList: MutableList<Budget> = mutableListOf()
 
     init {
@@ -23,6 +28,12 @@ class BudgetDataHolderAdapter(private val budgetList: List<Budget>) : RecyclerVi
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = budgetList[position]
         holder.bind(item)
+        holder.itemView.setOnClickListener {
+            itemClickListener.onItemClick(item)
+        }
+    }
+    interface OnItemClickListener {
+        fun onItemClick(budget: Budget)
     }
 
     override fun getItemCount(): Int {

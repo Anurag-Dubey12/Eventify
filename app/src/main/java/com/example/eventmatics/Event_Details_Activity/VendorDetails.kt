@@ -95,6 +95,19 @@ class VendorDetails : AppCompatActivity(){
                 vendorBalanceTV.text="Balance:${vendorEstimatedAmount.text}"
             }
         })
+
+        val Selected_Item:Vendor?=intent.getParcelableExtra("Selected_Item")
+        if(Selected_Item!=null){
+            vendorNameET.setText(Selected_Item.name)
+            categoryButton.setText(Selected_Item.category)
+            vendorNoteET.setText(Selected_Item.note)
+            vendorEstimatedAmount.setText(Selected_Item.estimatedAmount)
+            vendorBalanceTV.setText(Selected_Item.balance)
+            vendorPhoneET.setText(Selected_Item.balance)
+            vendorEmailET.setText(Selected_Item.emailid)
+            vendorWebsiteET.setText(Selected_Item.website)
+            vendorAddressET.setText(Selected_Item.address)
+        }
     }
 
     private fun infoshow() {
@@ -158,12 +171,20 @@ class VendorDetails : AppCompatActivity(){
                     true
             }
                 R.id.Check->{
+                    val Selected_Item:Vendor?=intent.getParcelableExtra("Selected_Item")
+                    if(Selected_Item!=null){
+                        UpdateDatabase(Selected_Item.id)
+                    }else{
                     AddvaluetoDatabase()
+
+                    }
                     true
                 }
             else->super.onOptionsItemSelected(item)
             }
         }
+
+
 
     //retrive the contact from the device
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -210,6 +231,24 @@ class VendorDetails : AppCompatActivity(){
         val db=LocalDatabase(this,databasename)
         db.createVendor(vendor)
         Toast.makeText(this, "Vendor Added successfully", Toast.LENGTH_SHORT).show()
+        finish()
+    }
+    private fun UpdateDatabase(id: Long) {
+        val vendorName = vendorNameET.text.toString()
+        val category = categoryButton.text.toString()
+        val vendorNote = vendorNoteET.text.toString()
+        val estimatedAmount = vendorEstimatedAmount.text.toString()
+        val vendorBalance = vendorBalanceTV.text.toString()
+        val vendorPhone = vendorPhoneET.text.toString()
+        val vendorEmail = vendorEmailET.text.toString()
+        val vendorWebsite = vendorWebsiteET.text.toString()
+        val vendorAddress = vendorAddressET.text.toString()
+
+        val databasename=getSharedPreference(this,"databasename").toString()
+        val vendor=Vendor(id,vendorName,category,vendorNote,estimatedAmount,vendorBalance,"","",vendorPhone,vendorEmail,vendorWebsite,vendorAddress)
+        val db=LocalDatabase(this,databasename)
+        db.updateVendor(vendor)
+        Toast.makeText(this, "Vendor Updated successfully", Toast.LENGTH_SHORT).show()
         finish()
     }
 }

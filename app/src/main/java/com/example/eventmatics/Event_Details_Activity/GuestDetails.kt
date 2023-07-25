@@ -26,8 +26,6 @@ class GuestDetails : AppCompatActivity() {
     private lateinit var guestNameEt: EditText
     private lateinit var guestNoteEt: EditText
     private lateinit var TotalFamilyMember: EditText
-    private lateinit var FeMaleNumber: EditText
-    private lateinit var MaleNumber: EditText
     private lateinit var invitationSentButton:  Button
     private lateinit var notSentButton:  Button
     private lateinit var contactviewtv: ImageView
@@ -36,7 +34,6 @@ class GuestDetails : AppCompatActivity() {
     private lateinit var guestEmailEt: EditText
     private lateinit var guestEmailtv: TextView
     private lateinit var guestAddresssEt: EditText
-    private lateinit var guestAddressstv: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,16 +47,13 @@ class GuestDetails : AppCompatActivity() {
         contactviewtv=findViewById(R.id.contactviewtv)
         guestNoteEt =findViewById(R.id.GuestNoteET)
         TotalFamilyMember =findViewById(R.id.TotalFamilyMember)
-        FeMaleNumber =findViewById(R.id.FeMaleNumber)
-        MaleNumber =findViewById(R.id.MaleNumber)
         invitationSentButton = findViewById(R.id.Invitaionsentbut)
         notSentButton = findViewById(R.id.NotSentBut)
         guestPhoneEt = findViewById(R.id.GuestPhoneEt)
         guestEmailEt = findViewById(R.id.GuestEmailEt)
-        guestAddresssEt = findViewById(R.id.GuestAddresssEt)
         guestPhonetv=findViewById(R.id.GuestPhonetv)
         guestEmailtv=findViewById(R.id.GuestEmailtv)
-        guestAddressstv=findViewById(R.id.GuestAddressstv)
+        guestAddresssEt=findViewById(R.id.GuestAddresssEt)
 
         invitationSentButton.setOnClickListener {
             setButtonBackground(invitationSentButton,true)
@@ -72,16 +66,25 @@ class GuestDetails : AppCompatActivity() {
         contactviewtv.setOnClickListener {
             guestinfoview()
         }
+        val selectedlist:Guest?=intent.getParcelableExtra("selected_list")
+        if(selectedlist!=null){
+            guestNameEt.setText(selectedlist.name)
+            TotalFamilyMember.setText(selectedlist.totalFamilyMembers)
+            guestNoteEt.setText(selectedlist.note)
+            guestPhoneEt.setText(selectedlist.phoneNumber)
+            guestEmailEt.setText(selectedlist.email)
+            guestAddresssEt.setText(selectedlist.address)
+        }
     }
 
 
     private fun guestinfoview() {
-        if(guestPhonetv.visibility== View.VISIBLE && guestEmailtv.visibility== View.VISIBLE && guestAddressstv.visibility== View.VISIBLE &&
+        if(guestPhonetv.visibility== View.VISIBLE && guestEmailtv.visibility== View.VISIBLE && guestAddresssEt.visibility== View.VISIBLE &&
             guestPhoneEt.visibility== View.VISIBLE && guestEmailEt.visibility== View.VISIBLE && guestAddresssEt.visibility== View.VISIBLE){
 
             guestPhonetv.visibility=View.GONE
             guestEmailtv.visibility=View.GONE
-            guestAddressstv.visibility=View.GONE
+            guestAddresssEt.visibility=View.GONE
             guestPhoneEt.visibility=View.GONE
             guestEmailEt.visibility=View.GONE
             guestAddresssEt.visibility=View.GONE
@@ -89,7 +92,7 @@ class GuestDetails : AppCompatActivity() {
         else{
             guestPhonetv.visibility=View.VISIBLE
             guestEmailtv.visibility=View.VISIBLE
-            guestAddressstv.visibility=View.VISIBLE
+            guestAddresssEt.visibility=View.VISIBLE
             guestPhoneEt.visibility=View.VISIBLE
             guestEmailEt.visibility=View.VISIBLE
             guestAddresssEt.visibility=View.VISIBLE
@@ -113,12 +116,20 @@ class GuestDetails : AppCompatActivity() {
                 true
             }
             R.id.Check->{
+                val selectedlist:Guest?=intent.getParcelableExtra("selected_list")
+                if(selectedlist!=null){
+                    updateDatabase(selectedlist.id)
+                }else{
                 AddValueToDatabase()
+
+                }
                 true
             }
         else->super.onOptionsItemSelected(item)
     }
 }
+
+
 
     fun getSharedPreference(context: Context, key:String):String?{
         val sharedValues=context.getSharedPreferences("Database",Context.MODE_PRIVATE)
@@ -129,19 +140,31 @@ class GuestDetails : AppCompatActivity() {
         val db=LocalDatabase(this,databasename)
         val guestName = guestNameEt.text.toString()
         val guestNote = guestNoteEt.text.toString()
-        val totalFamilyMembers = TotalFamilyMember.text.toString().toInt()
-        val FeMaleNumber = FeMaleNumber.text.toString().toInt()
-        val MaleNumber = MaleNumber.text.toString().toInt()
+        val totalFamilyMembers = TotalFamilyMember.text.toString()
         val guestPhone = guestPhoneEt.text.toString()
         val guestEmail = guestEmailEt.text.toString()
         val guestAddress = guestAddresssEt.text.toString()
-        val GuestList= Guest(1,guestName,totalFamilyMembers,MaleNumber,FeMaleNumber,guestNote, " ",
+        val GuestList= Guest(1,guestName,totalFamilyMembers,guestNote, " ",
         guestPhone,guestEmail,guestAddress)
         db.createGuest(GuestList)
         Toast.makeText(this, "Guest Added successfully", Toast.LENGTH_SHORT).show()
         finish()
     }
-
+    private fun updateDatabase(id: Long) {
+        val databasename=getSharedPreference(this,"databasename").toString()
+        val db=LocalDatabase(this,databasename)
+        val guestName = guestNameEt.text.toString()
+        val guestNote = guestNoteEt.text.toString()
+        val totalFamilyMembers = TotalFamilyMember.text.toString()
+        val guestPhone = guestPhoneEt.text.toString()
+        val guestEmail = guestEmailEt.text.toString()
+        val guestAddress = guestAddresssEt.text.toString()
+        val GuestList= Guest(id,guestName,totalFamilyMembers,guestNote, " ",
+            guestPhone,guestEmail,guestAddress)
+        db.updateGuest(GuestList)
+        Toast.makeText(this, "Guest Updated successfully", Toast.LENGTH_SHORT).show()
+        finish()
+    }
     //retriveing the contact name and number form the device
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

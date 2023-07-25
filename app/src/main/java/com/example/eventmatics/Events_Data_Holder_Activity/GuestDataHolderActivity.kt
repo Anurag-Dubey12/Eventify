@@ -19,10 +19,11 @@ import com.example.eventmatics.Adapter.GuestApdater
 import com.example.eventmatics.Event_Details_Activity.GuestDetails
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
+import com.example.eventmatics.SQLiteDatabase.Dataclass.Guest
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class GuestDataHolderActivity : AppCompatActivity() {
+class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickListener {
     private lateinit var recyclerView: RecyclerView
     lateinit var guestAdd: FloatingActionButton
     lateinit var bottomnav: BottomNavigationView
@@ -60,7 +61,7 @@ class GuestDataHolderActivity : AppCompatActivity() {
                 val db=LocalDatabase(this,databasename)
                 val GuestList=db.getAllGuests()
                 if(GuestList!=null){
-                    val adapter=GuestApdater(GuestList)
+                    val adapter=GuestApdater(GuestList,this)
                     recyclerView.adapter=adapter
                     recyclerView.layoutManager=LinearLayoutManager(this)
                     adapter.notifyDataSetChanged()
@@ -94,7 +95,7 @@ class GuestDataHolderActivity : AppCompatActivity() {
         val db=LocalDatabase(this,databasename)
         val GuestList=db.getAllGuests()
         if(GuestList!=null){
-            val adapter=GuestApdater(GuestList)
+            val adapter=GuestApdater(GuestList,this)
             recyclerView.adapter=adapter
             recyclerView.layoutManager=LinearLayoutManager(this)
             adapter.notifyDataSetChanged()
@@ -107,7 +108,7 @@ class GuestDataHolderActivity : AppCompatActivity() {
         val db=LocalDatabase(this,databasename)
         val GuestList=db.getAllGuests()
         if(GuestList!=null){
-            val adapter=GuestApdater(GuestList)
+            val adapter=GuestApdater(GuestList,this)
             recyclerView.adapter=adapter
             recyclerView.layoutManager=LinearLayoutManager(this)
             adapter.notifyDataSetChanged()
@@ -160,6 +161,13 @@ class GuestDataHolderActivity : AppCompatActivity() {
             }
 
             else->super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onItemClik(guestlist: Guest) {
+        Intent(this,GuestDetails::class.java).also {
+            it.putExtra("selected_list",guestlist)
+            startActivity(it)
         }
     }
 }

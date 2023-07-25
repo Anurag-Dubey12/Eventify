@@ -1,5 +1,9 @@
 package com.example.eventmatics.SQLiteDatabase.Dataclass
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class Budget(
     val id:Long,
     val name: String = "",
@@ -9,4 +13,4 @@ data class Budget(
     val balance: String,
     val remaining: String,
     val paid: String
-)
+) : Parcelable

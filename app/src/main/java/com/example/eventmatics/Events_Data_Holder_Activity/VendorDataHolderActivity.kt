@@ -19,15 +19,24 @@ import com.example.eventmatics.Adapter.VendorDataHolderClass
 import com.example.eventmatics.Event_Details_Activity.VendorDetails
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
+import com.example.eventmatics.SQLiteDatabase.Dataclass.Vendor
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class VendorDataHolderActivity : AppCompatActivity() {
+class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onItemClickListener {
     private lateinit var recyclerView: RecyclerView
     lateinit var vendorAdd: FloatingActionButton
     lateinit var swipeRefreshLayout: SwipeRefreshLayout
     lateinit var bottomnav: BottomNavigationView
     lateinit var adapter:VendorDataHolderClass
+
+    override fun onItemclick(vendor: Vendor) {
+        Intent(this,VendorDetails::class.java).also {
+            it.putExtra("Selected_Item",vendor)
+            startActivity(it)
+        }
+
+    }
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +73,7 @@ class VendorDataHolderActivity : AppCompatActivity() {
                 val db=LocalDatabase(this,databasename)
                 val vendorlist=db.getAllVendors()
                 if(vendorlist!=null){
-                    adapter=VendorDataHolderClass(vendorlist)
+                    adapter=VendorDataHolderClass(vendorlist,this)
                     recyclerView.adapter=adapter
                     recyclerView.layoutManager=LinearLayoutManager(this)
                 }
@@ -93,7 +102,7 @@ class VendorDataHolderActivity : AppCompatActivity() {
         val db=LocalDatabase(this,databasename)
         val vendorlist=db.getAllVendors()
         if(vendorlist!=null){
-            adapter=VendorDataHolderClass(vendorlist)
+            adapter=VendorDataHolderClass(vendorlist,this)
             recyclerView.adapter=adapter
             recyclerView.layoutManager=LinearLayoutManager(this)
         }
@@ -105,7 +114,7 @@ class VendorDataHolderActivity : AppCompatActivity() {
         val db=LocalDatabase(this,databasename)
         val vendorlist=db.getAllVendors()
         if(vendorlist!=null){
-            adapter=VendorDataHolderClass(vendorlist)
+            adapter=VendorDataHolderClass(vendorlist,this)
             recyclerView.adapter=adapter
             recyclerView.layoutManager=LinearLayoutManager(this)
         }
@@ -160,4 +169,6 @@ class VendorDataHolderActivity : AppCompatActivity() {
             dialog.dismiss()
         }
     }
+
+
 }

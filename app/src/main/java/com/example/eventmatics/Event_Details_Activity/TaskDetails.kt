@@ -42,7 +42,7 @@ class TaskDetails : AppCompatActivity(){
     lateinit var TaskNameET:EditText
     lateinit var taskNote:EditText
     lateinit var taskdate:TextView
-    lateinit var category_button:AppCompatButton
+    lateinit var category_button:TextView
     lateinit var TaskPendingbut:AppCompatButton
     lateinit var TaskCombut:AppCompatButton
     var taskStatus:String=""
@@ -82,6 +82,12 @@ class TaskDetails : AppCompatActivity(){
             category_button.text = selectedTask.category
             taskNote.setText(selectedTask.taskNote)
             taskdate.setText(selectedTask.taskDate)
+
+        }
+        else{
+            val today= Calendar.getInstance()
+            val formateddate="${today.get(Calendar.DAY_OF_MONTH)}/${today.get(Calendar.MONTH)+1}/${today.get(Calendar.YEAR)}"
+            taskdate.setText(formateddate)
         }
 
         TaskPendingbut.setOnClickListener {
@@ -98,9 +104,7 @@ class TaskDetails : AppCompatActivity(){
         category_button.setOnClickListener {
             ShowTaskCategory()
         }
-        val today= Calendar.getInstance()
-        val formateddate="${today.get(Calendar.DAY_OF_MONTH)}/${today.get(Calendar.MONTH)+1}/${today.get(Calendar.YEAR)}"
-        taskdate.setText(formateddate)
+
     }
     private fun ShowTaskCategory() {
         val spinnerAdapter = CategoryAdapter(this, spinnerItems)
@@ -152,14 +156,17 @@ class TaskDetails : AppCompatActivity(){
                 true
             }
             R.id.Check->{
+                val selectedTask: Task? = intent.getParcelableExtra("selected_task")
+                if(selectedTask!=null){
+                    UpdateData(selectedTask.id)
+                }else{
                 addvaluetodatabase()
+                }
                 true
             }
          else->super.onOptionsItemSelected(item)
         }
     }
-
-
     fun getSharedPreference(context: Context, key: String): String?{
         val sharedvalue=context.getSharedPreferences("Database",Context.MODE_PRIVATE)
         return sharedvalue.getString(key,null)
@@ -185,4 +192,23 @@ class TaskDetails : AppCompatActivity(){
         finish()
 
 }
+    private fun UpdateData(id: Long) {
+        val databasename=getSharedPreference(this,"databasename").toString()
+        val Db=LocalDatabase(this,databasename)
+        val taskname = TaskNameET.text.toString()
+        val category = category_button.text.toString()
+        val TaskNoteET = taskNote.text.toString()
+        val taskdate = taskdate.text.toString()
+
+        if (TaskPendingbut.isSelected) {
+            taskStatus = "Pending"
+        } else if (TaskCombut.isSelected) {
+            taskStatus = "Completed"
+        }
+        val task=Task(id,taskname,category,TaskNoteET,taskStatus,taskdate)
+        Db.updateTask(task)
+        Toast.makeText(this, "Task Updated successfully", Toast.LENGTH_SHORT).show()
+
+        finish()
+    }
 }

@@ -42,83 +42,78 @@
                 android:layout_marginBottom="10sp"
                 android:background="@drawable/valueediteffect" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10sp"
-                android:orientation="horizontal">
+
 
                 <TextView
-                    android:layout_width="0sp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="400sp"
+                    android:layout_height="35sp"
                     android:layout_marginEnd="10sp"
                     android:textSize="18sp"
+                    android:layout_marginStart="5sp"
                     android:layout_weight="1"
                     android:textColor="@color/black"
                     android:text="@string/Family_Member" />
-
                 <EditText
                     android:id="@+id/TotalFamilyMember"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="400sp"
+                    android:layout_height="35sp"
                     android:textColor="@color/black"
+                    android:layout_marginStart="5sp"
                     android:inputType="number"
-                    android:layout_weight="1"
                     android:background="@drawable/valueediteffect"
                     android:hint="@string/Total_Number" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10sp"
-                android:orientation="horizontal">
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginBottom="10sp"-->
+<!--                android:orientation="horizontal">-->
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="15sp"
-                    android:textColor="@color/black"
-                    android:layout_weight="1"
-                    android:textSize="18sp"
-                    android:text="@string/Male" />
+<!--                <TextView-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginEnd="15sp"-->
+<!--                    android:textColor="@color/black"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:textSize="18sp"-->
+<!--                    android:text="@string/Male" />-->
 
-                <EditText
-                    android:id="@+id/MaleNumber"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="15sp"
-                    android:layout_weight="1"
-                    android:textColor="@color/black"
-                    android:background="@drawable/valueediteffect"
-                    android:hint="@string/Male_Number" />
+<!--                <EditText-->
+<!--                    android:id="@+id/MaleNumber"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginEnd="15sp"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:textColor="@color/black"-->
+<!--                    android:background="@drawable/valueediteffect"-->
+<!--                    android:hint="@string/Male_Number" />-->
 
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10sp"
-                android:orientation="horizontal">
+<!--            </LinearLayout>-->
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginBottom="10sp"-->
+<!--                android:orientation="horizontal">-->
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="15sp"
-                    android:textColor="@color/black"
-                    android:layout_weight="1"
-                    android:textSize="18sp"
-                    android:text="@string/Female" />
+<!--                <TextView-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginEnd="15sp"-->
+<!--                    android:textColor="@color/black"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:textSize="18sp"-->
+<!--                    android:text="@string/Female" />-->
 
-                <EditText
-                    android:id="@+id/FeMaleNumber"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="15sp"
-                    android:layout_weight="1"
-                    android:textColor="@color/black"
-                    android:background="@drawable/valueediteffect"
-                    android:hint="@string/Female_Number" />
+<!--                <EditText-->
+<!--                    android:id="@+id/FeMaleNumber"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginEnd="15sp"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:textColor="@color/black"-->
+<!--                    android:background="@drawable/valueediteffect"-->
+<!--                    android:hint="@string/Female_Number" />-->
 
-            </LinearLayout>
+<!--            </LinearLayout>-->
 
             <TextView
                 android:layout_width="match_parent"

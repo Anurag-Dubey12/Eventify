@@ -50,7 +50,7 @@ class TaskDataHolderData(private val context:Context,private val dataList: List<
         fun bind(data: Task) {
             taskNameTextView.text = data.taskName
             taskInfoTextView.text = data.taskStatus
-            taskDateTextView.text = data.taskDate // Set the task date
+            taskDateTextView.text = data.taskDate
             task_category.text = data.category
             task_note.text = data.taskNote
         }

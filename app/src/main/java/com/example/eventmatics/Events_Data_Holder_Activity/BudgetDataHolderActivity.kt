@@ -17,13 +17,14 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.eventmatics.Adapter.BudgetDataHolderAdapter
 import com.example.eventmatics.Event_Details_Activity.BudgetDetails
+import com.example.eventmatics.Event_Details_Activity.TaskDetails
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Budget
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class BudgetDataHolderActivity : AppCompatActivity(){
+class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnItemClickListener{
     private lateinit var recyclerView: RecyclerView
     lateinit var budgetAdd: FloatingActionButton
     lateinit var bottomnav: BottomNavigationView
@@ -31,7 +32,12 @@ class BudgetDataHolderActivity : AppCompatActivity(){
     lateinit var budgetlist:MutableList<Budget>
     private var filteredList: MutableList<Budget> = mutableListOf()
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-
+    override fun onItemClick(budget: Budget) {
+        Intent(this, BudgetDetails::class.java).apply {
+            putExtra("selected_item", budget)
+            startActivity(this)
+        }
+    }
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,7 +64,7 @@ class BudgetDataHolderActivity : AppCompatActivity(){
                 val databasehelper = LocalDatabase(this, databasename)
                 val BudgetList = databasehelper.getAllBudgets()
                 if(BudgetList!=null){
-                    adapter = BudgetDataHolderAdapter(BudgetList)
+                    adapter = BudgetDataHolderAdapter(this,BudgetList,this)
                     recyclerView.adapter = adapter
                     recyclerView.layoutManager = LinearLayoutManager(this)
             }
@@ -106,7 +112,7 @@ class BudgetDataHolderActivity : AppCompatActivity(){
         val databasehelper = LocalDatabase(this, databasename)
         val BudgetList = databasehelper.getAllBudgets()
         if(BudgetList!=null){
-            adapter = BudgetDataHolderAdapter(BudgetList)
+            adapter = BudgetDataHolderAdapter(this,BudgetList,this)
             recyclerView.adapter = adapter
             recyclerView.layoutManager = LinearLayoutManager(this)
         }
@@ -118,7 +124,7 @@ class BudgetDataHolderActivity : AppCompatActivity(){
         val databasehelper = LocalDatabase(this, databasename)
         val BudgetList = databasehelper.getAllBudgets()
         if(BudgetList!=null){
-            adapter = BudgetDataHolderAdapter(BudgetList)
+            adapter = BudgetDataHolderAdapter(this,BudgetList,this)
             recyclerView.adapter = adapter
             recyclerView.layoutManager = LinearLayoutManager(this)
         }
@@ -210,4 +216,6 @@ class BudgetDataHolderActivity : AppCompatActivity(){
             dialog.dismiss()
         }
     }
+
+
 }

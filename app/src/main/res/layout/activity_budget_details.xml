@@ -61,10 +61,13 @@
 <!--         android:textStyle="bold"-->
 <!--         android:layout_marginBottom="10sp"-->
 <!--         />-->
-       <androidx.appcompat.widget.AppCompatButton
+       <TextView
            android:id="@+id/categoryselection"
            android:layout_width="match_parent"
-           android:layout_height="wrap_content"
+           android:layout_height="40sp"
+           android:textAlignment="center"
+           android:paddingTop="10sp"
+           android:textStyle="bold"
            android:drawableEnd="@drawable/drop_arrow"
            android:background="@drawable/category_button"
            android:text="@string/select_a_category"

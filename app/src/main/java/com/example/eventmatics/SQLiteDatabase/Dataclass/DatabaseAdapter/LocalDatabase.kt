@@ -53,8 +53,6 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         //Guest Column Name
         private const val Guest_Name = "Guest_Name"
         private const val TOTAL_FAMILY_MEMBERS = "total_family_members"
-        private const val MALE_NUMBER = "male_number"
-        private const val FEMALE_NUMBER = "female_number"
         private const val NOTE = "note"
         private const val GUEST_STATUS = "guest_status"
         private const val GUEST_CONTACT = "guest_contact"
@@ -115,8 +113,6 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
                 "$COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "$Guest_Name TEXT," +
                 "$TOTAL_FAMILY_MEMBERS INTEGER," +
-                "$MALE_NUMBER INTEGER," +
-                "$FEMALE_NUMBER INTEGER," +
                 "$NOTE TEXT," +
                 "$GUEST_STATUS TEXT," +
                 "$GUEST_CONTACT TEXT," +
@@ -183,9 +179,7 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
             val createGuestTableQuery = "CREATE TABLE $TABLE_GUEST (" +
                     "$COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "$Guest_Name TEXT," +
-                    "$TOTAL_FAMILY_MEMBERS INTEGER," +
-                    "$MALE_NUMBER INTEGER," +
-                    "$FEMALE_NUMBER INTEGER," +
+                    "$TOTAL_FAMILY_MEMBERS TEXT," +
                     "$NOTE TEXT," +
                     "$GUEST_STATUS TEXT," +
                     "$GUEST_CONTACT TEXT," +
@@ -331,11 +325,11 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
                 do {
                     val id = it.getLong(it.getColumnIndex(COLUMN_ID))
                     val name = it.getString(it.getColumnIndex(Task_Name))
-                    val status = it.getString(it.getColumnIndex(Task_Status))
-                    val date = it.getString(it.getColumnIndex(Task_Date))
                     val category = it.getString(it.getColumnIndex(Task_Category))
                     val note = it.getString(it.getColumnIndex(Task_Note))
-                    val task = Task( id,name,status ,date,category, note )
+                    val status = it.getString(it.getColumnIndex(Task_Status))
+                    val date = it.getString(it.getColumnIndex(Task_Date))
+                    val task = Task( id,name,category, note, status,date)
                     tasks.add(task)
                 } while (it.moveToNext())
             }
@@ -523,8 +517,6 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         val values = ContentValues().apply {
             put(Guest_Name, guest.name)
             put(TOTAL_FAMILY_MEMBERS, guest.totalFamilyMembers)
-            put(MALE_NUMBER, guest.maleNumber)
-            put(FEMALE_NUMBER, guest.femaleNumber)
             put(NOTE, guest.note)
             put(GUEST_STATUS, guest.isInvitationSent)
             put(GUEST_CONTACT, guest.phoneNumber)
@@ -548,15 +540,13 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
                 do {
                     val id = it.getLong(it.getColumnIndex(COLUMN_ID))
                     val name = it.getString(it.getColumnIndex(Guest_Name))
-                    val totalFamilyMembers = it.getInt(it.getColumnIndex(TOTAL_FAMILY_MEMBERS))
-                    val maleNumber = it.getInt(it.getColumnIndex(MALE_NUMBER))
-                    val femaleNumber = it.getInt(it.getColumnIndex(FEMALE_NUMBER))
+                    val totalFamilyMembers = it.getString(it.getColumnIndex(TOTAL_FAMILY_MEMBERS))
                     val note = it.getString(it.getColumnIndex(NOTE))
                     val status = it.getString(it.getColumnIndex(GUEST_STATUS))
                     val contact = it.getString(it.getColumnIndex(GUEST_CONTACT))
                     val email = it.getString(it.getColumnIndex(GUEST_EMAIL))
                     val address = it.getString(it.getColumnIndex(GUEST_ADDRESS))
-                    val guest = Guest(id, name, totalFamilyMembers, maleNumber, femaleNumber, note, status, contact, email, address)
+                    val guest = Guest(id, name, totalFamilyMembers, note, status, contact, email, address)
                     guests.add(guest)
                 } while (it.moveToNext())
             }
@@ -576,16 +566,14 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
 
         if (cursor.moveToFirst()) {
             val guestName = cursor.getString(cursor.getColumnIndex(Guest_Name))
-            val totalFamilyMembers = cursor.getInt(cursor.getColumnIndex(TOTAL_FAMILY_MEMBERS))
-            val maleNumber = cursor.getInt(cursor.getColumnIndex(MALE_NUMBER))
-            val femaleNumber = cursor.getInt(cursor.getColumnIndex(FEMALE_NUMBER))
+            val totalFamilyMembers = cursor.getString(cursor.getColumnIndex(TOTAL_FAMILY_MEMBERS))
             val guestNote = cursor.getString(cursor.getColumnIndex(NOTE))
             val guestStatus = cursor.getString(cursor.getColumnIndex(GUEST_STATUS))
             val guestContact = cursor.getString(cursor.getColumnIndex(GUEST_CONTACT))
             val guestEmail = cursor.getString(cursor.getColumnIndex(GUEST_EMAIL))
             val guestAddress = cursor.getString(cursor.getColumnIndex(GUEST_ADDRESS))
 
-            guest = Guest(guestId.toLong(), guestName, totalFamilyMembers, maleNumber, femaleNumber, guestNote, guestStatus, guestContact, guestEmail, guestAddress)
+            guest = Guest(guestId.toLong(), guestName, totalFamilyMembers, guestNote, guestStatus, guestContact, guestEmail, guestAddress)
         }
 
         cursor.close()
@@ -601,8 +589,6 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         val values = ContentValues().apply {
             put(Guest_Name, guest.name)
             put(TOTAL_FAMILY_MEMBERS, guest.totalFamilyMembers)
-            put(MALE_NUMBER, guest.maleNumber)
-            put(FEMALE_NUMBER, guest.femaleNumber)
             put(NOTE, guest.note)
             put(GUEST_STATUS, guest.isInvitationSent)
             put(GUEST_CONTACT, guest.phoneNumber)
