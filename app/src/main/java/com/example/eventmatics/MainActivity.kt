@@ -108,7 +108,6 @@ class MainActivity : AppCompatActivity() {
         drawerLayout.addDrawerListener(actionBarDrawerToggle)
         actionBarDrawerToggle.syncState()
 
-
         taskImageButton.setOnClickListener { Intent(this,TaskDataHolderActivity::class.java).also { startActivity(it) } }
         budgetImageButton.setOnClickListener { Intent(this, BudgetDataHolderActivity::class.java).also { startActivity(it) } }
         guestImageButton.setOnClickListener { Intent(this,GuestDataHolderActivity::class.java).also { startActivity(it) } }
