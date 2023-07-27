@@ -25,6 +25,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.eventmatics.Adapter.TaskDataHolderData
 import com.example.eventmatics.Event_Details_Activity.TaskDetails
 import com.example.eventmatics.R
+import com.example.eventmatics.SQLiteDatabase.Dataclass.Budget
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Task
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -48,6 +49,7 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderData.OnItemCli
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private var isRecyclerViewEmpty = true
     private  val NUMBER_OF_COLUMNS = 6
+    private var filteredList: MutableList<Task> = mutableListOf()
     override fun onItemClick(task: Task) {
         // Open TaskDetails activity and pass the selected task's data
         Intent(this, TaskDetails::class.java).apply {
@@ -163,6 +165,7 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderData.OnItemCli
         dialog.show()
 
         nameAscending.setOnClickListener {
+
             dialog.dismiss()
         }
 
@@ -180,8 +183,28 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderData.OnItemCli
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.holder,menu)
-        return super.onCreateOptionsMenu(menu)
+        val searchItem = menu?.findItem(R.id.action_search)
+        // Set up the SearchView
+        val searchView = searchItem?.actionView as androidx.appcompat.widget.SearchView
+        searchView.queryHint = "Search"
+
+        // Handle query submission and text changes
+        searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                // Perform search or any other actions
+//                Toast.makeText(applicationContext, "Search query: $query", Toast.LENGTH_SHORT).show()
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+
+                return true
+            }
+        })
+        return true
     }
+
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return  when(item.itemId){

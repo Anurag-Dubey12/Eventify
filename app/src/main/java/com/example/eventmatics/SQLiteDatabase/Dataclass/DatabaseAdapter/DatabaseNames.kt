@@ -7,14 +7,14 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseNameHolder
 
-class DatabaseAdapter(val context: Context,val Databasename:String):SQLiteOpenHelper(context,Databasename,null,DATABASE_VERSION) {
+class DatabaseNames(val context: Context,val Databasename:String):SQLiteOpenHelper(context,Databasename,null,DATABASE_VERSION) {
     companion object {
         private const val DATABASE_VERSION = 1
         private const val COLUMN_ID = "id"
         //Table and column
-        private const val DATABASE_TABLE = "database_table"
-        private const val DATABASE_NAME = "database_name"
-        private const val DATABASE_DATE = "database_date"
+        private const val DATABASE_TABLE = "Database_Table"
+        private const val DATABASE_NAME = "Database_Name"
+        private const val DATABASE_DATE = "Database_Date"
 
     }
 

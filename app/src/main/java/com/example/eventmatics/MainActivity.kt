@@ -140,7 +140,8 @@ class MainActivity : AppCompatActivity() {
                 Eventshow.visibility=View.GONE
             } }
         eventaddbut.setOnClickListener { val eventadding=EventAdding(this,supportFragmentManager,null)
-            eventadding.show() }
+            eventadding.show()
+        }
         widgetButton.setOnClickListener { addWidgetToHomeScreen() }
         swipeRefreshLayout.setOnRefreshListener {
             Handler().postDelayed({
@@ -185,7 +186,6 @@ class MainActivity : AppCompatActivity() {
                 swipeRefreshLayout.isRefreshing=false
             },1)
         }
-
         swipeRefreshLayout.setColorSchemeResources(R.color.Coral, R.color.Fuchsia, R.color.Indigo)
         swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.Lavender_Blush)
         swipeRefreshLayout.setProgressViewOffset(true, 0, 150)
@@ -241,7 +241,7 @@ class MainActivity : AppCompatActivity() {
             budgetShowTextView.text = Eventtimer.budget
             val budget=Eventtimer.budget
             piechart.addPieSlice(PieModel("Budget",budget.toFloat(),Color.parseColor("#959494")))
-
+            piechart.startAnimation()
 //            piechart.addPieSlice(PieModel("Budget",budget.toFloat(),Color.parseColor("#F6D661")))
             // Calculate remaining time until the event date
             val eventDate = Eventtimer.Date

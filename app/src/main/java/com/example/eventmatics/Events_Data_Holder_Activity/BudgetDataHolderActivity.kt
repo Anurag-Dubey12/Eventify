@@ -153,19 +153,19 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
             dialog.dismiss()
         }
 
-//        pendingOnly.setOnClickListener {
-//            filteredList.clear()
-//            filteredList.addAll(budgetlist.filter { it.traninfo == "Pending" })
-//            adapter.updateList(filteredList)
-//            dialog.dismiss()
-//        }
-//
-//        paidOnly.setOnClickListener {
-//            filteredList.clear()
-//            filteredList.addAll(budgetlist.filter { it.traninfo == "Paid" })
-//            adapter.updateList(filteredList)
-//            dialog.dismiss()
-//        }
+        pendingOnly.setOnClickListener {
+            filteredList.clear()
+            filteredList.addAll(budgetlist.filter { it.remaining == "Pending" })
+            adapter.updateList(filteredList)
+            dialog.dismiss()
+        }
+
+        paidOnly.setOnClickListener {
+            filteredList.clear()
+            filteredList.addAll(budgetlist.filter { it.paid== "Paid" })
+            adapter.updateList(filteredList)
+            dialog.dismiss()
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

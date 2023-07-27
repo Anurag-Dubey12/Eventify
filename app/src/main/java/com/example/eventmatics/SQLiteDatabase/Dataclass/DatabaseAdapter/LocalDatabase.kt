@@ -6,6 +6,7 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.widget.Toast
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Budget
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Events
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Guest
@@ -208,6 +209,9 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         onCreate(db)
     }
     fun createEvent(event: Events): Long {
+        if (isEventNameExists(event.name)) {
+            return -1
+        }
         val db = writableDatabase
         val values = ContentValues().apply {
             put(Event_Name, event.name)
@@ -219,6 +223,16 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         db.close()
         return id
     }
+    fun isEventNameExists(eventName: String): Boolean {
+        val db = readableDatabase
+        val query = "SELECT $Event_Name FROM $TABLE_Event WHERE $Event_Name = ?"
+        val cursor = db.rawQuery(query, arrayOf(eventName))
+        val eventExists = cursor.count > 0
+        cursor.close()
+        db.close()
+        return eventExists
+    }
+
     @SuppressLint("Range")
     fun getAllEvents(): MutableList<Events> {
         val events = ArrayList<Events>()

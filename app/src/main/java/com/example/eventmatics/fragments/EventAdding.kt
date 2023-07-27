@@ -100,41 +100,52 @@ class EventAdding(
         }
         eventDate.setOnClickListener { showDatePicker() }
         eventTime.setOnClickListener { showTimePicker() }
+
         createButton.setOnClickListener {
+            val databasename=getSharedPreference(context,"databasename").toString()
             val eventNameText = eventName.text.toString()
             var eventDateText = eventDate.text.toString()
             val eventTimeText = eventTime.text.toString()
             val eventBudgetText = eventBudget.text.toString()
-            if(eventNameText.isEmpty()){
-                eventName.error="Enter Event Name"
-            }
-            if(eventDateText.isEmpty()){
-                eventDateText="Date is not Defined"
-            }
-            if(eventBudgetText.isEmpty()){
-                eventBudget.error="Enter Budget"
-            }
-            if(eventTimeText.isEmpty()){
-                eventTime.error="Select Time"
-            }
-            if(eventNameText.isNotEmpty() && eventDateText.isNotEmpty() && eventBudgetText.isNotEmpty() && eventTimeText.isNotEmpty()){
-                val event=Events(0,eventNameText,eventDateText,eventTimeText,eventBudgetText)
-                val databaseHelper=LocalDatabase(context,eventNameText)
 
-                databaseHelper.createEvent(event)
+            if (eventNameText.isEmpty()) {
+                eventName.error = "Enter Event Name"
+                return@setOnClickListener
+            }
+            if (eventDateText.isEmpty()) {
+                eventDateText = "Date is not Defined"
+            }
+            if (eventBudgetText.isEmpty()) {
+                eventBudget.error = "Enter Budget"
+                return@setOnClickListener
+            }
+            if (eventTimeText.isEmpty()) {
+                eventTime.error = "Select Time"
+                return@setOnClickListener
+            }
+            val databaseHelper = LocalDatabase(context, databasename)
+            if (databaseHelper.isEventNameExists(eventNameText)) {
+                Toast.makeText(context, "Event name must be unique", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val event = Events(0, eventNameText, eventDateText, eventTimeText, eventBudgetText)
+            val eventId = databaseHelper.createEvent(event)
+            databaseHelper.close()
+
+            if (eventId != -1L) {
                 val dataAddedIntent = Intent("com.example.eventmatics.fragments")
                 context?.sendBroadcast(dataAddedIntent)
-                // Dismiss the dialog if needed
                 dismiss()
                 Toast.makeText(context, "Event created successfully", Toast.LENGTH_SHORT).show()
-                saveToSharedPreferences(context,"databasename",eventNameText)
+                saveToSharedPreferences(context, "databasename", eventNameText)
                 dismiss()
-            }
-            else{
-                Toast.makeText(context,"Please check Field Properly",Toast.LENGTH_SHORT).show()
-            }
+            } else {
 
+                Toast.makeText(context, "Failed to create event", Toast.LENGTH_SHORT).show()
+            }
         }
+
 
     }
     private fun getEventDataFromSQLite(position: Int): Events {

@@ -13,14 +13,22 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.Event_Details_Activity.TaskDetails
 import com.example.eventmatics.R
+import com.example.eventmatics.SQLiteDatabase.Dataclass.Budget
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Task
 import com.example.eventmatics.SharedViewModel
 
 class TaskDataHolderData(private val context:Context,private val dataList: List<Task>
-,     private val itemClickListener: OnItemClickListener
-) :
-    RecyclerView.Adapter<TaskDataHolderData.ViewHolder>() {
+,     private val itemClickListener: OnItemClickListener) : RecyclerView.Adapter<TaskDataHolderData.ViewHolder>() {
+    private var filteredList: MutableList<Task> = mutableListOf()
 
+    init {
+        filteredList.addAll(dataList)
+    }
+    fun updateList(filteredList: MutableList<Task>) {
+//        this.filteredList.clear()
+        this.filteredList.addAll(filteredList)
+        notifyDataSetChanged()
+    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.taskdataholder, parent, false)

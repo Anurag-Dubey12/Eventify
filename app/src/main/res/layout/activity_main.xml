@@ -292,7 +292,6 @@
                     android:id="@+id/piechart"
                     android:layout_width="100sp"
                     android:layout_height="100sp"
-                    app:egInnerPaddingColor="@color/Aqua"
                     android:animateLayoutChanges="true"
                     android:animationCache="true"
                     android:layout_gravity="center_horizontal"
