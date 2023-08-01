@@ -1,25 +1,21 @@
 package com.example.eventmatics.Adapter
 
 import android.content.Context
-import android.content.Intent
-import android.icu.text.Transliterator.Position
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView.OnItemClickListener
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
-import com.example.eventmatics.Event_Details_Activity.TaskDetails
 import com.example.eventmatics.R
-import com.example.eventmatics.SQLiteDatabase.Dataclass.Budget
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Task
-import com.example.eventmatics.SharedViewModel
 
-class TaskDataHolderData(private val context:Context,private val dataList: List<Task>
-,     private val itemClickListener: OnItemClickListener) : RecyclerView.Adapter<TaskDataHolderData.ViewHolder>() {
+class TaskDataHolderAdpater(private val context:Context, private val dataList: MutableList<Task>
+                            , private val itemClickListener: OnItemClickListener) : RecyclerView.Adapter<TaskDataHolderAdpater.ViewHolder>() {
     private var filteredList: MutableList<Task> = mutableListOf()
+    fun removeItem(position: Int) {
+        dataList.removeAt(position)
+        notifyItemRemoved(position)
+    }
 
     init {
         filteredList.addAll(dataList)
@@ -44,11 +40,17 @@ class TaskDataHolderData(private val context:Context,private val dataList: List<
         holder.itemView.setOnClickListener {
             itemClickListener.onItemClick(data)
         }
+        holder.itemView.setOnLongClickListener {
+            removeItem(position)
+            true // Return 'true' to indicate that the long click event is consumed.
+        }
     }
+
 
     override fun getItemCount(): Int {
         return dataList.size
     }
+
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val taskNameTextView: TextView = itemView.findViewById(R.id.Taskname)
         private val taskInfoTextView: TextView = itemView.findViewById(R.id.Task_info_show)

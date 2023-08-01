@@ -19,17 +19,21 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.example.eventmatics.Adapter.TaskDataHolderData
+import com.example.eventmatics.Adapter.TaskDataHolderAdpater
 import com.example.eventmatics.Event_Details_Activity.TaskDetails
 import com.example.eventmatics.PDF.TaskPDF
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Task
+import com.example.eventmatics.SwipeGesture.SwipeToDelete
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import com.itextpdf.text.Document
 import com.itextpdf.text.Element
 import com.itextpdf.text.FontFactory
@@ -42,10 +46,10 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
-class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderData.OnItemClickListener {
+class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItemClickListener {
     lateinit var taskAdd:FloatingActionButton
     lateinit var bottomnav: BottomNavigationView
-    private lateinit var adapter: TaskDataHolderData
+    private lateinit var adapter: TaskDataHolderAdpater
     private lateinit var recyclerView: RecyclerView
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private var isRecyclerViewEmpty = true
@@ -70,7 +74,6 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderData.OnItemCli
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         bottomnav=findViewById(R.id.bottomNavigationView)
         bottomnav.background=null
-        //Action Bar
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -91,7 +94,8 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderData.OnItemCli
                 // Check if the first visible item index is at the top
                 val isAtTop = recyclerView.canScrollVertically(-1)
                 swipeRefreshLayout.isEnabled =
-                    !isAtTop // Enable/disable the SwipeRefreshLayout based on scroll position
+                    !isAtTop
+            // Enable/disable the SwipeRefreshLayout based on scroll position
             }
         })
         swipeRefreshLayout=findViewById(R.id.swipeRefreshLayout)
@@ -103,7 +107,7 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderData.OnItemCli
             isRecyclerViewEmpty = tasklist.isNullOrEmpty()
             if(tasklist!=null){
                 //Recycler view
-                adapter = TaskDataHolderData(this,tasklist,this)
+                adapter = TaskDataHolderAdpater(this,tasklist,this)
                 recyclerView?.adapter = adapter
                 recyclerView.layoutManager = LinearLayoutManager(this)
                 swipeRefreshLayout.isRefreshing=false
@@ -113,6 +117,7 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderData.OnItemCli
 
         showTaskData()
     }
+
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         val pdfReportItem = menu.findItem(R.id.pdfreport)
         val check = menu.findItem(R.id.Check)
@@ -128,23 +133,106 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderData.OnItemCli
         isRecyclerViewEmpty=tasklist.isNullOrEmpty()
         if(tasklist!=null){
             //Recycler view
-            adapter = TaskDataHolderData(this,tasklist,this)
+            adapter = TaskDataHolderAdpater(this,tasklist,this)
             recyclerView?.adapter = adapter
             recyclerView.layoutManager = LinearLayoutManager(this)
             swipeRefreshLayout.isRefreshing=false
+
         }
+        val swipe=object :SwipeToDelete(this){
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position=viewHolder.adapterPosition
+                var actionBtn=false
+                when(direction){
+                    ItemTouchHelper.LEFT->{
+                        val deleteitem=tasklist[position]
+                        tasklist.removeAt(position)
+                        adapter.notifyItemRemoved(position)
+                        val snackbar=Snackbar.make(this@TaskDataHolderActivity.recyclerView,"Item Delete",Snackbar.LENGTH_LONG)
+                            .addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                                override fun onDismissed(
+                                    transientBottomBar: Snackbar?,
+                                    event: Int
+                                ) {
+                                    super.onDismissed(transientBottomBar, event)
+                                }
+
+                                override fun onShown(transientBottomBar: Snackbar?) {
+                                    transientBottomBar?.setAction("UNDO"){
+                                        tasklist.add(position,deleteitem)
+                                        adapter.notifyItemInserted(position)
+                                        actionBtn=true
+                                    }
+                                    super.onShown(transientBottomBar)
+                                }
+
+                            }).apply {
+                                animationMode=Snackbar.ANIMATION_MODE_SLIDE
+                            }
+                        snackbar.setActionTextColor(
+                            ContextCompat.getColor(
+                                this@TaskDataHolderActivity, androidx.browser.R.color.browser_actions_bg_grey
+                            )
+                        )
+                        snackbar.show()
+                    }
+
+                    ItemTouchHelper.RIGHT->{
+                        val paiditem=tasklist[position]
+                        val position=viewHolder.adapterPosition
+                        tasklist.removeAt(position)
+                        adapter.notifyItemRemoved(position)
+                        tasklist.add(paiditem)
+                        adapter.notifyItemRemoved(position)
+
+                        val snackbar=Snackbar.make(this@TaskDataHolderActivity.recyclerView
+                        ,"Item Paid",Snackbar.LENGTH_LONG)
+                            .addCallback(object :BaseTransientBottomBar.BaseCallback<Snackbar>(){
+                                override fun onDismissed(
+                                    transientBottomBar: Snackbar?,
+                                    event: Int
+                                ) {
+                                    super.onDismissed(transientBottomBar, event)
+                                }
+
+                                override fun onShown(transientBottomBar: Snackbar?) {
+                                    transientBottomBar?.setAction("UNDO"){
+                                        tasklist.add(position,paiditem)
+                                        adapter.notifyItemInserted(position)
+                                        actionBtn=true
+                                    }
+                                    super.onShown(transientBottomBar)
+                                }
+                            })
+                            .apply {
+                                animationMode=Snackbar.ANIMATION_MODE_SLIDE
+                            }
+                        snackbar.setActionTextColor(
+                            ContextCompat.getColor(
+                                this@TaskDataHolderActivity, androidx.browser.R.color.browser_actions_bg_grey
+                            )
+                        )
+                        snackbar.show()
+                    }
+                }
+            }
+        }
+        val touchHelper=ItemTouchHelper(swipe)
+        touchHelper.attachToRecyclerView(recyclerView)
         invalidateOptionsMenu()
     }
     private fun showTaskData() {
+
         val databsename=getSharedPreference(this,"databasename").toString()
         val db=LocalDatabase(this,databsename)
         val tasklist=db.getAllTasks()
         isRecyclerViewEmpty=tasklist.isNullOrEmpty()
         if(tasklist!=null){
             //Recycler view
-            adapter = TaskDataHolderData(this,tasklist,this)
+            adapter = TaskDataHolderAdpater(this,tasklist,this)
             recyclerView?.adapter = adapter
             recyclerView.layoutManager = LinearLayoutManager(this)
+
             swipeRefreshLayout.isRefreshing=false
         }
         invalidateOptionsMenu()

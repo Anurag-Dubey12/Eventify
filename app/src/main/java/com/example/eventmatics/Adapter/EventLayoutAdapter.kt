@@ -44,7 +44,6 @@ class EventLayoutAdapter(val eventdata:MutableList<Events>,
             eventNameTextView.text=eventdata.name
             eventDateTextView.text=eventdata.Date
             eventTimeTextView.text=eventdata.time
-//            itemView.item.setOnClickListener { onItemClickListener(position) }
 
         }
 

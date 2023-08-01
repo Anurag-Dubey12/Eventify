@@ -3,12 +3,12 @@ package com.example.eventmatics.Adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
-import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseNameHolder
-import com.example.eventmatics.SQLiteDatabase.Dataclass.Events
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseNameDataClass
 
-class EventDatabaseAdapter(private val DatabaseList: MutableList<DatabaseNameHolder>):RecyclerView.Adapter<EventDatabaseAdapter.Viewholder>() {
+class EventDatabaseAdapter(private val DatabaseList: List<DatabaseNameDataClass>):RecyclerView.Adapter<EventDatabaseAdapter.Viewholder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventDatabaseAdapter.Viewholder {
         val view=LayoutInflater.from(parent.context).inflate(R.layout.databaseholder,parent,false)
         return Viewholder(view)
@@ -23,9 +23,13 @@ class EventDatabaseAdapter(private val DatabaseList: MutableList<DatabaseNameHol
         return DatabaseList.size
     }
     inner class Viewholder(itemview: View):RecyclerView.ViewHolder(itemview){
-
-        fun bind(DatabaseList: DatabaseNameHolder){
-
+        val DatabaseName=itemview.findViewById<TextView>(R.id.DatabaseName)
+        val Databaseindex=itemview.findViewById<TextView>(R.id.Databaseindex)
+        val DatabaseDate=itemview.findViewById<TextView>(R.id.DatabaseDate)
+        fun bind(DatabaseList: DatabaseNameDataClass){
+            DatabaseName.text=DatabaseList.DatabaseName
+            Databaseindex.text= DatabaseList.id.toString()
+            DatabaseDate.text=DatabaseList.Date
         }
     }
 }

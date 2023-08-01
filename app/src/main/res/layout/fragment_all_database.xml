@@ -1,29 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/swipeRefreshLayout"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
-<LinearLayout
-    android:layout_width="match_parent"
+<LinearLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    tools:context=".fragments.AllDatabase">
+    tools:context=".fragments.DatabaseNameHolder"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 <androidx.appcompat.widget.Toolbar
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:menu="@menu/databasemenu"
-    android:background="@color/light_purple"
-    android:title="Add Task"
+    android:layout_height="30sp"
+    android:background="@color/Lavender_Blush"
+    android:title="Manage Event"
+    app:titleTextColor="@color/black"
     android:titleMarginStart="30sp"
     />
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/swipeRefreshLayout"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools">
     <androidx.recyclerview.widget.RecyclerView
         android:layout_below="@id/toolbar"
         android:id="@+id/DatabaseRecycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-</LinearLayout>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</LinearLayout>

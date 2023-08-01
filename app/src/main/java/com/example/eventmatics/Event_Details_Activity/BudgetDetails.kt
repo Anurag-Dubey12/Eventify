@@ -7,7 +7,10 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -23,6 +26,7 @@ import java.util.Calendar
 class BudgetDetails : AppCompatActivity(){
     lateinit var nameEditText:EditText
     lateinit var  balanceET: TextView
+    lateinit var  PaidET: TextView
     lateinit var EstimatedEt: EditText
     lateinit var NoteET: EditText
     lateinit var categoryselection: TextView
@@ -99,6 +103,7 @@ class BudgetDetails : AppCompatActivity(){
           R.id.Check->{
               val selected_item:Budget?=intent.getParcelableExtra("selected_item")
               if (selected_item!=null){
+
                   UpdateDatabase(selected_item.id)
               }
               else{
@@ -152,6 +157,7 @@ class BudgetDetails : AppCompatActivity(){
             EstimatedEt.error = "Please enter an amount"
             return
         }
+
         val id=0
         val databasename=getSharedPreference(this,"databasename").toString()
         val db=LocalDatabase(this,databasename)

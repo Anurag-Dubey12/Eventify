@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.opengl.Visibility
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -12,16 +11,18 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDialog
 import androidx.fragment.app.FragmentManager
-import com.example.eventmatics.MainActivity
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
-import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseNameHolder
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Events
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import java.util.Calendar
+import android.content.BroadcastReceiver
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.NamesDatabase
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseNameDataClass
+
 
 class EventAdding(
     context: Context, private val fragmentManager: FragmentManager,
@@ -124,15 +125,17 @@ class EventAdding(
                 return@setOnClickListener
             }
             val databaseHelper = LocalDatabase(context, databasename)
+            val Databasename=NamesDatabase(context)
             if (databaseHelper.isEventNameExists(eventNameText)) {
                 Toast.makeText(context, "Event name must be unique", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
             val event = Events(0, eventNameText, eventDateText, eventTimeText, eventBudgetText)
+            val names=DatabaseNameDataClass(0,eventNameText,eventDateText)
             val eventId = databaseHelper.createEvent(event)
+            val Eventlist=Databasename.createDatabase(names)
             databaseHelper.close()
-
+            Databasename.close()
             if (eventId != -1L) {
                 val dataAddedIntent = Intent("com.example.eventmatics.fragments")
                 context?.sendBroadcast(dataAddedIntent)

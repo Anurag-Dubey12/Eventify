@@ -1,11 +1,8 @@
 package com.example.eventmatics.Event_Details_Activity
 
-import android.content.ContentValues.TAG
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Environment
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
@@ -23,18 +20,8 @@ import com.example.eventmatics.Adapter.CategoryAdapter
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Task
-import com.example.eventmatics.SharedViewModel
 import com.example.eventmatics.data_class.SpinnerItem
 import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import com.itextpdf.text.Document
-import com.itextpdf.text.Paragraph
-import com.itextpdf.text.pdf.PdfWriter
-import java.io.File
-import java.io.FileOutputStream
 import java.util.Calendar
 
 class TaskDetails : AppCompatActivity(){
@@ -180,9 +167,9 @@ class TaskDetails : AppCompatActivity(){
         val taskdate=taskdate.text.toString()
 
 
-        if (TaskPendingbut.isSelected) {
+        if (TaskPendingbut.isClickable) {
             taskStatus = "Pending"
-        } else if (TaskCombut.isSelected) {
+        } else if (TaskCombut.isClickable) {
             taskStatus = "Completed"
         }
         val Task=Task(0,taskname,category,TaskNoteET,taskStatus,taskdate)

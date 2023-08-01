@@ -16,6 +16,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
+import android.preference.PreferenceManager
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -29,6 +30,7 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
 import androidx.core.view.GravityCompat
+import androidx.core.view.isEmpty
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -42,8 +44,7 @@ import com.example.eventmatics.Login_Activity.signin_account
 import com.example.eventmatics.NavigationDrawer.ProfileActivity
 import com.example.eventmatics.NavigationDrawer.SettingActivity
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
-import com.example.eventmatics.SQLiteDatabase.Dataclass.Events
-import com.example.eventmatics.fragments.AllDatabase
+import com.example.eventmatics.fragments.DatabaseNameHolder
 import com.example.eventmatics.fragments.EventAdding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -108,10 +109,24 @@ class MainActivity : AppCompatActivity() {
         drawerLayout.addDrawerListener(actionBarDrawerToggle)
         actionBarDrawerToggle.syncState()
 
-        taskImageButton.setOnClickListener { Intent(this,TaskDataHolderActivity::class.java).also { startActivity(it) } }
-        budgetImageButton.setOnClickListener { Intent(this, BudgetDataHolderActivity::class.java).also { startActivity(it) } }
-        guestImageButton.setOnClickListener { Intent(this,GuestDataHolderActivity::class.java).also { startActivity(it) } }
-        vendorImageButton.setOnClickListener { Intent(this,VendorDataHolderActivity::class.java).also { startActivity(it) } }
+        if (eventRecyclerView.adapter?.itemCount == 0) {
+            val eventAdding = EventAdding(this, supportFragmentManager, null)
+            eventAdding.show()
+        } else {
+            taskImageButton.setOnClickListener {
+                Intent(this, TaskDataHolderActivity::class.java).also { startActivity(it) }
+            }
+            budgetImageButton.setOnClickListener {
+                Intent(this, BudgetDataHolderActivity::class.java).also { startActivity(it) }
+            }
+            guestImageButton.setOnClickListener {
+                Intent(this, GuestDataHolderActivity::class.java).also { startActivity(it) }
+            }
+            vendorImageButton.setOnClickListener {
+                Intent(this, VendorDataHolderActivity::class.java).also { startActivity(it) }
+            }
+        }
+
         Eventshow.setOnClickListener {
             if (eventshowhide.visibility== View.GONE && eventRecyclerView.visibility==View.GONE){
                 eventshowhide.visibility=View.VISIBLE
@@ -140,6 +155,12 @@ class MainActivity : AppCompatActivity() {
             } }
         eventaddbut.setOnClickListener { val eventadding=EventAdding(this,supportFragmentManager,null)
             eventadding.show()
+        }
+
+        if (isFirstLaunch(this)) {
+            showFirstLaunchDialog()
+
+            setFirstLaunchFlag(this, false)
         }
         widgetButton.setOnClickListener { addWidgetToHomeScreen() }
         swipeRefreshLayout.setOnRefreshListener {
@@ -174,11 +195,12 @@ class MainActivity : AppCompatActivity() {
                     }.start()
                 }
                 else{
-                    Toast.makeText(this,"Event Not Found",Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(this,"Event Not Found",Toast.LENGTH_SHORT).show()
                 }
                 val adapter = EventLayoutAdapter(eventList){ position ->
                     val eventadding=EventAdding(this,supportFragmentManager,position)
-                    eventadding.show()}
+                    eventadding.show()
+                }
                 eventRecyclerView.adapter = adapter
                 eventRecyclerView.layoutManager = LinearLayoutManager(this)
                 adapter.notifyDataSetChanged()
@@ -221,8 +243,18 @@ class MainActivity : AppCompatActivity() {
         val sharedPref = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
         return sharedPref.getString(key, null)
     }
-    // Add this function in your MainActivity class
-
+    private fun showFirstLaunchDialog() {
+        val eventAdding=EventAdding(this,supportFragmentManager,null)
+        eventAdding.show()
+    }
+    fun isFirstLaunch(context: Context): Boolean {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        return sharedPreferences.getBoolean("isFirstLaunch", true)
+    }
+    fun setFirstLaunchFlag(context: Context, isFirstLaunch: Boolean) {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        sharedPreferences.edit().putBoolean("isFirstLaunch", isFirstLaunch).apply()
+    }
 
     @SuppressLint("Range")
      fun showEventData() {
@@ -271,7 +303,7 @@ class MainActivity : AppCompatActivity() {
                 Log.e("CountdownError", "Error parsing event date and time.")
             }
         } else {
-            Toast.makeText(this, "Event Not Found", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(this, "Event Not Found", Toast.LENGTH_SHORT).show()
         }
 
         val adapter = EventLayoutAdapter(eventList){ position ->
@@ -345,7 +377,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_manage_event->{
-                    val EventName=AllDatabase(this)
+                    val EventName=DatabaseNameHolder(this)
                     EventName.show()
                     true
                 }

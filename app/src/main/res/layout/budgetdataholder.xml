@@ -10,11 +10,18 @@
         app:cardCornerRadius="15sp"
         app:cardElevation="5sp"
         android:layout_marginBottom="10sp"
->
+        >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+            <CheckBox
+                android:id="@+id/Paidcheck"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:visibility="gone"
+                />
             <ImageView
                 android:layout_marginTop="5sp"
                 android:layout_width="65sp"
@@ -42,11 +49,6 @@
                     android:textStyle="bold" />
 
             </LinearLayout>
-
-<!--            <View-->
-<!--                android:layout_width="1dp"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:background="#999999" />-->
 
             <LinearLayout
                 android:layout_width="0dp"

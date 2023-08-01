@@ -54,7 +54,7 @@ dependencies {
     implementation 'com.itextpdf:itextg:5.5.10'
 
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-
+    implementation 'it.xabaras.android:recyclerview-swipedecorator:1.4'
     //    PieChart
     implementation 'com.github.blackfizz:eazegraph:1.2.5l@aar'
     implementation 'com.nineoldandroids:library:2.4.0'

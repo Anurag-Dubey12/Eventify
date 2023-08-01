@@ -136,17 +136,17 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-//        if(oldVersion<2){
-//        db?.execSQL("DROP TABLE IF EXISTS $TABLE_Event")
-//            val createEventTableQuery = "CREATE TABLE $TABLE_Event (" +
-//                    "$COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT," +
-//                    "$Event_Name TEXT," +
-//                    "$Event_Date TEXT," +
-//                    "$Event_Time TEXT," +
-//                    "$Event_Budget TEXT" +
-//                    ")"
-//            db?.execSQL(createEventTableQuery)
-//        }
+        if(oldVersion<2){
+        db?.execSQL("DROP TABLE IF EXISTS $TABLE_Event")
+            val createEventTableQuery = "CREATE TABLE $TABLE_Event (" +
+                    "$COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "$Event_Name TEXT," +
+                    "$Event_Date TEXT," +
+                    "$Event_Time TEXT," +
+                    "$Event_Budget TEXT" +
+                    ")"
+            db?.execSQL(createEventTableQuery)
+        }
                 db?.execSQL("DROP TABLE IF EXISTS $TABLE_Event")
 
         if(oldVersion<3){
@@ -329,7 +329,7 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
 
     // Get all tasks
     @SuppressLint("Range")
-    fun getAllTasks(): List<Task> {
+    fun getAllTasks(): MutableList<Task> {
         val tasks = ArrayList<Task>()
         val selectQuery = "SELECT * FROM $TABLE_TASK ORDER BY $COLUMN_ID ASC"
         val db = readableDatabase
@@ -465,7 +465,7 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
 
     // Get all budgets
     @SuppressLint("Range")
-    fun getAllBudgets(): List<Budget> {
+    fun getAllBudgets(): MutableList<Budget> {
         val budgets = ArrayList<Budget>()
         val selectQuery = "SELECT * FROM $TABLE_BUDGET"
         val db = readableDatabase
