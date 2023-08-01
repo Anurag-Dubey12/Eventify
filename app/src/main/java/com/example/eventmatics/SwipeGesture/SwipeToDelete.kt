@@ -16,7 +16,7 @@ abstract class SwipeToDelete(context:Context):ItemTouchHelper.SimpleCallback(
     private val deleteicon=R.drawable.baseline_delete_24
 
     private val archiveColor=ContextCompat.getColor(context, R.color.Light_Pink)
-    private val archiveicon=R.drawable.archive
+    private val archiveicon=R.drawable.baseline_paid_24
 
     override fun onMove(
         recyclerView: RecyclerView,
@@ -48,7 +48,7 @@ abstract class SwipeToDelete(context:Context):ItemTouchHelper.SimpleCallback(
             .addSwipeLeftBackgroundColor(deleteColor)
             .addSwipeLeftActionIcon(deleteicon)
             .addSwipeRightBackgroundColor(archiveColor)
-            .addSwipeRightBackgroundColor(archiveColor)
+            .addSwipeRightActionIcon(archiveicon)
             .create()
             .decorate()
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
