@@ -127,6 +127,7 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
 
     override fun onResume() {
         super.onResume()
+
         val databsename=getSharedPreference(this,"databasename").toString()
         val db=LocalDatabase(this,databsename)
         val tasklist=db.getAllTasks()
@@ -139,42 +140,64 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
             swipeRefreshLayout.isRefreshing=false
 
         }
+
+        invalidateOptionsMenu()
+    }
+    private fun showTaskData() {
+
+        val databsename=getSharedPreference(this,"databasename").toString()
+        val db=LocalDatabase(this,databsename)
+        val tasklist=db.getAllTasks()
+        isRecyclerViewEmpty=tasklist.isNullOrEmpty()
+        if(tasklist!=null){
+            //Recycler view
+            adapter = TaskDataHolderAdpater(this,tasklist,this)
+            recyclerView?.adapter = adapter
+            recyclerView.layoutManager = LinearLayoutManager(this)
+
+            swipeRefreshLayout.isRefreshing=false
+        }
         val swipe=object :SwipeToDelete(this){
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position=viewHolder.adapterPosition
                 var actionBtn=false
                 when(direction){
                     ItemTouchHelper.LEFT->{
-                        val deleteitem=tasklist[position]
-                        tasklist.removeAt(position)
-                        adapter.notifyItemRemoved(position)
-                        val snackbar=Snackbar.make(this@TaskDataHolderActivity.recyclerView,"Item Delete",Snackbar.LENGTH_LONG)
-                            .addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
-                                override fun onDismissed(
-                                    transientBottomBar: Snackbar?,
-                                    event: Int
-                                ) {
-                                    super.onDismissed(transientBottomBar, event)
-                                }
+                        if(position!=RecyclerView.NO_POSITION){
+                            val deleteitem=tasklist[position]
+                            db.deleteTask(deleteitem)
+                            adapter.notifyItemRemoved(position)
 
-                                override fun onShown(transientBottomBar: Snackbar?) {
-                                    transientBottomBar?.setAction("UNDO"){
-                                        tasklist.add(position,deleteitem)
-                                        adapter.notifyItemInserted(position)
-                                        actionBtn=true
+
+                            val snackbar=Snackbar.make(this@TaskDataHolderActivity.recyclerView,"Item Delete",Snackbar.LENGTH_SHORT)
+                                .addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                                    override fun onDismissed(
+                                        transientBottomBar: Snackbar?,
+                                        event: Int
+                                    ) {
+                                        super.onDismissed(transientBottomBar, event)
+                                        recreate()
                                     }
-                                    super.onShown(transientBottomBar)
-                                }
+                                    override fun onShown(transientBottomBar: Snackbar?) {
+                                        transientBottomBar?.setAction("UNDO"){
+                                            tasklist.add(position,deleteitem)
+                                            adapter.notifyItemInserted(position)
+                                            actionBtn=true
+                                        }
+                                        super.onShown(transientBottomBar)
+                                    }
 
-                            }).apply {
-                                animationMode=Snackbar.ANIMATION_MODE_SLIDE
-                            }
-                        snackbar.setActionTextColor(
-                            ContextCompat.getColor(
-                                this@TaskDataHolderActivity, androidx.browser.R.color.browser_actions_bg_grey
+                                }).apply {
+                                    animationMode = Snackbar.ANIMATION_MODE_FADE
+                                }
+                            snackbar.setActionTextColor(
+                                ContextCompat.getColor(
+                                    this@TaskDataHolderActivity, androidx.browser.R.color.browser_actions_bg_grey
+                                )
                             )
-                        )
-                        snackbar.show()
+                            snackbar.show()
+
+                        }
                     }
 
                     ItemTouchHelper.RIGHT->{
@@ -186,7 +209,7 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
                         adapter.notifyItemRemoved(position)
 
                         val snackbar=Snackbar.make(this@TaskDataHolderActivity.recyclerView
-                        ,"Item Paid",Snackbar.LENGTH_LONG)
+                            ,"Item Paid",Snackbar.LENGTH_LONG)
                             .addCallback(object :BaseTransientBottomBar.BaseCallback<Snackbar>(){
                                 override fun onDismissed(
                                     transientBottomBar: Snackbar?,
@@ -219,22 +242,6 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
         }
         val touchHelper=ItemTouchHelper(swipe)
         touchHelper.attachToRecyclerView(recyclerView)
-        invalidateOptionsMenu()
-    }
-    private fun showTaskData() {
-
-        val databsename=getSharedPreference(this,"databasename").toString()
-        val db=LocalDatabase(this,databsename)
-        val tasklist=db.getAllTasks()
-        isRecyclerViewEmpty=tasklist.isNullOrEmpty()
-        if(tasklist!=null){
-            //Recycler view
-            adapter = TaskDataHolderAdpater(this,tasklist,this)
-            recyclerView?.adapter = adapter
-            recyclerView.layoutManager = LinearLayoutManager(this)
-
-            swipeRefreshLayout.isRefreshing=false
-        }
         invalidateOptionsMenu()
     }
 

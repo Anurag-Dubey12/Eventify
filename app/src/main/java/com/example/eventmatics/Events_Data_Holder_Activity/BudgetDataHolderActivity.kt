@@ -12,6 +12,8 @@ import android.widget.TextView
 import androidx.annotation.NonNull
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -21,8 +23,11 @@ import com.example.eventmatics.Event_Details_Activity.TaskDetails
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Budget
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
+import com.example.eventmatics.SwipeGesture.BudgetSwipeToDelete
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 
 class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnItemClickListener{
     private lateinit var recyclerView: RecyclerView
@@ -119,6 +124,80 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
             recyclerView.adapter = adapter
             recyclerView.layoutManager = LinearLayoutManager(this)
         }
+        val swipe=object:BudgetSwipeToDelete(this){
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position=viewHolder.adapterPosition
+                when(direction){
+                    ItemTouchHelper.LEFT->{
+                if(position!=RecyclerView.NO_POSITION){
+                    val deleteitem=BudgetList[position]
+                    databasehelper.deleteBudget(deleteitem)
+                    adapter.notifyItemRemoved(position)
+
+                    val snackbar=Snackbar.make(this@BudgetDataHolderActivity.recyclerView,"Budget Item Deleted",Snackbar.LENGTH_SHORT)
+                        .addCallback(object:BaseTransientBottomBar.BaseCallback<Snackbar>(){
+                            override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                                super.onDismissed(transientBottomBar, event)
+                                recreate()
+                            }
+
+                            override fun onShown(transientBottomBar: Snackbar?) {
+                                transientBottomBar?.setAction("UNDO"){
+                                    BudgetList.add(position,deleteitem)
+                                    adapter.notifyItemInserted(position)
+                                }
+
+                                super.onShown(transientBottomBar)
+                            }
+                        }).apply {
+                            animationMode = Snackbar.ANIMATION_MODE_FADE
+                        }
+                    snackbar.setActionTextColor(
+                        ContextCompat.getColor(
+                            this@BudgetDataHolderActivity, androidx.browser.R.color.browser_actions_bg_grey
+                        )
+                    )
+                    snackbar.show()
+                }
+                    }
+                    ItemTouchHelper.RIGHT->{
+                        if(position!=RecyclerView.NO_POSITION){
+                            val Paiditem=BudgetList[position]
+                            databasehelper.updateBudgetPaid(position.toLong(),"Paid")
+                            adapter.notifyItemInserted(position)
+                            val snackbar=Snackbar.make(this@BudgetDataHolderActivity.recyclerView,"Budget Data Updated",Snackbar.LENGTH_LONG)
+                                .addCallback(object:BaseTransientBottomBar.BaseCallback<Snackbar>(){
+                                    override fun onDismissed(
+                                        transientBottomBar: Snackbar?,
+                                        event: Int
+                                    ) {
+                                        super.onDismissed(transientBottomBar, event)
+                                        recreate()
+                                    }
+
+                                    override fun onShown(transientBottomBar: Snackbar?) {
+                                        transientBottomBar?.setAction("UNDO"){
+                                            BudgetList.add(position,Paiditem)
+                                            adapter.notifyItemInserted(position)
+                                        }
+                                        super.onShown(transientBottomBar)
+                                    }
+                                }).apply {
+                                    animationMode=Snackbar.ANIMATION_MODE_FADE
+                                }
+                            snackbar.setActionTextColor(
+                                ContextCompat.getColor(
+                                    this@BudgetDataHolderActivity, androidx.browser.R.color.browser_actions_bg_grey
+                                )
+                            )
+                            snackbar.show()
+                        }
+                    }
+                }
+            }
+        }
+        val itemTouch=ItemTouchHelper(swipe)
+        itemTouch.attachToRecyclerView(recyclerView)
     }
 
     override fun onResume() {

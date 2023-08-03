@@ -8,15 +8,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 
-abstract class SwipeToDelete(context:Context):ItemTouchHelper.SimpleCallback(
-    0,ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
-) {
+abstract class BudgetSwipeToDelete(context: Context):ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
+{
+    private val deleteicon= R.drawable.baseline_delete_24
+    private val Paidicon=R.drawable.paid
 
-    private val deleteColor=ContextCompat.getColor(context, R.color.Light_Pink)
-    private val deleteicon=R.drawable.delete
-
-    private val archiveColor=ContextCompat.getColor(context, R.color.light_blue_50)
-    private val archiveicon=R.drawable.completed
+    private val DeleteColor=ContextCompat.getColor(context,R.color.Light_Pink)
+    private val PaidColor=ContextCompat.getColor(context,R.color.light_blue_50)
 
     override fun onMove(
         recyclerView: RecyclerView,
@@ -24,7 +22,6 @@ abstract class SwipeToDelete(context:Context):ItemTouchHelper.SimpleCallback(
         target: RecyclerView.ViewHolder
     ): Boolean {
         return false
-
     }
 
     override fun onChildDraw(
@@ -45,10 +42,10 @@ abstract class SwipeToDelete(context:Context):ItemTouchHelper.SimpleCallback(
             actionState,
             isCurrentlyActive
         )
-            .addSwipeLeftBackgroundColor(deleteColor)
+            .addSwipeLeftBackgroundColor(DeleteColor)
+            .addSwipeRightBackgroundColor(PaidColor)
             .addSwipeLeftActionIcon(deleteicon)
-            .addSwipeRightBackgroundColor(archiveColor)
-            .addSwipeRightActionIcon(archiveicon)
+            .addSwipeRightActionIcon(Paidicon)
             .create()
             .decorate()
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)

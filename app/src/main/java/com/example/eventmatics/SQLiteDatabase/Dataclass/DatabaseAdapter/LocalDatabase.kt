@@ -396,6 +396,7 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         db.close()
         return rowsAffected
     }
+
     // Delete a task
     fun deleteTask(task: Task): Int {
         val db = writableDatabase
@@ -407,7 +408,6 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         db.close()
         return rowsAffected
     }
-
 
     // Create new budget
     fun createBudget(budget: Budget): Long {
@@ -425,6 +425,8 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         db.close()
         return id
     }
+
+
     //Getting Specific data for budget
     @SuppressLint("Range")
     fun getBudgetData(budgetId: Int): Budget? {
@@ -447,6 +449,15 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
 
         cursor.close()
         return budget
+    }
+    fun updateBudgetPaid(id:Long,newvalue:String):Int{
+        val db=writableDatabase
+        val value=ContentValues().apply {
+            put(Budget_Paid,newvalue)
+        }
+        val rowaffected=db.update(TABLE_BUDGET,value,"$COLUMN_ID=?", arrayOf(id.toString()))
+        db.close()
+        return rowaffected
     }
     fun getTotalBudget(): Double {
         var totalBudget = 0.0
