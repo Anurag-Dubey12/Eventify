@@ -12,6 +12,8 @@ import android.widget.TextView
 import androidx.annotation.NonNull
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -20,13 +22,17 @@ import com.example.eventmatics.Event_Details_Activity.GuestDetails
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Guest
+import com.example.eventmatics.SwipeGesture.GuestSwipeToDelete
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 
 class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickListener {
     private lateinit var recyclerView: RecyclerView
     lateinit var guestAdd: FloatingActionButton
     lateinit var bottomnav: BottomNavigationView
+    lateinit var adapter: GuestApdater
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,11 +114,47 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
         val db=LocalDatabase(this,databasename)
         val GuestList=db.getAllGuests()
         if(GuestList!=null){
-            val adapter=GuestApdater(GuestList,this)
+            adapter=GuestApdater(GuestList,this)
             recyclerView.adapter=adapter
             recyclerView.layoutManager=LinearLayoutManager(this)
             adapter.notifyDataSetChanged()
         }
+        val swipe=object : GuestSwipeToDelete(this){
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position=viewHolder.adapterPosition
+                if(position!=RecyclerView.NO_POSITION){
+                    val deleteitem=GuestList[position]
+                    db.deleteGuest(deleteitem)
+                    adapter.notifyItemRemoved(position)
+
+                    val snackbar= Snackbar.make(this@GuestDataHolderActivity.recyclerView,"Guest Data Removed",Snackbar.LENGTH_LONG)
+                        .addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>(){
+                            override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                                super.onDismissed(transientBottomBar, event)
+                                recreate()
+                            }
+
+                            override fun onShown(transientBottomBar: Snackbar?) {
+                                transientBottomBar?.setAction("UNDO"){
+                                    GuestList.add(position,deleteitem)
+                                    adapter.notifyItemInserted(position)
+                                }
+                                super.onShown(transientBottomBar)
+                            }
+                        }).apply {
+                            animationMode=Snackbar.ANIMATION_MODE_SLIDE
+                        }
+                    snackbar.setActionTextColor(
+                        ContextCompat.getColor(
+                            this@GuestDataHolderActivity, androidx.browser.R.color.browser_actions_bg_grey
+                        )
+                    )
+                    snackbar.show()
+                }
+            }
+        }
+        val itemtouch= ItemTouchHelper(swipe)
+        itemtouch.attachToRecyclerView(recyclerView)
     }
     private fun showSortOptions() {
         val dialogBuilder = AlertDialog.Builder(this)

@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Guest
 
-class GuestApdater(private val GuestList:List<Guest>,
+class GuestApdater(private val GuestList:MutableList<Guest>,
 private val onitemclick:OnItemClickListener):RecyclerView.Adapter<GuestApdater.GuestViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,

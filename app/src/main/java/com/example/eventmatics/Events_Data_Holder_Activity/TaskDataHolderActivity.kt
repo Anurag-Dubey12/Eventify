@@ -114,7 +114,7 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
             }
             invalidateOptionsMenu()
         }
-
+swipeRefreshLayout.setProgressViewEndTarget(true,150)
         showTaskData()
     }
 

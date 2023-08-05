@@ -6,6 +6,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.widget.RelativeLayout
@@ -126,29 +127,43 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
             recyclerView.layoutManager = LinearLayoutManager(this)
         }
         val swipe=object:BudgetSwipeToDelete(this){
+            var deletedItem: Budget? = null
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position=viewHolder.adapterPosition
                 when(direction){
                     ItemTouchHelper.LEFT->{
                 if(position!=RecyclerView.NO_POSITION){
-                    val deleteitem=BudgetList[position]
-                    databasehelper.deleteBudget(deleteitem)
+                    deletedItem=BudgetList[position]
+                    databasehelper.deleteBudget(deletedItem!!)
                     adapter.notifyItemRemoved(position)
 
-                    val snackbar=Snackbar.make(this@BudgetDataHolderActivity.recyclerView,"Budget Item Deleted",Snackbar.LENGTH_SHORT)
+                    val snackbar=Snackbar.make(this@BudgetDataHolderActivity.recyclerView,"Budget Item Deleted",Snackbar.LENGTH_LONG)
+                    snackbar.setAction("UNDO") {
+                        // Undo the delete operation
+                        if (deletedItem != null) {
+                            databasehelper.createBudget(deletedItem!!)
+                            BudgetList.add(position, deletedItem!!)
+                            adapter.notifyItemInserted(position)
+                            adapter.notifyDataSetChanged()
+
+                        }
+                    }
                         .addCallback(object:BaseTransientBottomBar.BaseCallback<Snackbar>(){
                             override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
                                 super.onDismissed(transientBottomBar, event)
-                                recreate()
-                            }
-                            override fun onShown(transientBottomBar: Snackbar?) {
-                                transientBottomBar?.setAction("UNDO"){
-                                    BudgetList.add(position,deleteitem)
-                                    adapter.notifyItemInserted(position)
+                                if (event!= DISMISS_EVENT_ACTION){
+                                    deletedItem=null
                                 }
-
-                                super.onShown(transientBottomBar)
+//                                recreate()
                             }
+//                            override fun onShown(transientBottomBar: Snackbar?) {
+//                                transientBottomBar?.setAction("UNDO"){
+//                                    BudgetList.add(position,deleteitem)
+//                                    adapter.notifyItemInserted(position)
+//                                }
+//
+//                                super.onShown(transientBottomBar)
+//                            }
                         }).apply {
                             animationMode = Snackbar.ANIMATION_MODE_FADE
                         }
@@ -158,6 +173,7 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
                         )
                     )
                     snackbar.show()
+
                 }
                     }
                     ItemTouchHelper.RIGHT->{
@@ -203,6 +219,7 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
                                 )
                             )
                             snackbar.show()
+
                         }
                     }
                 }

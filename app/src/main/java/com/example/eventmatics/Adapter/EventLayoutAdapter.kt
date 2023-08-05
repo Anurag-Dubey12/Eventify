@@ -25,10 +25,10 @@ class EventLayoutAdapter(val eventdata:MutableList<Events>,
         val current=eventdata[position]
         holder.bind(current)
 //        holder.itemView.setOnClickListener { onItemClickListener(position) }
-        holder.itemedit.setOnClickListener {
-            // Call the onItemClickListener and pass the position or any other relevant data.
-            onItemClickListener(position)
-        }
+//        holder.itemedit.setOnClickListener {
+//            // Call the onItemClickListener and pass the position or any other relevant data.
+//            onItemClickListener(position)
+//        }
     }
 
 
@@ -39,7 +39,7 @@ class EventLayoutAdapter(val eventdata:MutableList<Events>,
         val eventNameTextView: TextView = item.findViewById(R.id.eventnametv)
         val eventDateTextView: TextView = item.findViewById(R.id.eventdatetv)
         val eventTimeTextView: TextView = item.findViewById(R.id.eventtimetv)
-        val itemedit: ImageView = item.findViewById(R.id.itemedit)
+//        val itemedit: ImageView = item.findViewById(R.id.itemedit)
         fun bind(eventdata:Events){
             eventNameTextView.text=eventdata.name
             eventDateTextView.text=eventdata.Date

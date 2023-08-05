@@ -555,7 +555,7 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
 
     // Get all guests
     @SuppressLint("Range")
-    fun getAllGuests(): List<Guest> {
+    fun getAllGuests(): MutableList<Guest> {
         val guests = ArrayList<Guest>()
         val selectQuery = "SELECT * FROM $TABLE_GUEST"
         val db = readableDatabase
@@ -630,7 +630,15 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         return rowsAffected
     }
 
-
+    fun updateGuestInvitation(id:Long,newvalue:String):Int{
+        val db=writableDatabase
+        val value=ContentValues().apply {
+            put(Budget_Paid,newvalue)
+        }
+        val rowaffected=db.update(TABLE_BUDGET,value,"$COLUMN_ID=?", arrayOf(id.toString()))
+        db.close()
+        return rowaffected
+    }
     // Delete a guest
     fun deleteGuest(guest: Guest): Int {
         val db = writableDatabase
@@ -665,8 +673,9 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
     }
 
     // Get all vendors
+
     @SuppressLint("Range")
-    fun getAllVendors(): List<Vendor> {
+    fun getAllVendors(): MutableList<Vendor> {
         val vendors = ArrayList<Vendor>()
         val selectQuery = "SELECT * FROM $TABLE_VENDOR"
         val db = readableDatabase
@@ -695,6 +704,7 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         db.close()
         return vendors
     }
+
     //Getting Specific Data from Vendor
     @SuppressLint("Range")
     fun getVendorData(vendorId: Int): Vendor? {

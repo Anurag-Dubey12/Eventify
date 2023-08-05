@@ -3,6 +3,7 @@ package com.example.eventmatics.Event_Details_Activity
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
@@ -30,7 +31,7 @@ class TaskDetails : AppCompatActivity(){
     lateinit var taskNote:EditText
     lateinit var taskdate:TextView
     lateinit var category_button:TextView
-    lateinit var TaskPendingbut:AppCompatButton
+    lateinit var taskPendingbut:AppCompatButton
     lateinit var TaskCombut:AppCompatButton
     var taskStatus:String=""
     val spinnerItems = listOf(
@@ -60,7 +61,7 @@ class TaskDetails : AppCompatActivity(){
         taskNote=findViewById(R.id.TaskNoteET)
         taskdate=findViewById(R.id.taskdate)
         category_button=findViewById(R.id.Taskcategory_button)
-        TaskPendingbut=findViewById(R.id.TaskPendingbut)
+        taskPendingbut=findViewById(R.id.TaskPendingbut)
         TaskCombut=findViewById(R.id.Taskcombut)
 
         val selectedTask: Task? = intent.getParcelableExtra("selected_task")
@@ -77,12 +78,12 @@ class TaskDetails : AppCompatActivity(){
             taskdate.setText(formateddate)
         }
 
-        TaskPendingbut.setOnClickListener {
-            setButtonBackground(TaskPendingbut,true)
+        taskPendingbut.setOnClickListener {
+            setButtonBackground(taskPendingbut,true)
             setButtonBackground(TaskCombut,false)
         }
         TaskCombut.setOnClickListener {
-            setButtonBackground(TaskPendingbut,false)
+            setButtonBackground(taskPendingbut,false)
             setButtonBackground(TaskCombut,true)
         }
         taskdate.setOnClickListener {
@@ -167,11 +168,13 @@ class TaskDetails : AppCompatActivity(){
         val taskdate=taskdate.text.toString()
 
 
-        if (TaskPendingbut.isClickable) {
-            taskStatus = "Pending"
-        } else if (TaskCombut.isClickable) {
-            taskStatus = "Completed"
+        if (taskPendingbut.isClickable) {
+            taskStatus = taskPendingbut.text.toString()
         }
+        if(TaskCombut.isClickable) {
+            taskStatus = TaskCombut.text.toString()
+        }
+        Log.d("TaskStaus:",taskStatus)
         val Task=Task(0,taskname,category,TaskNoteET,taskStatus,taskdate)
         Db.createTask(Task)
         Toast.makeText(this, "Task Added successfully", Toast.LENGTH_SHORT).show()
@@ -187,7 +190,7 @@ class TaskDetails : AppCompatActivity(){
         val TaskNoteET = taskNote.text.toString()
         val taskdate = taskdate.text.toString()
 
-        if (TaskPendingbut.isSelected) {
+        if (taskPendingbut.isSelected) {
             taskStatus = "Pending"
         } else if (TaskCombut.isSelected) {
             taskStatus = "Completed"
