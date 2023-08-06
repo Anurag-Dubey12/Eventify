@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
 import androidx.annotation.NonNull
@@ -195,6 +196,36 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
             dialog.dismiss()
         }
     }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.holder,menu)
+
+        val searchitem=menu?.findItem(R.id.action_search)
+        val searchview=searchitem?.actionView as androidx.appcompat.widget.SearchView
+        searchview.queryHint="Search"
+
+        searchview.setOnQueryTextListener(object:androidx.appcompat.widget.SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String): Boolean {
+                SearchGuest(query)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                SearchGuest(newText)
+                return true
+
+            }
+        })
+        return true
+    }
+    fun SearchGuest(query:String){
+        val databasename=getSharedPreference(this,"databasename").toString()
+        val db=LocalDatabase(this,databasename)
+        val GuestList=db.SearchGuest(query)
+
+        adapter.setdata(GuestList)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return  when(item.itemId){
             android.R.id.home->{

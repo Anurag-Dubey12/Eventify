@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Vendor
 
-class VendorDataHolderClass(private val vendorList:MutableList<Vendor>
+class VendorDataHolderClass(private var vendorList:MutableList<Vendor>
 ,private val OnItemClickListener:onItemClickListener): RecyclerView.Adapter<VendorDataHolderClass.ViewHolder>() {
 
     private var filteredList: MutableList<Vendor> = mutableListOf()
@@ -23,7 +23,10 @@ class VendorDataHolderClass(private val vendorList:MutableList<Vendor>
     override fun getItemCount(): Int {
         return vendorList.size
     }
-
+    fun setdata(newlist:MutableList<Vendor>){
+        vendorList=newlist
+        notifyDataSetChanged()
+    }
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item=vendorList[position]
         holder.itemView.setOnClickListener {

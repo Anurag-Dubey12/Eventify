@@ -114,7 +114,10 @@ class BudgetDetails : AppCompatActivity(){
             else->super.onOptionsItemSelected(item)
         }
     }
-
+    fun getSharedPreference(context: Context, key: String): String? {
+        val sharedPref = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
+        return sharedPref.getString(key, null)
+    }
     private fun UpdateDatabase(id: Long) {
         val name = nameEditText.text.toString()
         val totalamt = EstimatedEt.text.toString().toFloat()
@@ -138,10 +141,7 @@ class BudgetDetails : AppCompatActivity(){
         finish()
     }
 
-    fun getSharedPreference(context: Context, key: String): String? {
-        val sharedPref = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
-        return sharedPref.getString(key, null)
-    }
+
     private fun AddValueToDataBase() {
         val name = nameEditText.text.toString()
         val totalamt = EstimatedEt.text.toString().toFloat()

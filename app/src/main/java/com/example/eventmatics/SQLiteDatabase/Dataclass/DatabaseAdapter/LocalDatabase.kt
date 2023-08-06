@@ -12,6 +12,8 @@ import com.example.eventmatics.SQLiteDatabase.Dataclass.Events
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Guest
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Task
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Vendor
+import com.example.eventmatics.SwipeGesture.BudgetSwipeToDelete
+import kotlinx.coroutines.currentCoroutineContext
 
 class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,databasename,null,DATABASE_VERSION) {
 
@@ -355,13 +357,13 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
 
     //Getting Specific data from Task
     @SuppressLint("Range")
-    fun getTaskData(taskId: Int): Task? {
+    fun getTaskData(taskId: String): MutableList<Task> {
         val db = readableDatabase
-        val query = "SELECT * FROM $TABLE_TASK WHERE $COLUMN_ID = $taskId"
+        val query = "SELECT * FROM $TABLE_TASK WHERE $COLUMN_ID LIKE '%$taskId%' OR $Task_Name LIKE '%$taskId%' OR $Task_Category LIKE '%$taskId%'"
         val cursor = db.rawQuery(query, null)
-        var task: Task? = null
+        val taskList = mutableListOf<Task>()
 
-        if (cursor.moveToFirst()) {
+        while (cursor.moveToNext()) {
             val id = cursor.getLong(cursor.getColumnIndex(COLUMN_ID))
             val taskName = cursor.getString(cursor.getColumnIndex(Task_Name))
             val taskCategory = cursor.getString(cursor.getColumnIndex(Task_Category))
@@ -369,15 +371,47 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
             val taskStatus = cursor.getString(cursor.getColumnIndex(Task_Status))
             val taskDate = cursor.getString(cursor.getColumnIndex(Task_Date))
 
-            task = Task( id,taskName, taskCategory, taskNote, taskStatus, taskDate)
+            val task = Task(id, taskName, taskCategory, taskNote, taskStatus, taskDate)
+            taskList.add(task)
         }
 
         cursor.close()
-        return task
+        return taskList
     }
 
+    //Saerch For Task
+    @SuppressLint("Range")
+    fun searchTask(query: String): MutableList<Task> {
+        val db = readableDatabase
+        val cursor = db.query(
+            TABLE_TASK,
+            null,
+            "$Task_Name LIKE ?",
+            arrayOf("%$query%"),
+            null,
+            null,
+            null
+        )
+        val taskList = mutableListOf<Task>()
 
-//     Update a task
+        if (cursor.moveToFirst()) {
+            do {
+                val id = cursor.getLong(cursor.getColumnIndex(COLUMN_ID))
+                val taskName = cursor.getString(cursor.getColumnIndex(Task_Name))
+                val taskCategory = cursor.getString(cursor.getColumnIndex(Task_Category))
+                val taskNote = cursor.getString(cursor.getColumnIndex(Task_Note))
+                val taskStatus = cursor.getString(cursor.getColumnIndex(Task_Status))
+                val taskDate = cursor.getString(cursor.getColumnIndex(Task_Date))
+
+                taskList.add(Task(id, taskName, taskCategory, taskNote, taskStatus, taskDate))
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        return taskList
+    }
+
+    //     Update a task
     fun updateTask(task: Task): Int {
         val db = writableDatabase
         val values = ContentValues().apply {
@@ -450,6 +484,39 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         cursor.close()
         return budget
     }
+
+    @SuppressLint("Range")
+    fun SearchBudget(query: String):MutableList<Budget>{
+        val db=readableDatabase
+        val cursor=db.query(
+            TABLE_BUDGET,
+            null,
+            "$Budget_Name LIKE ?",
+            arrayOf("%$query"),
+            null,
+            null,
+            null
+        )
+        var BudgetList= mutableListOf<Budget>()
+    if(cursor.moveToFirst()){
+        do{
+            val budgetId=cursor.getLong(cursor.getColumnIndex(COLUMN_ID))
+            val budgetName = cursor.getString(cursor.getColumnIndex(Budget_Name))
+            val budgetCategory = cursor.getString(cursor.getColumnIndex(Budget_Category))
+            val budgetNote = cursor.getString(cursor.getColumnIndex(Budget_Note))
+            val budgetEstimated = cursor.getString(cursor.getColumnIndex(Budget_Estimated))
+            val budgetBalance = cursor.getString(cursor.getColumnIndex(Budget_Balance))
+            val budgetPending = cursor.getString(cursor.getColumnIndex(Budget_Pending))
+            val budgetPaid = cursor.getString(cursor.getColumnIndex(Budget_Paid))
+
+            BudgetList.add(Budget(budgetId.toLong(), budgetName, budgetCategory, budgetNote, budgetEstimated, budgetBalance, budgetPending, budgetPaid))
+
+        }while (cursor.moveToNext())
+
+    }
+        cursor.close()
+        return BudgetList
+    }
     fun updateBudgetPaid(id:Long,newvalue:String):Int{
         val db=writableDatabase
         val value=ContentValues().apply {
@@ -501,6 +568,8 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         db.close()
         return budgets
     }
+
+
 
     // Update a budget
     fun updateBudget(budget: Budget): Int {
@@ -579,6 +648,37 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         cursor?.close()
         db.close()
         return guests
+    }
+    //Search Guest
+    @SuppressLint("Range")
+    fun SearchGuest(query:String):MutableList<Guest>{
+        val db=readableDatabase
+        val cursor=db.query(
+            TABLE_GUEST,
+            null,
+            "$Guest_Name LIKE ?",
+            arrayOf("%$query"),
+            null,
+            null,
+            null
+        )
+        val GuestList= mutableListOf<Guest>()
+        if(cursor.moveToFirst()){
+            do {
+                val Guestid=cursor.getLong(cursor.getColumnIndex(COLUMN_ID))
+                val guestName = cursor.getString(cursor.getColumnIndex(Guest_Name))
+                val totalFamilyMembers = cursor.getString(cursor.getColumnIndex(TOTAL_FAMILY_MEMBERS))
+                val guestNote = cursor.getString(cursor.getColumnIndex(NOTE))
+                val guestStatus = cursor.getString(cursor.getColumnIndex(GUEST_STATUS))
+                val guestContact = cursor.getString(cursor.getColumnIndex(GUEST_CONTACT))
+                val guestEmail = cursor.getString(cursor.getColumnIndex(GUEST_EMAIL))
+                val guestAddress = cursor.getString(cursor.getColumnIndex(GUEST_ADDRESS))
+
+                GuestList.add(Guest(Guestid, guestName, totalFamilyMembers, guestNote, guestStatus, guestContact, guestEmail, guestAddress))
+            }while (cursor.moveToNext())
+        }
+        db.close()
+        return GuestList
     }
 
     //Getting Specific data from Guest
@@ -704,7 +804,39 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         db.close()
         return vendors
     }
-
+    @SuppressLint("Range")
+    fun SearchVendor(query: String):MutableList<Vendor>{
+        val db=readableDatabase
+        val cursor=db.query(
+            TABLE_VENDOR,
+            null,
+            "$Vendor_Name LIKE ?",
+            arrayOf("%$query"),
+            null,
+            null,
+            null
+        )
+        val VendorList= mutableListOf<Vendor>()
+        if(cursor.moveToFirst()){
+            do {
+                val id = cursor.getLong(cursor.getColumnIndex(COLUMN_ID))
+                val name = cursor.getString(cursor.getColumnIndex(Vendor_Name))
+                val category = cursor.getString(cursor.getColumnIndex(Vendor_Category))
+                val note = cursor.getString(cursor.getColumnIndex(Vendor_Note))
+                val estimated = cursor.getString(cursor.getColumnIndex(Vendor_Estimated))
+                val balance = cursor.getString(cursor.getColumnIndex(Vendor_Balance))
+                val pending = cursor.getString(cursor.getColumnIndex(Vendor_Pending))
+                val paid = cursor.getString(cursor.getColumnIndex(Vendor_Paid))
+                val phoneNumber = cursor.getString(cursor.getColumnIndex(Vendor_PhoneNumber))
+                val emailId = cursor.getString(cursor.getColumnIndex(Vendor_EmailId))
+                val website = cursor.getString(cursor.getColumnIndex(Vendor_Website))
+                val Address = cursor.getString(cursor.getColumnIndex(Vendor_Address))
+              VendorList.add(Vendor(id, name, category, note, estimated, balance, pending, paid, phoneNumber, emailId, website,Address))
+            }while (cursor.moveToNext())
+        }
+        db.close()
+        return VendorList
+    }
     //Getting Specific Data from Vendor
     @SuppressLint("Range")
     fun getVendorData(vendorId: Int): Vendor? {

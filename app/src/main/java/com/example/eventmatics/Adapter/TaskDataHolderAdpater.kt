@@ -9,22 +9,22 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Task
 
-class TaskDataHolderAdpater(private val context:Context, private val dataList: MutableList<Task>
+class TaskDataHolderAdpater(private val context:Context, private var taskList: MutableList<Task>
                             , private val itemClickListener: OnItemClickListener) : RecyclerView.Adapter<TaskDataHolderAdpater.ViewHolder>() {
     private var filteredList: MutableList<Task> = mutableListOf()
     fun removeItem(position: Int) {
-        dataList.removeAt(position)
+        taskList.removeAt(position)
         notifyItemRemoved(position)
     }
 
     init {
-        filteredList.addAll(dataList)
+        filteredList.addAll(taskList)
     }
-    fun updateList(filteredList: MutableList<Task>) {
-//        this.filteredList.clear()
-        this.filteredList.addAll(filteredList)
+    fun setData(newList: MutableList<Task>) {
+        taskList = newList
         notifyDataSetChanged()
     }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.taskdataholder, parent, false)
@@ -35,7 +35,7 @@ class TaskDataHolderAdpater(private val context:Context, private val dataList: M
         fun onItemClick(task: Task)
     }
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val data = dataList[position]
+        val data = taskList[position]
         holder.bind(data)
         holder.itemView.setOnClickListener {
             itemClickListener.onItemClick(data)
@@ -48,7 +48,7 @@ class TaskDataHolderAdpater(private val context:Context, private val dataList: M
 
 
     override fun getItemCount(): Int {
-        return dataList.size
+        return taskList.size
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

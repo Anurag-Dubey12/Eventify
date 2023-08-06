@@ -8,11 +8,13 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.MenuItem
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.annotation.NonNull
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -242,6 +244,35 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.holder,menu)
+
+        val searchitem=menu?.findItem(R.id.action_search)
+
+        val searchView=searchitem?.actionView as androidx.appcompat.widget.SearchView
+        searchView.queryHint="Search"
+
+        searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                searchBudget(query)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+
+                searchBudget(newText)
+                return true
+            }
+        })
+        return true
+    }
+    fun searchBudget(query:String){
+        val databasename=getSharedPreference(this,"databasename").toString()
+        val db = LocalDatabase(this, databasename)
+        val BudgetFilter=db.SearchBudget(query)
+       adapter.setadapter(BudgetFilter)
+
+    }
     @SuppressLint("MissingInflatedId")
     private fun showFilterOptions() {
         val dialogBuilder = AlertDialog.Builder(this)

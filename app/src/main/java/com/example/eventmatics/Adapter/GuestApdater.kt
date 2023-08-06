@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Guest
 
-class GuestApdater(private val GuestList:MutableList<Guest>,
-private val onitemclick:OnItemClickListener):RecyclerView.Adapter<GuestApdater.GuestViewHolder>() {
+class GuestApdater(private var GuestList:MutableList<Guest>,
+                   private val onitemclick:OnItemClickListener):RecyclerView.Adapter<GuestApdater.GuestViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -24,6 +24,10 @@ private val onitemclick:OnItemClickListener):RecyclerView.Adapter<GuestApdater.G
         holder.itemView.setOnClickListener {
             onitemclick.onItemClik(Guestlist)
         }
+    }
+    fun setdata(newlist:MutableList<Guest>){
+        GuestList=newlist
+        notifyDataSetChanged()
     }
 interface OnItemClickListener{
     fun onItemClik(guestlist:Guest)

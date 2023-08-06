@@ -11,7 +11,7 @@ import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Budget
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Task
 
-class BudgetDataHolderAdapter(private val context: Context, private val budgetList: List<Budget>
+class BudgetDataHolderAdapter(private val context: Context, private var budgetList: List<Budget>
 , private val itemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<BudgetDataHolderAdapter.ViewHolder>() {
     private var filteredList: MutableList<Budget> = mutableListOf()
@@ -31,6 +31,10 @@ class BudgetDataHolderAdapter(private val context: Context, private val budgetLi
         holder.itemView.setOnClickListener {
             itemClickListener.onItemClick(item)
         }
+    }
+    fun setadapter(newlist:MutableList<Budget>){
+        budgetList=newlist
+        notifyDataSetChanged()
     }
     interface OnItemClickListener {
         fun onItemClick(budget: Budget)

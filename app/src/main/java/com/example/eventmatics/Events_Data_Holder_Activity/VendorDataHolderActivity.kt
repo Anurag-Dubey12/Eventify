@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
 import androidx.annotation.NonNull
@@ -162,6 +163,34 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
     fun getSharedPreference(context: Context, key:String):String?{
         val sharedvalue=context.getSharedPreferences("Database", Context.MODE_PRIVATE)
         return sharedvalue.getString(key,null)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.holder,menu)
+        val searchitem=menu?.findItem(R.id.action_search)
+        val searchview=searchitem?.actionView as androidx.appcompat.widget.SearchView
+        searchview.queryHint="Search"
+
+        searchview.setOnQueryTextListener(object:androidx.appcompat.widget.SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String): Boolean {
+                SearchVendor(query)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                SearchVendor(newText)
+                return true
+            }
+
+        })
+        return true
+    }
+    fun SearchVendor(query:String){
+        val databasename=getSharedPreference(this,"databasename").toString()
+        val db=LocalDatabase(this,databasename)
+        val VendorList=db.SearchVendor(query)
+        adapter.setdata(VendorList)
+
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return  when(item.itemId){

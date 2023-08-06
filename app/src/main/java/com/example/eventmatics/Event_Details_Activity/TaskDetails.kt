@@ -71,6 +71,7 @@ class TaskDetails : AppCompatActivity(){
             taskNote.setText(selectedTask.taskNote)
             taskdate.setText(selectedTask.taskDate)
 
+
         }
         else{
             val today= Calendar.getInstance()
@@ -190,10 +191,11 @@ class TaskDetails : AppCompatActivity(){
         val TaskNoteET = taskNote.text.toString()
         val taskdate = taskdate.text.toString()
 
-        if (taskPendingbut.isSelected) {
-            taskStatus = "Pending"
-        } else if (TaskCombut.isSelected) {
-            taskStatus = "Completed"
+        if (taskPendingbut.isClickable) {
+            taskStatus = taskPendingbut.text.toString()
+        }
+        if (TaskCombut.isClickable) {
+            taskStatus = TaskCombut.text.toString()
         }
         val task=Task(id,taskname,category,TaskNoteET,taskStatus,taskdate)
         Db.updateTask(task)
