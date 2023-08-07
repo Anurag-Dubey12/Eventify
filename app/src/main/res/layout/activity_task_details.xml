@@ -85,7 +85,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10sp"
                     android:layout_weight="1"
-
+                    android:backgroundTint="#F2FFCA"
                     android:textColor="@color/black"
                     android:text="@string/taskpending" />
 
@@ -95,7 +95,7 @@
                     android:layout_weight="1"
                     android:textColor="@color/black"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/white"
+                    android:backgroundTint="#F2FFCA"
                     android:text="@string/completed" />
             </LinearLayout>
             <TextView

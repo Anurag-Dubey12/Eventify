@@ -1,23 +1,17 @@
 package com.example.eventmatics.Events_Data_Holder_Activity
 
-import android.content.ContentValues
+
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,7 +19,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.eventmatics.Adapter.TaskDataHolderAdpater
 import com.example.eventmatics.Event_Details_Activity.TaskDetails
-import com.example.eventmatics.PDF.TaskPDF
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Task
@@ -34,17 +27,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
-import com.itextpdf.text.Document
-import com.itextpdf.text.Element
-import com.itextpdf.text.FontFactory
-import com.itextpdf.text.PageSize
-import com.itextpdf.text.Phrase
-import com.itextpdf.text.pdf.PdfPCell
-import com.itextpdf.text.pdf.PdfPTable
-import com.itextpdf.text.pdf.PdfWriter
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
 
 class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItemClickListener {
     lateinit var taskAdd:FloatingActionButton
@@ -62,9 +44,6 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
             startActivity(this)
         }
     }
-    companion object {
-        private const val REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 123
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,6 +53,7 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         bottomnav=findViewById(R.id.bottomNavigationView)
         bottomnav.background=null
+        swipeRefreshLayout=findViewById(R.id.swipeRefreshLayout)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -98,7 +78,6 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
             // Enable/disable the SwipeRefreshLayout based on scroll position
             }
         })
-        swipeRefreshLayout=findViewById(R.id.swipeRefreshLayout)
 
         swipeRefreshLayout.setOnRefreshListener {
             val databsename=getSharedPreference(this,"databasename").toString()
@@ -115,7 +94,7 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
             }
             invalidateOptionsMenu()
         }
-swipeRefreshLayout.setProgressViewEndTarget(true,150)
+        swipeRefreshLayout.setProgressViewEndTarget(true,150)
         showTaskData()
 //        loadOriginalTaskList()
 
@@ -141,7 +120,7 @@ swipeRefreshLayout.setProgressViewEndTarget(true,150)
             adapter = TaskDataHolderAdpater(this,tasklist,this)
             recyclerView?.adapter = adapter
             recyclerView.layoutManager = LinearLayoutManager(this)
-            swipeRefreshLayout.isRefreshing=false
+//            swipeRefreshLayout.isRefreshing=false
 
         }
 
@@ -159,7 +138,7 @@ swipeRefreshLayout.setProgressViewEndTarget(true,150)
             recyclerView?.adapter = adapter
             recyclerView.layoutManager = LinearLayoutManager(this)
 
-            swipeRefreshLayout.isRefreshing=false
+//            swipeRefreshLayout.isRefreshing=false
         }
         val swipe=object :SwipeToDelete(this){
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
@@ -205,13 +184,17 @@ swipeRefreshLayout.setProgressViewEndTarget(true,150)
                     }
 
                     ItemTouchHelper.RIGHT->{
-                        val paiditem=tasklist[position]
+                        if(position!=RecyclerView.NO_POSITION){
+                        val Task=tasklist[position]
                         val position=viewHolder.adapterPosition
-                        tasklist.removeAt(position)
-                        adapter.notifyItemRemoved(position)
-                        tasklist.add(paiditem)
-                        adapter.notifyItemRemoved(position)
 
+                            val TaskStatus=Task.taskStatus
+
+                            val NewStatus=if(TaskStatus=="Pending") "Completed" else "Pending"
+
+                            val rowaffected=db.UpdateTaskStatus(Task.id,NewStatus)
+
+                            if(rowaffected>0){
                         val snackbar=Snackbar.make(this@TaskDataHolderActivity.recyclerView
                             ,"Item Paid",Snackbar.LENGTH_LONG)
                             .addCallback(object :BaseTransientBottomBar.BaseCallback<Snackbar>(){
@@ -224,10 +207,10 @@ swipeRefreshLayout.setProgressViewEndTarget(true,150)
 
                                 override fun onShown(transientBottomBar: Snackbar?) {
                                     transientBottomBar?.setAction("UNDO"){
-                                        tasklist.add(position,paiditem)
-                                        adapter.notifyItemInserted(position)
-                                        actionBtn=true
+                                        val previousPaidStatus = if (NewStatus == "Pending") "Completed" else "Pending"
+                                        db.UpdateTaskStatus(Task.id, previousPaidStatus)
                                     }
+                                    recreate()
                                     super.onShown(transientBottomBar)
                                 }
                             })
@@ -243,7 +226,7 @@ swipeRefreshLayout.setProgressViewEndTarget(true,150)
                     }
                 }
             }
-        }
+        }}}
         val touchHelper=ItemTouchHelper(swipe)
         touchHelper.attachToRecyclerView(recyclerView)
         invalidateOptionsMenu()

@@ -378,6 +378,15 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         cursor.close()
         return taskList
     }
+    fun UpdateTaskStatus(id:Long,newvalue:String):Int{
+        val db=writableDatabase
+        val value=ContentValues().apply {
+            put(Task_Status,newvalue)
+        }
+        val rowaffected=db.update(TABLE_TASK,value,"$COLUMN_ID=?", arrayOf(id.toString()))
+        db.close()
+        return rowaffected
+    }
 
     //Saerch For Task
     @SuppressLint("Range")

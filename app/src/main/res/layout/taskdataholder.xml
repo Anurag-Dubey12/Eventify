@@ -13,7 +13,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         android:id="@+id/cardView"
-        android:background="@drawable/valueediteffect"
+        android:layout_marginBottom="15sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
         <RelativeLayout
@@ -64,6 +64,7 @@
 
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/linear"
                 android:layout_width="200sp"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/Basic_info"
@@ -90,7 +91,6 @@
                         android:textSize="16sp"
                         />
             </LinearLayout>
-
         </RelativeLayout>
 
     </androidx.cardview.widget.CardView>

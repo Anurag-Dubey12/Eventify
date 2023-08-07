@@ -137,23 +137,23 @@
                 android:layout_marginBottom="10sp"
                 android:orientation="horizontal">
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/Invitaionsentbut"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="15sp"
                     android:layout_weight="1"
+                    android:backgroundTint="#F2FFCA"
                     android:textColor="@color/black"
-                    android:background="@drawable/addpaymentbutton"
                     android:text="@string/invitation_sent" />
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/NotSentBut"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:backgroundTint="#F2FFCA"
                     android:textColor="@color/black"
-                    android:background="@drawable/addpaymentbutton"
                     android:text="@string/not_sent" />
 
             </LinearLayout>
@@ -210,6 +210,7 @@
                         android:layout_height="35sp"
                         android:layout_marginStart="5sp"
                         android:layout_marginBottom="10sp"
+                        android:maxLength="10"
                         android:background="@drawable/valueediteffect"
                         android:drawableEnd="@drawable/call" />
 
@@ -233,7 +234,6 @@
                         android:background="@drawable/valueediteffect"
                         android:drawableEnd="@drawable/email"
                         android:inputType="textEmailAddress" />
-
                     <TextView
                         android:id="@+id/GuestAddressstv"
                         android:layout_width="match_parent"

@@ -8,6 +8,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -18,6 +20,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Guest
@@ -34,6 +37,7 @@ class GuestDetails : AppCompatActivity() {
     private lateinit var guestEmailEt: EditText
     private lateinit var guestEmailtv: TextView
     private lateinit var guestAddresssEt: EditText
+    private lateinit var InvitationStatus:String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -144,11 +148,23 @@ class GuestDetails : AppCompatActivity() {
         val guestPhone = guestPhoneEt.text.toString()
         val guestEmail = guestEmailEt.text.toString()
         val guestAddress = guestAddresssEt.text.toString()
-        val GuestList= Guest(1,guestName,totalFamilyMembers,guestNote, " ",
+        if(invitationSentButton.isClickable){
+            InvitationStatus=invitationSentButton.text.toString()
+        }
+        if(notSentButton.isClickable){
+            InvitationStatus=notSentButton.text.toString()
+        }
+
+        val GuestList= Guest(1,guestName,totalFamilyMembers,guestNote, InvitationStatus,
         guestPhone,guestEmail,guestAddress)
         db.createGuest(GuestList)
+
         Toast.makeText(this, "Guest Added successfully", Toast.LENGTH_SHORT).show()
         finish()
+    }
+    fun isEmailValid(email: String): Boolean {
+        val emailRegex = Regex("^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$")
+        return email.matches(emailRegex)
     }
     private fun updateDatabase(id: Long) {
         val databasename=getSharedPreference(this,"databasename").toString()
@@ -159,12 +175,19 @@ class GuestDetails : AppCompatActivity() {
         val guestPhone = guestPhoneEt.text.toString()
         val guestEmail = guestEmailEt.text.toString()
         val guestAddress = guestAddresssEt.text.toString()
-        val GuestList= Guest(id,guestName,totalFamilyMembers,guestNote, " ",
+        if(invitationSentButton.isClickable){
+            InvitationStatus=invitationSentButton.text.toString()
+        }
+        if(notSentButton.isClickable){
+            InvitationStatus=notSentButton.text.toString()
+        }
+        val GuestList= Guest(id,guestName,totalFamilyMembers,guestNote, InvitationStatus,
             guestPhone,guestEmail,guestAddress)
         db.updateGuest(GuestList)
         Toast.makeText(this, "Guest Updated successfully", Toast.LENGTH_SHORT).show()
         finish()
     }
+
     //retriveing the contact name and number form the device
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -194,7 +217,7 @@ class GuestDetails : AppCompatActivity() {
         }
     }
     fun setButtonBackground(button: Button, isSelected: Boolean) {
-        val backgroundColor = if (isSelected) R.color.light_blue else R.color.white
+        val backgroundColor = if (isSelected) R.color.light_blue else R.color.Light_Lemon
         button.backgroundTintList = ContextCompat.getColorStateList(this, backgroundColor)
     }
 }

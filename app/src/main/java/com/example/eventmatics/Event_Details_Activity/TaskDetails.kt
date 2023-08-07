@@ -70,7 +70,14 @@ class TaskDetails : AppCompatActivity(){
             category_button.text = selectedTask.category
             taskNote.setText(selectedTask.taskNote)
             taskdate.setText(selectedTask.taskDate)
-
+            if(selectedTask.taskStatus=="Pending"){
+                setButtonBackground(taskPendingbut,true)
+                setButtonBackground(TaskCombut,false)
+            }
+            if(selectedTask.taskStatus=="Completed"){
+                setButtonBackground(taskPendingbut,false)
+                setButtonBackground(TaskCombut,true)
+            }
 
         }
         else{
@@ -109,7 +116,7 @@ class TaskDetails : AppCompatActivity(){
     }
 
     fun setButtonBackground(button: Button, isSelected:Boolean){
-        val BackgroundColor=if(isSelected) R.color.light_blue else R.color.white
+        val BackgroundColor=if(isSelected) R.color.light_blue else R.color.Light_Lemon
         button.backgroundTintList=ContextCompat.getColorStateList(this,BackgroundColor)
     }
 
@@ -167,7 +174,6 @@ class TaskDetails : AppCompatActivity(){
         val category=category_button.text.toString()
         val TaskNoteET=taskNote.text.toString()
         val taskdate=taskdate.text.toString()
-
 
         if (taskPendingbut.isClickable) {
             taskStatus = taskPendingbut.text.toString()
