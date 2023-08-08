@@ -32,6 +32,7 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:text="@string/budget_title"
+          android:textStyle="bold"
           android:textSize="20sp"
           />
       <EditText
@@ -46,6 +47,7 @@
           android:layout_height="wrap_content"
           android:text="@string/Category"
           android:textSize="20sp"
+          android:textStyle="bold"
           android:layout_marginBottom="10sp"
           />
 <!--     <TextView-->
@@ -78,6 +80,7 @@
           android:layout_height="wrap_content"
           android:text="@string/note"
           android:textSize="20sp"
+          android:textStyle="bold"
           android:layout_marginBottom="10sp"
           />
       <EditText
@@ -91,6 +94,7 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:text="@string/estimated_amount"
+          android:textStyle="bold"
           android:textSize="20sp"
           android:layout_marginBottom="10sp"
           />
@@ -106,8 +110,9 @@
            android:id="@+id/Balancetv"
            android:layout_width="match_parent"
            android:layout_height="40sp"
-           android:text="@string/balance"
+           android:hint="@string/balance"
            android:textSize="20sp"
+           android:textStyle="bold"
            android:layout_marginBottom="10sp"
            android:background="@drawable/valueediteffect"
            />

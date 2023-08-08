@@ -501,7 +501,7 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
             TABLE_BUDGET,
             null,
             "$Budget_Name LIKE ?",
-            arrayOf("%$query"),
+            arrayOf("%$query%"),
             null,
             null,
             null
@@ -526,10 +526,11 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         cursor.close()
         return BudgetList
     }
-    fun updateBudgetPaid(id:Long,newvalue:String):Int{
+    fun updateBudgetPaid(id:Long,newvalue:String,newBalanceValue:String):Int{
         val db=writableDatabase
         val value=ContentValues().apply {
             put(Budget_Paid,newvalue)
+            put(Budget_Balance,newBalanceValue)
         }
         val rowaffected=db.update(TABLE_BUDGET,value,"$COLUMN_ID=?", arrayOf(id.toString()))
         db.close()
@@ -666,7 +667,7 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
             TABLE_GUEST,
             null,
             "$Guest_Name LIKE ?",
-            arrayOf("%$query"),
+            arrayOf("%$query%"),
             null,
             null,
             null
@@ -742,9 +743,9 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
     fun updateGuestInvitation(id:Long,newvalue:String):Int{
         val db=writableDatabase
         val value=ContentValues().apply {
-            put(Budget_Paid,newvalue)
+            put(GUEST_STATUS,newvalue)
         }
-        val rowaffected=db.update(TABLE_BUDGET,value,"$COLUMN_ID=?", arrayOf(id.toString()))
+        val rowaffected=db.update(TABLE_GUEST,value,"$COLUMN_ID=?", arrayOf(id.toString()))
         db.close()
         return rowaffected
     }
@@ -820,7 +821,7 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
             TABLE_VENDOR,
             null,
             "$Vendor_Name LIKE ?",
-            arrayOf("%$query"),
+            arrayOf("%$query%"),
             null,
             null,
             null
@@ -845,6 +846,15 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         }
         db.close()
         return VendorList
+    }
+    fun updateVendorPaid(id:Long,newvalue:String):Int{
+        val db=writableDatabase
+        val value=ContentValues().apply {
+            put(Vendor_Paid,newvalue)
+        }
+        val rowaffected=db.update(TABLE_VENDOR,value,"$COLUMN_ID=?", arrayOf(id.toString()))
+        db.close()
+        return rowaffected
     }
     //Getting Specific Data from Vendor
     @SuppressLint("Range")

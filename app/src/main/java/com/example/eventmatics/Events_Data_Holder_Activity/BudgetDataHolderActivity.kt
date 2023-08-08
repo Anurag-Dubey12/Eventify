@@ -132,6 +132,10 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
             var deletedItem: Budget? = null
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position=viewHolder.adapterPosition
+                val newPaidStatus:String
+                var previousPaidStatus:String
+                var NewBalance:Float
+                val bal=0;
                 when(direction){
                     ItemTouchHelper.LEFT->{
                 if(position!=RecyclerView.NO_POSITION){
@@ -184,12 +188,20 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
 
                             // Get the current 'Paid' status of the budget
                             val currentPaidStatus = budget.paid
+                            val budgetCost=budget.estimatedAmount
 
                             // Determine the new 'Paid' status based on the current status
-                            val newPaidStatus = if (currentPaidStatus == "Paid") "Not Paid" else "Paid"
+                             if (currentPaidStatus == "Paid"){
+                                 newPaidStatus="Not Paid"
+                                 NewBalance= budget.estimatedAmount.toFloat()
+                             } else {
+                                 newPaidStatus="Paid"
+
+                                 NewBalance=bal.toFloat()
+                             }
 
                             // Update the 'Paid' status in the database
-                            val rowsAffected = databasehelper.updateBudgetPaid(budget.id, newPaidStatus)
+                            val rowsAffected = databasehelper.updateBudgetPaid(budget.id, newPaidStatus,"$NewBalance")
                             if (rowsAffected > 0) {
                                 val snackbar=Snackbar.make(this@BudgetDataHolderActivity.recyclerView,"Budget Data Updated",Snackbar.LENGTH_LONG)
                                 .addCallback(object:BaseTransientBottomBar.BaseCallback<Snackbar>(){
@@ -203,13 +215,18 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
 
                                     override fun onShown(transientBottomBar: Snackbar?) {
                                         transientBottomBar?.setAction("UNDO"){
-//                                            BudgetList.add(position,Paiditem)
-//                                            adapter.notifyItemInserted(position)
-                                            val previousPaidStatus = if (newPaidStatus == "Paid") "Not Paid" else "Paid"
-                                            databasehelper.updateBudgetPaid(budget.id, previousPaidStatus)
-
-                                            recreate()
+//
+//                                            val previousPaidStatus = if (newPaidStatus == "Paid") "Not Paid" else "Paid"
+                                            if (newPaidStatus == "Paid"){
+                                                previousPaidStatus="Not Paid"
+                                                NewBalance=budget.estimatedAmount.toFloat()
+                                            } else {
+                                                previousPaidStatus="Paid"
+                                                NewBalance=bal.toFloat()
+                                            }
+                                            databasehelper.updateBudgetPaid(budget.id, previousPaidStatus,"$NewBalance")
                                         }
+                                        recreate()
                                         super.onShown(transientBottomBar)
                                     }
                                 }).apply {

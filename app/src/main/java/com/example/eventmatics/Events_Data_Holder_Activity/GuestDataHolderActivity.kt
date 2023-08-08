@@ -123,6 +123,8 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
         val swipe=object : GuestSwipeToDelete(this){
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position=viewHolder.adapterPosition
+                when(direction){
+                    ItemTouchHelper.LEFT->
                 if(position!=RecyclerView.NO_POSITION){
                     val deleteitem=GuestList[position]
                     db.deleteGuest(deleteitem)
@@ -152,7 +154,44 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
                     )
                     snackbar.show()
                 }
+                    ItemTouchHelper.RIGHT->{
+                        val Guest=GuestList[position]
+                        val CurrentStatus=Guest.isInvitationSent
+                        val New_Status=if(CurrentStatus=="Invitation Sent") "Not Sent" else "Invitation Sent"
+                        val RowAffected=db.updateGuestInvitation(Guest.id,New_Status)
+                        if(RowAffected>0){
+                            val snackbar=Snackbar.make(this@GuestDataHolderActivity.recyclerView,"Guest Data Updated",Snackbar.LENGTH_LONG)
+                                .addCallback(object:BaseTransientBottomBar.BaseCallback<Snackbar>(){
+                                    override fun onDismissed(
+                                        transientBottomBar: Snackbar?,
+                                        event: Int
+                                    ) {
+                                        super.onDismissed(transientBottomBar, event)
+                                        recreate()
+                                    }
+                                    override fun onShown(transientBottomBar: Snackbar?) {
+                                        transientBottomBar?.setAction("UNDO"){
+                                            val previousPaidStatus =if(New_Status=="Invitation Sent") "Not Sent" else "Invitation Sent"
+                                            db.updateGuestInvitation(Guest.id,previousPaidStatus)
+                                        }
+                                        recreate()
+                                        super.onShown(transientBottomBar)
+                                    }
+                                }).apply {
+                                    animationMode=Snackbar.ANIMATION_MODE_FADE
+                                }
+                            snackbar.setActionTextColor(
+                                ContextCompat.getColor(
+                                    this@GuestDataHolderActivity, androidx.browser.R.color.browser_actions_bg_grey
+                                )
+                            )
+                            snackbar.show()
+                        }
+
+                    }
             }
+
+        }
         }
         val itemtouch= ItemTouchHelper(swipe)
         itemtouch.attachToRecyclerView(recyclerView)

@@ -78,6 +78,14 @@ class GuestDetails : AppCompatActivity() {
             guestPhoneEt.setText(selectedlist.phoneNumber)
             guestEmailEt.setText(selectedlist.email)
             guestAddresssEt.setText(selectedlist.address)
+            if(selectedlist.isInvitationSent=="Invitation Sent"){
+                setButtonBackground(invitationSentButton,true)
+                setButtonBackground(notSentButton,false)
+            }
+            if(selectedlist.isInvitationSent=="Not Sent"){
+                setButtonBackground(invitationSentButton,false)
+                setButtonBackground(notSentButton,true)
+            }
         }
     }
 

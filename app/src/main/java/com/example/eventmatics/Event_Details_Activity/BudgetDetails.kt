@@ -68,7 +68,7 @@ class BudgetDetails : AppCompatActivity(){
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             }
             override fun afterTextChanged(edit: Editable?) {
-                balanceET.text="Balance:+${EstimatedEt.text}"
+                balanceET.text="${EstimatedEt.text}"
             }
         })
         val selected_item:Budget?=intent.getParcelableExtra("selected_item")
