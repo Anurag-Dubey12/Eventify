@@ -79,7 +79,7 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
                 val db=LocalDatabase(this,databasename)
                 val vendorlist=db.getAllVendors()
                 if(vendorlist!=null){
-                    adapter=VendorDataHolderClass(vendorlist,this)
+                    adapter=VendorDataHolderClass(this,vendorlist,this)
                     recyclerView.adapter=adapter
                     recyclerView.layoutManager=LinearLayoutManager(this)
                 }
@@ -108,13 +108,16 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
         val db=LocalDatabase(this,databasename)
         val vendorlist=db.getAllVendors()
         if(vendorlist!=null){
-            adapter=VendorDataHolderClass(vendorlist,this)
+            adapter=VendorDataHolderClass(this,vendorlist,this)
             recyclerView.adapter=adapter
             recyclerView.layoutManager=LinearLayoutManager(this)
         }
         val swipe=object:BudgetSwipeToDelete(this){
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position=viewHolder.adapterPosition
+                when(direction){
+
+                ItemTouchHelper.LEFT->{
                 if(position!=RecyclerView.NO_POSITION){
                     val deleteditem=vendorlist[position]
                     db.deleteVendor(deleteditem)
@@ -144,7 +147,62 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
                     snackbar.show()
                 }
             }
-        }
+                    ItemTouchHelper.RIGHT->{
+                        val newStatus:String
+                        var NewBalance:Float
+                        var previousstatus:String
+                        val Balance:Int=0
+                        if(position!=RecyclerView.NO_POSITION){
+                            val vendor=vendorlist[position]
+                            val CurrentStatus=vendor.paid
+                            if(CurrentStatus=="Paid"){
+                                newStatus="Not Paid"
+                                NewBalance=vendor.estimatedAmount.toFloat()
+                            }
+                            else{
+                                newStatus="Paid"
+                                NewBalance=Balance.toFloat()
+                            }
+                            val rowaffected=db.updateVendorPaid(vendor.id,newStatus,"$NewBalance")
+                            if(rowaffected>0){
+                                val snackbar=Snackbar.make(this@VendorDataHolderActivity.recyclerView,"Vendor Data Updated",Snackbar.LENGTH_LONG)
+                                    .addCallback(object:BaseTransientBottomBar.BaseCallback<Snackbar>(){
+                                        override fun onDismissed(
+                                            transientBottomBar: Snackbar?,
+                                            event: Int
+                                        ) {
+                                            super.onDismissed(transientBottomBar, event)
+                                            recreate()
+                                        }
+                                        override fun onShown(transientBottomBar: Snackbar?) {
+                                            transientBottomBar?.setAction("UNDO"){
+                                                if (newStatus=="Paid"){
+                                                    previousstatus="Not Paid"
+                                                    NewBalance=vendor.estimatedAmount.toFloat()
+                                                }
+                                                else{
+                                                    previousstatus="Paid"
+                                                    NewBalance=Balance.toFloat()
+                                                }
+                                                db.updateVendorPaid(vendor.id,previousstatus,"$NewBalance")
+                                                recreate()
+                                            }
+
+                                            super.onShown(transientBottomBar)
+                                        }
+                                    }).apply {
+                                        animationMode=Snackbar.ANIMATION_MODE_FADE
+                                    }
+                                snackbar.setActionTextColor(
+                                    ContextCompat.getColor(
+                                        this@VendorDataHolderActivity, androidx.browser.R.color.browser_actions_bg_grey
+                                    )
+                                )
+                                snackbar.show()
+                            }
+                        }
+                    }
+        }}}
         val itemtouch=ItemTouchHelper(swipe)
         itemtouch.attachToRecyclerView(recyclerView)
     }
@@ -155,7 +213,7 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
         val db=LocalDatabase(this,databasename)
         val vendorlist=db.getAllVendors()
         if(vendorlist!=null){
-            adapter=VendorDataHolderClass(vendorlist,this)
+            adapter=VendorDataHolderClass(this,vendorlist,this)
             recyclerView.adapter=adapter
             recyclerView.layoutManager=LinearLayoutManager(this)
         }

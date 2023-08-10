@@ -22,7 +22,7 @@
     <string name="Category">Category</string>
     <string name="note">Note</string>
     <string name="estimated_amount">Estimated Amount</string>
-    <string name="balance">Balance</string>
+    <string name="balance">Balance:</string>
     <string name="pending">Pending:</string>
     <string name="paid">Paid:</string>
     <string name="amount">Amount</string>

@@ -191,22 +191,39 @@ class TaskDetails : AppCompatActivity(){
 }
     private fun UpdateData(id: Long) {
         val databasename=getSharedPreference(this,"databasename").toString()
-        val Db=LocalDatabase(this,databasename)
+        val db=LocalDatabase(this,databasename)
         val taskname = TaskNameET.text.toString()
         val category = category_button.text.toString()
         val TaskNoteET = taskNote.text.toString()
         val taskdate = taskdate.text.toString()
-
+//        var status:String
+        val iscompleted=db.isTaskCompleted(id)
+//        if(iscompleted){
+//            status="Completed"
+//        }
+//        else if(taskPendingbut.isClickable){
+//            status="Pending"
+//        }
+//        else if(TaskCombut.isClickable){
+//            status="Completed"
+//        }
+//        else{
+//            status="Pending"
+//        }
         if (taskPendingbut.isClickable) {
             taskStatus = taskPendingbut.text.toString()
-        }
-        if (TaskCombut.isClickable) {
+        }else if (TaskCombut.isClickable) {
             taskStatus = TaskCombut.text.toString()
         }
-        val task=Task(id,taskname,category,TaskNoteET,taskStatus,taskdate)
-        Db.updateTask(task)
-        Toast.makeText(this, "Task Updated successfully", Toast.LENGTH_SHORT).show()
+        else{
+            if(iscompleted){
+            taskStatus="Completed"
+            }
+        }
 
+        val task=Task(id,taskname,category,TaskNoteET,taskStatus,taskdate)
+        db.updateTask(task)
+        Toast.makeText(this, "Task Updated successfully", Toast.LENGTH_SHORT).show()
         finish()
     }
 }

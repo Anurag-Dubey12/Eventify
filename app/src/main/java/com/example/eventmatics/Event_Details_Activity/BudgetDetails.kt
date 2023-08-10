@@ -29,6 +29,7 @@ class BudgetDetails : AppCompatActivity(){
     lateinit var  PaidET: TextView
     lateinit var EstimatedEt: EditText
     lateinit var NoteET: EditText
+    lateinit var PaymentBalance: LinearLayout
     lateinit var categoryselection: TextView
 
     val spinnerItems = listOf(
@@ -57,22 +58,24 @@ class BudgetDetails : AppCompatActivity(){
         EstimatedEt = findViewById(R.id.Estimated_Amount)
         NoteET = findViewById(R.id.NoteET)
         balanceET = findViewById(R.id.Balancetv)
+        PaymentBalance = findViewById(R.id.PaymentBalance)
         categoryselection = findViewById(R.id.categoryselection)
 
         categoryselection.setOnClickListener {
             showCategoryPopup()
         }
-        EstimatedEt.addTextChangedListener(object:TextWatcher{
-            override fun beforeTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-            override fun afterTextChanged(edit: Editable?) {
-                balanceET.text="${EstimatedEt.text}"
-            }
-        })
+//        EstimatedEt.addTextChangedListener(object:TextWatcher{
+//            override fun beforeTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+//            }
+//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+//            }
+//            override fun afterTextChanged(edit: Editable?) {
+////                balanceET.text="${EstimatedEt.text}"
+//            }
+//        })
         val selected_item:Budget?=intent.getParcelableExtra("selected_item")
         if (selected_item!=null){
+            PaymentBalance.visibility=View.VISIBLE
             nameEditText.setText(selected_item.name)
             categoryselection.setText(selected_item.category)
             NoteET.setText(selected_item.note)
@@ -126,6 +129,7 @@ class BudgetDetails : AppCompatActivity(){
         val category=categoryselection.text.toString()
         val balance=balanceET.text.toString()
 
+
         if (name.isEmpty()) {
             nameEditText.error = "Please enter a name"
             return }
@@ -133,14 +137,21 @@ class BudgetDetails : AppCompatActivity(){
             EstimatedEt.error = "Please enter an amount"
             return
         }
+        val status:String
         val databasename=getSharedPreference(this,"databasename").toString()
         val db=LocalDatabase(this,databasename)
-        val budget=Budget(id,name,category,note,Totalamount,balance,"","")
+        val isBudgetPaid=db.isBudgetPaid(id)
+        if(isBudgetPaid){
+            status="Paid"
+        }
+        else{
+            status="Not Paid"
+        }
+        val budget=Budget(id,name,category,note,Totalamount,balance,"","$status")
         db.updateBudget(budget)
         Toast.makeText(this, "Budget Updated successfully", Toast.LENGTH_SHORT).show()
         finish()
     }
-
 
     private fun AddValueToDataBase() {
         val name = nameEditText.text.toString()
@@ -161,7 +172,7 @@ class BudgetDetails : AppCompatActivity(){
         val id=0
         val databasename=getSharedPreference(this,"databasename").toString()
         val db=LocalDatabase(this,databasename)
-        val budget=Budget(id.toLong(),name,category,note,Totalamount,balance,"","")
+        val budget=Budget(id.toLong(),name,category,note,Totalamount,balance,"","Not Paid")
         db.createBudget(budget)
         Toast.makeText(this, "Budget Added successfully", Toast.LENGTH_SHORT).show()
         finish()

@@ -13,7 +13,7 @@ data class Vendor(
     val balance: String ,
     val remaining: String,
     val paid: String ,
-    val phonenumber:String,
+    val phonenumber:String=" ",
     val emailid:String,
     val website:String,
     val address:String

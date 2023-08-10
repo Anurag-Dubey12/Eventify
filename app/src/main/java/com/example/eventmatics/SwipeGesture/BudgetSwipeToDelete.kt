@@ -43,8 +43,10 @@ abstract class BudgetSwipeToDelete(context: Context):ItemTouchHelper.SimpleCallb
             isCurrentlyActive
         )
             .addSwipeLeftBackgroundColor(DeleteColor)
+            .addSwipeLeftLabel("Delete")
             .addSwipeRightBackgroundColor(PaidColor)
             .addSwipeLeftActionIcon(deleteicon)
+            .addSwipeRightLabel("Paid")
             .addSwipeRightActionIcon(Paidicon)
             .create()
             .decorate()

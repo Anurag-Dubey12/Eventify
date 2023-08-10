@@ -131,7 +131,7 @@ class EventAdding(
                 return@setOnClickListener
             }
             val event = Events(0, eventNameText, eventDateText, eventTimeText, eventBudgetText)
-            val names=DatabaseNameDataClass(0,eventNameText,eventDateText)
+            val names=DatabaseNameDataClass(0,eventNameText,eventDateText,eventTimeText)
             val eventId = databaseHelper.createEvent(event)
             val Eventlist=Databasename.createDatabase(names)
             databaseHelper.close()

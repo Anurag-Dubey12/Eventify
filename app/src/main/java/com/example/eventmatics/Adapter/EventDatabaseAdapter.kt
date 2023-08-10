@@ -24,11 +24,11 @@ class EventDatabaseAdapter(private val DatabaseList: List<DatabaseNameDataClass>
     }
     inner class Viewholder(itemview: View):RecyclerView.ViewHolder(itemview){
         val DatabaseName=itemview.findViewById<TextView>(R.id.DatabaseName)
-        val Databaseindex=itemview.findViewById<TextView>(R.id.Databaseindex)
+        val DatabaseTime=itemview.findViewById<TextView>(R.id.DatabaseTime)
         val DatabaseDate=itemview.findViewById<TextView>(R.id.DatabaseDate)
         fun bind(DatabaseList: DatabaseNameDataClass){
             DatabaseName.text=DatabaseList.DatabaseName
-            Databaseindex.text= DatabaseList.id.toString()
+            DatabaseTime.text= DatabaseList.Time
             DatabaseDate.text=DatabaseList.Date
         }
     }

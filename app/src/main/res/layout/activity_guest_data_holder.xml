@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:context=".Events_Data_Holder_Activity.GuestDataHolderActivity">
-    <androidx.appcompat.widget.Toolbar
+    <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:logo="@drawable/back_arrow"
         android:background="@color/Lemon_Chiffon"
-        android:title="Add Task"
+        android:title=" Guest "
         android:titleMarginStart="30sp"
         />
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

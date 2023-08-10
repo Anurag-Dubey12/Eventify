@@ -88,14 +88,26 @@
                 android:background="@drawable/valueediteffect"
                 android:layout_marginBottom="10sp"
                 />
-            <TextView
-                android:id="@+id/VendorBalancetv"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="40sp"
-                android:text="@string/balance"
-                android:textSize="20sp"
-                android:background="@drawable/valueediteffect"
-                 />
+                android:id="@+id/Balancefeild"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="40sp"
+                    android:text="@string/balance"
+                    android:textSize="20sp"
+                    />
+                <TextView
+                    android:id="@+id/VendorBalancetv"
+                    android:layout_width="match_parent"
+                    android:layout_height="40sp"
+                    android:textSize="20sp"
+                    />
+            </LinearLayout>
+
 <!--            <TextView-->
 <!--                android:id="@+id/VendorRemainingET"-->
 <!--                android:layout_width="match_parent"-->

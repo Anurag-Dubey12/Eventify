@@ -183,13 +183,21 @@ class GuestDetails : AppCompatActivity() {
         val guestPhone = guestPhoneEt.text.toString()
         val guestEmail = guestEmailEt.text.toString()
         val guestAddress = guestAddresssEt.text.toString()
+        var status:String
+        val isinvitationsent=db.isInvitationsent(id)
+        if(isinvitationsent){
+            status="Invitation Sent"
+        }
+        else{
+            status="Not Sent"
+        }
         if(invitationSentButton.isClickable){
             InvitationStatus=invitationSentButton.text.toString()
         }
         if(notSentButton.isClickable){
             InvitationStatus=notSentButton.text.toString()
         }
-        val GuestList= Guest(id,guestName,totalFamilyMembers,guestNote, InvitationStatus,
+        val GuestList= Guest(id,guestName,totalFamilyMembers,guestNote, status,
             guestPhone,guestEmail,guestAddress)
         db.updateGuest(GuestList)
         Toast.makeText(this, "Guest Updated successfully", Toast.LENGTH_SHORT).show()

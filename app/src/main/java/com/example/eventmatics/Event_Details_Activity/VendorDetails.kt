@@ -14,6 +14,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -39,6 +40,7 @@ class VendorDetails : AppCompatActivity(){
     private lateinit var vendorEmailTV: TextView
     private lateinit var vendorEmailET: EditText
     private lateinit var vendorWebsiteTV: TextView
+    private lateinit var Balancefeild: LinearLayout
     private lateinit var vendorWebsiteET: EditText
     private lateinit var vendorAddressTV: TextView
     private lateinit var vendorAddressET: EditText
@@ -77,6 +79,7 @@ class VendorDetails : AppCompatActivity(){
         vendorEmailET = findViewById(R.id.VendorEmailEt)
         vendorWebsiteTV = findViewById(R.id.Vendorwebsitetv)
         vendorWebsiteET = findViewById(R.id.VendorwebsiteEt)
+        Balancefeild = findViewById(R.id.Balancefeild)
         vendorAddressTV = findViewById(R.id.VendorAddressstv)
         vendorAddressET = findViewById(R.id.VendorAddresssEt)
 
@@ -86,24 +89,25 @@ class VendorDetails : AppCompatActivity(){
         vendorViewTV.setOnClickListener {
             infoshow()
         }
-        vendorEstimatedAmount.addTextChangedListener(object: TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-            override fun afterTextChanged(edit: Editable?) {
-                vendorBalanceTV.text="Balance:${vendorEstimatedAmount.text}"
-            }
-        })
+//        vendorEstimatedAmount.addTextChangedListener(object: TextWatcher {
+//            override fun beforeTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+//            }
+//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+//            }
+//            override fun afterTextChanged(edit: Editable?) {
+//                vendorBalanceTV.text="Balance:${vendorEstimatedAmount.text}"
+//            }
+//        })
 
         val Selected_Item:Vendor?=intent.getParcelableExtra("Selected_Item")
         if(Selected_Item!=null){
+            Balancefeild.visibility=View.VISIBLE
             vendorNameET.setText(Selected_Item.name)
             categoryButton.setText(Selected_Item.category)
             vendorNoteET.setText(Selected_Item.note)
             vendorEstimatedAmount.setText(Selected_Item.estimatedAmount)
             vendorBalanceTV.setText(Selected_Item.balance)
-            vendorPhoneET.setText(Selected_Item.balance)
+            vendorPhoneET.setText(Selected_Item.phonenumber)
             vendorEmailET.setText(Selected_Item.emailid)
             vendorWebsiteET.setText(Selected_Item.website)
             vendorAddressET.setText(Selected_Item.address)
@@ -227,7 +231,7 @@ class VendorDetails : AppCompatActivity(){
         val vendorAddress = vendorAddressET.text.toString()
 
         val databasename=getSharedPreference(this,"databasename").toString()
-        val vendor=Vendor(0,vendorName,category,vendorNote,estimatedAmount,vendorBalance,"","",vendorPhone,vendorEmail,vendorWebsite,vendorAddress)
+        val vendor=Vendor(0,vendorName,category,vendorNote,estimatedAmount,vendorBalance,"","Not Paid",vendorPhone,vendorEmail,vendorWebsite,vendorAddress)
         val db=LocalDatabase(this,databasename)
         db.createVendor(vendor)
         Toast.makeText(this, "Vendor Added successfully", Toast.LENGTH_SHORT).show()
@@ -243,10 +247,17 @@ class VendorDetails : AppCompatActivity(){
         val vendorEmail = vendorEmailET.text.toString()
         val vendorWebsite = vendorWebsiteET.text.toString()
         val vendorAddress = vendorAddressET.text.toString()
-
+        var status:String
         val databasename=getSharedPreference(this,"databasename").toString()
-        val vendor=Vendor(id,vendorName,category,vendorNote,estimatedAmount,vendorBalance,"","",vendorPhone,vendorEmail,vendorWebsite,vendorAddress)
         val db=LocalDatabase(this,databasename)
+        val ispaid=db.isVendorPaid(id)
+        if(ispaid){
+            status="Paid"
+        }
+        else{
+            status="Not Paid"
+        }
+        val vendor=Vendor(id,vendorName,category,vendorNote,estimatedAmount,vendorBalance,"","$status",vendorPhone,vendorEmail,vendorWebsite,vendorAddress)
         db.updateVendor(vendor)
         Toast.makeText(this, "Vendor Updated successfully", Toast.LENGTH_SHORT).show()
         finish()

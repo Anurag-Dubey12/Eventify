@@ -16,6 +16,7 @@ import androidx.annotation.NonNull
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -193,10 +194,10 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
                             // Determine the new 'Paid' status based on the current status
                              if (currentPaidStatus == "Paid"){
                                  newPaidStatus="Not Paid"
+
                                  NewBalance= budget.estimatedAmount.toFloat()
                              } else {
                                  newPaidStatus="Paid"
-
                                  NewBalance=bal.toFloat()
                              }
 

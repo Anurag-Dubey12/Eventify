@@ -388,6 +388,24 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         return rowaffected
     }
 
+
+    @SuppressLint("Range")
+    fun isTaskCompleted(Taskid:Long):Boolean{
+        val db=readableDatabase
+        val query="SELECT $Task_Status FROM $TABLE_TASK WHERE $COLUMN_ID = ?"
+        val cursor=db.rawQuery(query, arrayOf(Taskid.toString()))
+        var iscompleted=false
+        if(cursor.moveToFirst()){
+            val completedvalue=cursor.getString(cursor.getColumnIndex(Task_Status))
+            if(completedvalue=="Completed"){
+                iscompleted=true
+            }
+        }
+        cursor.close()
+        db.close()
+        return iscompleted
+    }
+
     //Saerch For Task
     @SuppressLint("Range")
     fun searchTask(query: String): MutableList<Task> {
@@ -526,6 +544,26 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         cursor.close()
         return BudgetList
     }
+    @SuppressLint("Range")
+    fun isBudgetPaid(budgetId: Long): Boolean {
+        val db = readableDatabase
+        val query = "SELECT $Budget_Paid FROM $TABLE_BUDGET WHERE $COLUMN_ID = ?"
+        val cursor = db.rawQuery(query, arrayOf(budgetId.toString()))
+        var isPaid = false
+
+        if (cursor.moveToFirst()) {
+            val paidValue = cursor.getString(cursor.getColumnIndex(Budget_Paid))
+            if (paidValue == "Paid") {
+                isPaid = true
+            }
+        }
+
+        cursor.close()
+        db.close()
+        return isPaid
+    }
+
+    //Function to update Budget Value
     fun updateBudgetPaid(id:Long,newvalue:String,newBalanceValue:String):Int{
         val db=writableDatabase
         val value=ContentValues().apply {
@@ -691,6 +729,24 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         return GuestList
     }
 
+
+    @SuppressLint("Range")
+    fun isInvitationsent(Guestid:Long):Boolean{
+        val db=readableDatabase
+        val query="SELECT $GUEST_STATUS FROM $TABLE_GUEST WHERE $COLUMN_ID = ?"
+        val cursor=db.rawQuery(query, arrayOf(Guestid.toString()))
+        var isinvitationsent=false
+        if(cursor.moveToFirst()){
+            val invitationsent=cursor.getString(cursor.getColumnIndex(GUEST_STATUS))
+            if(invitationsent=="Invitation Sent"){
+                isinvitationsent=true
+            }
+        }
+        cursor.close()
+        db.close()
+        return isinvitationsent
+    }
+
     //Getting Specific data from Guest
     @SuppressLint("Range")
     fun getGuestData(guestId: Int): Guest? {
@@ -798,14 +854,14 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
                     val category = it.getString(it.getColumnIndex(Vendor_Category))
                     val note = it.getString(it.getColumnIndex(Vendor_Note))
                     val estimated = it.getString(it.getColumnIndex(Vendor_Estimated))
-                    val balance = it.getString(it.getColumnIndex(Vendor_Balance))
+//                    val balance = it.getString(it.getColumnIndex(Vendor_Balance))
                     val pending = it.getString(it.getColumnIndex(Vendor_Pending))
                     val paid = it.getString(it.getColumnIndex(Vendor_Paid))
                     val phoneNumber = it.getString(it.getColumnIndex(Vendor_PhoneNumber))
                     val emailId = it.getString(it.getColumnIndex(Vendor_EmailId))
                     val website = it.getString(it.getColumnIndex(Vendor_Website))
                     val Address = cursor.getString(cursor.getColumnIndex(Vendor_Address))
-                    val vendor = Vendor(id, name, category, note, estimated, balance, pending, paid, phoneNumber, emailId, website,Address)
+                    val vendor = Vendor(id, name, category, note, estimated, " ", pending, paid, phoneNumber, emailId, website,Address)
                     vendors.add(vendor)
                 } while (it.moveToNext())
             }
@@ -847,10 +903,29 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         db.close()
         return VendorList
     }
-    fun updateVendorPaid(id:Long,newvalue:String):Int{
+    @SuppressLint("Range")
+    fun isVendorPaid(VendorId: Long): Boolean {
+        val db = readableDatabase
+        val query = "SELECT $Vendor_Paid FROM $TABLE_VENDOR WHERE $COLUMN_ID = ?"
+        val cursor = db.rawQuery(query, arrayOf(VendorId.toString()))
+        var isPaid = false
+
+        if (cursor.moveToFirst()) {
+            val paidValue = cursor.getString(cursor.getColumnIndex(Vendor_Paid))
+            if (paidValue == "Paid") {
+                isPaid = true
+            }
+        }
+
+        cursor.close()
+        db.close()
+        return isPaid
+    }
+    fun updateVendorPaid(id:Long,newvalue:String,NewBalance:String):Int{
         val db=writableDatabase
         val value=ContentValues().apply {
             put(Vendor_Paid,newvalue)
+            put(Vendor_Balance,NewBalance)
         }
         val rowaffected=db.update(TABLE_VENDOR,value,"$COLUMN_ID=?", arrayOf(id.toString()))
         db.close()

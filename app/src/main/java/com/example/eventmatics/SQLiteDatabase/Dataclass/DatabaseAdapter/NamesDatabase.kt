@@ -3,6 +3,7 @@ package com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter
 import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseNameDataClass
@@ -15,6 +16,7 @@ class NamesDatabase(val context: Context):SQLiteOpenHelper(context,"Databasename
         private const val DATABASE_TABLE = "Database_Table"
         private const val DATABASE_NAME = "Database_Name"
         private const val DATABASE_DATE = "Database_Date"
+        private const val DATABASE_Time = "Database_Time"
 
     }
 
@@ -22,7 +24,8 @@ class NamesDatabase(val context: Context):SQLiteOpenHelper(context,"Databasename
         val query = "CREATE TABLE $DATABASE_TABLE (" +
                 "$COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "$DATABASE_NAME TEXT," +
-                "$DATABASE_DATE TEXT" + ")"
+                "$DATABASE_DATE TEXT,"+
+                "$DATABASE_Time TEXT"+ ")"
         db?.execSQL(query)
     }
 
@@ -36,6 +39,7 @@ class NamesDatabase(val context: Context):SQLiteOpenHelper(context,"Databasename
         val values = ContentValues().apply {
             put(DATABASE_NAME, databaseNameDataClass.DatabaseName)
             put(DATABASE_DATE, databaseNameDataClass.Date)
+            put(DATABASE_Time, databaseNameDataClass.Time)
         }
         val id = db.insert(DATABASE_TABLE, null, values)
         db.close()
@@ -47,14 +51,15 @@ class NamesDatabase(val context: Context):SQLiteOpenHelper(context,"Databasename
         val databaseNames = ArrayList<DatabaseNameDataClass>()
         val db = this.readableDatabase
         val query = "SELECT * FROM $DATABASE_TABLE"
-        val cursor = db.rawQuery(query, null)
-        cursor.use {
+        val cursor:Cursor? = db.rawQuery(query, null)
+        cursor?.let {
             if (it.moveToFirst()) {
                 do {
                     val id = it.getLong(it.getColumnIndex(COLUMN_ID))
                     val name = it.getString(it.getColumnIndex(DATABASE_NAME))
                     val date = it.getString(it.getColumnIndex(DATABASE_DATE))
-                    val databaseNameDataClass = DatabaseNameDataClass(id, name, date)
+                    val time = it.getString(it.getColumnIndex(DATABASE_Time))
+                    val databaseNameDataClass = DatabaseNameDataClass(id, name, date,time)
                     databaseNames.add(databaseNameDataClass)
                 } while (it.moveToNext())
             }
@@ -78,6 +83,7 @@ class NamesDatabase(val context: Context):SQLiteOpenHelper(context,"Databasename
         val values = ContentValues().apply {
             put(DATABASE_NAME, databaseNameDataClass.DatabaseName)
             put(DATABASE_DATE, databaseNameDataClass.Date)
+            put(DATABASE_Time, databaseNameDataClass.Time)
         }
         val rowsAffected = db.update(
             DATABASE_TABLE,

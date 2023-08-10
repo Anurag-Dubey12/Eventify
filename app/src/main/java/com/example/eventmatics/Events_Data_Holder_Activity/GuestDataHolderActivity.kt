@@ -68,7 +68,7 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
                 val db=LocalDatabase(this,databasename)
                 val GuestList=db.getAllGuests()
                 if(GuestList!=null){
-                    val adapter=GuestApdater(GuestList,this)
+                    val adapter=GuestApdater(this,GuestList,this)
                     recyclerView.adapter=adapter
                     recyclerView.layoutManager=LinearLayoutManager(this)
                     adapter.notifyDataSetChanged()
@@ -102,7 +102,7 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
         val db=LocalDatabase(this,databasename)
         val GuestList=db.getAllGuests()
         if(GuestList!=null){
-            val adapter=GuestApdater(GuestList,this)
+            val adapter=GuestApdater(this,GuestList,this)
             recyclerView.adapter=adapter
             recyclerView.layoutManager=LinearLayoutManager(this)
             adapter.notifyDataSetChanged()
@@ -115,7 +115,7 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
         val db=LocalDatabase(this,databasename)
         val GuestList=db.getAllGuests()
         if(GuestList!=null){
-            adapter=GuestApdater(GuestList,this)
+            adapter=GuestApdater(this,GuestList,this)
             recyclerView.adapter=adapter
             recyclerView.layoutManager=LinearLayoutManager(this)
             adapter.notifyDataSetChanged()

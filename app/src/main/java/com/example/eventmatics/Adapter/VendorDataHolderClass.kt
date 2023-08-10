@@ -1,14 +1,18 @@
 package com.example.eventmatics.Adapter
 
+import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Vendor
 
-class VendorDataHolderClass(private var vendorList:MutableList<Vendor>
+class VendorDataHolderClass(private val context: Context,private var vendorList:MutableList<Vendor>
 ,private val OnItemClickListener:onItemClickListener): RecyclerView.Adapter<VendorDataHolderClass.ViewHolder>() {
 
     private var filteredList: MutableList<Vendor> = mutableListOf()
@@ -32,7 +36,7 @@ class VendorDataHolderClass(private var vendorList:MutableList<Vendor>
         holder.itemView.setOnClickListener {
             OnItemClickListener.onItemclick(item)
         }
-        return holder.bind(item)
+        return holder.bind(item,position)
     }
 interface onItemClickListener{
     fun onItemclick(vendor: Vendor)
@@ -51,7 +55,9 @@ interface onItemClickListener{
         val vendorNoteTextView: TextView = itemView.findViewById(R.id.Vendor_Note)
         val vendorEmailTextView: TextView = itemView.findViewById(R.id.Vendoremail)
         val vendorAddressTextView: TextView = itemView.findViewById(R.id.VendorAddress)
-        fun bind(vendor:Vendor){
+        val VendorPaid: TextView = itemView.findViewById(R.id.VendorPaid)
+        val cardview: CardView = itemView.findViewById(R.id.vendorcardview)!!
+        fun bind(vendor:Vendor,position: Int){
             vendorNameTextView.text=vendor.name
             budgetCategoryTextView.text=vendor.category
             vendorPhoneTextView.text=vendor.phonenumber
@@ -61,7 +67,21 @@ interface onItemClickListener{
             vendorNoteTextView.text=vendor.note
             vendorEmailTextView.text=vendor.emailid
             vendorAddressTextView.text=vendor.address
+            val databasename = getSharedPreference(context, "databasename").toString()
+            val db = LocalDatabase(context, databasename)
+            val isVendorPaid=db.isVendorPaid(vendor.id)
+            if(isVendorPaid){
+                VendorPaid.text="Paid"
+                VendorPaid.setTextColor(Color.parseColor("#00FF00"))
+                cardview.setBackgroundColor(Color.parseColor("#F5F5F5"))
+            }
+            else{
+                VendorPaid.text="Not Paid"
+            }
         }
-
+        fun getSharedPreference(context: Context, key: String): String? {
+            val sharedPref = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
+            return sharedPref.getString(key, null)
+        }
     }
 }
