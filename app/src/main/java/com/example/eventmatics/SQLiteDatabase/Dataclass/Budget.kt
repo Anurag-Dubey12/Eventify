@@ -12,5 +12,5 @@ data class Budget(
     val estimatedAmount: String,
     val balance: String,
     val remaining: String,
-    val paid: String
+    var paid: String
 ) : Parcelable

@@ -10,7 +10,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        app:fabAlignmentMode="center">
+        app:fabAlignmentMode="center"
+        app:fabAnchorMode="cradle"
+        app:fabAnimationMode="slide"
+        app:removeEmbeddedFabElevation="true"
+        app:fabCradleRoundedCornerRadius="115sp">
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavigationView"
@@ -26,7 +30,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/add"
-        android:layout_gravity="center"
         app:layout_anchor="@id/bottomAppBar" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -15,7 +15,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:logo="@drawable/back_arrow"
+
             app:title="BUDGET"
             android:background="@color/Lemon_Chiffon"
 
@@ -35,11 +35,17 @@
             android:layout_height="wrap_content" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
+<!--    <fragment-->
+<!--        android:id="@+id/paymentfrag"-->
+<!--      android:name="com.example.eventmatics.fragments.PaymentFragment"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="wrap_content"-->
+<!--    android:layout_below="@id/swipeRefreshLayout"-->
+<!--    android:layout_above="@id/budgetBottomnav"-->
+<!--    />-->
     <include
         android:id="@+id/budgetBottomnav"
         layout="@layout/eventbottomnav"
-        app:layout_anchorGravity="bottom|center_horizontal"
-        app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior" />
+        app:layout_anchorGravity="bottom|center_horizontal" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
