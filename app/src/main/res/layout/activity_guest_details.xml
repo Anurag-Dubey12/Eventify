@@ -157,6 +157,39 @@
                     android:text="@string/not_sent" />
 
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10sp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/Accepted"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="15sp"
+                    android:layout_weight="1"
+                    android:backgroundTint="#F2FFCA"
+                    android:textColor="@color/black"
+                    android:text="Accepted" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/Pending"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:backgroundTint="#F2FFCA"
+                    android:textColor="@color/black"
+                    android:text="Pending" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/Denied"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:backgroundTint="#F2FFCA"
+                    android:textColor="@color/black"
+                    android:text="Denied" />
+            </LinearLayout>
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
@@ -190,11 +223,12 @@
 
                             />
                     </LinearLayout>
-                    <View
-                        android:layout_width="300dp"
-                        android:layout_height="1dp"
-                        android:layout_gravity="center"
-                        android:background="#101212" />
+                    <com.google.android.material.divider.MaterialDivider
+                        android:layout_below="@id/BudgetCardView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:dividerInsetStart="16dp"
+                        app:dividerInsetEnd="16dp"/>
                     <TextView
                         android:id="@+id/GuestPhonetv"
                         android:layout_width="match_parent"
@@ -214,26 +248,26 @@
                         android:background="@drawable/valueediteffect"
                         android:drawableEnd="@drawable/call" />
 
-                    <TextView
-                        android:id="@+id/GuestEmailtv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5sp"
-                        android:layout_marginBottom="10sp"
-                        android:text="@string/email_id"
-                        android:textSize="20sp"
+<!--                    <TextView-->
+<!--                        android:id="@+id/GuestEmailtv"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginStart="5sp"-->
+<!--                        android:layout_marginBottom="10sp"-->
+<!--                        android:text="@string/email_id"-->
+<!--                        android:textSize="20sp"-->
 
-                        />
+<!--                        />-->
 
-                    <EditText
-                        android:id="@+id/GuestEmailEt"
-                        android:layout_width="400sp"
-                        android:layout_height="35sp"
-                        android:layout_marginStart="5sp"
-                        android:layout_marginBottom="10sp"
-                        android:background="@drawable/valueediteffect"
-                        android:drawableEnd="@drawable/email"
-                        android:inputType="textEmailAddress" />
+<!--                    <EditText-->
+<!--                        android:id="@+id/GuestEmailEt"-->
+<!--                        android:layout_width="400sp"-->
+<!--                        android:layout_height="35sp"-->
+<!--                        android:layout_marginStart="5sp"-->
+<!--                        android:layout_marginBottom="10sp"-->
+<!--                        android:background="@drawable/valueediteffect"-->
+<!--                        android:drawableEnd="@drawable/email"-->
+<!--                        android:inputType="textEmailAddress" />-->
                     <TextView
                         android:id="@+id/GuestAddressstv"
                         android:layout_width="match_parent"

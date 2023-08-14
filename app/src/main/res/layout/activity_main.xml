@@ -288,7 +288,7 @@
                     android:layout_height="1dp"
                     android:layout_marginBottom="15sp"
                     android:background="@android:color/black"/>
-                <org.eazegraph.lib.charts.PieChart
+               <org.eazegraph.lib.charts.PieChart
                     android:id="@+id/piechart"
                     android:layout_width="100sp"
                     android:layout_height="100sp"
@@ -296,6 +296,7 @@
                     android:animationCache="true"
                     android:layout_gravity="center_horizontal"
                     />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -393,58 +394,58 @@
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
-        <androidx.cardview.widget.CardView
-            android:layout_below="@id/budget_info"
-            android:layout_marginTop="15sp"
-            android:layout_width="match_parent"
-            app:cardCornerRadius="15sp"
-            app:cardElevation="5sp"
-            android:layout_height="wrap_content">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:layout_marginStart="15sp"
-                android:textColor="@color/black"
-                android:text="Advice"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginBottom="15sp"
-                    android:background="@android:color/black"/>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
-                    <ImageView
-                        android:layout_width="90sp"
-                        android:layout_height="90sp"
-                        android:src="@drawable/guest_icon"
-                        />
-                    <TextView
-                        android:layout_width="210sp"
-                        android:layout_height="50sp"
-                        android:textColor="@color/black"
-                        android:textSize="16sp"
-                        android:text="Add widgets with event data to your phone's home screen"
-                        />
+<!--        <androidx.cardview.widget.CardView-->
+<!--            android:layout_below="@id/budget_info"-->
+<!--            android:layout_marginTop="15sp"-->
+<!--            android:layout_width="match_parent"-->
+<!--            app:cardCornerRadius="15sp"-->
+<!--            app:cardElevation="5sp"-->
+<!--            android:layout_height="wrap_content">-->
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:orientation="vertical">-->
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:textSize="20sp"-->
+<!--                android:textStyle="bold"-->
+<!--                android:layout_marginStart="15sp"-->
+<!--                android:textColor="@color/black"-->
+<!--                android:text="Advice"/>-->
+<!--                <View-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="1dp"-->
+<!--                    android:layout_marginBottom="15sp"-->
+<!--                    android:background="@android:color/black"/>-->
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:orientation="horizontal">-->
+<!--                    <ImageView-->
+<!--                        android:layout_width="90sp"-->
+<!--                        android:layout_height="90sp"-->
+<!--                        android:src="@drawable/guest_icon"-->
+<!--                        />-->
+<!--                    <TextView-->
+<!--                        android:layout_width="210sp"-->
+<!--                        android:layout_height="50sp"-->
+<!--                        android:textColor="@color/black"-->
+<!--                        android:textSize="16sp"-->
+<!--                        android:text="Add widgets with event data to your phone's home screen"-->
+<!--                        />-->
 
-                    <Button
-                        android:id="@+id/widgetbutton"
-                        android:layout_width="90dp"
-                        android:layout_height="wrap_content"
-                        android:text="Add" />
-                </LinearLayout>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginBottom="15sp"
-                    android:background="@android:color/black"/>
+<!--                    <Button-->
+<!--                        android:id="@+id/widgetbutton"-->
+<!--                        android:layout_width="90dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Add" />-->
+<!--                </LinearLayout>-->
+<!--                <View-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="1dp"-->
+<!--                    android:layout_marginBottom="15sp"-->
+<!--                    android:background="@android:color/black"/>-->
 <!--                <LinearLayout-->
 <!--                    android:layout_width="match_parent"-->
 <!--                    android:layout_height="match_parent"-->
@@ -467,11 +468,12 @@
 <!--                        android:layout_height="wrap_content"-->
 <!--                        android:text="Add" />-->
 <!--                </LinearLayout>-->
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+<!--            </LinearLayout>-->
+<!--        </androidx.cardview.widget.CardView>-->
 
     </RelativeLayout>
 </ScrollView>
+
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navView"
         android:layout_width="match_parent"
@@ -479,6 +481,9 @@
         app:headerLayout="@layout/nav_header"
         android:background="@color/Lavender"
         app:drawerLayoutCornerSize="15sp"
+        style="@style/Widget.Material3.NavigationView"
+       app:itemShapeAppearance="@anim/nav_default_enter_anim"
+        app:itemShapeInsetEnd="@dimen/cardview_compat_inset_shadow"
         app:menu="@menu/nav_header_menu"
         android:layout_gravity="start"
         android:fitsSystemWindows="true" />

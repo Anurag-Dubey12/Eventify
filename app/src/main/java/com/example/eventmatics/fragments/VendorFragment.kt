@@ -84,12 +84,12 @@ class VendorFragment(private var fragmentManager:FragmentManager) : BottomSheetD
             val paymentStatus = if (vendorButtonPending.isSelected) "Pending" else "Paid"
             val date=vendorexpireDate.text.toString()
 
-            val userdata=Paymentinfo(name, amount, date)
+//            val userdata=Paymentinfo(name, amount, date)
 //When the user clicks the buttonSubmit, the onClick listener is triggered.
 //The listener retrieves the values entered in the EditText fields and creates a Paymentinfo object with the provided data.
 //The userDataListener is then called with the userData as an argument to pass the entered payment information.
 //Finally, the VendorFragment is dismissed, closing the bottom sheet dialog.
-            userDataListener?.onUserDataEntered(userdata)
+//            userDataListener?.onUserDataEntered(userdata)
             dismiss()
         }
     }

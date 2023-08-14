@@ -22,7 +22,7 @@ class signin_account : AppCompatActivity() {
     private lateinit var loginButton: Button
     private lateinit var googleLogin: Button
     private lateinit var forgetpas: TextView
-    private lateinit var createacc:TextView
+    private lateinit var createacc: TextView
     private lateinit var firebaseauth: FirebaseAuth
     private lateinit var progressDialog: ProgressDialog
     private lateinit var rProgLayout: ProgressBar
@@ -30,6 +30,7 @@ class signin_account : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signin_account)
+
         alreadyEmail = findViewById(R.id.alreadyemail)
         alreadyPassfield = findViewById(R.id.alreadypassfield)
         createacc = findViewById(R.id.createaccount)
@@ -37,81 +38,87 @@ class signin_account : AppCompatActivity() {
         rProgLayout = findViewById(R.id.progressBar)
         googleLogin = findViewById(R.id.google_login)
         forgetpas = findViewById(R.id.forgetpass)
-        firebaseauth=FirebaseAuth.getInstance()
-        progressDialog=ProgressDialog(this)
+        firebaseauth = FirebaseAuth.getInstance()
+        progressDialog = ProgressDialog(this)
+
+        rProgLayout.visibility=View.GONE
         loginButton.setOnClickListener {
-            val email=alreadyEmail.text.toString()
-            val password=alreadyPassfield.text.toString()
+            val email = alreadyEmail.text.toString()
+            val password = alreadyPassfield.text.toString()
 
-            if(email.isEmpty()){
-                alreadyEmail.error="Please Enter the Email"
+            if (email.isEmpty()) {
+                alreadyEmail.error = "Please Enter the Email"
             }
-            if( password.isEmpty()){
-                alreadyPassfield.error="Please Enter the Password"
+            if (password.isEmpty()) {
+                alreadyPassfield.error = "Please Enter the Password"
             }
 
-            if (email.isNotEmpty() && password.isNotEmpty()){
-                firebaseauth.signInWithEmailAndPassword(email,password).addOnCompleteListener {
-                    if(it.isSuccessful){
-                        rProgLayout.visibility= View.VISIBLE
-                        Intent(this,MainActivity::class.java).also {
-                            startActivity(it)
+            if (email.isNotEmpty() && password.isNotEmpty()) {
+                progressDialog.setMessage("Logging in...")
+                progressDialog.setCanceledOnTouchOutside(false)
+                progressDialog.show()
+
+                firebaseauth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        rProgLayout.visibility = View.VISIBLE
+                        Intent(this, MainActivity::class.java).also { intent ->
+                            startActivity(intent)
                         }
-                        Toast.makeText(this,"Welcome User!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Welcome User!", Toast.LENGTH_SHORT).show()
+                    } else {
+                        rProgLayout.visibility = View.GONE
+                        Toast.makeText(this, "Failed To Create", Toast.LENGTH_SHORT).show()
                     }
-                    else{
-                        rProgLayout.visibility= View.GONE
-                        Toast.makeText(this,"Failed To Create", Toast.LENGTH_SHORT).show()
-                    }
+                    progressDialog.dismiss()
                 }
             }
+
             forgetpas.setOnClickListener {
                 resetpassword()
             }
         }
+
         createacc.setOnClickListener {
-            Intent(this,account_creat::class.java).also {
+            Intent(this, account_creat::class.java).also {
                 startActivity(it)
             }
         }
-        checksignin()
 
-        }
+        checksignin()
+    }
 
     private fun checksignin() {
-        val loggoogleaccount=GoogleSignIn.getLastSignedInAccount(this)
-        if(loggoogleaccount!=null){
-            Intent(this,MainActivity::class.java).also {
+        val loggoogleaccount = GoogleSignIn.getLastSignedInAccount(this)
+        if (loggoogleaccount != null) {
+            Intent(this, MainActivity::class.java).also {
                 startActivity(it)
             }
         }
-        val currentuser=FirebaseAuth.getInstance().currentUser
-        if(currentuser!=null){
-            Intent(this,MainActivity::class.java).also {
+        val currentuser = FirebaseAuth.getInstance().currentUser
+        if (currentuser != null) {
+            Intent(this, MainActivity::class.java).also {
                 startActivity(it)
                 finish()
             }
         }
-
     }
 
     private fun resetpassword() {
-        val email=alreadyEmail.text.toString()
-        if(email.isEmpty()){
-            alreadyEmail.error="Please enter your mail to reset"
-        }
-        else{
-            firebaseauth.sendPasswordResetEmail(email).addOnSuccessListener {
-                Toast.makeText(this,"Email has been sent your mail",Toast.LENGTH_SHORT).show()
-                progressDialog.cancel()
-            }.addOnFailureListener{e->
-                Toast.makeText(this,"Enter A Valid Email ${e.message}",Toast.LENGTH_SHORT).show()
-                progressDialog.cancel()
-            }
+        val email = alreadyEmail.text.toString()
+        if (email.isEmpty()) {
+            alreadyEmail.error = "Please enter your mail to reset"
+        } else {
             progressDialog.setMessage("Sending Mail")
             progressDialog.setCanceledOnTouchOutside(false)
-//            rProgLayout.visibility= View.VISIBLE
             progressDialog.show()
+
+            firebaseauth.sendPasswordResetEmail(email).addOnSuccessListener {
+                Toast.makeText(this, "Email has been sent to your mail", Toast.LENGTH_SHORT).show()
+                progressDialog.dismiss()
+            }.addOnFailureListener { e ->
+                Toast.makeText(this, "Enter A Valid Email ${e.message}", Toast.LENGTH_SHORT).show()
+                progressDialog.dismiss()
+            }
         }
     }
-   }
+}

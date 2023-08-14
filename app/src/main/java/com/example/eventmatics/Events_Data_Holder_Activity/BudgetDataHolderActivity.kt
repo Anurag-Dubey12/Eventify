@@ -3,7 +3,6 @@ package com.example.eventmatics.Events_Data_Holder_Activity
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
@@ -21,11 +20,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.eventmatics.Adapter.BudgetDataHolderAdapter
+import com.example.eventmatics.Adapter.PaymentActivityAdapter
 import com.example.eventmatics.Event_Details_Activity.BudgetDetails
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Budget
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SwipeGesture.BudgetSwipeToDelete
+import com.example.eventmatics.data_class.Paymentinfo
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.BaseTransientBottomBar
@@ -40,6 +41,7 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
     lateinit var bottomnav: BottomNavigationView
     lateinit var adapter:BudgetDataHolderAdapter
     lateinit var budgetlist:MutableList<Budget>
+//    lateinit var paymentlist:Paymentinfo
     private var filteredList: MutableList<Budget> = mutableListOf()
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     override fun onItemClick(budget: Budget) {
@@ -48,6 +50,13 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
             startActivity(this)
         }
     }
+//    override fun onItemClick(payment: Paymentinfo) {
+//        val intent = Intent().apply {
+//            putExtra("Selected_Item", payment)
+//        }
+//        startActivityForResult(intent, 230)
+//    }
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,6 +80,9 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
 
             true
         }
+        if(recyclerView.adapter?.itemCount==0){
+
+        }
         swipeRefreshLayout.setOnRefreshListener {
             Handler().postDelayed({
                 val databasename=getSharedPreference(this,"databasename").toString()
@@ -82,8 +94,10 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
                     recyclerView.layoutManager = LinearLayoutManager(this)
             }
                 swipeRefreshLayout.isRefreshing=false
+//                removeSharedPreference(this, "databasename")
 
-        },1)
+
+            },1)
         }
         swipeRefreshLayout.setColorSchemeResources(
             R.color.Coral,
@@ -120,6 +134,13 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
         val sharedPref = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
         return sharedPref.getString(key, null)
     }
+    fun removeSharedPreference(context: Context, key: String) {
+        val sharedPref = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
+        val editor = sharedPref.edit()
+        editor.remove(key)
+        editor.apply()
+    }
+
     private fun showbudgetlist() {
         val databasename=getSharedPreference(this,"databasename").toString()
         val databasehelper = LocalDatabase(this, databasename)
@@ -185,112 +206,119 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
                 }
                     }
                     ItemTouchHelper.RIGHT->{
-//                        if(position!=RecyclerView.NO_POSITION){
-//                            val budget = BudgetList[position]
+                        if(position!=RecyclerView.NO_POSITION){
+                            val budget = BudgetList[position]
+
+                            // Get the current 'Paid' status of the budget
+                            val currentPaidStatus = budget.paid
+                            val budgetCost=budget.estimatedAmount
+
+                            // Determine the new 'Paid' status based on the current status
+                             if (currentPaidStatus == "Paid"){
+                                 newPaidStatus="Not Paid"
+                                 NewBalance= budget.estimatedAmount.toFloat()
+                             } else {
+                                 newPaidStatus="Paid"
+                                 NewBalance=bal.toFloat()
+                             }
+                            // Update the 'Paid' status in the database
+                            val rowsAffected = databasehelper.updateBudgetPaid(budget.id, newPaidStatus,"$NewBalance")
+                            if (rowsAffected > 0) {
+                                val snackbar=Snackbar.make(this@BudgetDataHolderActivity.recyclerView,"Budget Data Updated",Snackbar.LENGTH_LONG)
+                                .addCallback(object:BaseTransientBottomBar.BaseCallback<Snackbar>(){
+                                    override fun onDismissed(
+                                        transientBottomBar: Snackbar?,
+                                        event: Int
+                                    ) {
+                                        super.onDismissed(transientBottomBar, event)
+                                        recreate()
+                                    }
+
+                                    override fun onShown(transientBottomBar: Snackbar?) {
+                                        transientBottomBar?.setAction("UNDO"){
 //
-//                            // Get the current 'Paid' status of the budget
-//                            val currentPaidStatus = budget.paid
-//                            val budgetCost=budget.estimatedAmount
+//                                            val previousPaidStatus = if (newPaidStatus == "Paid") "Not Paid" else "Paid"
+                                            if (newPaidStatus == "Paid"){
+                                                previousPaidStatus="Not Paid"
+                                                NewBalance=budget.estimatedAmount.toFloat()
+                                            } else {
+                                                previousPaidStatus="Paid"
+                                                NewBalance=bal.toFloat()
+                                            }
+                                            databasehelper.updateBudgetPaid(budget.id, previousPaidStatus,"$NewBalance")
+                                        recreate()
+                                        }
+                                        super.onShown(transientBottomBar)
+                                    }
+                                }).apply {
+                                    animationMode=Snackbar.ANIMATION_MODE_FADE
+                                }
+                            snackbar.setActionTextColor(
+                                ContextCompat.getColor(
+                                    this@BudgetDataHolderActivity, androidx.browser.R.color.browser_actions_bg_grey
+                                )
+                            )
+                            snackbar.show()
+
+                        }
+                    }
+                        //Payment Gateway code
+//                        val budget = BudgetList[position]
+//                        val getdata=budget.estimatedAmount
+//                        val amount=getdata.toFloat()
+//                        var parseamount=Math.round(amount!! *100)
+//                        val checkout = Checkout()
+//                        val name=budget.name
+//                        // set your id as below
+//                        checkout.setKeyID("rzp_test_nIeiFSu0nyqFRK")
 //
-//                            // Determine the new 'Paid' status based on the current status
-//                             if (currentPaidStatus == "Paid"){
-//                                 newPaidStatus="Not Paid"
+//                        // set image
+//                        checkout.setImage(R.drawable.event_management)
+//                        Checkout.preload(applicationContext)
+//                        // initialize json object
+//                        val `object` = JSONObject()
+//                        try {
+//                            // to put name
+//                            `object`.put("name", "$name")
 //
-//                                 NewBalance= budget.estimatedAmount.toFloat()
-//                             } else {
-//                                 newPaidStatus="Paid"
-//                                 NewBalance=bal.toFloat()
-//                             }
+//                            // put description
+//                            `object`.put("description", "Budget Payment")
 //
-//                            // Update the 'Paid' status in the database
-//                            val rowsAffected = databasehelper.updateBudgetPaid(budget.id, newPaidStatus,"$NewBalance")
-//                            if (rowsAffected > 0) {
-//                                val snackbar=Snackbar.make(this@BudgetDataHolderActivity.recyclerView,"Budget Data Updated",Snackbar.LENGTH_LONG)
-//                                .addCallback(object:BaseTransientBottomBar.BaseCallback<Snackbar>(){
-//                                    override fun onDismissed(
-//                                        transientBottomBar: Snackbar?,
-//                                        event: Int
-//                                    ) {
-//                                        super.onDismissed(transientBottomBar, event)
-//                                        recreate()
-//                                    }
+//                            // to set theme color
+//                            `object`.put("theme.color", "#FF81D4FA")
 //
-//                                    override fun onShown(transientBottomBar: Snackbar?) {
-//                                        transientBottomBar?.setAction("UNDO"){
-////
-////                                            val previousPaidStatus = if (newPaidStatus == "Paid") "Not Paid" else "Paid"
-//                                            if (newPaidStatus == "Paid"){
-//                                                previousPaidStatus="Not Paid"
-//                                                NewBalance=budget.estimatedAmount.toFloat()
-//                                            } else {
-//                                                previousPaidStatus="Paid"
-//                                                NewBalance=bal.toFloat()
-//                                            }
-//                                            databasehelper.updateBudgetPaid(budget.id, previousPaidStatus,"$NewBalance")
-//                                        }
-//                                        recreate()
-//                                        super.onShown(transientBottomBar)
-//                                    }
-//                                }).apply {
-//                                    animationMode=Snackbar.ANIMATION_MODE_FADE
-//                                }
-//                            snackbar.setActionTextColor(
-//                                ContextCompat.getColor(
-//                                    this@BudgetDataHolderActivity, androidx.browser.R.color.browser_actions_bg_grey
-//                                )
-//                            )
-//                            snackbar.show()
+////                            `object`.put("order_id", "order_DBJOWzybf0sJbb");
+//                            // put the currency
+//                            `object`.put("currency", "INR")
 //
-//                        }
-//                    }
-                        val budget = BudgetList[position]
-                        val getdata=budget.estimatedAmount
-                        val amount=getdata.toFloat()
-                        var parseamount=Math.round(amount!! *100)
-                        val checkout = Checkout()
-                        val name=budget.name
-                        val color=ContextCompat.getColor(this@BudgetDataHolderActivity,R.color.Goldenrod)
-                        // set your id as below
-                        checkout.setKeyID("rzp_test_nIeiFSu0nyqFRK")
-
-                        // set image
-                        checkout.setImage(R.drawable.event_management)
-
-                        // initialize json object
-                        val `object` = JSONObject()
-                        try {
-                            // to put name
-                            `object`.put("name", "$name")
-
-                            // put description
-                            `object`.put("description", "Budget Payment")
-
-                            // to set theme color
-                            `object`.put("theme.color", "$color")
-
-                            // put the currency
-                            `object`.put("currency", "INR")
-
-                            // put amount
-                            `object`.put("amount", parseamount)
-
+//                            // put amount
+//                            `object`.put("amount", parseamount)
+//                            val retryObj = JSONObject()
+//                            retryObj.put("enabled", true);
+//                            retryObj.put("max_count", 4);
+//                            `object`.put("retry", retryObj);
+//
+//                            val prefill = JSONObject()
+//                            prefill.put("email","ad210689@gmail.com")
+//                            prefill.put("contact","9004040592")
+//                            `object`.put("prefill",prefill)
                             // put mobile number
-                            `object`.put("prefill.contact", "")
-
-                            // put email
-                            `object`.put("prefill.email", "")
+//                            `object`.put("prefill.contact", "")
+//                            `object`.put("send_sms_hash",true);
+//
+//                            `object`.put("receipt","order_rcptid_11")
 
                             // open razorpay to checkout activity
-                checkout.open(this@BudgetDataHolderActivity, `object`)
-                        } catch (e: JSONException) {
-                            e.printStackTrace()
-                        }
-                        var budgetid=budget.id
-                        val BudgetName=budget.name
-                        onPaymentSuccess("For $BudgetName",budgetid)
-
-                         onPaymentError("Something Went Wrong",budgetid)
-
+//                            Checkout.clearUserData(this@BudgetDataHolderActivity)
+//                checkout.open(this@BudgetDataHolderActivity, `object`)
+//                        } catch (e: JSONException) {
+//                            e.printStackTrace()
+//                        }
+//                        var budgetid=budget.id
+//                        val BudgetName=budget.name
+//                        onPaymentSuccess("For $BudgetName",budgetid)
+//
+//                         onPaymentError("Something Went Wrong",budgetid)
 
                 }
             }
@@ -299,18 +327,26 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
         val itemTouch=ItemTouchHelper(swipe)
         itemTouch.attachToRecyclerView(recyclerView)
     }
-    fun onPaymentSuccess(s: String, budgetId: Long) {
-        val updated = updateBudgetAndUI(budgetId, "Paid")
-        if (updated) {
-            Toast.makeText(this@BudgetDataHolderActivity, "Payment is successful : $s", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(this@BudgetDataHolderActivity, "Payment was successful but failed to update status.", Toast.LENGTH_SHORT).show()
-        }
-    }
+//    fun onPaymentSuccess(s: String, budgetId: Long) {
+//        val updated = updateBudgetAndUI(budgetId, "Paid")
+//        if (updated) {
+//            Toast.makeText(this@BudgetDataHolderActivity, "Payment is successful : $s", Toast.LENGTH_SHORT).show()
+//        } else {
+//            Toast.makeText(this@BudgetDataHolderActivity, "Payment was successful but failed to update status.", Toast.LENGTH_SHORT).show()
+//        }
+//    }
 
-    fun onPaymentError(s: String, budgetId: Long) {
-        Toast.makeText(this@BudgetDataHolderActivity, "Payment Failed due to error : $s", Toast.LENGTH_SHORT).show()
-    }
+//    fun onPaymentError(s: String, budgetId: Long) {
+//        val update=updateBudgetAndUI(budgetId,"Not Paid")
+//        if(update){
+//            Toast.makeText(this@BudgetDataHolderActivity, "Payment is not successful : $s", Toast.LENGTH_SHORT).show()
+//
+//        }
+//        else{
+//            Toast.makeText(this@BudgetDataHolderActivity, "Payment Failed due to error : $s", Toast.LENGTH_SHORT).show()
+//        }
+//
+//    }
     private fun updateBudgetAndUI(budgetId: Long, newStatus: String): Boolean {
         val databasename = getSharedPreference(this, "databasename").toString()
         val databasehelper = LocalDatabase(this, databasename)
@@ -455,6 +491,8 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
             dialog.dismiss()
         }
     }
+
+
 
 
 }

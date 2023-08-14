@@ -14,11 +14,23 @@
         android:title=" Guest "
         android:titleMarginStart="30sp"
         />
+    <TextView
+        android:id="@+id/invi"
+        android:layout_below="@id/toolbar"
+        android:layout_width="match_parent"
+
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/notinvi"
+        android:layout_below="@id/invi"
+        android:layout_width="match_parent"
+
+        android:layout_height="wrap_content"/>
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/toolbar"
+        android:layout_below="@id/notinvi"
         xmlns:android="http://schemas.android.com/apk/res/android">
         <androidx.recyclerview.widget.RecyclerView
             android:layout_below="@id/toolbar"

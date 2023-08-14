@@ -30,6 +30,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/add"
+        app:hoveredFocusedTranslationZ="22sp"
+        android:backgroundTint="@color/white"
+        app:pressedTranslationZ="15sp"
+        app:rippleColor="@color/Lemon_Chiffon"
+        app:showMotionSpec="@anim/nav_default_pop_enter_anim"
+        
+        android:contentDescription="Add Budget"
         app:layout_anchor="@id/bottomAppBar" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -6,17 +6,15 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.widget.Toast
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Budget
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Events
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Guest
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Task
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Vendor
-import com.example.eventmatics.SwipeGesture.BudgetSwipeToDelete
-import kotlinx.coroutines.currentCoroutineContext
+import com.example.eventmatics.data_class.Paymentinfo
 
-class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,databasename,null,DATABASE_VERSION) {
-
+class LocalDatabase(contex:Context,databasename:String):
+    SQLiteOpenHelper(contex,databasename,null,DATABASE_VERSION) {
     companion object{
         private const val DATABASE_VERSION = 1
         // Table names
@@ -25,6 +23,7 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         private const val TABLE_VENDOR = "Vendor"
         private const val TABLE_GUEST = "Guest"
         private const val TABLE_BUDGET = "Budget"
+        private const val TABLE_Payment = "Payment"
 
         // Common column names
         private const val COLUMN_ID = "id"
@@ -52,6 +51,14 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         private const val Budget_Pending = "Budget_Pending"
         private const val Budget_Paid = "Budget_Paid"
 
+        //Payment Column Name
+        private const val Payment_Name = "Payment_Name"
+        private const val Payment_Amount = "Payment_Amount"
+        private const val Payment_Status = "Payment_Status"
+        private const val Payment_Date = "Payment_Date"
+        private const val Payment_ID = "Payment_ID"
+        private const val Payment_BudgetID = "Payment_BudgetID"
+
 
         //Guest Column Name
         private const val Guest_Name = "Guest_Name"
@@ -59,7 +66,8 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         private const val NOTE = "note"
         private const val GUEST_STATUS = "guest_status"
         private const val GUEST_CONTACT = "guest_contact"
-        private const val GUEST_EMAIL = "guest_email"
+//        private const val GUEST_EMAIL = "guest_email"
+        private const val GUEST_Acceptence_Status = "Guest_Acceptence_Status"
         private const val GUEST_ADDRESS = "guest_address"
 
         //Vendor Column Name
@@ -119,7 +127,7 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
                 "$NOTE TEXT," +
                 "$GUEST_STATUS TEXT," +
                 "$GUEST_CONTACT TEXT," +
-                "$GUEST_EMAIL TEXT," +
+                "$GUEST_Acceptence_Status TEXT," +
                 "$GUEST_ADDRESS TEXT" +
                 ")"
         db?.execSQL(createGuestTableQuery)
@@ -135,6 +143,19 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
                 "$Budget_Paid TEXT" +
                 ")"
         db?.execSQL(createBudgetTableQuery)
+
+        val CREATE_PAYMENT_TABLE = "CREATE TABLE $TABLE_Payment ("+
+                "$Payment_ID INTEGER PRIMARY KEY AUTOINCREMENT,"+
+                "$Payment_Name TEXT,"+
+                "$Payment_Amount REAL,"+
+                "$Payment_Status TEXT,"+
+                "$Payment_Date TEXT,"+
+                "$Payment_BudgetID INTEGER,"+
+                "FOREIGN KEY ($Payment_BudgetID) REFERENCES $TABLE_BUDGET($COLUMN_ID)"+
+                ")"
+
+        db?.execSQL(CREATE_PAYMENT_TABLE)
+
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
@@ -186,7 +207,7 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
                     "$NOTE TEXT," +
                     "$GUEST_STATUS TEXT," +
                     "$GUEST_CONTACT TEXT," +
-                    "$GUEST_EMAIL TEXT," +
+                    "$GUEST_Acceptence_Status TEXT," +
                     "$GUEST_ADDRESS TEXT" +
                     ")"
             db?.execSQL(createGuestTableQuery)
@@ -207,6 +228,20 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
                     "$Vendor_Website TEXT," +
                     "$Vendor_Address TEXT" +
                     ")"
+            db?.execSQL(createVendorTableQuery)
+        }
+        if(oldVersion<7){
+            db?.execSQL("DROP TABLE IF EXISTS $TABLE_Payment")
+            val CREATE_PAYMENT_TABLE = "CREATE TABLE $TABLE_Payment ("+
+                    "$Payment_ID INTEGER PRIMARY KEY,"+
+                    "$Payment_Name TEXT,"+
+                    "$Payment_Amount REAL,"+
+                    "$Payment_Status TEXT,"+
+                    "$Payment_Date TEXT,"+
+                    "$Payment_BudgetID INTEGER,"+
+                    "FOREIGN KEY ($Payment_BudgetID) REFERENCES $TABLE_BUDGET($COLUMN_ID)"+
+                    ")"
+            db?.execSQL(CREATE_PAYMENT_TABLE)
         }
         onCreate(db)
     }
@@ -576,7 +611,7 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
     }
     fun getTotalBudget(): Double {
         var totalBudget = 0.0
-        val selectQuery = "SELECT SUM(CAST(${Budget_Estimated} AS REAL)) FROM $TABLE_BUDGET"
+        val selectQuery = "SELECT SUM(CAST(${Budget_Estimated} AS REAL)) FROM $TABLE_BUDGET WHERE $Budget_Paid= 'Paid'"
         val db = readableDatabase
         val cursor: Cursor? = db.rawQuery(selectQuery, null)
         cursor?.let {
@@ -588,6 +623,20 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         db.close()
         return totalBudget
     }
+fun getTotalUnPaid():Double{
+    var total=0.0
+    val query="SELECT SUM(CAST(${Budget_Estimated} AS REAL)) FROM $TABLE_BUDGET WHERE $Budget_Paid= 'Not Paid'"
+    val db=readableDatabase
+    val cursor:Cursor?=db.rawQuery(query,null)
+    cursor?.let {
+        if(it.moveToFirst()){
+            total=it.getDouble(0)
+        }
+    }
+    cursor?.close()
+    db.close()
+    return total
+}
 
     // Get all budgets
     @SuppressLint("Range")
@@ -653,6 +702,93 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         return rowsAffected
     }
 
+    fun createPayment(payment: Paymentinfo) {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put(Payment_Name, payment.name)
+            put(Payment_Amount, payment.amount)
+            put(Payment_Date, payment.date)
+            put(Payment_Status, payment.status)
+            put(Payment_BudgetID, payment.budgetid)
+        }
+
+        db.insert(TABLE_Payment, null, values)
+        db.close()
+    }
+
+    @SuppressLint("Range")
+    fun getPaymentsForBudget(budgetId: Int): MutableList<Paymentinfo> {
+        val paymentList = mutableListOf<Paymentinfo>()
+
+        val query = "SELECT $TABLE_Payment.$Payment_ID, $TABLE_Payment.$Payment_Name,$TABLE_Payment.$Payment_Amount, $TABLE_Payment.$Payment_Date," +
+                "$TABLE_Payment.$Payment_Status, $TABLE_Payment.$Payment_BudgetID FROM $TABLE_Payment " +
+                "INNER JOIN $TABLE_BUDGET ON $TABLE_Payment.$Payment_BudgetID = $TABLE_BUDGET.$COLUMN_ID " +
+                "WHERE $TABLE_BUDGET.$COLUMN_ID = $budgetId"
+
+        val db = readableDatabase
+        val cursor = db.rawQuery(query, null)
+
+        cursor.use {
+            while (it.moveToNext()) {
+                val id = it.getInt(it.getColumnIndex(Payment_ID))
+                val name = it.getString(it.getColumnIndex(Payment_Name))
+                val amount = it.getFloat(it.getColumnIndex(Payment_Amount))
+                val date = it.getString(it.getColumnIndex(Payment_Date))
+                val status = it.getString(it.getColumnIndex(Payment_Status))
+                val budgetid = it.getLong(it.getColumnIndex(Payment_BudgetID))
+                paymentList.add(Paymentinfo(id, name, amount, date, status, budgetid))
+            }
+        }
+
+        return paymentList
+    }
+
+    fun deletePaymentsForBudget(budgetId: Int) {
+        val db = writableDatabase
+        db.delete(TABLE_Payment, "$Payment_BudgetID = ?", arrayOf(budgetId.toString()))
+        db.close()
+    }
+
+    fun deletePayment(paymentId: Long): Int {
+        val db = writableDatabase
+        return db.delete(TABLE_Payment, "$Payment_ID = ?", arrayOf(paymentId.toString()))
+    }
+
+    @SuppressLint("Range")
+    fun getAllPayments(): MutableList<Paymentinfo> {
+        val paymentList = mutableListOf<Paymentinfo>()
+        val query = "SELECT * FROM $TABLE_Payment"
+        val db = readableDatabase
+        val cursor = db.rawQuery(query, null)
+        if (cursor.moveToFirst()) {
+            do {
+                val id = cursor.getInt(cursor.getColumnIndex(Payment_ID))
+                val name = cursor.getString(cursor.getColumnIndex(Payment_Name))
+                val amount = cursor.getFloat(cursor.getColumnIndex(Payment_Amount))
+                val status = cursor.getString(cursor.getColumnIndex(Payment_Status))
+                val date = cursor.getString(cursor.getColumnIndex(Payment_Date))
+                val budgetId = cursor.getLong(cursor.getColumnIndex(Payment_BudgetID))
+                val payment = Paymentinfo(id,name, amount, status, date, budgetId)
+                paymentList.add(payment)
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        return paymentList
+    }
+
+    fun updatePayment(payment: Paymentinfo): Int {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put(Payment_ID, payment.id)
+            put(Payment_Name, payment.name)
+            put(Payment_Amount, payment.amount)
+            put(Payment_Status, payment.status)
+            put(Payment_Date, payment.date)
+            put(Payment_BudgetID, payment.budgetid)
+        }
+        return db.update(TABLE_Payment, values, "$Payment_ID = ?", arrayOf(payment.id.toString()))
+    }
+
     // Create new guest
     fun createGuest(guest: Guest): Long {
         val db = writableDatabase
@@ -662,7 +798,7 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
             put(NOTE, guest.note)
             put(GUEST_STATUS, guest.isInvitationSent)
             put(GUEST_CONTACT, guest.phoneNumber)
-            put(GUEST_EMAIL, guest.email)
+            put(GUEST_Acceptence_Status, guest.Acceptence)
             put(GUEST_ADDRESS, guest.address)
         }
         val id = db.insert(TABLE_GUEST, null, values)
@@ -686,9 +822,9 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
                     val note = it.getString(it.getColumnIndex(NOTE))
                     val status = it.getString(it.getColumnIndex(GUEST_STATUS))
                     val contact = it.getString(it.getColumnIndex(GUEST_CONTACT))
-                    val email = it.getString(it.getColumnIndex(GUEST_EMAIL))
+                    val Acceptence = it.getString(it.getColumnIndex(GUEST_Acceptence_Status))
                     val address = it.getString(it.getColumnIndex(GUEST_ADDRESS))
-                    val guest = Guest(id, name, totalFamilyMembers, note, status, contact, email, address)
+                    val guest = Guest(id, name, totalFamilyMembers, note, status, contact, Acceptence, address)
                     guests.add(guest)
                 } while (it.moveToNext())
             }
@@ -719,16 +855,45 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
                 val guestNote = cursor.getString(cursor.getColumnIndex(NOTE))
                 val guestStatus = cursor.getString(cursor.getColumnIndex(GUEST_STATUS))
                 val guestContact = cursor.getString(cursor.getColumnIndex(GUEST_CONTACT))
-                val guestEmail = cursor.getString(cursor.getColumnIndex(GUEST_EMAIL))
+                val Acceptence = cursor.getString(cursor.getColumnIndex(GUEST_Acceptence_Status))
                 val guestAddress = cursor.getString(cursor.getColumnIndex(GUEST_ADDRESS))
 
-                GuestList.add(Guest(Guestid, guestName, totalFamilyMembers, guestNote, guestStatus, guestContact, guestEmail, guestAddress))
+                GuestList.add(Guest(Guestid, guestName, totalFamilyMembers, guestNote, guestStatus, guestContact, Acceptence, guestAddress))
             }while (cursor.moveToNext())
         }
         db.close()
         return GuestList
     }
 
+    fun getTotalInvitationsSent(): Int {
+        var total = 0
+        val query = "SELECT COUNT(*) FROM $TABLE_GUEST WHERE $GUEST_STATUS = 'Invitation Sent'"
+        val db = readableDatabase
+        val cursor: Cursor? = db.rawQuery(query, null)
+        cursor?.let {
+            if (it.moveToFirst()) {
+                total = it.getInt(0)
+            }
+        }
+        cursor?.close()
+        db.close()
+        return total
+    }
+
+    fun getTotalInvitationsNotSent(): Int {
+        var total = 0
+        val query = "SELECT COUNT(*) FROM $TABLE_GUEST WHERE $GUEST_STATUS = 'Not Sent'"
+        val db = readableDatabase
+        val cursor: Cursor? = db.rawQuery(query, null)
+        cursor?.let {
+            if (it.moveToFirst()) {
+                total = it.getInt(0)
+            }
+        }
+        cursor?.close()
+        db.close()
+        return total
+    }
 
     @SuppressLint("Range")
     fun isInvitationsent(Guestid:Long):Boolean{
@@ -746,6 +911,42 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
         db.close()
         return isinvitationsent
     }
+    @SuppressLint("Range")
+    fun AcceptanceStatus(Guestid: Long): Triple<Boolean, Boolean, Boolean> {
+        val db = readableDatabase
+        val query = "SELECT $GUEST_Acceptence_Status FROM $TABLE_GUEST WHERE $COLUMN_ID = ?"
+        val cursor: Cursor = db.rawQuery(query, arrayOf(Guestid.toString()))
+        var isAcceptance = false
+        var isDenied = false
+        var isPending = false
+
+        if (cursor.moveToFirst()) {
+            val acceptanceStatus = cursor.getString(cursor.getColumnIndex(GUEST_Acceptence_Status))
+            when (acceptanceStatus) {
+                "Accepted" -> {
+                    isAcceptance = true
+                    isDenied = false
+                    isPending = false
+                }
+                "Pending" -> {
+                    isAcceptance = false
+                    isDenied = false
+                    isPending = true
+                }
+                "Denied" -> {
+                    isAcceptance = false
+                    isDenied = true
+                    isPending = false
+                }
+            }
+        }
+
+        cursor.close()
+        db.close()
+
+        return Triple(isAcceptance, isDenied, isPending)
+    }
+
 
     //Getting Specific data from Guest
     @SuppressLint("Range")
@@ -761,7 +962,7 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
             val guestNote = cursor.getString(cursor.getColumnIndex(NOTE))
             val guestStatus = cursor.getString(cursor.getColumnIndex(GUEST_STATUS))
             val guestContact = cursor.getString(cursor.getColumnIndex(GUEST_CONTACT))
-            val guestEmail = cursor.getString(cursor.getColumnIndex(GUEST_EMAIL))
+            val guestEmail = cursor.getString(cursor.getColumnIndex(GUEST_Acceptence_Status))
             val guestAddress = cursor.getString(cursor.getColumnIndex(GUEST_ADDRESS))
 
             guest = Guest(guestId.toLong(), guestName, totalFamilyMembers, guestNote, guestStatus, guestContact, guestEmail, guestAddress)
@@ -783,7 +984,7 @@ class LocalDatabase(contex:Context,databasename:String):SQLiteOpenHelper(contex,
             put(NOTE, guest.note)
             put(GUEST_STATUS, guest.isInvitationSent)
             put(GUEST_CONTACT, guest.phoneNumber)
-            put(GUEST_EMAIL, guest.email)
+            put(GUEST_Acceptence_Status, guest.Acceptence)
             put(GUEST_ADDRESS, guest.address)
         }
         val rowsAffected = db.update(

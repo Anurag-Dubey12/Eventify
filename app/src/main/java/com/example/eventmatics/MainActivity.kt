@@ -17,8 +17,11 @@ import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
 import android.preference.PreferenceManager
+import android.transition.Fade
 import android.util.Log
 import android.view.View
+import android.view.animation.AlphaAnimation
+import android.view.animation.TranslateAnimation
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -29,6 +32,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.isEmpty
 import androidx.drawerlayout.widget.DrawerLayout
@@ -74,7 +78,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var pendingAmountShowTextView: TextView
     private lateinit var paidAmountShowTextView: TextView
     private lateinit var eventaddbut: AppCompatButton
-    private lateinit var widgetButton: Button
+    private lateinit var adapter: EventLayoutAdapter
+//    private lateinit var widgetButton: Button
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var dataAddedReceiver: BroadcastReceiver
     private lateinit var piechart:PieChart
@@ -103,7 +108,7 @@ class MainActivity : AppCompatActivity() {
         budgetShowTextView = findViewById(R.id.Budgetshow)
         pendingAmountShowTextView = findViewById(R.id.PendingAmountshow)
         paidAmountShowTextView = findViewById(R.id.PaidAmountshow)
-        widgetButton = findViewById(R.id.widgetbutton)
+//        widgetButton = findViewById(R.id.widgetbutton)
 
         val actionBarDrawerToggle = ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close)
         drawerLayout.addDrawerListener(actionBarDrawerToggle)
@@ -114,19 +119,39 @@ class MainActivity : AppCompatActivity() {
             eventAdding.show()
         } else {
             taskImageButton.setOnClickListener {
+                if (eventRecyclerView.adapter?.itemCount==0){
+                    val eventAdding = EventAdding(this, supportFragmentManager, null)
+                    eventAdding.show()
+                    Toast.makeText(this,"Create A Event Before Moving Futher",Toast.LENGTH_SHORT).show()
+                }else{
                 Intent(this, TaskDataHolderActivity::class.java).also { startActivity(it) }
+                }
             }
             budgetImageButton.setOnClickListener {
+                if (eventRecyclerView.adapter?.itemCount==0){
+                    val eventAdding = EventAdding(this, supportFragmentManager, null)
+                    eventAdding.show()
+                    Toast.makeText(this,"Create A Event Before Moving Futher",Toast.LENGTH_SHORT).show()
+                }else{
                 Intent(this, BudgetDataHolderActivity::class.java).also { startActivity(it) }
-            }
+            }}
             guestImageButton.setOnClickListener {
+                if (eventRecyclerView.adapter?.itemCount==0){
+                    val eventAdding = EventAdding(this, supportFragmentManager, null)
+                    eventAdding.show()
+                    Toast.makeText(this,"Create A Event Before Moving Futher",Toast.LENGTH_SHORT).show()
+                }else{
                 Intent(this, GuestDataHolderActivity::class.java).also { startActivity(it) }
-            }
+            }}
             vendorImageButton.setOnClickListener {
+                if (eventRecyclerView.adapter?.itemCount==0){
+                    val eventAdding = EventAdding(this, supportFragmentManager, null)
+                    eventAdding.show()
+                    Toast.makeText(this,"Create A Event Before Moving Futher",Toast.LENGTH_SHORT).show()
+                }else{
                 Intent(this, VendorDataHolderActivity::class.java).also { startActivity(it) }
-            }
+            }}
         }
-
         Eventshow.setOnClickListener {
             if (eventshowhide.visibility== View.GONE && eventRecyclerView.visibility==View.GONE){
                 eventshowhide.visibility=View.VISIBLE
@@ -162,7 +187,7 @@ class MainActivity : AppCompatActivity() {
 
             setFirstLaunchFlag(this, false)
         }
-        widgetButton.setOnClickListener { addWidgetToHomeScreen() }
+//        widgetButton.setOnClickListener { addWidgetToHomeScreen() }
         swipeRefreshLayout.setOnRefreshListener {
             Handler().postDelayed({
                 val databasename=getSharedPreference(this,"databasename").toString()
@@ -197,7 +222,7 @@ class MainActivity : AppCompatActivity() {
                 else{
 //                    Toast.makeText(this,"Event Not Found",Toast.LENGTH_SHORT).show()
                 }
-                val adapter = EventLayoutAdapter(eventList){ position ->
+                adapter = EventLayoutAdapter(eventList){ position ->
                     val eventadding=EventAdding(this,supportFragmentManager,position)
                     eventadding.show()
                 }
@@ -207,6 +232,7 @@ class MainActivity : AppCompatActivity() {
                 swipeRefreshLayout.isRefreshing=false
             },1)
         }
+
         swipeRefreshLayout.setColorSchemeResources(R.color.Coral, R.color.Fuchsia, R.color.Indigo)
         swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.Lavender_Blush)
         swipeRefreshLayout.setProgressViewOffset(true, 0, 150)
@@ -231,6 +257,7 @@ class MainActivity : AppCompatActivity() {
                 swipeRefreshLayout.isRefreshing = false
             },1)
         }
+        swipeRefreshLayout.setProgressViewEndTarget(true,200)
         navigationDrawershow()
     }
 //    private fun launchNewActivity(selectedItem: String) {
@@ -256,6 +283,10 @@ class MainActivity : AppCompatActivity() {
         sharedPreferences.edit().putBoolean("isFirstLaunch", isFirstLaunch).apply()
     }
 
+    override fun onResume() {
+        super.onResume()
+        showEventData()
+    }
     @SuppressLint("Range")
      fun showEventData() {
         val databasename = getSharedPreference(this, "databasename").toString()
@@ -263,17 +294,19 @@ class MainActivity : AppCompatActivity() {
         val eventList = databasehelper.getAllEvents()
         val Eventtimer = databasehelper.getEventData(1)
         val budgettotdal=databasehelper.getTotalBudget()
-        if(budgettotdal!=null){
-            piechart.addPieSlice(PieModel("Budget",budgettotdal.toFloat(),Color.parseColor("#FF63A1")))
-
-        }
+        val budgetUnPaid=databasehelper.getTotalUnPaid()
         if (Eventtimer != null) {
             Eventshow.text = Eventtimer.name
             budgetShowTextView.text = Eventtimer.budget
             val budget=Eventtimer.budget
-            piechart.addPieSlice(PieModel("Budget",budget.toFloat(),Color.parseColor("#959494")))
+            piechart.clearChart()
+            piechart.addPieSlice(PieModel("Event",budget.toFloat(),Color.parseColor("#2ecc71")))
+            piechart.addPieSlice(PieModel("Paid",budgettotdal.toFloat(),Color.parseColor("#3498db")))
+            piechart.addPieSlice(PieModel("UnPaid",budgetUnPaid.toFloat(),Color.parseColor("#e74c3c")))
             piechart.startAnimation()
-//            piechart.addPieSlice(PieModel("Budget",budget.toFloat(),Color.parseColor("#F6D661")))
+            paidAmountShowTextView.setText(budgettotdal.toString())
+            pendingAmountShowTextView.setText(budgetUnPaid.toString())
+
             // Calculate remaining time until the event date
             val eventDate = Eventtimer.Date
             val eventTime = Eventtimer.time
@@ -344,7 +377,7 @@ class MainActivity : AppCompatActivity() {
 
     //Navigation Drawer function
     private fun navigationDrawershow() {
-        // Set the item click listener for the NavigationView
+
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 android.R.id.home -> {
@@ -381,9 +414,25 @@ class MainActivity : AppCompatActivity() {
                     EventName.show()
                     true
                 }
+                R.id.widget->{
+                    addWidgetToHomeScreen()
+                    true
+                }
                 else -> false
             }
         }
+       drawerLayout.addDrawerListener(object :DrawerLayout.SimpleDrawerListener(){
+           override fun onDrawerOpened(drawerView: View) {
+               swipeRefreshLayout.isEnabled=false
+           }
+
+           override fun onDrawerClosed(drawerView: View) {
+               super.onDrawerClosed(drawerView)
+               swipeRefreshLayout.isEnabled=true
+
+           }
+
+       })
 }
 
     private fun userlogout() {

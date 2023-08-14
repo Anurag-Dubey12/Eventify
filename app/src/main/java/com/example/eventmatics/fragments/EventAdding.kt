@@ -22,6 +22,9 @@ import java.util.Calendar
 import android.content.BroadcastReceiver
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.NamesDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseNameDataClass
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.DateValidatorPointBackward
+import com.google.android.material.datepicker.DateValidatorPointForward
 
 
 class EventAdding(
@@ -192,11 +195,16 @@ class EventAdding(
         timePicker.show(fragmentManager, "TAG_TIME_PICKER")
     }
     private fun showDatePicker() {
+        val constraintBulder=CalendarConstraints.Builder()
+            .setValidator(DateValidatorPointForward.now())
         val calendar = Calendar.getInstance()
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setTitleText("Select Date")
             .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+            .setCalendarConstraints(constraintBulder.build())
             .build()
+
+
 
         datePicker.addOnPositiveButtonClickListener { selectedDate ->
             val selectedCalendar = Calendar.getInstance()
@@ -208,6 +216,7 @@ class EventAdding(
             eventDate.setText(formattedDate)
         }
         datePicker.show(fragmentManager, "datePicker")
+
     }
 
 }

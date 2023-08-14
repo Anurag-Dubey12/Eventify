@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -14,50 +14,61 @@
         <LinearLayout
             android:id="@+id/payment_info"
             android:layout_width="200sp"
+            android:layout_toRightOf="@id/Radiopaid"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/budgetPaymentName"
-                android:layout_width="150sp"
+                android:id="@+id/budgetid"
+                android:layout_width="wrap_content"
                 android:layout_height="50sp"
                 android:textStyle="bold"
                 android:textSize="20sp"
-                android:text="Payment_name"
+
                 />
             <TextView
-                android:id="@+id/budgetpaymentdate"
-                android:layout_width="150sp"
-                android:layout_height="50sp"
+                android:id="@+id/budgetPaymentName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:textStyle="bold"
-                android:textSize="16sp"
-                android:text="paymentdate"
+                android:textSize="20sp"
                 />
+
         </LinearLayout>
         <LinearLayout
             android:layout_toRightOf="@id/payment_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
+            android:orientation="vertical">
             <TextView
-                android:id="@+id/budgetpaymentamount"
-                android:layout_width="150sp"
-                android:layout_height="50sp"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:text="Payment Amount"
-                />
-            <RadioButton
-                android:id="@+id/Radiopaid"
+                android:id="@+id/budgetpaymentdate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
+                android:textStyle="bold"
+                android:textSize="16sp"
 
                 />
-
+            <TextView
+                android:id="@+id/budgetpaymentamount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                />
+            <TextView
+                android:id="@+id/budgetpaymentstatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                />
         </LinearLayout>
-
+        <RadioButton
+            android:id="@+id/Radiopaid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            />
     </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -34,12 +34,16 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
     lateinit var guestAdd: FloatingActionButton
     lateinit var bottomnav: BottomNavigationView
     lateinit var adapter: GuestApdater
+    lateinit var invi: TextView
+    lateinit var notinvi: TextView
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_guest_data_holder)
         recyclerView = findViewById(R.id.guestDatarec)
+        invi = findViewById(R.id.invi)
+        notinvi = findViewById(R.id.notinvi)
         guestAdd=findViewById(R.id.fab)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         bottomnav=findViewById(R.id.bottomNavigationView)
@@ -67,6 +71,10 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
                 val databasename=getSharedPreference(this,"databasename").toString()
                 val db=LocalDatabase(this,databasename)
                 val GuestList=db.getAllGuests()
+                val tot=db.getTotalInvitationsSent()
+                val nottot=db.getTotalInvitationsNotSent()
+                invi.setText(tot.toString())
+                notinvi.setText(nottot.toString())
                 if(GuestList!=null){
                     val adapter=GuestApdater(this,GuestList,this)
                     recyclerView.adapter=adapter

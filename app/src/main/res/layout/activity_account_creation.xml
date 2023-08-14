@@ -5,19 +5,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#E600FF"
     tools:context=".MainActivity">
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:background="#D3D3D3"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="10dp"
-        app:cardMaxElevation="6dp"
-        app:cardUseCompatPadding="true"
-        app:contentPadding="16dp">
+<!--    <androidx.cardview.widget.CardView-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_alignParentTop="true"-->
+<!--        android:background="#D3D3D3"-->
+<!--        app:cardCornerRadius="10dp"-->
+<!--        app:cardElevation="10dp"-->
+<!--        app:cardMaxElevation="6dp"-->
+<!--        app:cardUseCompatPadding="true"-->
+<!--        app:contentPadding="16dp">-->
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -27,7 +26,7 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="199dp"
-                android:src="@drawable/event_management"
+                android:src="@drawable/logo"
                 android:contentDescription="@string/app_logo"
                 />
 
@@ -42,15 +41,21 @@
                 android:textStyle="bold" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
+                android:layout_width="400sp"
                 android:layout_height="wrap_content"
-                app:boxStrokeColor="#FF6600"
-                app:boxStrokeWidth="0dp"
-                app:hintTextColor="#070707">
+                app:boxStrokeColor="@color/Aqua"
+                android:layout_gravity="center"
+                app:hintTextColor="#070707"
+                app:hintAnimationEnabled="true"
+                app:boxStrokeErrorColor="#F40000"
+                app:expandedHintEnabled="true"
+                android:textColorHint="@color/black"
+                android:autofillHints="emailAddress"
+                app:boxStrokeWidth="1dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/emailfield"
-                    android:layout_width="match_parent"
+                    android:layout_width="400sp"
                     android:layout_height="60dp"
                     android:layout_marginBottom="10dp"
                     android:hint="@string/email_address"
@@ -61,16 +66,22 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
+                android:layout_width="400sp"
                 android:layout_height="wrap_content"
-                app:boxStrokeColor="#FF6600"
-                app:boxStrokeWidth="0dp"
+                app:boxStrokeColor="@color/Aqua"
                 app:hintTextColor="#070707"
+                android:layout_gravity="center"
+                app:hintAnimationEnabled="true"
+                app:boxStrokeErrorColor="#F40000"
+                app:expandedHintEnabled="true"
+                android:textColorHint="@color/black"
+                android:autofillHints="emailAddress"
+                app:boxStrokeWidth="1dp"
                 app:passwordToggleEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/passfield"
-                    android:layout_width="match_parent"
+                    android:layout_width="400sp"
                     android:layout_height="60dp"
                     android:layout_marginBottom="10dp"
                     android:hint="@string/password"
@@ -81,9 +92,10 @@
             </com.google.android.material.textfield.TextInputLayout>
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/createbutton"
-                android:layout_width="match_parent"
+                android:layout_width="300sp"
                 android:layout_height="65dp"
                 android:layout_marginBottom="15dp"
+                android:layout_gravity="center"
                 android:background="@drawable/button_shape"
                 android:text="@string/create_an_account"
                 android:textAllCaps="false"
@@ -92,8 +104,9 @@
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/google_creation"
-                android:layout_width="match_parent"
+                android:layout_width="300sp"
                 android:layout_height="65dp"
+                android:layout_gravity="center"
                 android:layout_marginBottom="15dp"
                 android:background="@drawable/google_login_button"
                 android:text="@string/continue_with_google"
@@ -105,9 +118,9 @@
                 android:layout_marginBottom="20dp"
                 android:text="@string/already_have_an_account"
                 android:textAlignment="center"
-                android:textColor="#706E6E"
+                android:textColor="@color/black"
                 android:textSize="18dp"
                 android:textStyle="bold" />
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
+<!--    </androidx.cardview.widget.CardView>-->
 </RelativeLayout>

@@ -8,7 +8,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/name"
+        android:text="Budget Title"
         android:textSize="18sp"
         android:layout_marginBottom="10sp"
         />
@@ -50,20 +50,22 @@
         android:layout_marginBottom="10sp"
         android:orientation="horizontal">
 
-        <androidx.appcompat.widget.AppCompatButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonPending"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/addpaymentbutton"
+            android:backgroundTint="@color/Lemon_Chiffon"
             android:layout_weight="1"
+            android:textColor="@color/black"
             android:text="Pending" />
 
-        <androidx.appcompat.widget.AppCompatButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonPaid"
             android:layout_width="0dp"
-            android:background="@drawable/addpaymentbutton"
+            android:backgroundTint="@color/Lemon_Chiffon"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textColor="@color/black"
             android:text="Paid" />
 
     </LinearLayout>

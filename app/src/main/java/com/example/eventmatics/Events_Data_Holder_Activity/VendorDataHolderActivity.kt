@@ -102,7 +102,6 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
         })
         showData()
     }
-
     private fun showData() {
         val databasename=getSharedPreference(this,"databasename").toString()
         val db=LocalDatabase(this,databasename)
@@ -202,6 +201,7 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
                             }
                         }
                     }
+
         }}}
         val itemtouch=ItemTouchHelper(swipe)
         itemtouch.attachToRecyclerView(recyclerView)

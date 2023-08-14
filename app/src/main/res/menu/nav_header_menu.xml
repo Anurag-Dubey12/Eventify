@@ -4,6 +4,8 @@
     tools:showIn="navigation_view"
     >
 <group>
+    <item android:title="Basic">
+        <menu>
 
     <item
         android:id="@+id/nav_settings"
@@ -17,6 +19,13 @@
         android:id="@+id/nav_manage_event"
         android:icon="@drawable/event"
         android:title="Manage Event" />
+            <item
+                android:id="@+id/widget"
+                android:icon="@drawable/widget"
+
+                android:title="Widget" />
+    </menu>
+    </item>
 </group>
     <group>
 
@@ -26,7 +35,8 @@
             <item
                 android:id="@+id/nav_profile"
                 android:icon="@drawable/profile"
-                android:title="@string/profile" />
+                android:title="@string/profile"
+                />
             <item
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/logout"
