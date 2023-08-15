@@ -11,7 +11,8 @@ import com.example.eventmatics.SQLiteDatabase.Dataclass.Events
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Guest
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Task
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Vendor
-import com.example.eventmatics.data_class.Paymentinfo
+import com.example.eventmatics.SQLiteDatabase.Dataclass.Paymentinfo
+import com.example.eventmatics.SQLiteDatabase.Dataclass.VendorPaymentinfo
 
 class LocalDatabase(contex:Context,databasename:String):
     SQLiteOpenHelper(contex,databasename,null,DATABASE_VERSION) {
@@ -24,6 +25,7 @@ class LocalDatabase(contex:Context,databasename:String):
         private const val TABLE_GUEST = "Guest"
         private const val TABLE_BUDGET = "Budget"
         private const val TABLE_Payment = "Payment"
+        private const val Vendor_TABLE_Payment = "Vendor_Payment"
 
         // Common column names
         private const val COLUMN_ID = "id"
@@ -51,14 +53,21 @@ class LocalDatabase(contex:Context,databasename:String):
         private const val Budget_Pending = "Budget_Pending"
         private const val Budget_Paid = "Budget_Paid"
 
-        //Payment Column Name
+        //Budget Payment Column Name
+        private const val Payment_ID = "Payment_ID"
         private const val Payment_Name = "Payment_Name"
         private const val Payment_Amount = "Payment_Amount"
         private const val Payment_Status = "Payment_Status"
         private const val Payment_Date = "Payment_Date"
-        private const val Payment_ID = "Payment_ID"
         private const val Payment_BudgetID = "Payment_BudgetID"
 
+        //Vendor Payment Column Name
+        private const val Vendor_Payment_ID = "Vendor_Payment_ID"
+        private const val Vendor_Payment_Name = "Vendor_Payment_Name"
+        private const val Vendor_Payment_Amount = "Vendor_Payment_Amount"
+        private const val Vendor_Payment_Status = "Vendor_Payment_Status"
+        private const val Vendor_Payment_Date = "Vendor_Payment_Date"
+        private const val Payment_VendorID = "Payment_VendorID"
 
         //Guest Column Name
         private const val Guest_Name = "Guest_Name"
@@ -155,6 +164,17 @@ class LocalDatabase(contex:Context,databasename:String):
                 ")"
 
         db?.execSQL(CREATE_PAYMENT_TABLE)
+        val CREATE_VENDOR_PAYMENT_TABLE = "CREATE TABLE $Vendor_TABLE_Payment ("+
+                "$Vendor_Payment_ID INTEGER PRIMARY KEY AUTOINCREMENT,"+
+                "$Vendor_Payment_Name TEXT,"+
+                "$Vendor_Payment_Amount REAL,"+
+                "$Vendor_Payment_Status TEXT,"+
+                "$Vendor_Payment_Date TEXT,"+
+                "$Payment_VendorID INTEGER,"+
+                "FOREIGN KEY ($Payment_VendorID) REFERENCES $TABLE_VENDOR($COLUMN_ID)"+
+                ")"
+
+        db?.execSQL(CREATE_VENDOR_PAYMENT_TABLE)
 
     }
 
@@ -240,6 +260,20 @@ class LocalDatabase(contex:Context,databasename:String):
                     "$Payment_Date TEXT,"+
                     "$Payment_BudgetID INTEGER,"+
                     "FOREIGN KEY ($Payment_BudgetID) REFERENCES $TABLE_BUDGET($COLUMN_ID)"+
+                    ")"
+            db?.execSQL(CREATE_PAYMENT_TABLE)
+        }
+        onCreate(db)
+        if(oldVersion<8){
+            db?.execSQL("DROP TABLE IF EXISTS $Vendor_TABLE_Payment")
+            val CREATE_PAYMENT_TABLE = "CREATE TABLE $Vendor_TABLE_Payment ("+
+                    "$Vendor_Payment_ID INTEGER PRIMARY KEY,"+
+                    "$Vendor_Payment_Name TEXT,"+
+                    "$Vendor_Payment_Amount REAL,"+
+                    "$Vendor_Payment_Status TEXT,"+
+                    "$Vendor_Payment_Date TEXT,"+
+                    "$Payment_VendorID INTEGER,"+
+                    "FOREIGN KEY ($Payment_VendorID) REFERENCES $TABLE_VENDOR($COLUMN_ID)"+
                     ")"
             db?.execSQL(CREATE_PAYMENT_TABLE)
         }
@@ -715,19 +749,29 @@ fun getTotalUnPaid():Double{
         db.insert(TABLE_Payment, null, values)
         db.close()
     }
+    fun createVendorPayment(payment: VendorPaymentinfo) {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put(Vendor_Payment_Name, payment.name)
+            put(Vendor_Payment_Amount, payment.amount)
+            put(Vendor_Payment_Date, payment.date)
+            put(Vendor_Payment_Status, payment.status)
+            put(Payment_VendorID, payment.VendorId)
+        }
+        db.insert(Vendor_TABLE_Payment, null, values)
+        db.close()
+    }
 
     @SuppressLint("Range")
     fun getPaymentsForBudget(budgetId: Int): MutableList<Paymentinfo> {
         val paymentList = mutableListOf<Paymentinfo>()
 
         val query = "SELECT $TABLE_Payment.$Payment_ID, $TABLE_Payment.$Payment_Name,$TABLE_Payment.$Payment_Amount, $TABLE_Payment.$Payment_Date," +
-                "$TABLE_Payment.$Payment_Status, $TABLE_Payment.$Payment_BudgetID FROM $TABLE_Payment " +
-                "INNER JOIN $TABLE_BUDGET ON $TABLE_Payment.$Payment_BudgetID = $TABLE_BUDGET.$COLUMN_ID " +
+                "$TABLE_Payment.$Payment_Status, $TABLE_Payment.$Payment_BudgetID FROM $TABLE_Payment" +
+                " INNER JOIN $TABLE_BUDGET ON $TABLE_Payment.$Payment_BudgetID = $TABLE_BUDGET.$COLUMN_ID " +
                 "WHERE $TABLE_BUDGET.$COLUMN_ID = $budgetId"
-
         val db = readableDatabase
         val cursor = db.rawQuery(query, null)
-
         cursor.use {
             while (it.moveToNext()) {
                 val id = it.getInt(it.getColumnIndex(Payment_ID))
@@ -742,6 +786,30 @@ fun getTotalUnPaid():Double{
 
         return paymentList
     }
+
+    @SuppressLint("Range")
+    fun getPaymentForVendor(VendorId: Int): MutableList<VendorPaymentinfo> {
+        val paymentlist = mutableListOf<VendorPaymentinfo>()
+        val query = "SELECT $Vendor_TABLE_Payment.$Vendor_Payment_ID,$Vendor_TABLE_Payment.$Vendor_Payment_Name,$Vendor_TABLE_Payment.$Vendor_Payment_Amount,$Vendor_TABLE_Payment.$Vendor_Payment_Date," +
+                "$Vendor_TABLE_Payment.$Vendor_Payment_Status,$Vendor_TABLE_Payment.$Payment_VendorID FROM $Vendor_TABLE_Payment" +
+                " INNER JOIN $TABLE_VENDOR ON $Vendor_TABLE_Payment.$Payment_VendorID=$TABLE_VENDOR.$COLUMN_ID " +
+                "WHERE $TABLE_VENDOR.$COLUMN_ID = $VendorId"
+        val db = readableDatabase
+        val cursor = db.rawQuery(query, null)
+        cursor.use {
+            while (it.moveToNext()) {
+                val id = it.getInt(it.getColumnIndex(Vendor_Payment_ID))
+                val name = it.getString(it.getColumnIndex(Vendor_Payment_Name))
+                val amount = it.getFloat(it.getColumnIndex(Vendor_Payment_Amount))
+                val date = it.getString(it.getColumnIndex(Vendor_Payment_Date))
+                val status = it.getString(it.getColumnIndex(Vendor_Payment_Status))
+                val VendorId = it.getLong(it.getColumnIndex(Payment_VendorID))
+                paymentlist.add(VendorPaymentinfo(id, name, amount, date, status, VendorId))
+            }
+        }
+        return paymentlist
+    }
+
 
     fun deletePaymentsForBudget(budgetId: Int) {
         val db = writableDatabase

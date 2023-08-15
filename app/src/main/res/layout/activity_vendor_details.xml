@@ -243,35 +243,35 @@
                         android:drawableEnd="@drawable/location" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
-<!--            <LinearLayout-->
-<!--                android:layout_marginTop="10sp"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:orientation="horizontal">-->
-<!--                <TextView-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="35sp"-->
-<!--                    android:textSize="20sp"-->
-<!--                    android:text="@string/payments"-->
-<!--                    android:textColor="@color/light_purple"-->
-<!--                    />-->
-<!--                <ImageView-->
-<!--                    android:id="@+id/PaymentAdd"-->
-<!--                    android:layout_width="30sp"-->
-<!--                    android:layout_height="30sp"-->
-<!--                    android:src="@drawable/add"-->
-<!--                    android:layout_marginStart="260sp"-->
-<!--                    />-->
+            <LinearLayout
+                android:layout_marginTop="10sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="35sp"
+                    android:textSize="20sp"
+                    android:text="@string/payments"
+                    android:textColor="@color/light_purple"
+                    />
+                <ImageView
+                    android:id="@+id/PaymentAdd"
+                    android:layout_width="30sp"
+                    android:layout_height="30sp"
+                    android:src="@drawable/add"
+                    android:layout_marginStart="260sp"
+                    />
 
-<!--            </LinearLayout>-->
-<!--            <LinearLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:orientation="vertical">-->
-<!--                <androidx.recyclerview.widget.RecyclerView-->
-<!--                    android:id="@+id/vendorpaymenttrans"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="190sp"/>-->
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/vendorpaymenttrans"
+                    android:layout_width="match_parent"
+                    android:layout_height="190sp"/>
 <!--                <View-->
 <!--                    android:layout_width="300dp"-->
 <!--                    android:layout_height="1dp"-->
@@ -279,7 +279,7 @@
 <!--                    android:layout_gravity="center"-->
 <!--                    />-->
 
-<!--            </LinearLayout>-->
+            </LinearLayout>
         </LinearLayout>
     </RelativeLayout>
 </ScrollView>

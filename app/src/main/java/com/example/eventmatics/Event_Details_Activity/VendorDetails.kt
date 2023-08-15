@@ -6,8 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.provider.ContactsContract
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -20,13 +18,18 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.Adapter.CategoryAdapter
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.VendorPaymentActivityAdapter
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Vendor
+import com.example.eventmatics.SQLiteDatabase.Dataclass.VendorPaymentinfo
 import com.example.eventmatics.data_class.SpinnerItem
+import com.example.eventmatics.fragments.VendorFragment
 
-class VendorDetails : AppCompatActivity(){
+class VendorDetails : AppCompatActivity(),VendorFragment.UserDataListener{
 
 //    val fragmentmanager:FragmentManager=supportFragmentManager
     private lateinit var vendorNameET: EditText
@@ -35,6 +38,7 @@ class VendorDetails : AppCompatActivity(){
     private lateinit var vendorEstimatedAmount: EditText
     private lateinit var vendorBalanceTV: TextView
     private lateinit var vendorViewTV: ImageView
+    private lateinit var PaymentAdd: ImageView
     private lateinit var vendorPhoneTV: TextView
     private lateinit var vendorPhoneET: EditText
     private lateinit var vendorEmailTV: TextView
@@ -43,8 +47,11 @@ class VendorDetails : AppCompatActivity(){
     private lateinit var Balancefeild: LinearLayout
     private lateinit var vendorWebsiteET: EditText
     private lateinit var vendorAddressTV: TextView
+    private lateinit var vendorpaymenttrans: RecyclerView
     private lateinit var vendorAddressET: EditText
-
+    var paymentlist:MutableList<VendorPaymentinfo> = mutableListOf()
+    lateinit var adapter: VendorPaymentActivityAdapter
+    lateinit var vendorFragment:VendorFragment
     val spinnerItems = listOf(
         SpinnerItem("Accessories"),
         SpinnerItem( "Accommodation"),
@@ -59,6 +66,12 @@ class VendorDetails : AppCompatActivity(){
         SpinnerItem( "Reception"),
         SpinnerItem( "Transportation")
     )
+
+    override fun onUserDataEntered(userData: VendorPaymentinfo) {
+        paymentlist.add(userData)
+        adapter.notifyDataSetChanged()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_vendor_details)
@@ -74,8 +87,10 @@ class VendorDetails : AppCompatActivity(){
         vendorBalanceTV = findViewById(R.id.VendorBalancetv)
         vendorViewTV = findViewById(R.id.Vendorviewtv)
         vendorPhoneTV = findViewById(R.id.VendorPhonetv)
+        vendorpaymenttrans = findViewById(R.id.vendorpaymenttrans)
         vendorPhoneET = findViewById(R.id.VendortPhoneEt)
         vendorEmailTV = findViewById(R.id.VendorEmailtv)
+        PaymentAdd = findViewById(R.id.PaymentAdd)
         vendorEmailET = findViewById(R.id.VendorEmailEt)
         vendorWebsiteTV = findViewById(R.id.Vendorwebsitetv)
         vendorWebsiteET = findViewById(R.id.VendorwebsiteEt)
@@ -89,15 +104,6 @@ class VendorDetails : AppCompatActivity(){
         vendorViewTV.setOnClickListener {
             infoshow()
         }
-//        vendorEstimatedAmount.addTextChangedListener(object: TextWatcher {
-//            override fun beforeTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-//            }
-//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-//            }
-//            override fun afterTextChanged(edit: Editable?) {
-//                vendorBalanceTV.text="Balance:${vendorEstimatedAmount.text}"
-//            }
-//        })
 
         val Selected_Item:Vendor?=intent.getParcelableExtra("Selected_Item")
         if(Selected_Item!=null){
@@ -111,7 +117,26 @@ class VendorDetails : AppCompatActivity(){
             vendorEmailET.setText(Selected_Item.emailid)
             vendorWebsiteET.setText(Selected_Item.website)
             vendorAddressET.setText(Selected_Item.address)
+
+            val id=Selected_Item?.id!!.toInt()
+            val databasename = getSharedPreference(this@VendorDetails, "databasename").toString()
+            val db = LocalDatabase(this@VendorDetails, databasename)
+            val Payment=db.getPaymentForVendor(id)
+           adapter= VendorPaymentActivityAdapter(this,Payment)
+            vendorpaymenttrans.adapter=adapter
+            vendorpaymenttrans.layoutManager=LinearLayoutManager(this)
+            paymentlist.clear()
+            paymentlist.addAll(Payment)
+            adapter.notifyDataSetChanged()
         }
+        vendorFragment= VendorFragment(this,supportFragmentManager,Selected_Item?.id)
+        vendorFragment.setUserDataListener(this)
+        adapter= VendorPaymentActivityAdapter(this,paymentlist)
+
+        PaymentAdd.setOnClickListener {
+            vendorFragment.show(supportFragmentManager,"VendorFragmentManager")
+        }
+
     }
 
     private fun infoshow() {
@@ -177,7 +202,7 @@ class VendorDetails : AppCompatActivity(){
                 R.id.Check->{
                     val Selected_Item:Vendor?=intent.getParcelableExtra("Selected_Item")
                     if(Selected_Item!=null){
-                        UpdateDatabase(Selected_Item.id)
+                        UpdateDatabase(Selected_Item.id,paymentlist)
                     }else{
                     AddvaluetoDatabase()
 
@@ -237,7 +262,7 @@ class VendorDetails : AppCompatActivity(){
         Toast.makeText(this, "Vendor Added successfully", Toast.LENGTH_SHORT).show()
         finish()
     }
-    private fun UpdateDatabase(id: Long) {
+    private fun UpdateDatabase(id: Long,paymentList:List<VendorPaymentinfo>) {
         val vendorName = vendorNameET.text.toString()
         val category = categoryButton.text.toString()
         val vendorNote = vendorNoteET.text.toString()
@@ -259,7 +284,14 @@ class VendorDetails : AppCompatActivity(){
         }
         val vendor=Vendor(id,vendorName,category,vendorNote,estimatedAmount,vendorBalance,"","$status",vendorPhone,vendorEmail,vendorWebsite,vendorAddress)
         db.updateVendor(vendor)
+        for(payment in paymentList){
+            if(payment.VendorId  == id.toLong()){
+                db.createVendorPayment(payment)
+            }
+        }
         Toast.makeText(this, "Vendor Updated successfully", Toast.LENGTH_SHORT).show()
         finish()
     }
+
+
 }

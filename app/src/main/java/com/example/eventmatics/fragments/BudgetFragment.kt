@@ -13,13 +13,13 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import com.example.eventmatics.R
-import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
-import com.example.eventmatics.data_class.Paymentinfo
+import com.example.eventmatics.SQLiteDatabase.Dataclass.Paymentinfo
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.datepicker.MaterialDatePicker
 import java.util.Calendar
 
-class BudgetFragment(private val context: Context, private val fragmentManager: FragmentManager, private val budgetId: Long?) : BottomSheetDialogFragment() {
+class BudgetFragment(private val context: Context, private val fragmentManager: FragmentManager,
+                     private val budgetId: Long?) : BottomSheetDialogFragment() {
     private lateinit var etName: EditText
     private lateinit var etAmount: EditText
     private lateinit var buttonPending: Button
@@ -27,8 +27,6 @@ class BudgetFragment(private val context: Context, private val fragmentManager: 
     private lateinit var etDate: TextView
     private lateinit var buttonSubmit: Button
     var status:String=""
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -36,10 +34,9 @@ class BudgetFragment(private val context: Context, private val fragmentManager: 
         val view = inflater.inflate(R.layout.fragment_budget, container, false)
 
         return view
-
     }
     interface OnDataEnter{
-        fun ondataenter(userdata:Paymentinfo)
+        fun ondataenter(userdata: Paymentinfo)
     }
     private var userdataenter:OnDataEnter?=null
 
@@ -80,7 +77,7 @@ class BudgetFragment(private val context: Context, private val fragmentManager: 
             if(buttonPaid.isClickable){status=buttonPaid.text.toString()}
             if(buttonPending.isClickable){status=buttonPending.text.toString()}
 //            val payment=Paymentinfo(0,name,amount,date,status, budgetId.toInt())
-            val payment=Paymentinfo(0,name,amount,date,status, budgetId!!)
+            val payment= Paymentinfo(0,name,amount,date,status, budgetId!!)
             userdataenter?.ondataenter(payment)
             Toast.makeText(context,"Data Added",Toast.LENGTH_SHORT).show()
 //            amountpassing()
@@ -131,7 +128,5 @@ class BudgetFragment(private val context: Context, private val fragmentManager: 
         val backgroundColor = if (isSelected) R.color.light_blue else R.color.white
         button.backgroundTintList = ContextCompat.getColorStateList(requireContext(), backgroundColor)
     }
-
-
 }
 

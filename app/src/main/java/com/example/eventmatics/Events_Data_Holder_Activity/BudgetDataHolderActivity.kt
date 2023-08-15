@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -20,20 +19,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.eventmatics.Adapter.BudgetDataHolderAdapter
-import com.example.eventmatics.Adapter.PaymentActivityAdapter
 import com.example.eventmatics.Event_Details_Activity.BudgetDetails
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Budget
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SwipeGesture.BudgetSwipeToDelete
-import com.example.eventmatics.data_class.Paymentinfo
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
-import com.razorpay.Checkout
-import org.json.JSONException
-import org.json.JSONObject
 
 class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnItemClickListener{
     private lateinit var recyclerView: RecyclerView

@@ -1,4 +1,4 @@
-package com.example.eventmatics.Adapter
+package com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter
 
 
 import android.content.Context
@@ -9,11 +9,9 @@ import android.widget.RadioButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
-import com.example.eventmatics.data_class.Paymentinfo
+import com.example.eventmatics.SQLiteDatabase.Dataclass.Paymentinfo
 
-class PaymentActivityAdapter(private val context: Context, private val paymentList: MutableList<Paymentinfo>,
-
-) :
+class PaymentActivityAdapter(private val context: Context, private val paymentList: MutableList<Paymentinfo>) :
     RecyclerView.Adapter<PaymentActivityAdapter.PaymentInfoViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PaymentInfoViewHolder {

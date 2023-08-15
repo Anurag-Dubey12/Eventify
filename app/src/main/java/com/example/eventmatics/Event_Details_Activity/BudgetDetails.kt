@@ -1,7 +1,6 @@
 package com.example.eventmatics.Event_Details_Activity
 
 import android.content.Context
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -18,11 +17,11 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.Adapter.CategoryAdapter
-import com.example.eventmatics.Adapter.PaymentActivityAdapter
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.PaymentActivityAdapter
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Budget
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
-import com.example.eventmatics.data_class.Paymentinfo
+import com.example.eventmatics.SQLiteDatabase.Dataclass.Paymentinfo
 import com.example.eventmatics.data_class.SpinnerItem
 import com.example.eventmatics.fragments.BudgetFragment
 
@@ -103,7 +102,7 @@ class BudgetDetails : AppCompatActivity(),BudgetFragment.OnDataEnter{
             for (payment in paymentData) {
                 Log.d("PaymentData", "ID: ${payment.id}, Name: ${payment.name}, Amount: ${payment.amount}")
             }
-            adapter=PaymentActivityAdapter(this,paymentData)
+            adapter= PaymentActivityAdapter(this,paymentData)
             PaymentRecycler.adapter = adapter
             PaymentRecycler.layoutManager = LinearLayoutManager(this)
             paymentlist.clear()

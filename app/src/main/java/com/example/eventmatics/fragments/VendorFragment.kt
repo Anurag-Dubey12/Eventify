@@ -1,5 +1,6 @@
 package com.example.eventmatics.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,22 +8,26 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import com.example.eventmatics.R
-import com.example.eventmatics.data_class.Paymentinfo
+import com.example.eventmatics.SQLiteDatabase.Dataclass.Paymentinfo
+import com.example.eventmatics.SQLiteDatabase.Dataclass.VendorPaymentinfo
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.datepicker.MaterialDatePicker
 import java.util.Calendar
 
-class VendorFragment(private var fragmentManager:FragmentManager) : BottomSheetDialogFragment() {
+class VendorFragment(private val context: Context,private var fragmentManager:FragmentManager,
+                     private val VendorId:Long?) : BottomSheetDialogFragment() {
     private lateinit var editTextName: EditText
     private lateinit var editTextAmount: EditText
     private lateinit var vendorButtonPending: AppCompatButton
     private lateinit var vendorButtonPaid: AppCompatButton
     private lateinit var vendorexpireDate: TextView
     private lateinit var buttonSubmit: AppCompatButton
+    var paymentStatus :String=" "
 
     interface PendingAmountlistener{
         fun onPendingAmountSelected(amount:Float)
@@ -34,21 +39,19 @@ class VendorFragment(private var fragmentManager:FragmentManager) : BottomSheetD
     }
     var paidAmountListener:PaidAmountListener?=null
     interface UserDataListener {
-        fun onUserDataEntered(userData: Paymentinfo)
+        fun onUserDataEntered(userData: VendorPaymentinfo)
     }
 
-    private var userDataListener: VendorFragment.UserDataListener? = null
+    private var userDataListener: UserDataListener? = null
     // Setter method for the UserDataListener
-    fun setUserDataListener(listener: VendorFragment.UserDataListener) {
+    fun setUserDataListener(listener:UserDataListener) {
         userDataListener = listener
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         val view= inflater.inflate(R.layout.fragment_vendor, container, false)
-
         return view
     }
 
@@ -61,19 +64,15 @@ class VendorFragment(private var fragmentManager:FragmentManager) : BottomSheetD
         vendorexpireDate = view.findViewById(R.id.editTextDate)
         buttonSubmit = view.findViewById(R.id.buttonSubmit)
 
-        //VendorPending amount listener to pass the amount value and changing button backgriund on click
+        clearfield()
         vendorButtonPending.setOnClickListener {
             setButtonBackground(vendorButtonPending,true)
             setButtonBackground(vendorButtonPaid,false)
-            val amount=editTextAmount.text.toString().toFloat()
-            pendingAmountlistener?.onPendingAmountSelected(amount)
         }
-        //VendorPaid amount listener to pass the amount value and changing button backgriund on click
+
         vendorButtonPaid.setOnClickListener {
             setButtonBackground(vendorButtonPaid,true)
             setButtonBackground(vendorButtonPending,false)
-            val amount=editTextAmount.text.toString().toFloat()
-            paidAmountListener?.onPaidAmountSelected(amount)
         }
         vendorexpireDate.setOnClickListener {
             showDatePicker()
@@ -81,19 +80,22 @@ class VendorFragment(private var fragmentManager:FragmentManager) : BottomSheetD
         buttonSubmit.setOnClickListener {
             val name=editTextName.text.toString()
             val amount=editTextAmount.text.toString().toFloat()
-            val paymentStatus = if (vendorButtonPending.isSelected) "Pending" else "Paid"
             val date=vendorexpireDate.text.toString()
-
-//            val userdata=Paymentinfo(name, amount, date)
-//When the user clicks the buttonSubmit, the onClick listener is triggered.
-//The listener retrieves the values entered in the EditText fields and creates a Paymentinfo object with the provided data.
-//The userDataListener is then called with the userData as an argument to pass the entered payment information.
-//Finally, the VendorFragment is dismissed, closing the bottom sheet dialog.
-//            userDataListener?.onUserDataEntered(userdata)
+            if(vendorButtonPaid.isClickable){ paymentStatus=vendorButtonPaid.text.toString()}
+            if(vendorButtonPending.isClickable){ paymentStatus=vendorButtonPending.text.toString()}
+            val payment= VendorPaymentinfo(0,name,amount,date,paymentStatus, VendorId!!)
+            userDataListener?.onUserDataEntered(payment)
+            Toast.makeText(context,"Data Added",Toast.LENGTH_SHORT).show()
             dismiss()
         }
     }
-
+fun clearfield(){
+    editTextName.text.clear()
+    editTextAmount.text.clear()
+    vendorexpireDate.text = null
+    setButtonBackground(vendorButtonPaid,false)
+    setButtonBackground(vendorButtonPending,false)
+}
     private fun showDatePicker() {
         val calendar = Calendar.getInstance()
         val day = calendar.get(Calendar.DAY_OF_MONTH)
