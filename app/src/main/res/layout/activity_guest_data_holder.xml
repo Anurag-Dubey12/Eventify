@@ -1,45 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    tools:context=".Events_Data_Holder_Activity.GuestDataHolderActivity">
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".Events_Data_Holder_Activity.GuestDataHolderActivity"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:logo="@drawable/back_arrow"
-        android:background="@color/Lemon_Chiffon"
-        android:title=" Guest "
-        android:titleMarginStart="30sp"
-        />
-    <TextView
-        android:id="@+id/invi"
-        android:layout_below="@id/toolbar"
-        android:layout_width="match_parent"
+        android:fitsSystemWindows="true"
+        android:background="@android:color/transparent"
+        >
 
-        android:layout_height="wrap_content"/>
-    <TextView
-        android:id="@+id/notinvi"
-        android:layout_below="@id/invi"
-        android:layout_width="match_parent"
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="Guest"
+            app:layout_scrollFlags="scroll|enterAlways"/>
 
-        android:layout_height="wrap_content"/>
+    </com.google.android.material.appbar.AppBarLayout>
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/notinvi"
-        xmlns:android="http://schemas.android.com/apk/res/android">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
         <androidx.recyclerview.widget.RecyclerView
-            android:layout_below="@id/toolbar"
             android:id="@+id/guestDatarec"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     <include
         android:id="@+id/budgetBottomnav"
         layout="@layout/eventbottomnav"
-        />
-</RelativeLayout>
+        app:layout_anchorGravity="bottom|center_horizontal" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

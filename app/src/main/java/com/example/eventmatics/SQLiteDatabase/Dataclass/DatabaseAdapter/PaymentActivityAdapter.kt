@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.RadioButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -39,14 +40,11 @@ class PaymentActivityAdapter(private val context: Context, private val paymentLi
         private val paymentAmountTextView: TextView = itemView.findViewById(R.id.budgetpaymentamount)
         private val paymentDateTextView: TextView = itemView.findViewById(R.id.budgetpaymentdate)
         private val budgetpaymentstatus: TextView = itemView.findViewById(R.id.budgetpaymentstatus)
-        private val budgetid: TextView = itemView.findViewById(R.id.budgetid)
-        private val paidRadioButton: RadioButton = itemView.findViewById(R.id.Radiopaid)
+        private val paidRadioButton: CheckBox = itemView.findViewById(R.id.Radiopaid)
 
-        // Bind data to views
         fun bind(payment: Paymentinfo) {
             paymentNameTextView.text = payment.name
             budgetpaymentstatus.text = payment.status
-            budgetid.text = payment.budgetid.toString()
             paymentAmountTextView.text = payment.amount.toString()
             paymentDateTextView.text = payment.date
         }

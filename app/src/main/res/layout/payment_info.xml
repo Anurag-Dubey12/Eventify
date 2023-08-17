@@ -9,6 +9,9 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
+        android:background="@drawable/boxborder"
+        android:layout_marginBottom="10sp"
+        android:layout_marginTop="10sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
         <LinearLayout
@@ -18,14 +21,14 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/budgetid"
-                android:layout_width="wrap_content"
-                android:layout_height="50sp"
-                android:textStyle="bold"
-                android:textSize="20sp"
+<!--            <TextView-->
+<!--                android:id="@+id/budgetid"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="50sp"-->
+<!--                android:textStyle="bold"-->
+<!--                android:textSize="20sp"-->
 
-                />
+<!--                />-->
             <TextView
                 android:id="@+id/budgetPaymentName"
                 android:layout_width="wrap_content"
@@ -33,13 +36,6 @@
                 android:textStyle="bold"
                 android:textSize="20sp"
                 />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_toRightOf="@id/payment_info"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
             <TextView
                 android:id="@+id/budgetpaymentdate"
                 android:layout_width="wrap_content"
@@ -48,6 +44,14 @@
                 android:textSize="16sp"
 
                 />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_toRightOf="@id/payment_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
             <TextView
                 android:id="@+id/budgetpaymentamount"
                 android:layout_width="wrap_content"
@@ -63,11 +67,15 @@
                 android:textSize="16sp"
                 />
         </LinearLayout>
-        <RadioButton
+
+        <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/Radiopaid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
+            style="Widget.MaterialComponents.CompoundButton.RadioButton"
+            android:tooltipText="Payment Paid"
+            android:checked="false"
             />
     </RelativeLayout>
 

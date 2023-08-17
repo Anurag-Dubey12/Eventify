@@ -4,20 +4,22 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".Events_Data_Holder_Activity.TaskDataHolderActivity"
+    tools:context=".Events_Data_Holder_Activity.VendorDataHolderActivity"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        android:background="@android:color/transparent"
+        >
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         app:title="Vendor"
-        android:background="@color/Lemon_Chiffon"
-        app:backgroundTint="@color/Lemon_Chiffon" />
+        app:layout_scrollFlags="scroll|enterAlways"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -30,7 +32,9 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/vendorDatarec"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="100sp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     <include

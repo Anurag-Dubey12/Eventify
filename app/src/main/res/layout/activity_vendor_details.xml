@@ -259,7 +259,7 @@
                     android:id="@+id/PaymentAdd"
                     android:layout_width="30sp"
                     android:layout_height="30sp"
-                    android:src="@drawable/add"
+                    android:src="@drawable/addfab"
                     android:layout_marginStart="260sp"
                     />
 

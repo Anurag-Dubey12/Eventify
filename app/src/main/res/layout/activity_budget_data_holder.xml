@@ -10,6 +10,8 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:id="@+id/appbar"
+        android:fitsSystemWindows="true"
+        android:background="@android:color/transparent"
         android:layout_height="wrap_content">
 
         <com.google.android.material.appbar.MaterialToolbar
@@ -17,8 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:title="BUDGET"
-            android:background="@color/Lemon_Chiffon"
-            app:backgroundTint="@color/Lemon_Chiffon" />
+            app:layout_scrollFlags="scroll|enterAlways" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

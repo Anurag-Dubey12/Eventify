@@ -1,18 +1,33 @@
 package com.example.eventmatics.Events_Data_Holder_Activity
 
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
+import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Typeface
+import android.graphics.pdf.PdfDocument
 import android.os.Bundle
+import android.os.CountDownTimer
+import android.os.Environment
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,6 +43,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
+import java.io.File
+import java.io.FileOutputStream
 
 class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnItemClickListener{
     private lateinit var recyclerView: RecyclerView
@@ -35,7 +52,10 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
     lateinit var bottomnav: BottomNavigationView
     lateinit var adapter:BudgetDataHolderAdapter
     lateinit var budgetlist:MutableList<Budget>
-//    lateinit var paymentlist:Paymentinfo
+    lateinit var bmp:Bitmap
+    lateinit var scalebmp:Bitmap
+    private var isRecyclerViewEmpty = true
+    var PERMISSION_CODE=101
     private var filteredList: MutableList<Budget> = mutableListOf()
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     override fun onItemClick(budget: Budget) {
@@ -44,12 +64,6 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
             startActivity(this)
         }
     }
-//    override fun onItemClick(payment: Paymentinfo) {
-//        val intent = Intent().apply {
-//            putExtra("Selected_Item", payment)
-//        }
-//        startActivityForResult(intent, 230)
-//    }
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,8 +94,9 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
         swipeRefreshLayout.setOnRefreshListener {
             Handler().postDelayed({
                 val databasename=getSharedPreference(this,"databasename").toString()
-                val databasehelper = LocalDatabase(this, databasename)
-                val BudgetList = databasehelper.getAllBudgets()
+                val db = LocalDatabase(this, databasename)
+                val BudgetList = db.getAllBudgets()
+                isRecyclerViewEmpty=BudgetList.isNullOrEmpty()
                 if(BudgetList!=null){
                     adapter = BudgetDataHolderAdapter(this,BudgetList,this)
                     recyclerView.adapter = adapter
@@ -128,27 +143,34 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
         val sharedPref = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
         return sharedPref.getString(key, null)
     }
-    fun removeSharedPreference(context: Context, key: String) {
-        val sharedPref = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
-        val editor = sharedPref.edit()
-        editor.remove(key)
-        editor.apply()
+//    fun removeSharedPreference(context: Context, key: String) {
+//        val sharedPref = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
+//        val editor = sharedPref.edit()
+//        editor.remove(key)
+//        editor.apply()
+//    }
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        val pdfReportItem = menu.findItem(R.id.pdfreport)
+        val check = menu.findItem(R.id.Check)
+        pdfReportItem.isVisible = !isRecyclerViewEmpty
+        return true
     }
 
     private fun showbudgetlist() {
         val databasename=getSharedPreference(this,"databasename").toString()
-        val databasehelper = LocalDatabase(this, databasename)
-        val BudgetList = databasehelper.getAllBudgets()
-
+        val db = LocalDatabase(this, databasename)
+        val BudgetList = db.getAllBudgets()
+        isRecyclerViewEmpty=BudgetList.isNullOrEmpty()
         if(BudgetList!=null){
             adapter = BudgetDataHolderAdapter(this,BudgetList,this)
             recyclerView.adapter = adapter
             recyclerView.layoutManager = LinearLayoutManager(this)
         }
+
         val swipe=object:BudgetSwipeToDelete(this){
-            var deletedItem: Budget? = null
+            var deleteditem: Budget? = null
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val position=viewHolder.adapterPosition
+                var position=viewHolder.adapterPosition
                 val newPaidStatus:String
                 var previousPaidStatus:String
                 var NewBalance:Float
@@ -156,37 +178,35 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
                 when(direction){
                     ItemTouchHelper.LEFT->{
                 if(position!=RecyclerView.NO_POSITION){
-                    deletedItem=BudgetList[position]
-                    databasehelper.deleteBudget(deletedItem!!)
+                    deleteditem=BudgetList[position]
+                    db.deleteBudget(deleteditem!!)
                     adapter.notifyItemRemoved(position)
 
                     val snackbar=Snackbar.make(this@BudgetDataHolderActivity.recyclerView,"Budget Item Deleted",Snackbar.LENGTH_LONG)
                     snackbar.setAction("UNDO") {
-                        // Undo the delete operation
-                        if (deletedItem != null) {
-                            databasehelper.createBudget(deletedItem!!)
-                            BudgetList.add(position, deletedItem!!)
+                        if (deleteditem != null) {
+                            db.createBudget(deleteditem!!)
+                            BudgetList.add(position, deleteditem!!)
                             adapter.notifyItemInserted(position)
                             adapter.notifyDataSetChanged()
-
                         }
                     }
                         .addCallback(object:BaseTransientBottomBar.BaseCallback<Snackbar>(){
                             override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
                                 super.onDismissed(transientBottomBar, event)
                                 if (event!= DISMISS_EVENT_ACTION){
-                                    deletedItem=null
-                                }
-//                                recreate()
+                                    deleteditem=null
                             }
-//                            override fun onShown(transientBottomBar: Snackbar?) {
-//                                transientBottomBar?.setAction("UNDO"){
-//                                    BudgetList.add(position,deleteitem)
-//                                    adapter.notifyItemInserted(position)
-//                                }
-//
-//                                super.onShown(transientBottomBar)
-//                            }
+                                recreate()
+                            }
+                            override fun onShown(transientBottomBar: Snackbar?) {
+                                transientBottomBar?.setAction("UNDO"){
+                                    BudgetList.add(position, deleteditem!!)
+                                    adapter.notifyItemInserted(position)
+                                }
+
+                                super.onShown(transientBottomBar)
+                            }
                         }).apply {
                             animationMode = Snackbar.ANIMATION_MODE_FADE
                         }
@@ -216,7 +236,7 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
                                  NewBalance=bal.toFloat()
                              }
                             // Update the 'Paid' status in the database
-                            val rowsAffected = databasehelper.updateBudgetPaid(budget.id, newPaidStatus,"$NewBalance")
+                            val rowsAffected = db.updateBudgetPaid(budget.id, newPaidStatus,"$NewBalance")
                             if (rowsAffected > 0) {
                                 val snackbar=Snackbar.make(this@BudgetDataHolderActivity.recyclerView,"Budget Data Updated",Snackbar.LENGTH_LONG)
                                 .addCallback(object:BaseTransientBottomBar.BaseCallback<Snackbar>(){
@@ -239,7 +259,7 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
                                                 previousPaidStatus="Paid"
                                                 NewBalance=bal.toFloat()
                                             }
-                                            databasehelper.updateBudgetPaid(budget.id, previousPaidStatus,"$NewBalance")
+                                            db.updateBudgetPaid(budget.id, previousPaidStatus,"$NewBalance")
                                         recreate()
                                         }
                                         super.onShown(transientBottomBar)
@@ -343,9 +363,9 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
 //    }
     private fun updateBudgetAndUI(budgetId: Long, newStatus: String): Boolean {
         val databasename = getSharedPreference(this, "databasename").toString()
-        val databasehelper = LocalDatabase(this, databasename)
-        val updatedRows = databasehelper.updateBudgetPaid(budgetId, newStatus, "0.0")
-        val BudgetList = databasehelper.getAllBudgets()
+        val db = LocalDatabase(this, databasename)
+        val updatedRows = db.updateBudgetPaid(budgetId, newStatus, "0.0")
+        val BudgetList = db.getAllBudgets()
 
         if (updatedRows > 0) {
             val positionToUpdate = BudgetList.indexOfFirst { it.id == budgetId }
@@ -360,14 +380,7 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
 
     override fun onResume() {
         super.onResume()
-        val databasename=getSharedPreference(this,"databasename").toString()
-        val databasehelper = LocalDatabase(this, databasename)
-        val BudgetList = databasehelper.getAllBudgets()
-        if(BudgetList!=null){
-            adapter = BudgetDataHolderAdapter(this,BudgetList,this)
-            recyclerView.adapter = adapter
-            recyclerView.layoutManager = LinearLayoutManager(this)
-        }
+        showbudgetlist()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -443,7 +456,140 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
                 onBackPressed()
                 true
             }
+            R.id.pdfreport->{
+                if(checkPermissions()){
+                GeneratePDF()
+                }
+                else{
+                    requestPermission()
+                }
+                true
+            }
             else->super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun GeneratePDF() {
+        val databasename = getSharedPreference(this, "databasename").toString()
+        val db = LocalDatabase(this, databasename)
+        val BudgetList = db.getAllBudgets()
+
+        val pageWidth = 792
+        val pageHeight = 1120
+        bmp = BitmapFactory.decodeResource(resources, R.drawable.logo)
+        scalebmp = Bitmap.createScaledBitmap(bmp, 140, 140, false)
+
+        val pdfDocument = PdfDocument()
+
+        val paint = Paint()
+        val title = Paint()
+
+        val pageInfo: PdfDocument.PageInfo = PdfDocument.PageInfo.Builder(
+            pageWidth, pageHeight, 1
+        ).create()
+        val page: PdfDocument.Page = pdfDocument.startPage(pageInfo)
+        val canvas: Canvas = page.canvas
+
+        canvas.drawBitmap(scalebmp, 57F, 40F, paint)
+        title.textSize = 15F
+        title.color = ContextCompat.getColor(this, R.color.Goldenrod)
+        canvas.drawText("Budget Report", 209F, 80F, title)
+
+        val startY = 120F
+        val lineHeight = 30F
+
+        // Draw the header text at the center of the page
+        val headerPaint = Paint()
+        headerPaint.textSize = 20F
+        headerPaint.color = Color.BLACK
+        headerPaint.textAlign = Paint.Align.CENTER
+        val headerText = "Sr.No ,Name,Category,Note,Estimated"
+        val headerX = pageWidth.toFloat() / 2
+        val headerY = startY
+        canvas.drawText(headerText, headerX, headerY, headerPaint)
+
+        val dataPaint = Paint()
+        dataPaint.textSize = 12F
+        dataPaint.color = Color.BLACK
+        dataPaint.textAlign = Paint.Align.CENTER
+
+        val columnSpacing = pageWidth / 6
+
+        for ((index, Budget) in BudgetList.withIndex()) {
+            val xPosition = pageWidth / 6
+            val yPosition = startY + (index + 1) * lineHeight
+
+            val idText = Budget.id.toString()
+            val nameText = Budget.name
+            val categoryText = Budget.category
+            val noteText = Budget.note
+            val estimatedText = Budget.estimatedAmount
+
+            canvas.drawText(idText, xPosition.toFloat(), yPosition, dataPaint)
+            canvas.drawText(nameText, (xPosition + columnSpacing).toFloat(), yPosition, dataPaint)
+            canvas.drawText(categoryText,
+                (xPosition + 2 * columnSpacing).toFloat(), yPosition, dataPaint)
+            canvas.drawText(noteText,
+                (xPosition + 3 * columnSpacing).toFloat(), yPosition, dataPaint)
+            canvas.drawText(estimatedText,
+                (xPosition + 4 * columnSpacing).toFloat(), yPosition, dataPaint)
+        }
+
+        pdfDocument.finishPage(page)
+
+        // Create a directory named "PDFs"
+        val pdfDirectory = File(getExternalFilesDir(null), "PDFs")
+        pdfDirectory.mkdirs()
+        val pdfFilePath = File(pdfDirectory, "BudgetReport.pdf")
+
+        try {
+            pdfDocument.writeTo(FileOutputStream(pdfFilePath))
+            Log.d("PDF", "PDF file generated successfully.")
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.e("PDF", "Failed to generate PDF file: ${e.message}")
+        }
+
+        pdfDocument.close()
+    }
+    fun checkPermissions():Boolean{
+        var writeStoragePermission=ContextCompat.checkSelfPermission(
+            applicationContext,
+            WRITE_EXTERNAL_STORAGE
+        )
+
+        var readStroragePermission=ContextCompat.checkSelfPermission(
+            applicationContext,
+            READ_EXTERNAL_STORAGE
+        )
+
+        return writeStoragePermission==PackageManager.PERMISSION_GRANTED &&
+                readStroragePermission==PackageManager.PERMISSION_GRANTED
+    }
+    fun requestPermission(){
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE),PERMISSION_CODE
+        )
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if(requestCode==PERMISSION_CODE){
+            if(grantResults.size > 0){
+                if(grantResults[0]==PackageManager.PERMISSION_GRANTED &&
+                    grantResults[1]==PackageManager.PERMISSION_GRANTED){
+                    GeneratePDF()
+                }
+                else{
+                    Log.d("PDF", "Permission Denied.")
+
+                }
+            }
         }
     }
     private fun showSortOptions() {
