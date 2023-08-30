@@ -37,7 +37,14 @@ class EventAdding(
     private lateinit var eventBudget: TextInputEditText
     private lateinit var createButton: Button
     private lateinit var EditButton: Button
+    interface OnDataEnter{
+        fun onDataEnter(event:Events)
+    }
+    private var ondataenter:OnDataEnter?=null
 
+    fun setUserDataEnter(listener:OnDataEnter){
+        ondataenter=listener
+    }
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -137,19 +144,19 @@ class EventAdding(
             val names=DatabaseNameDataClass(0,eventNameText,eventDateText,eventTimeText)
             val eventId = databaseHelper.createEvent(event)
             val Eventlist=Databasename.createDatabase(names)
-            databaseHelper.close()
-            Databasename.close()
             if (eventId != -1L) {
                 val dataAddedIntent = Intent("com.example.eventmatics.fragments")
                 context?.sendBroadcast(dataAddedIntent)
+//                ondataenter?.onDataEnter(event)
                 dismiss()
                 Toast.makeText(context, "Event created successfully", Toast.LENGTH_SHORT).show()
                 saveToSharedPreferences(context, "databasename", eventNameText)
                 dismiss()
             } else {
-
                 Toast.makeText(context, "Failed to create event", Toast.LENGTH_SHORT).show()
             }
+            Databasename.close()
+            databaseHelper.close()
         }
 
 

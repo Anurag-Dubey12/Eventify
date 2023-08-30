@@ -6,7 +6,9 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Budget
+import com.example.eventmatics.SQLiteDatabase.Dataclass.BudgetWithPayment
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Events
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Guest
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Task
@@ -700,6 +702,67 @@ fun getTotalUnPaid():Double{
         return budgets
     }
 
+    @SuppressLint("Range")
+//    fun GetAllBudgetWithPayment(): MutableList<BudgetWithPayment> {
+//        val budgetlist = mutableListOf<BudgetWithPayment>()
+//        val query = "SELECT $TABLE_BUDGET.* ,$TABLE_Payment.$Payment_Name, " +
+//                "$TABLE_Payment.$Payment_Amount, $TABLE_Payment.$Payment_Date, $TABLE_Payment.$Payment_Status " +
+//                "FROM $TABLE_BUDGET " +
+//                "LEFT JOIN $TABLE_Payment ON $TABLE_BUDGET.$COLUMN_ID = $TABLE_Payment.$Payment_BudgetID"
+//
+//        val db = readableDatabase
+//        val cursor: Cursor = db.rawQuery(query, null)
+//        cursor.use { cursor ->
+//            var currentBudget: BudgetWithPayment? = null
+//            while (cursor.moveToNext()) {
+//                val budgetID = cursor.getInt(cursor.getColumnIndex(COLUMN_ID))
+//                val name = cursor.getString(cursor.getColumnIndex(Budget_Name))
+//                val category = cursor.getString(cursor.getColumnIndex(Budget_Category))
+//                val note = cursor.getString(cursor.getColumnIndex(Budget_Note))
+//                val estimated = cursor.getString(cursor.getColumnIndex(Budget_Estimated))
+//                val balance = cursor.getString(cursor.getColumnIndex(Budget_Balance))
+//                val pending = cursor.getString(cursor.getColumnIndex(Budget_Pending))
+//                val paid = cursor.getString(cursor.getColumnIndex(Budget_Paid))
+//
+//                Log.d("DEBUG", "Budget_ID: $budgetID, Name: $name")
+//
+//                if (currentBudget?.budget?.id != budgetID.toLong()) {
+//                    if (currentBudget != null) {
+//                        budgetlist.add(currentBudget)
+//                    }
+//                    currentBudget = BudgetWithPayment(
+//                        Budget(
+//                            budgetID.toLong(), name, category, note, estimated, balance, pending, paid
+//                        ),
+//                        mutableListOf()
+//                    )
+//                }
+//                val paymentID = cursor.getInt(cursor.getColumnIndex(Payment_ID))
+//                if (paymentID != 0) {
+//                    val paymentName = cursor.getString(cursor.getColumnIndex(Payment_Name))
+//                    val paymentAmount = cursor.getFloat(cursor.getColumnIndex(Payment_Amount))
+//                    val paymentDate = cursor.getString(cursor.getColumnIndex(Payment_Date))
+//                    val paymentStatus = cursor.getString(cursor.getColumnIndex(Payment_Status))
+//
+//                    currentBudget?.payment?.add(
+//                        Paymentinfo(
+//                            paymentID, paymentName, paymentAmount, paymentDate, paymentStatus,
+//                            budgetID.toLong()
+//                        )
+//                    )
+//                    Log.d("DEBUG", "Payment details added for Budget ID: $budgetID")
+//                } else {
+//                    Log.d("DEBUG", "No payment details for Budget ID: $budgetID")
+//                }
+//            }
+//            currentBudget?.let {
+//                budgetlist.add(it)
+//            }
+//        }
+//        return budgetlist
+//    }
+
+
 
 
     // Update a budget
@@ -794,6 +857,27 @@ fun getTotalUnPaid():Double{
                 "$Vendor_TABLE_Payment.$Vendor_Payment_Status,$Vendor_TABLE_Payment.$Payment_VendorID FROM $Vendor_TABLE_Payment" +
                 " INNER JOIN $TABLE_VENDOR ON $Vendor_TABLE_Payment.$Payment_VendorID=$TABLE_VENDOR.$COLUMN_ID " +
                 "WHERE $TABLE_VENDOR.$COLUMN_ID = $VendorId"
+        val db = readableDatabase
+        val cursor = db.rawQuery(query, null)
+        cursor.use {
+            while (it.moveToNext()) {
+                val id = it.getInt(it.getColumnIndex(Vendor_Payment_ID))
+                val name = it.getString(it.getColumnIndex(Vendor_Payment_Name))
+                val amount = it.getFloat(it.getColumnIndex(Vendor_Payment_Amount))
+                val date = it.getString(it.getColumnIndex(Vendor_Payment_Date))
+                val status = it.getString(it.getColumnIndex(Vendor_Payment_Status))
+                val VendorId = it.getLong(it.getColumnIndex(Payment_VendorID))
+                paymentlist.add(VendorPaymentinfo(id, name, amount, date, status, VendorId))
+            }
+        }
+        return paymentlist
+    }
+    @SuppressLint("Range")
+    fun getAllPaymentsForVendors(): MutableList<VendorPaymentinfo> {
+        val paymentlist = mutableListOf<VendorPaymentinfo>()
+        val query = "SELECT $Vendor_TABLE_Payment.$Vendor_Payment_ID,$Vendor_TABLE_Payment.$Vendor_Payment_Name,$Vendor_TABLE_Payment.$Vendor_Payment_Amount,$Vendor_TABLE_Payment.$Vendor_Payment_Date," +
+                "$Vendor_TABLE_Payment.$Vendor_Payment_Status,$Vendor_TABLE_Payment.$Payment_VendorID FROM $Vendor_TABLE_Payment" +
+                " INNER JOIN $TABLE_VENDOR ON $Vendor_TABLE_Payment.$Payment_VendorID=$TABLE_VENDOR.$COLUMN_ID"
         val db = readableDatabase
         val cursor = db.rawQuery(query, null)
         cursor.use {

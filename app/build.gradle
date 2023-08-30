@@ -51,17 +51,19 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:20.2.2'
     testImplementation 'junit:junit:4.13.2'
 
-//swiperefresh and swipe decorator
+    //swiperefresh and swipe decorator
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'it.xabaras.android:recyclerview-swipedecorator:1.4'
 
     implementation 'com.razorpay:checkout:1.6.34'
 
+    //PDF Report
+//    implementation 'com.github.barteksc:android-pdf-viewer:3.2.0-beta.1'
+    implementation 'com.itextpdf:itextpdf:5.5.13'
+
     //    PieChart
     implementation 'com.github.blackfizz:eazegraph:1.2.5l@aar'
     implementation 'com.nineoldandroids:library:2.4.0'
-
-
 
 
     implementation 'de.hdodenhof:circleimageview:3.1.0'

@@ -109,53 +109,40 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
             recyclerView.layoutManager=LinearLayoutManager(this)
             adapter.notifyDataSetChanged()
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        val databasename=getSharedPreference(this,"databasename").toString()
-        val db=LocalDatabase(this,databasename)
-        val GuestList=db.getAllGuests()
-        if(GuestList!=null){
-            adapter=GuestApdater(this,GuestList,this)
-            recyclerView.adapter=adapter
-            recyclerView.layoutManager=LinearLayoutManager(this)
-            adapter.notifyDataSetChanged()
-        }
         val swipe=object : GuestSwipeToDelete(this){
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position=viewHolder.adapterPosition
                 when(direction){
                     ItemTouchHelper.LEFT->
-                if(position!=RecyclerView.NO_POSITION){
-                    val deleteitem=GuestList[position]
-                    db.deleteGuest(deleteitem)
-                    adapter.notifyItemRemoved(position)
+                        if(position!=RecyclerView.NO_POSITION){
+                            val deleteitem=GuestList[position]
+                            db.deleteGuest(deleteitem)
+                            adapter.notifyItemRemoved(position)
 
-                    val snackbar= Snackbar.make(this@GuestDataHolderActivity.recyclerView,"Guest Data Removed",Snackbar.LENGTH_LONG)
-                        .addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>(){
-                            override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                                super.onDismissed(transientBottomBar, event)
-                                recreate()
-                            }
+                            val snackbar= Snackbar.make(this@GuestDataHolderActivity.recyclerView,"Guest Data Removed",Snackbar.LENGTH_LONG)
+                                .addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>(){
+                                    override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                                        super.onDismissed(transientBottomBar, event)
+                                        recreate()
+                                    }
 
-                            override fun onShown(transientBottomBar: Snackbar?) {
-                                transientBottomBar?.setAction("UNDO"){
-                                    GuestList.add(position,deleteitem)
-                                    adapter.notifyItemInserted(position)
+                                    override fun onShown(transientBottomBar: Snackbar?) {
+                                        transientBottomBar?.setAction("UNDO"){
+                                            GuestList.add(position,deleteitem)
+                                            adapter.notifyItemInserted(position)
+                                        }
+                                        super.onShown(transientBottomBar)
+                                    }
+                                }).apply {
+                                    animationMode=Snackbar.ANIMATION_MODE_SLIDE
                                 }
-                                super.onShown(transientBottomBar)
-                            }
-                        }).apply {
-                            animationMode=Snackbar.ANIMATION_MODE_SLIDE
+                            snackbar.setActionTextColor(
+                                ContextCompat.getColor(
+                                    this@GuestDataHolderActivity, androidx.browser.R.color.browser_actions_bg_grey
+                                )
+                            )
+                            snackbar.show()
                         }
-                    snackbar.setActionTextColor(
-                        ContextCompat.getColor(
-                            this@GuestDataHolderActivity, androidx.browser.R.color.browser_actions_bg_grey
-                        )
-                    )
-                    snackbar.show()
-                }
                     ItemTouchHelper.RIGHT->{
                         val Guest=GuestList[position]
                         val CurrentStatus=Guest.isInvitationSent
@@ -191,12 +178,17 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
                         }
 
                     }
-            }
+                }
 
-        }
+            }
         }
         val itemtouch= ItemTouchHelper(swipe)
         itemtouch.attachToRecyclerView(recyclerView)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        showData()
     }
     private fun showSortOptions() {
         val dialogBuilder = AlertDialog.Builder(this)

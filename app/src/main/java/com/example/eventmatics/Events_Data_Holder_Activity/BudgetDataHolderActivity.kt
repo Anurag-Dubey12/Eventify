@@ -17,6 +17,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Environment
 import android.os.Handler
+import android.util.EventLog
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -45,6 +46,9 @@ import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import java.io.File
 import java.io.FileOutputStream
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnItemClickListener{
     private lateinit var recyclerView: RecyclerView
@@ -458,7 +462,7 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
             }
             R.id.pdfreport->{
                 if(checkPermissions()){
-                GeneratePDF()
+                    GeneratePDF()
                 }
                 else{
                     requestPermission()
@@ -473,11 +477,13 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
         val databasename = getSharedPreference(this, "databasename").toString()
         val db = LocalDatabase(this, databasename)
         val BudgetList = db.getAllBudgets()
+        val Event = db.getEventData(1)
+        val name=Event?.name
 
         val pageWidth = 792
         val pageHeight = 1120
         bmp = BitmapFactory.decodeResource(resources, R.drawable.logo)
-        scalebmp = Bitmap.createScaledBitmap(bmp, 140, 140, false)
+        scalebmp = Bitmap.createScaledBitmap(bmp, 190, 190, false)
 
         val pdfDocument = PdfDocument()
 
@@ -490,60 +496,108 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
         val page: PdfDocument.Page = pdfDocument.startPage(pageInfo)
         val canvas: Canvas = page.canvas
 
-        canvas.drawBitmap(scalebmp, 57F, 40F, paint)
-        title.textSize = 15F
-        title.color = ContextCompat.getColor(this, R.color.Goldenrod)
-        canvas.drawText("Budget Report", 209F, 80F, title)
+        canvas.drawBitmap(scalebmp, 20F, 0F, paint)
+        title.textSize = 30F
+        title.color = ContextCompat.getColor(this, R.color.black)
+        canvas.drawText("Budget Report", 209F, 50F, title)
 
-        val startY = 120F
-        val lineHeight = 30F
+        val startY = 200F
+        val lineHeight = 50F
 
-        // Draw the header text at the center of the page
+        // Define column names
+        val columnNames = listOf("No", "Name", "Category", "Note", "Estimated")
+
+        // Draw the header text and borders for header cells
+        val borderPaint = Paint()
+        borderPaint.style = Paint.Style.STROKE
+        borderPaint.color = Color.BLACK
+        borderPaint.strokeWidth = 2F
+
         val headerPaint = Paint()
         headerPaint.textSize = 20F
         headerPaint.color = Color.BLACK
         headerPaint.textAlign = Paint.Align.CENTER
-        val headerText = "Sr.No ,Name,Category,Note,Estimated"
+
         val headerX = pageWidth.toFloat() / 2
         val headerY = startY
-        canvas.drawText(headerText, headerX, headerY, headerPaint)
+
+        for ((columnIndex, columnName) in columnNames.withIndex()) {
+            val cellWidth = pageWidth / columnNames.size
+            val cellHeight = lineHeight
+
+            val cellX = columnIndex * cellWidth
+            val cellY = headerY - cellHeight / 2
+
+            // Draw borders around header cells
+            canvas.drawRect(
+                cellX.toFloat(), cellY, (cellX + cellWidth).toFloat(),
+                (cellY + cellHeight), borderPaint
+            )
+
+            // Draw header text
+            canvas.drawText(columnName,
+                (cellX + cellWidth / 2).toFloat(), cellY + cellHeight / 2, headerPaint)
+        }
 
         val dataPaint = Paint()
         dataPaint.textSize = 12F
         dataPaint.color = Color.BLACK
         dataPaint.textAlign = Paint.Align.CENTER
 
-        val columnSpacing = pageWidth / 6
+        val cellWidth = pageWidth / columnNames.size
+        val cellHeight = lineHeight
 
-        for ((index, Budget) in BudgetList.withIndex()) {
-            val xPosition = pageWidth / 6
-            val yPosition = startY + (index + 1) * lineHeight
+        for ((rowIndex, Budget) in BudgetList.withIndex()) {
+            val xPosition = 0
+            val yPosition = startY + (rowIndex + 1) * lineHeight
 
-            val idText = Budget.id.toString()
-            val nameText = Budget.name
-            val categoryText = Budget.category
-            val noteText = Budget.note
-            val estimatedText = Budget.estimatedAmount
+            val dataItems = listOf(
+                Budget.id.toString(),
+                Budget.name,
+                Budget.category,
+                Budget.note,
+                Budget.estimatedAmount
+            )
 
-            canvas.drawText(idText, xPosition.toFloat(), yPosition, dataPaint)
-            canvas.drawText(nameText, (xPosition + columnSpacing).toFloat(), yPosition, dataPaint)
-            canvas.drawText(categoryText,
-                (xPosition + 2 * columnSpacing).toFloat(), yPosition, dataPaint)
-            canvas.drawText(noteText,
-                (xPosition + 3 * columnSpacing).toFloat(), yPosition, dataPaint)
-            canvas.drawText(estimatedText,
-                (xPosition + 4 * columnSpacing).toFloat(), yPosition, dataPaint)
+            for ((columnIndex, data) in dataItems.withIndex()) {
+                val cellX = columnIndex * cellWidth
+                val cellY = yPosition - cellHeight / 2
+
+                // Draw borders around data cells
+                canvas.drawRect(
+                    cellX.toFloat(), cellY, (cellX + cellWidth).toFloat(),
+                    (cellY + cellHeight), borderPaint
+                )
+
+                // Draw data text
+                canvas.drawText(data,
+                    (cellX + cellWidth / 2).toFloat(), cellY + cellHeight / 2, dataPaint)
+            }
         }
-
         pdfDocument.finishPage(page)
 
-        // Create a directory named "PDFs"
-        val pdfDirectory = File(getExternalFilesDir(null), "PDFs")
-        pdfDirectory.mkdirs()
-        val pdfFilePath = File(pdfDirectory, "BudgetReport.pdf")
+
+        val pdfDirectory = File(Environment.getExternalStorageDirectory(), "Eventify")
+        if (!pdfDirectory.exists()) {
+            pdfDirectory.mkdirs()
+        }
+        val EventNameDirectory=File(pdfDirectory,name)
+        if (!EventNameDirectory.exists()) {
+            EventNameDirectory.mkdirs()
+        }
+        val childDirectory = File(EventNameDirectory, "Budget")
+        if (!childDirectory.exists()) {
+            childDirectory.mkdirs()
+        }
+
+        val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val pdfFileName = "BudgetReport_$timestamp.pdf"
+        val pdfFilePath = File(childDirectory, pdfFileName)
 
         try {
+            pdfFilePath.createNewFile()
             pdfDocument.writeTo(FileOutputStream(pdfFilePath))
+            Toast.makeText(this, "PDF file generated successfully", Toast.LENGTH_SHORT).show()
             Log.d("PDF", "PDF file generated successfully.")
         } catch (e: Exception) {
             e.printStackTrace()
@@ -552,6 +606,7 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
 
         pdfDocument.close()
     }
+
     fun checkPermissions():Boolean{
         var writeStoragePermission=ContextCompat.checkSelfPermission(
             applicationContext,
