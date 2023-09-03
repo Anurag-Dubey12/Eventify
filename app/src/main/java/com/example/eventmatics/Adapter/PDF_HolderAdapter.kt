@@ -30,8 +30,8 @@ class PDF_HolderAdapter(private val pdfFiles: List<PdfFileItem>) :
             pdfNameTextView.text = pdfFile.name
 
             itemView.setOnClickListener {
-                // Implement the logic to open the PDF when clicked
-                // You can start an intent to open a PDF viewer here
+
+
             }
         }
     }

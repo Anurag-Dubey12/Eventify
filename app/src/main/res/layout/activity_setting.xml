@@ -70,6 +70,39 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
+<!--    <androidx.cardview.widget.CardView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="16dp"-->
+<!--        android:padding="16dp">-->
+
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="@drawable/valueediteffect"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:gravity="center_vertical">-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/backupLabelTextView"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--              android:textStyle="bold"-->
+<!--                android:textColor="@color/black"-->
+<!--                android:layout_weight="1"-->
+<!--                android:text="Take Backup "-->
+<!--                android:textSize="18sp" />-->
+
+<!--            <androidx.appcompat.widget.AppCompatButton-->
+<!--                android:id="@+id/backupButton"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Backup Data"-->
+<!--                android:background="@drawable/addpaymentbutton"-->
+<!--                android:padding="8dp" />-->
+
+<!--        </LinearLayout>-->
+<!--    </androidx.cardview.widget.CardView>-->
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -79,40 +112,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/valueediteffect"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:id="@+id/backupLabelTextView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-              android:textStyle="bold"
-                android:textColor="@color/black"
-                android:layout_weight="1"
-                android:text="Take Backup "
-                android:textSize="18sp" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/backupButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Backup Data"
-                android:background="@drawable/addpaymentbutton"
-                android:padding="8dp" />
-
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:padding="16dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/valueediteffect"
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
@@ -123,53 +122,58 @@
                 android:textStyle="bold"
                 android:textColor="@color/black"
                 android:layout_weight="1"
-                android:text="Local Backup "
-                android:textSize="18sp" />
+                android:text=" Take Local Backup "
+                android:textSize="16sp" />
 
-            <androidx.appcompat.widget.AppCompatButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/LocalBackupbutton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
                 android:text="Local Backup"
-                android:background="@drawable/addpaymentbutton"
-                android:padding="8dp" />
-
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:padding="16dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/valueediteffect"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:id="@+id/DriveBackup"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
+                app:backgroundTint="@color/white"
                 android:textColor="@color/black"
-                android:layout_weight="1"
-                android:text="Drive Backup "
-                android:textSize="18sp" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/DriveBackupbutton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Drive Backup"
-                android:background="@drawable/addpaymentbutton"
+                app:cornerRadius="15sp"
+                app:strokeWidth="1sp"
+                app:strokeColor="@color/black"
                 android:padding="8dp" />
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
+
+<!--    <androidx.cardview.widget.CardView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="16dp"-->
+<!--        android:padding="16dp">-->
+
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="@drawable/valueediteffect"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:gravity="center_vertical">-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/DriveBackup"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:textStyle="bold"-->
+<!--                android:textColor="@color/black"-->
+<!--                android:layout_weight="1"-->
+<!--                android:text="Drive Backup "-->
+<!--                android:textSize="18sp" />-->
+
+<!--            <androidx.appcompat.widget.AppCompatButton-->
+<!--                android:id="@+id/DriveBackupbutton"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Drive Backup"-->
+<!--                android:background="@drawable/addpaymentbutton"-->
+<!--                android:padding="8dp" />-->
+
+<!--        </LinearLayout>-->
+<!--    </androidx.cardview.widget.CardView>-->
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -179,8 +183,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:background="@drawable/valueediteffect"
-
             android:gravity="center_vertical">
 
             <TextView
@@ -193,23 +195,33 @@
                 android:text="Reset Data"
                 android:textSize="18sp" />
 
-            <androidx.appcompat.widget.AppCompatButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/resetDataButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/addpaymentbutton"
                 android:text="Reset"
-                android:padding="8dp" />
+                android:padding="8dp"
+                app:backgroundTint="@color/white"
+                android:textColor="@color/black"
+                app:cornerRadius="15sp"
+                app:strokeWidth="1sp"
+                app:strokeColor="@color/black"
+                />
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/saveButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Save"
         android:layout_gravity="center"
         android:layout_marginTop="16dp"
+        app:backgroundTint="@color/white"
+        android:textColor="@color/black"
+        app:cornerRadius="15sp"
+        app:strokeWidth="1sp"
+        app:strokeColor="@color/black"
         android:padding="8dp" />
 
 </LinearLayout>

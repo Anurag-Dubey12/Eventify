@@ -384,6 +384,12 @@ class LocalDatabase(contex:Context,databasename:String):
         db.close()
         return rowsAffected
     }
+    fun deteleAllEvent():Int{
+        val db=writableDatabase
+        val rowsaffected=db.delete(TABLE_Event,null,null)
+        db.close()
+        return rowsaffected
+    }
 
     //Task Function
     fun createTask(task: Task): Long {

@@ -479,7 +479,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:headerLayout="@layout/nav_header"
-        android:background="@color/Lavender"
+        android:background="@color/white"
         app:drawerLayoutCornerSize="15sp"
         style="@style/Widget.Material3.NavigationView"
        app:itemShapeAppearance="@anim/nav_default_enter_anim"

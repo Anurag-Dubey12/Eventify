@@ -94,5 +94,11 @@ class NamesDatabase(val context: Context):SQLiteOpenHelper(context,"Databasename
         db.close()
         return rowsAffected
     }
+    fun deleteAll():Int{
+        val db=writableDatabase
+        val rowsaffected=db.delete(DATABASE_TABLE,null,null)
+        db.close()
+        return rowsaffected
+    }
 
 }
