@@ -38,6 +38,7 @@ import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDat
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Task
 import com.example.eventmatics.SwipeGesture.SwipeToDelete
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
@@ -157,38 +158,56 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
                     ItemTouchHelper.LEFT->{
                         if(position!=RecyclerView.NO_POSITION){
                             val deleteitem=tasklist[position]
-                            db.deleteTask(deleteitem)
+
                             adapter.notifyItemRemoved(position)
 
 
-                            val snackbar=Snackbar.make(this@TaskDataHolderActivity.recyclerView,"Item Delete",Snackbar.LENGTH_SHORT)
-                                .addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
-                                    override fun onDismissed(
-                                        transientBottomBar: Snackbar?,
-                                        event: Int
-                                    ) {
-                                        super.onDismissed(transientBottomBar, event)
-                                        recreate()
-                                    }
-                                    override fun onShown(transientBottomBar: Snackbar?) {
-                                        transientBottomBar?.setAction("UNDO"){
-                                            tasklist.add(position,deleteitem)
-                                            adapter.notifyItemInserted(position)
-                                            actionBtn=true
-                                        }
-                                        super.onShown(transientBottomBar)
-                                    }
-
-                                }).apply {
-                                    animationMode = Snackbar.ANIMATION_MODE_FADE
+//                            val snackbar=Snackbar.make(this@TaskDataHolderActivity.recyclerView,"Item Delete",Snackbar.LENGTH_SHORT)
+//                                .addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
+//                                    override fun onDismissed(
+//                                        transientBottomBar: Snackbar?,
+//                                        event: Int
+//                                    ) {
+//                                        super.onDismissed(transientBottomBar, event)
+//                                        recreate()
+//                                    }
+//                                    override fun onShown(transientBottomBar: Snackbar?) {
+//                                        transientBottomBar?.setAction("UNDO"){
+//                                            tasklist.add(position,deleteitem)
+//                                            adapter.notifyItemInserted(position)
+//                                            actionBtn=true
+//                                        }
+//                                        super.onShown(transientBottomBar)
+//                                    }
+//
+//                                }).apply {
+//                                    animationMode = Snackbar.ANIMATION_MODE_FADE
+//                                }
+//                            snackbar.setActionTextColor(
+//                                ContextCompat.getColor(
+//                                    this@TaskDataHolderActivity, androidx.browser.R.color.browser_actions_bg_grey
+//                                )
+//                            )
+//                            snackbar.show()
+                            MaterialAlertDialogBuilder(this@TaskDataHolderActivity)
+                                .setTitle("Delete Item")
+                                .setMessage("Do you want to delete this item?")
+                                .setPositiveButton("Delete") { dialog, which ->
+                                    db.deleteTask(deleteitem)
+                                    actionBtn = true
+//                                    recreate()
                                 }
-                            snackbar.setActionTextColor(
-                                ContextCompat.getColor(
-                                    this@TaskDataHolderActivity, androidx.browser.R.color.browser_actions_bg_grey
-                                )
-                            )
-                            snackbar.show()
-
+                                .setNegativeButton("Cancel") { dialog, which ->
+                                    tasklist.add(position, deleteitem)
+                                    adapter.notifyItemInserted(position)
+                                }
+//                                .setOnDismissListener {
+//                                    if (!actionBtn) {
+//                                        // If the dialog is dismissed without choosing an option, recreate
+//                                        recreate()
+//                                    }
+//                                }
+                                .show()
                         }
                     }
 

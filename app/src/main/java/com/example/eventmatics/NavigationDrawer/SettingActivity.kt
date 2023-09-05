@@ -1,11 +1,15 @@
 package com.example.eventmatics.NavigationDrawer
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
+import android.provider.ContactsContract.Directory
 import android.util.Log
 import android.view.MenuItem
 import android.widget.Button
@@ -14,11 +18,14 @@ import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.FileProvider
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.NamesDatabase
+import com.example.eventmatics.SQLiteDatabase.Dataclass.Events
 import com.example.eventmatics.getSharedPreference
 import com.google.android.material.button.MaterialButton
+import com.google.gson.Gson
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -29,6 +36,8 @@ class SettingActivity : AppCompatActivity() {
     private lateinit var LocalBackupbutton:MaterialButton
     private lateinit var DriveBackupbutton:MaterialButton
     private lateinit var resetDataButton:MaterialButton
+    private lateinit var Loadbackup:MaterialButton
+    private val PICK_FILE_REQUEST = 1
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +50,7 @@ class SettingActivity : AppCompatActivity() {
         val themegroup:RadioGroup=findViewById(R.id.themeRadioGroup)
          LocalBackupbutton=findViewById(R.id.LocalBackupbutton)
         resetDataButton=findViewById(R.id.resetDataButton)
+        Loadbackup=findViewById(R.id.LoadBackup)
 //        DriveBackupbutton=findViewById(R.id.DriveBackupbutton)
 
         val current=AppCompatDelegate.getDefaultNightMode()
@@ -66,9 +76,21 @@ class SettingActivity : AppCompatActivity() {
         resetDataButton.setOnClickListener {
             ResetData()
         }
+        Loadbackup.setOnClickListener {
+            LoadBackupData()
+        }
 //        DriveBackupbutton.setOnClickListener {
 //            driveBackupDatabase()
 //        }
+    }
+    fun LoadBackupData() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.type = "*/*"
+        if (intent.resolveActivity(packageManager) != null) {
+            startActivityForResult(intent, PICK_FILE_REQUEST)
+        } else {
+
+        }
     }
 
     private fun ResetData() {
@@ -126,6 +148,7 @@ class SettingActivity : AppCompatActivity() {
             Log.d("Backup", "Backup Could Not Be Processed Because: ${e.message}")
         }
     }
+
 
     private fun copyFile(sourcefile: File, dest: File) {
         if (!sourcefile.exists()) return

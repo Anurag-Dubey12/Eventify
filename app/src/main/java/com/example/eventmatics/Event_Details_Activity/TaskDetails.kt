@@ -177,8 +177,7 @@ class TaskDetails : AppCompatActivity(){
 
         if (taskPendingbut.isClickable) {
             taskStatus = taskPendingbut.text.toString()
-        }
-        if(TaskCombut.isClickable) {
+        }else if (TaskCombut.isClickable) {
             taskStatus = TaskCombut.text.toString()
         }
         Log.d("TaskStaus:",taskStatus)

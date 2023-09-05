@@ -58,7 +58,7 @@ class PDF_Report : AppCompatActivity() {
         if (directory.exists() && directory.isDirectory) {
             val files = directory.listFiles { _, filename -> filename.endsWith(".pdf") }
             files?.forEach { file ->
-                pdfFiles.add(PdfFileItem(file.name, file.absolutePath))
+                pdfFiles.add(PdfFileItem(file.nameWithoutExtension, file.absolutePath))
             }
         }
 

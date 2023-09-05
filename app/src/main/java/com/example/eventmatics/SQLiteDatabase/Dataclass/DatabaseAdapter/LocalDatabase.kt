@@ -296,6 +296,34 @@ class LocalDatabase(contex:Context,databasename:String):
         db.close()
         return id
     }
+    @SuppressLint("Range")
+    fun GetEvent(name:String):Events?{
+        val db=readableDatabase
+        val selection="$Event_Name = ?"
+        val selectionargs= arrayOf(selection)
+        val cursor=db.query(
+            TABLE_Event,
+            null,
+            selection,
+            selectionargs,
+            null,
+            null,
+            null
+        )
+        var event:Events?=null
+        if(cursor!=null && cursor.moveToFirst()){
+            val id = cursor.getLong(cursor.getColumnIndex(COLUMN_ID))
+            val name = cursor.getString(cursor.getColumnIndex(Event_Name))
+            val date = cursor.getString(cursor.getColumnIndex(Event_Date))
+            val time = cursor.getString(cursor.getColumnIndex(Event_Time))
+            val budget = cursor.getString(cursor.getColumnIndex(Event_Budget))
+
+            event = Events(id, name, date, time, budget)
+        }
+        cursor?.close()
+        db.close()
+        return event
+    }
     fun isEventNameExists(eventName: String): Boolean {
         val db = readableDatabase
         val query = "SELECT $Event_Name FROM $TABLE_Event WHERE $Event_Name = ?"

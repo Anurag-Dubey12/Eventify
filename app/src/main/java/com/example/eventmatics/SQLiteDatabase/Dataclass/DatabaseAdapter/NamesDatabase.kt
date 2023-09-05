@@ -45,7 +45,23 @@ class NamesDatabase(val context: Context):SQLiteOpenHelper(context,"Databasename
         db.close()
         return id
     }
-
+    @SuppressLint("Range")
+    fun GetNamesEventsData(eventid:Int):DatabaseNameDataClass?{
+        val db=readableDatabase
+        val query="SELECT * FROM $DATABASE_TABLE WHERE $COLUMN_ID = $eventid"
+        val cursor=db.rawQuery(query,null)
+        var names:DatabaseNameDataClass?=null
+        if(cursor.moveToFirst()){
+            val id = cursor.getLong(cursor.getColumnIndex(COLUMN_ID))
+            val name = cursor.getString(cursor.getColumnIndex(DATABASE_NAME))
+            val date = cursor.getString(cursor.getColumnIndex(DATABASE_DATE))
+            val time = cursor.getString(cursor.getColumnIndex(DATABASE_Time))
+            names=DatabaseNameDataClass(id,name,date,time)
+        }
+        cursor?.close()
+        db.close()
+        return names
+    }
     @SuppressLint("Range")
     fun getAllEventNames(): List<DatabaseNameDataClass> {
         val databaseNames = ArrayList<DatabaseNameDataClass>()

@@ -4,6 +4,8 @@ import android.content.Context
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
+import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -30,7 +32,9 @@ class DatabaseNameHolder(context: Context) : BottomSheetDialog(context) {
                 val databasename = getSharedPreference(context, "databasename").toString()
                 val Databasenames = NamesDatabase(context)
                 val DatabaseNames=Databasenames.getAllEventNames()
-                adapter= EventDatabaseAdapter(DatabaseNames)
+                adapter= EventDatabaseAdapter(context,DatabaseNames){position ->
+                    ChangeDatabase(position)
+                }
                 databaseRecycler.adapter=adapter
                 databaseRecycler.layoutManager=LinearLayoutManager(context)
                 adapter.notifyDataSetChanged()
@@ -40,12 +44,22 @@ class DatabaseNameHolder(context: Context) : BottomSheetDialog(context) {
 //        EventNameInflate()
         showEventData()
     }
+    interface DatabaseChangeListener {
+        fun onDatabaseChanged(newDatabaseName: String)
+    }
+    private var databaseChangeListener: DatabaseChangeListener? = null
+    fun setDatabaseChangeListener(listener: DatabaseChangeListener?) {
+        this.databaseChangeListener = listener
+    }
 
-fun showEventData() {
+
+    fun showEventData() {
     val databasename = getSharedPreference(context, "databasename").toString()
     val Databasenames = NamesDatabase(context)
     val DatabaseNames=Databasenames.getAllEventNames()
-    adapter= EventDatabaseAdapter(DatabaseNames)
+    adapter= EventDatabaseAdapter(context,DatabaseNames){position ->
+        ChangeDatabase(position)
+    }
     databaseRecycler.adapter=adapter
     databaseRecycler.layoutManager=LinearLayoutManager(context)
     adapter.notifyDataSetChanged()
@@ -55,5 +69,53 @@ fun showEventData() {
         val sharedvalue=context.getSharedPreferences("Database",Context.MODE_PRIVATE)
         return sharedvalue.getString(key,null)
     }
+//    private fun ChangeDatabase(position:Int) {
+//        try{
+//            val sharedvalue=context.getSharedPreferences("Database", Context.MODE_PRIVATE)
+////          val databasename = getSharedPreference(context, "databasename").toString()
+//            val db = NamesDatabase(context)
+//            val Names=db.GetNamesEventsData(position)
+//            val DatabaseName=Names?.DatabaseName
+//            Log.d("Database_Names","Database name is:$Names")
+//            val editor=sharedvalue.edit()
+//            if(sharedvalue.contains("Database")){
+//                editor.remove("Database")
+//            }
+//            editor.putString("Database",DatabaseName)
+//            editor.apply()
+//            Log.d("Database_Names","Shared value is :$sharedvalue")
+//            databaseChangeListener?.onDatabaseChanged(newDatabaseName ?: "")
+//
+//            dismiss()
+//
+//        }catch (e:Exception){
+//            e.printStackTrace()
+//            Toast.makeText(context,"Database Could Not Be Changed Because :${e.message}", Toast.LENGTH_SHORT).show()
+//        }
+//    }
+private fun ChangeDatabase(position: Int) {
+    try {
+        val sharedvalue = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
+        val db = NamesDatabase(context)
+        val Names = db.GetNamesEventsData(position)
+        val DatabaseName = Names?.DatabaseName
+        Log.d("Database_Names", "Database name is:$Names")
+        val editor = sharedvalue.edit()
+        if (sharedvalue.contains("Database")) {
+            editor.remove("Database")
+        }
+        editor.putString("Database", DatabaseName)
+        editor.apply()
+        Log.d("Database_Names", "Shared value is :$sharedvalue")
+
+        // Invoke the callback here to notify the MainActivity of the database change
+        databaseChangeListener?.onDatabaseChanged(DatabaseName ?: "")
+
+        dismiss()
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Toast.makeText(context, "Database Could Not Be Changed Because :${e.message}", Toast.LENGTH_SHORT).show()
+    }
+}
 
 }

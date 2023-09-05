@@ -54,7 +54,7 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
 
     implementation 'com.squareup.picasso:picasso:2.71828'
-
+    implementation 'com.google.code.gson:gson:2.10.1'
     //swiperefresh and swipe decorator
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'it.xabaras.android:recyclerview-swipedecorator:1.4'

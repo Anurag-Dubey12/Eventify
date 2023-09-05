@@ -3,6 +3,7 @@ package com.example.eventmatics
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.BroadcastReceiver
@@ -42,6 +43,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.example.eventmatics.Adapter.EventDatabaseAdapter
 import com.example.eventmatics.Adapter.EventLayoutAdapter
 import com.example.eventmatics.Events_Data_Holder_Activity.BudgetDataHolderActivity
 import com.example.eventmatics.Events_Data_Holder_Activity.GuestDataHolderActivity
@@ -60,6 +62,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
+import com.google.gson.Gson
 import com.itextpdf.text.Document
 import com.itextpdf.text.Element
 import com.itextpdf.text.PageSize
@@ -78,7 +81,7 @@ import java.io.FileOutputStream
 import java.util.Calendar
 import java.util.Locale
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListener{
     lateinit var drawerLayout: DrawerLayout
     lateinit var navView: NavigationView
     lateinit var toogle:ActionBarDrawerToggle
@@ -104,6 +107,19 @@ class MainActivity : AppCompatActivity() {
     private lateinit var dataAddedReceiver: BroadcastReceiver
     private lateinit var piechart:PieChart
     private val PERMISSION_CODE=101
+    private val PICK_FILE_REQUEST = 1
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == PICK_FILE_REQUEST && resultCode == Activity.RESULT_OK) {
+            data?.data?.let { selectedFileUri ->
+                val inputStream=contentResolver.openInputStream(selectedFileUri)
+                val content=inputStream?.bufferedReader().use { it?.readText() }
+                val gson = Gson()
+                val dataobject=gson.fromJson(content,Events::class.java)
+            }
+        }
+    }
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -130,7 +146,8 @@ class MainActivity : AppCompatActivity() {
         pendingAmountShowTextView = findViewById(R.id.PendingAmountshow)
         paidAmountShowTextView = findViewById(R.id.PaidAmountshow)
 //        widgetButton = findViewById(R.id.widgetbutton)
-
+        val databaseNameHolder = DatabaseNameHolder(this)
+        databaseNameHolder.setDatabaseChangeListener(this)
         //Profile Pic And User Name
         val auth = FirebaseAuth.getInstance()
         val storage = FirebaseStorage.getInstance()
@@ -150,7 +167,7 @@ class MainActivity : AppCompatActivity() {
                 Picasso.get().load(photoUrl).into(userPic)
             }
         } else {
-            // Handle the case where the user is not authenticated or user information is not available
+
         }
 
 
@@ -163,40 +180,12 @@ class MainActivity : AppCompatActivity() {
             Eventshow.text=" "
             val eventAdding = EventAdding(this, supportFragmentManager, null)
             eventAdding.show()
-        } else {
-            taskImageButton.setOnClickListener {
-                if (eventRecyclerView.adapter?.itemCount==0){
-                    val eventAdding = EventAdding(this, supportFragmentManager, null)
-                    eventAdding.show()
-                    Toast.makeText(this,"Create A Event Before Moving Futher",Toast.LENGTH_SHORT).show()
-                }else{
-                Intent(this, TaskDataHolderActivity::class.java).also { startActivity(it) }
-                }
-            }
-            budgetImageButton.setOnClickListener {
-                if (eventRecyclerView.adapter?.itemCount==0){
-                    val eventAdding = EventAdding(this, supportFragmentManager, null)
-                    eventAdding.show()
-                    Toast.makeText(this,"Create A Event Before Moving Futher",Toast.LENGTH_SHORT).show()
-                }else{
-                Intent(this, BudgetDataHolderActivity::class.java).also { startActivity(it) }
-            }}
-            guestImageButton.setOnClickListener {
-                if (eventRecyclerView.adapter?.itemCount==0){
-                    val eventAdding = EventAdding(this, supportFragmentManager, null)
-                    eventAdding.show()
-                    Toast.makeText(this,"Create A Event Before Moving Futher",Toast.LENGTH_SHORT).show()
-                }else{
-                Intent(this, GuestDataHolderActivity::class.java).also { startActivity(it) }
-            }}
-            vendorImageButton.setOnClickListener {
-                if (eventRecyclerView.adapter?.itemCount==0){
-                    val eventAdding = EventAdding(this, supportFragmentManager, null)
-                    eventAdding.show()
-                    Toast.makeText(this,"Create A Event Before Moving Futher",Toast.LENGTH_SHORT).show()
-                }else{
-                Intent(this, VendorDataHolderActivity::class.java).also { startActivity(it) }
-            }}
+        }
+        else {
+            taskImageButton.setOnClickListener { CheckAndStartActivity(TaskDataHolderActivity::class.java) }
+            budgetImageButton.setOnClickListener { CheckAndStartActivity(BudgetDataHolderActivity::class.java) }
+            guestImageButton.setOnClickListener { CheckAndStartActivity(GuestDataHolderActivity::class.java) }
+            vendorImageButton.setOnClickListener { CheckAndStartActivity(VendorDataHolderActivity::class.java) }
         }
         Eventshow.setOnClickListener {
             if (eventshowhide.visibility== View.GONE && eventRecyclerView.visibility==View.GONE){
@@ -224,13 +213,12 @@ class MainActivity : AppCompatActivity() {
                 eventaddbut.visibility=View.VISIBLE
                 Eventshow.visibility=View.GONE
             } }
-        eventaddbut.setOnClickListener { val eventadding=EventAdding(this,supportFragmentManager,null)
-            eventadding.show()
-        }
+        eventaddbut.setOnClickListener {
+            val eventadding=EventAdding(this,supportFragmentManager,null)
+            eventadding.show() }
 
         if (isFirstLaunch(this)) {
             showFirstLaunchDialog()
-
             setFirstLaunchFlag(this, false)
         }
 //        widgetButton.setOnClickListener { addWidgetToHomeScreen() }
@@ -361,12 +349,23 @@ class MainActivity : AppCompatActivity() {
 
         navigationDrawershow()
     }
+    override fun onDatabaseChanged(newDatabaseName: String) {
 
+    }
     private fun SetAppTheme() {
         val Theme=GetThemePreference(this,"Theme")
         AppCompatDelegate.setDefaultNightMode(Theme)
     }
-
+    fun CheckAndStartActivity(targetActivity:Class<*>){
+        if (eventRecyclerView.adapter?.itemCount==0){
+            val eventAdding=EventAdding(this,supportFragmentManager,null)
+            eventAdding.show()
+            Toast.makeText(this, "Create an Event Before Moving Further", Toast.LENGTH_SHORT).show()
+        }
+        else{
+            Intent(this,targetActivity).also { startActivity(it) }
+        }
+    }
 
     fun createDataCell(data: String, font: com.itextpdf.text.Font): PdfPCell {
     val cell = PdfPCell(Paragraph(data, font))
@@ -974,4 +973,8 @@ fun checkPermissions():Boolean{
         unregisterReceiver(dataAddedReceiver)
 
     }
+
+
+
+
 }
