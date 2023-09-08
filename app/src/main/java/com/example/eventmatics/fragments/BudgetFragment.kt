@@ -15,6 +15,7 @@ import androidx.fragment.app.FragmentManager
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Paymentinfo
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.datepicker.MaterialDatePicker
 import java.util.Calendar
 
@@ -22,10 +23,10 @@ class BudgetFragment(private val context: Context, private val fragmentManager: 
                      private val budgetId: Long?) : BottomSheetDialogFragment() {
     private lateinit var etName: EditText
     private lateinit var etAmount: EditText
-    private lateinit var buttonPending: Button
-    private lateinit var buttonPaid: Button
+    private lateinit var buttonPending: MaterialButton
+    private lateinit var buttonPaid: MaterialButton
     private lateinit var etDate: TextView
-    private lateinit var buttonSubmit: Button
+    private lateinit var buttonSubmit: MaterialButton
     var status:String=""
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

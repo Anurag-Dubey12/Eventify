@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    style="@style/HolderScreen"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
    >
@@ -16,7 +17,7 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        style="@style/CardView"
         android:padding="16dp">
 
         <LinearLayout
@@ -24,14 +25,14 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <Switch
+            <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/notificationsSwitch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Enable Notifications"
                 android:textStyle="bold"
                 android:textSize="15sp"
-                android:textColor="@color/black"
+                style="@style/TEXTColor"
                 android:checked="true"
                 android:padding="8dp" />
 
@@ -41,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:text="Select Theme"
                 android:textStyle="bold"
-                android:textColor="@color/black"
+                style="@style/TEXTColor"
                 android:textSize="18sp"
                 android:paddingTop="8dp" />
 
@@ -57,6 +58,7 @@
                     android:layout_height="wrap_content"
                     android:text="Light Theme"
                     android:checked="true"
+                    style="@style/TEXTColor"
                     android:paddingLeft="16dp" />
 
                 <RadioButton
@@ -64,6 +66,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Dark Theme"
+                    style="@style/TEXTColor"
                     android:paddingLeft="16dp" />
             </RadioGroup>
 
@@ -120,7 +123,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
-                android:textColor="@color/black"
+                style="@style/TEXTColor"
                 android:layout_weight="1"
                 android:text=" Take Local Backup "
                 android:textSize="16sp" />
@@ -158,7 +161,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textStyle="bold"
-                android:textColor="@color/black"
+                style="@style/TEXTColor"
                 android:text="Load Data"
                 android:textSize="18sp" />
 
@@ -194,7 +197,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textStyle="bold"
-                android:textColor="@color/black"
+                style="@style/TEXTColor"
                 android:text="Reset Data"
                 android:textSize="18sp" />
 

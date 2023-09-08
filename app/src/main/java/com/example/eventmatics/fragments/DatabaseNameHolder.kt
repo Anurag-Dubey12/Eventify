@@ -2,17 +2,14 @@ package com.example.eventmatics.fragments
 
 import android.content.Context
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.os.Handler
 import android.util.Log
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.eventmatics.Adapter.EventDatabaseAdapter
 import com.example.eventmatics.R
-import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.NamesDatabase
 import com.example.eventmatics.getSharedPreference
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -45,7 +42,7 @@ class DatabaseNameHolder(context: Context) : BottomSheetDialog(context) {
         showEventData()
     }
     interface DatabaseChangeListener {
-        fun onDatabaseChanged(newDatabaseName: String)
+        fun onDatabaseChanged(EventID: Long?)
     }
     private var databaseChangeListener: DatabaseChangeListener? = null
     fun setDatabaseChangeListener(listener: DatabaseChangeListener?) {
@@ -98,18 +95,16 @@ private fun ChangeDatabase(position: Int) {
         val sharedvalue = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
         val db = NamesDatabase(context)
         val Names = db.GetNamesEventsData(position)
-        val DatabaseName = Names?.DatabaseName
-        Log.d("Database_Names", "Database name is:$Names")
-        val editor = sharedvalue.edit()
-        if (sharedvalue.contains("Database")) {
-            editor.remove("Database")
-        }
-        editor.putString("Database", DatabaseName)
-        editor.apply()
-        Log.d("Database_Names", "Shared value is :$sharedvalue")
-
-        // Invoke the callback here to notify the MainActivity of the database change
-        databaseChangeListener?.onDatabaseChanged(DatabaseName ?: "")
+        val EventID=Names?.id
+        Log.d("Database_Names", "Database name is:$EventID")
+//        val editor = sharedvalue.edit()
+//        if (sharedvalue.contains("Database")) {
+//            editor.remove("Database")
+//        }
+//        editor.putString("Database", DatabaseName)
+//        editor.apply()
+//        Log.d("Database_Names", "Shared value is :$sharedvalue")
+        databaseChangeListener?.onDatabaseChanged(EventID)
 
         dismiss()
     } catch (e: Exception) {

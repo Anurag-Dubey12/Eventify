@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    style="@style/CardView"
     android:padding="16dp">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/name"
-        android:textColor="@color/black"
         android:textSize="18sp"
+        style="@style/TEXTColor"
         android:layout_marginBottom="10sp"
         />
 
@@ -18,7 +20,7 @@
         android:id="@+id/editTextName"
         android:layout_width="match_parent"
         android:layout_height="30sp"
-        android:background="@drawable/valueediteffect"
+        style="@style/EditValueStyle"
         android:hint="Enter Name"
         android:layout_marginBottom="10sp"
         android:inputType="text" />
@@ -27,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/amount"
-        android:textColor="@color/black"
+        style="@style/RecyclerTextColor"
         android:textSize="18sp"
         android:layout_marginBottom="10sp"/>
 
@@ -35,7 +37,7 @@
         android:id="@+id/editTextAmount"
         android:layout_width="match_parent"
         android:layout_height="30sp"
-        android:background="@drawable/valueediteffect"
+        style="@style/EditValueStyle"
         android:hint="@string/amount"
         android:layout_marginBottom="10sp"
         android:inputType="numberDecimal" />
@@ -44,7 +46,7 @@
         android:layout_height="wrap_content"
         android:text="@string/payment_status"
         android:textSize="18sp"
-        android:textColor="@color/black"
+        style="@style/RecyclerTextColor"
         android:layout_marginBottom="10sp"
         />
 
@@ -54,22 +56,32 @@
         android:layout_marginBottom="10sp"
         android:orientation="horizontal">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonPending"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/addpaymentbutton"
             android:layout_weight="1"
-            android:layout_marginRight="15sp"
-            android:text="Pending" />
+            android:layout_marginEnd="15sp"
+            android:text="Pending"
+            app:backgroundTint="@color/white"
+            android:textColor="@color/black"
+            app:cornerRadius="15sp"
+            app:strokeWidth="1sp"
+            app:strokeColor="@color/black"
+            android:padding="8dp"/>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonPaid"
             android:layout_width="0dp"
-            android:background="@drawable/addpaymentbutton"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Paid" />
+            android:text="Paid"
+            app:backgroundTint="@color/white"
+            android:textColor="@color/black"
+            app:cornerRadius="15sp"
+            app:strokeWidth="1sp"
+            app:strokeColor="@color/black"
+            android:padding="8dp"/>
 
     </LinearLayout>
 
@@ -78,7 +90,7 @@
         android:layout_height="wrap_content"
         android:text="@string/expired_date"
         android:textSize="16sp"
-        android:textColor="@color/black"
+        style="@style/RecyclerTextColor"
         android:layout_marginBottom="10sp"/>
 
     <TextView
@@ -87,16 +99,22 @@
         android:layout_height="30sp"
         android:textColor="@color/black"
         android:hint="Select Your Date"
+        style="@style/EditValueStyle"
+        android:textColorHint="@color/white"
         android:drawableEnd="@drawable/calender"
-        android:background="@drawable/valueediteffect"
         android:layout_marginBottom="10sp"/>
 
-    <androidx.appcompat.widget.AppCompatButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonSubmit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/addpaymentbutton"
         android:text="Submit"
-        android:layout_marginBottom="10sp"/>
+        android:layout_marginBottom="10sp"
+        app:backgroundTint="@color/white"
+        android:textColor="@color/black"
+        app:cornerRadius="15sp"
+        app:strokeWidth="1sp"
+        app:strokeColor="@color/black"
+        android:padding="8dp"/>
 
 </LinearLayout>

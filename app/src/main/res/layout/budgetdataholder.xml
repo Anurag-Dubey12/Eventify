@@ -4,24 +4,25 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="10sp"
     android:id="@+id/backcol"
+
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <androidx.cardview.widget.CardView
         android:id="@+id/BudgetCardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardCornerRadius="15sp"
-        app:cardBackgroundColor="#FFFCFC"
         >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            style="@style/RecyclerBack">
 
             <ImageView
                 android:layout_marginTop="5sp"
                 android:layout_width="65sp"
                 android:layout_height="65sp"
-                android:src="@drawable/budgetdata"
+                style="@style/RecyclerImage"
                 />
             <LinearLayout
                 android:layout_width="0dp"
@@ -35,12 +36,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
+                    style="@style/RecyclerTextColor"
                     android:textStyle="bold" />
                 <TextView
                     android:id="@+id/Budget_Category"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
+                    style="@style/RecyclerTextColor"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -57,6 +60,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
+                    style="@style/RecyclerTextColor"
                     android:textStyle="bold" />
                 <TextView
                     android:id="@+id/BudgetNote"
@@ -64,6 +68,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
                     android:maxLines="2"
+                    style="@style/RecyclerTextColor"
                     android:ellipsize="end"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -74,6 +79,7 @@
                 android:textSize="16sp"
                 android:layout_gravity="center_vertical"
                 android:ellipsize="end"
+                style="@style/RecyclerTextColor"
                 android:layout_marginRight="10sp"
                 android:textStyle="bold" />
 
@@ -85,5 +91,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:dividerInsetStart="16dp"
+        style="@style/Divider"
         app:dividerInsetEnd="16dp"/>
 </RelativeLayout>

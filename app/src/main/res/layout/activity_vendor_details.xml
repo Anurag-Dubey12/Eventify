@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
+    style="@style/HolderScreen"
     android:layout_width="match_parent">
     <RelativeLayout
         android:layout_width="match_parent"
@@ -25,7 +26,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/vendor_details"
                 android:textSize="20sp"
-                android:textColor="@color/light_purple"
+                style="@style/TEXTColor"
                 android:layout_marginBottom="15sp"
                 />
             <TextView
@@ -33,12 +34,13 @@
                 android:layout_height="wrap_content"
                 android:text="@string/vendor_name"
                 android:textSize="20sp"
+                style="@style/TEXTColor"
                 />
             <EditText
                 android:id="@+id/VendorNameET"
                 android:layout_width="match_parent"
                 android:layout_height="35sp"
-                android:background="@drawable/valueediteffect"
+                style="@style/EditValueStyle"
                 android:layout_marginBottom="10sp"
                 android:inputType="text" />
             <TextView
@@ -46,6 +48,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/Category"
                 android:textSize="20sp"
+                style="@style/TEXTColor"
                 android:layout_marginBottom="10sp"
                 />
             <androidx.appcompat.widget.AppCompatButton
@@ -53,7 +56,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableEnd="@drawable/drop_arrow"
-                android:background="@drawable/category_button"
+                style="@style/EditValueStyle"
                 android:text="@string/select_a_category"
                 android:layout_marginBottom="10sp"
 
@@ -63,6 +66,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/note"
                 android:textSize="20sp"
+                style="@style/TEXTColor"
                 android:layout_marginBottom="10sp"
                 />
 
@@ -71,13 +75,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="35sp"
                 android:layout_marginBottom="10sp"
-                android:background="@drawable/valueediteffect" />
+                style="@style/EditValueStyle" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/estimated_amount"
                 android:textSize="20sp"
+                style="@style/TEXTColor"
                 android:layout_marginBottom="10sp"
                 />
             <EditText
@@ -85,7 +90,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="35sp"
                 android:inputType="numberDecimal"
-                android:background="@drawable/valueediteffect"
+                style="@style/EditValueStyle"
                 android:layout_marginBottom="10sp"
                 />
             <LinearLayout
@@ -167,6 +172,7 @@
                         android:layout_marginBottom="10sp"
                         android:text="@string/phone_number"
                         android:textSize="20sp"
+                        style="@style/TEXTColor"
                         />
 
                     <EditText
@@ -177,7 +183,7 @@
                         android:inputType="phone"
                         android:maxLength="10"
                         android:layout_marginBottom="10sp"
-                        android:background="@drawable/valueediteffect"
+                        style="@style/EditValueStyle"
                         android:drawableEnd="@drawable/call" />
 
                     <TextView
@@ -187,6 +193,7 @@
                         android:layout_marginStart="5sp"
                         android:layout_marginBottom="10sp"
                         android:text="@string/email_id"
+                        style="@style/TEXTColor"
                         android:textSize="20sp"
 
                         />
@@ -198,7 +205,7 @@
                         android:layout_marginStart="5sp"
                         android:maxLines="2"
                         android:layout_marginBottom="10sp"
-                        android:background="@drawable/valueediteffect"
+                        style="@style/EditValueStyle"
                         android:drawableEnd="@drawable/email"
                         android:inputType="textEmailAddress" />
                     <TextView
@@ -208,6 +215,7 @@
                         android:layout_marginStart="5sp"
                         android:layout_marginBottom="10sp"
                         android:text="@string/website"
+                        style="@style/TEXTColor"
                         android:textSize="20sp"
 
                         />
@@ -219,7 +227,7 @@
                         android:layout_marginStart="5sp"
                         android:inputType="textUri"
                         android:layout_marginBottom="10sp"
-                        android:background="@drawable/valueediteffect"
+                        style="@style/EditValueStyle"
 
                         />
                     <TextView
@@ -229,6 +237,7 @@
                         android:layout_marginStart="5sp"
                         android:layout_marginBottom="10sp"
                         android:text="@string/address"
+                        style="@style/TEXTColor"
                         android:textSize="20sp"
 
                         />
@@ -239,7 +248,7 @@
                         android:layout_height="35sp"
                         android:layout_marginStart="5sp"
                         android:layout_marginBottom="15sp"
-                        android:background="@drawable/valueediteffect"
+                        style="@style/EditValueStyle"
                         android:drawableEnd="@drawable/location" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -253,6 +262,7 @@
                     android:layout_height="35sp"
                     android:textSize="20sp"
                     android:text="@string/payments"
+                    style="@style/TEXTColor"
                     android:textColor="@color/light_purple"
                     />
                 <ImageView

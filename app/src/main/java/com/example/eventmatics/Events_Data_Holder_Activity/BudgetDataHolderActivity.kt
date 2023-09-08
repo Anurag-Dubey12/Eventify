@@ -11,13 +11,10 @@ import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Typeface
 import android.graphics.pdf.PdfDocument
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.os.Environment
 import android.os.Handler
-import android.util.EventLog
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -41,6 +38,7 @@ import com.example.eventmatics.SQLiteDatabase.Dataclass.Budget
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SwipeGesture.BudgetSwipeToDelete
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
@@ -183,50 +181,26 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
                     ItemTouchHelper.LEFT->{
                 if(position!=RecyclerView.NO_POSITION){
                     deleteditem=BudgetList[position]
-                    db.deleteBudget(deleteditem!!)
+
                     adapter.notifyItemRemoved(position)
 
-                    val snackbar=Snackbar.make(this@BudgetDataHolderActivity.recyclerView,"Budget Item Deleted",Snackbar.LENGTH_LONG)
-                    snackbar.setAction("UNDO") {
-                        if (deleteditem != null) {
-                            db.createBudget(deleteditem!!)
-                            BudgetList.add(position, deleteditem!!)
-                            adapter.notifyItemInserted(position)
-                            adapter.notifyDataSetChanged()
+                    MaterialAlertDialogBuilder(this@BudgetDataHolderActivity)
+                        .setTitle("Delete Budget Item")
+                        .setMessage("Do you want to delete this item?")
+                        .setPositiveButton("Delete"){dialog,_->
+                            db.deleteBudget(deleteditem!!)
+                            recreate()
                         }
-                    }
-                        .addCallback(object:BaseTransientBottomBar.BaseCallback<Snackbar>(){
-                            override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                                super.onDismissed(transientBottomBar, event)
-                                if (event!= DISMISS_EVENT_ACTION){
-                                    deleteditem=null
-                            }
-                                recreate()
-                            }
-                            override fun onShown(transientBottomBar: Snackbar?) {
-                                transientBottomBar?.setAction("UNDO"){
-                                    BudgetList.add(position, deleteditem!!)
-                                    adapter.notifyItemInserted(position)
-                                }
-
-                                super.onShown(transientBottomBar)
-                            }
-                        }).apply {
-                            animationMode = Snackbar.ANIMATION_MODE_FADE
+                        .setNegativeButton("Cancel"){dialog,_->
+                            dialog.dismiss()
+                            recreate()
                         }
-                    snackbar.setActionTextColor(
-                        ContextCompat.getColor(
-                            this@BudgetDataHolderActivity, androidx.browser.R.color.browser_actions_bg_grey
-                        )
-                    )
-                    snackbar.show()
-
                 }
                     }
                     ItemTouchHelper.RIGHT->{
                         if(position!=RecyclerView.NO_POSITION){
                             val budget = BudgetList[position]
-
+                            adapter.notifyItemRemoved(position)
                             // Get the current 'Paid' status of the budget
                             val currentPaidStatus = budget.paid
                             val budgetCost=budget.estimatedAmount
@@ -239,46 +213,23 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
                                  newPaidStatus="Paid"
                                  NewBalance=bal.toFloat()
                              }
-                            // Update the 'Paid' status in the database
-                            val rowsAffected = db.updateBudgetPaid(budget.id, newPaidStatus,"$NewBalance")
-                            if (rowsAffected > 0) {
-                                val snackbar=Snackbar.make(this@BudgetDataHolderActivity.recyclerView,"Budget Data Updated",Snackbar.LENGTH_LONG)
-                                .addCallback(object:BaseTransientBottomBar.BaseCallback<Snackbar>(){
-                                    override fun onDismissed(
-                                        transientBottomBar: Snackbar?,
-                                        event: Int
-                                    ) {
-                                        super.onDismissed(transientBottomBar, event)
-                                        recreate()
-                                    }
 
-                                    override fun onShown(transientBottomBar: Snackbar?) {
-                                        transientBottomBar?.setAction("UNDO"){
-//
-//                                            val previousPaidStatus = if (newPaidStatus == "Paid") "Not Paid" else "Paid"
-                                            if (newPaidStatus == "Paid"){
-                                                previousPaidStatus="Not Paid"
-                                                NewBalance=budget.estimatedAmount.toFloat()
-                                            } else {
-                                                previousPaidStatus="Paid"
-                                                NewBalance=bal.toFloat()
-                                            }
-                                            db.updateBudgetPaid(budget.id, previousPaidStatus,"$NewBalance")
-                                        recreate()
-                                        }
-                                        super.onShown(transientBottomBar)
-                                    }
-                                }).apply {
-                                    animationMode=Snackbar.ANIMATION_MODE_FADE
-                                }
-                            snackbar.setActionTextColor(
-                                ContextCompat.getColor(
-                                    this@BudgetDataHolderActivity, androidx.browser.R.color.browser_actions_bg_grey
-                                )
-                            )
-                            snackbar.show()
-
-                        }
+                          MaterialAlertDialogBuilder(this@BudgetDataHolderActivity)
+                              .setTitle("Budget Payment")
+                              .setMessage("What is the Status of the Budget Payment?")
+                              .setPositiveButton("PAID"){dialog,_->
+                                  db.updateBudgetPaid(budget.id, newPaidStatus,"$NewBalance")
+                                  recreate()
+                              }
+                              .setNegativeButton("UNPAID"){dialog,_->
+                                  db.updateBudgetPaid(budget.id, newPaidStatus,"$NewBalance")
+                                  recreate()
+                              }
+                              .setNeutralButton("Cancel"){dialog,_->
+                                  dialog.dismiss()
+                                  recreate()
+                              }
+                              .show()
                     }
                         //Payment Gateway code
 //                        val budget = BudgetList[position]

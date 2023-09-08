@@ -56,8 +56,10 @@ class BudgetDetails : AppCompatActivity(),BudgetFragment.OnDataEnter{
         SpinnerItem( "Transportation")
     )
     override fun ondataenter(userdata: Paymentinfo) {
-        paymentlist.add(userdata)
-        adapter.notifyDataSetChanged()
+        if (!paymentlist.contains(userdata)) {
+            paymentlist.add(userdata)
+            adapter.notifyDataSetChanged()
+        }
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

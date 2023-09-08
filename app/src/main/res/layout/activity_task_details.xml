@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
+    style="@style/HolderScreen"
     android:layout_width="match_parent">
     <RelativeLayout
         android:layout_width="match_parent"
@@ -23,13 +24,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/task_name"
+                style="@style/TEXTColor"
                 android:textSize="20sp"
                 />
             <EditText
                 android:id="@+id/TaskNameET"
                 android:layout_width="match_parent"
                 android:layout_height="35sp"
-                android:background="@drawable/valueediteffect"
+                style="@style/EditValueStyle"
                 android:layout_marginBottom="10sp"
                 android:inputType="text" />
             <TextView
@@ -37,6 +39,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/Category"
                 android:textSize="20sp"
+                style="@style/TEXTColor"
                 android:layout_marginBottom="10sp"
                 />
             <TextView
@@ -46,15 +49,15 @@
                 android:textAlignment="center"
                 android:paddingTop="10sp"
                 android:textStyle="bold"
-                android:drawableEnd="@drawable/drop_arrow"
-                android:background="@drawable/category_button"
+                style="@style/TEXTColor"
                 android:text="@string/select_a_category"
                 android:layout_marginBottom="10sp"
-                />
+                app:drawableEndCompat="@drawable/drop_arrow" />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/note"
+                style="@style/TEXTColor"
                 android:textSize="20sp"
                 android:layout_marginBottom="10sp"
                 />
@@ -62,7 +65,7 @@
                 android:id="@+id/TaskNoteET"
                 android:layout_width="match_parent"
                 android:layout_height="35sp"
-                android:background="@drawable/valueediteffect"
+                style="@style/EditValueStyle"
                 android:layout_marginBottom="10sp"
                 />
             <TextView
@@ -70,6 +73,7 @@
                 android:layout_height="wrap_content"
                 android:text="Task Status"
                 android:textSize="20sp"
+                style="@style/TEXTColor"
                 android:layout_marginBottom="10sp"
                 />
             <LinearLayout
@@ -102,6 +106,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/date"
+                style="@style/TEXTColor"
                 android:textSize="20sp"
                 />
             <TextView
@@ -110,7 +115,7 @@
                 android:layout_height="wrap_content"
                 android:hint="Select Your Task Date"
                 android:drawableEnd="@drawable/calender"
-                android:background="@drawable/valueediteffect"
+                style="@style/EditValueStyle"
                 android:textSize="20sp"
                 />
 

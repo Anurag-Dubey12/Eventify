@@ -25,6 +25,7 @@ import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDat
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Guest
 import com.example.eventmatics.SwipeGesture.GuestSwipeToDelete
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
@@ -104,7 +105,7 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
         val db=LocalDatabase(this,databasename)
         val GuestList=db.getAllGuests()
         if(GuestList!=null){
-            val adapter=GuestApdater(this,GuestList,this)
+            adapter=GuestApdater(this,GuestList,this)
             recyclerView.adapter=adapter
             recyclerView.layoutManager=LinearLayoutManager(this)
             adapter.notifyDataSetChanged()
@@ -116,72 +117,55 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
                     ItemTouchHelper.LEFT->
                         if(position!=RecyclerView.NO_POSITION){
                             val deleteitem=GuestList[position]
-                            db.deleteGuest(deleteitem)
                             adapter.notifyItemRemoved(position)
 
-                            val snackbar= Snackbar.make(this@GuestDataHolderActivity.recyclerView,"Guest Data Removed",Snackbar.LENGTH_LONG)
-                                .addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>(){
-                                    override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                                        super.onDismissed(transientBottomBar, event)
-                                        recreate()
-                                    }
-
-                                    override fun onShown(transientBottomBar: Snackbar?) {
-                                        transientBottomBar?.setAction("UNDO"){
-                                            GuestList.add(position,deleteitem)
-                                            adapter.notifyItemInserted(position)
-                                        }
-                                        super.onShown(transientBottomBar)
-                                    }
-                                }).apply {
-                                    animationMode=Snackbar.ANIMATION_MODE_SLIDE
+                            MaterialAlertDialogBuilder(this@GuestDataHolderActivity)
+                                .setTitle("Delete Item")
+                                .setMessage("Do you want to delete this item?")
+                                .setPositiveButton("Delete"){dialog,_->
+                                    db.deleteGuest(deleteitem)
+                                    recreate()
                                 }
-                            snackbar.setActionTextColor(
-                                ContextCompat.getColor(
-                                    this@GuestDataHolderActivity, androidx.browser.R.color.browser_actions_bg_grey
-                                )
-                            )
-                            snackbar.show()
-                        }
-                    ItemTouchHelper.RIGHT->{
-                        val Guest=GuestList[position]
-                        val CurrentStatus=Guest.isInvitationSent
-                        val New_Status=if(CurrentStatus=="Invitation Sent") "Not Sent" else "Invitation Sent"
-                        val RowAffected=db.updateGuestInvitation(Guest.id,New_Status)
-                        if(RowAffected>0){
-                            val snackbar=Snackbar.make(this@GuestDataHolderActivity.recyclerView,"Guest Data Updated",Snackbar.LENGTH_LONG)
-                                .addCallback(object:BaseTransientBottomBar.BaseCallback<Snackbar>(){
-                                    override fun onDismissed(
-                                        transientBottomBar: Snackbar?,
-                                        event: Int
-                                    ) {
-                                        super.onDismissed(transientBottomBar, event)
-                                        recreate()
-                                    }
-                                    override fun onShown(transientBottomBar: Snackbar?) {
-                                        transientBottomBar?.setAction("UNDO"){
-                                            val previousPaidStatus =if(New_Status=="Invitation Sent") "Not Sent" else "Invitation Sent"
-                                            db.updateGuestInvitation(Guest.id,previousPaidStatus)
-                                        }
-                                        recreate()
-                                        super.onShown(transientBottomBar)
-                                    }
-                                }).apply {
-                                    animationMode=Snackbar.ANIMATION_MODE_FADE
+                                .setNegativeButton("Cancel"){dialog,_->
+                                    dialog.dismiss()
+                                    recreate()
                                 }
-                            snackbar.setActionTextColor(
-                                ContextCompat.getColor(
-                                    this@GuestDataHolderActivity, androidx.browser.R.color.browser_actions_bg_grey
-                                )
-                            )
-                            snackbar.show()
+                                .show()
                         }
+                    ItemTouchHelper.RIGHT -> {
+                        val guest = GuestList[position]
+                        val currentStatus = guest.isInvitationSent
+                        val newStatus = if (currentStatus == "Invitation Sent") "Not Sent" else "Invitation Sent"
 
+                        when (newStatus) {
+                            "Not Sent" -> MaterialAlertDialogBuilder(this@GuestDataHolderActivity)
+                                .setTitle("Guest Invitation Status")
+                                .setMessage("Is Guest Invitation Sent?")
+                                .setPositiveButton("Yes") { dialog, _ ->
+                                    db.updateGuestInvitation(guest.id, newStatus)
+                                    recreate()
+                                }
+                                .setNeutralButton("No") { dialog, _ ->
+                                    dialog.dismiss()
+                                    recreate()
+                                }
+                                .show()
+                            "Invitation Sent" -> MaterialAlertDialogBuilder(this@GuestDataHolderActivity)
+                                .setTitle("Guest Invitation Status")
+                                .setMessage("Is Guest Invitation Sent?")
+                                .setPositiveButton("Yes") { dialog, _ ->
+                                    db.updateGuestInvitation(guest.id, newStatus)
+                                    recreate()
+                                }
+                                .setNeutralButton("No") { dialog, _ ->
+                                    dialog.dismiss()
+                                    recreate()
+                                }
+                                .show()
+                        }
                     }
-                }
 
-            }
-        }
+                } } }
         val itemtouch= ItemTouchHelper(swipe)
         itemtouch.attachToRecyclerView(recyclerView)
     }

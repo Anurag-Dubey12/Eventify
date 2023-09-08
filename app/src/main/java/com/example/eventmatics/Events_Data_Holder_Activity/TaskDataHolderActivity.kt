@@ -3,9 +3,9 @@ package com.example.eventmatics.Events_Data_Holder_Activity
 
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -151,6 +151,7 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
 //            swipeRefreshLayout.isRefreshing=false
         }
         val swipe=object :SwipeToDelete(this){
+            @SuppressLint("SuspiciousIndentation")
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position=viewHolder.adapterPosition
                 var actionBtn=false
@@ -160,47 +161,19 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
                             val deleteitem=tasklist[position]
 
                             adapter.notifyItemRemoved(position)
-
-
-//                            val snackbar=Snackbar.make(this@TaskDataHolderActivity.recyclerView,"Item Delete",Snackbar.LENGTH_SHORT)
-//                                .addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
-//                                    override fun onDismissed(
-//                                        transientBottomBar: Snackbar?,
-//                                        event: Int
-//                                    ) {
-//                                        super.onDismissed(transientBottomBar, event)
-//                                        recreate()
-//                                    }
-//                                    override fun onShown(transientBottomBar: Snackbar?) {
-//                                        transientBottomBar?.setAction("UNDO"){
-//                                            tasklist.add(position,deleteitem)
-//                                            adapter.notifyItemInserted(position)
-//                                            actionBtn=true
-//                                        }
-//                                        super.onShown(transientBottomBar)
-//                                    }
-//
-//                                }).apply {
-//                                    animationMode = Snackbar.ANIMATION_MODE_FADE
-//                                }
-//                            snackbar.setActionTextColor(
-//                                ContextCompat.getColor(
-//                                    this@TaskDataHolderActivity, androidx.browser.R.color.browser_actions_bg_grey
-//                                )
-//                            )
-//                            snackbar.show()
                             MaterialAlertDialogBuilder(this@TaskDataHolderActivity)
                                 .setTitle("Delete Item")
                                 .setMessage("Do you want to delete this item?")
                                 .setPositiveButton("Delete") { dialog, which ->
                                     db.deleteTask(deleteitem)
                                     actionBtn = true
-//                                    recreate()
+                                    recreate()
                                 }
                                 .setNegativeButton("Cancel") { dialog, which ->
                                     tasklist.add(position, deleteitem)
                                     adapter.notifyItemInserted(position)
                                 }
+
 //                                .setOnDismissListener {
 //                                    if (!actionBtn) {
 //                                        // If the dialog is dismissed without choosing an option, recreate
@@ -219,39 +192,42 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
                             val TaskStatus=Task.taskStatus
 
                             val NewStatus=if(TaskStatus=="Pending") "Completed" else "Pending"
-
-                            val rowaffected=db.UpdateTaskStatus(Task.id,NewStatus)
-
-                            if(rowaffected>0){
-                        val snackbar=Snackbar.make(this@TaskDataHolderActivity.recyclerView
-                            ,"Item Paid",Snackbar.LENGTH_LONG)
-                            .addCallback(object :BaseTransientBottomBar.BaseCallback<Snackbar>(){
-                                override fun onDismissed(
-                                    transientBottomBar: Snackbar?,
-                                    event: Int
-                                ) {
-                                    super.onDismissed(transientBottomBar, event)
-                                }
-
-                                override fun onShown(transientBottomBar: Snackbar?) {
-                                    transientBottomBar?.setAction("UNDO"){
-                                        val previousPaidStatus = if (NewStatus == "Pending") "Completed" else "Pending"
-                                        db.UpdateTaskStatus(Task.id, previousPaidStatus)
+                            when(TaskStatus){
+                                "Pending"-> MaterialAlertDialogBuilder(this@TaskDataHolderActivity)
+                                    .setTitle("Task Status Update")
+                                    .setMessage("Is Your Task has Completed?")
+                                    .setPositiveButton("Yes"){dialog,_->
+                                        db.UpdateTaskStatus(Task.id,NewStatus)
+                                        recreate()
                                     }
-                                    recreate()
-                                    super.onShown(transientBottomBar)
-                                }
-                            })
-                            .apply {
-                                animationMode=Snackbar.ANIMATION_MODE_SLIDE
+                                    .setNeutralButton("No"){dialog,_->
+                                        dialog.cancel()
+                                        recreate()
+                                    }
+//                                    .setNegativeButton("Pending"){dialog,_->
+//                                        db.UpdateTaskStatus(Task.id,NewStatus)
+//                                        recreate()
+//                                    }
+                                    .show()
+                                "Completed"->MaterialAlertDialogBuilder(this@TaskDataHolderActivity)
+                                    .setTitle("Task Status Update")
+                                    .setMessage("Is Your Task has Pending?")
+                                    .setPositiveButton("Yes"){dialog,_->
+                                        db.UpdateTaskStatus(Task.id,NewStatus)
+                                        recreate()
+                                    }
+                                    .setNeutralButton("No"){dialog,_->
+                                        dialog.cancel()
+                                        recreate()
+                                    }
+//                                    .setNegativeButton("Pending"){dialog,_->
+//                                        db.UpdateTaskStatus(Task.id,NewStatus)
+//                                        recreate()
+//                                    }
+                                    .show()
                             }
-                        snackbar.setActionTextColor(
-                            ContextCompat.getColor(
-                                this@TaskDataHolderActivity, androidx.browser.R.color.browser_actions_bg_grey
-                            )
-                        )
-                        snackbar.show()
-                    }
+
+
                 }
             }
         }}}

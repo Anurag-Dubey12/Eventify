@@ -4,10 +4,14 @@ import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlarmManager
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.BroadcastReceiver
 import android.content.ComponentName
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -16,6 +20,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.icu.text.SimpleDateFormat
 import android.net.Uri
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -38,13 +43,14 @@ import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.getSystemService
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.example.eventmatics.Adapter.EventDatabaseAdapter
 import com.example.eventmatics.Adapter.EventLayoutAdapter
+import com.example.eventmatics.BroadCastReceiver.EventNotificationReceiver
 import com.example.eventmatics.Events_Data_Holder_Activity.BudgetDataHolderActivity
 import com.example.eventmatics.Events_Data_Holder_Activity.GuestDataHolderActivity
 import com.example.eventmatics.Events_Data_Holder_Activity.TaskDataHolderActivity
@@ -58,6 +64,8 @@ import com.example.eventmatics.fragments.DatabaseNameHolder
 import com.example.eventmatics.fragments.EventAdding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -99,15 +107,19 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
     private lateinit var eventshowhide: LinearLayout
     private lateinit var pendingAmountShowTextView: TextView
     private lateinit var paidAmountShowTextView: TextView
-    private lateinit var eventaddbut: AppCompatButton
+    private lateinit var eventaddbut: MaterialButton
     private lateinit var adapter: EventLayoutAdapter
     private lateinit var bmp:Bitmap
+    private  var eventList:MutableList<Events> = mutableListOf()
     private lateinit var scalebmp:Bitmap
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var dataAddedReceiver: BroadcastReceiver
     private lateinit var piechart:PieChart
     private val PERMISSION_CODE=101
     private val PICK_FILE_REQUEST = 1
+
+    //Have to do it
+    //BackUp And Restore
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -116,15 +128,38 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
                 val inputStream=contentResolver.openInputStream(selectedFileUri)
                 val content=inputStream?.bufferedReader().use { it?.readText() }
                 val gson = Gson()
-                val dataobject=gson.fromJson(content,Events::class.java)
+                val eventsData = gson.fromJson(content, Events::class.java)
+                try {
+                    val databasename=getSharedPreference(this,"databasename").toString()
+
+                    val dbHelper=LocalDatabase(this,databasename)
+                    val db=dbHelper.writableDatabase
+
+                   val values=ContentValues()
+                    values.put("Event_Name", eventsData.name)
+                    values.put("Event_Date", eventsData.Date)
+                    values.put("Event_Time", eventsData.time)
+                    values.put("Event_Budget", eventsData.budget)
+                    val newRowId = db.insert("Event", null, values)
+
+                    db.close()
+                    eventList.add(eventsData)
+                    adapter.notifyDataSetChanged()
+                    Toast.makeText(this, "Data has been restored successfully", Toast.LENGTH_SHORT).show()
+                }catch (e:Exception){
+                    e.printStackTrace()
+                    Log.e("RestoreData", "Error restoring data: ${e.message}")                }
             }
+        }
+        else{
+            showEventData()
         }
     }
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        val toolbar: MaterialToolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         drawerLayout = findViewById(R.id.drawerlayout)
         navView= findViewById(R.id.navView)
@@ -175,6 +210,8 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
         drawerLayout.addDrawerListener(actionBarDrawerToggle)
         actionBarDrawerToggle.syncState()
 
+        createNotificationChannel()
+
         if (eventRecyclerView.adapter?.itemCount == 0) {
             EventTimerDisplay.text=" "
             Eventshow.text=" "
@@ -224,99 +261,7 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
 //        widgetButton.setOnClickListener { addWidgetToHomeScreen() }
         swipeRefreshLayout.setOnRefreshListener {
             Handler().postDelayed({
-                val databasename=getSharedPreference(this,"databasename").toString()
-                val db = LocalDatabase(this, databasename)
-                val eventList = db.getAllEvents()
-                val Eventtimer=db.getEventData(1)
-                if(Eventtimer!=null){
-                    Eventshow.text=Eventtimer.name
-                    budgetShowTextView.text=Eventtimer.budget
-                    val name=Eventtimer.name
-                    val ParentDirectory=File(Environment.getExternalStorageDirectory(),"Eventify")
-                    if(!ParentDirectory.exists()){
-                        ParentDirectory.mkdirs()
-                    }
-                    val EventNameDirectory=File(ParentDirectory,"$name")
-                    if(!EventNameDirectory.exists()){
-                        EventNameDirectory.mkdirs()
-                    }
-                    // Calculate remaining time until the event date
-                    val eventDate=Eventtimer.Date
-                    val eventTime=Eventtimer.time
-                    val currentDate = Calendar.getInstance().time
-                    val eventDateTime = SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.getDefault()).parse("$eventDate $eventTime")
-                    val remainingTimeInMillis = eventDateTime.time - currentDate.time
-                    // Start the countdown timer
-                    countDownTimer = object : CountDownTimer(remainingTimeInMillis, 1000) {
-                        override fun onTick(millisUntilFinished: Long) {
-                            val days = millisUntilFinished / (24 * 60 * 60 * 1000)
-                            val hours = (millisUntilFinished % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)
-                            val minutes = (millisUntilFinished % (60 * 60 * 1000)) / (60 * 1000)
-                            val seconds = (millisUntilFinished % (60 * 1000)) / 1000
-                            val remainingTime = String.format("%02dd %02dh %02dm %02ds", days, hours, minutes, seconds)
-                            EventTimerDisplay.text = remainingTime
-                        }
-                        override fun onFinish() {
-                            EventTimerDisplay.text = "Event Started"
-                        }
-                    }.start()
-                }
-                else{
-//                    Toast.makeText(this,"Event Not Found",Toast.LENGTH_SHORT).show()
-                }
-                adapter = EventLayoutAdapter(eventList) { position ->
-                    val popup = PopupMenu(eventshowhide.context, eventshowhide)
-                    popup.menuInflater.inflate(R.menu.popup_menu, popup.menu)
-
-                    popup.setOnMenuItemClickListener {
-                        when (it.itemId) {
-                            R.id.Event_Pdf -> {
-                                val options = arrayOf("Combined", "Separate")
-
-                                MaterialAlertDialogBuilder(eventshowhide.context)
-                                    .setTitle("PDF Format")
-                                    .setSingleChoiceItems(options, -1) { dialog, which ->
-                                        when (which) {
-                                            0 -> {
-                                                // Combined option selected
-                                                if (checkPermissions()) {
-                                                    GeneratePDF()
-                                                } else {
-                                                    requestPermission()
-                                                }
-                                            }
-                                            1 -> {
-                                                // Separate option selected
-                                                if (checkPermissions()) {
-                                                    SepratePDF()
-                                                } else {
-                                                    requestPermission()
-                                                }
-                                            }
-                                        }
-                                        dialog.dismiss()
-                                    }
-                                    .setNegativeButton("Cancel") { dialog, _ ->
-                                        dialog.dismiss()
-                                    }
-                                    .show()
-
-                                true
-                            }
-                            R.id.event_delete -> {
-                                // Handle delete option
-                                // You can add your delete logic here
-                                true
-                            }
-                            else -> return@setOnMenuItemClickListener false
-                        }
-                    }
-                    popup.show()
-                }
-
-                eventRecyclerView.adapter = adapter
-                eventRecyclerView.layoutManager = LinearLayoutManager(this)
-                adapter.notifyDataSetChanged()
+               showEventData()
                 swipeRefreshLayout.isRefreshing=false
             },1)
         }
@@ -337,7 +282,6 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
         }
         registerReceiver(dataAddedReceiver, filter)
 
-
         swipeRefreshLayout.post {
             swipeRefreshLayout.isRefreshing = true
             Handler(Looper.getMainLooper()).postDelayed({
@@ -349,9 +293,134 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
 
         navigationDrawershow()
     }
-    override fun onDatabaseChanged(newDatabaseName: String) {
+    fun createNotificationChannel(){
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
+            val channelId="Event_Notification"
+            val channelName="Event Notification"
+            val importance=NotificationManager.IMPORTANCE_HIGH
+            val channel=NotificationChannel(channelId,channelName,importance)
+            val notificationManager=getSystemService(NotificationManager::class.java)
+            notificationManager?.createNotificationChannel(channel)
+        }
 
     }
+    @SuppressLint("ScheduleExactAlarm")
+    fun ScheduleEventNotification(events: List<Events>) {
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        for (event in events) {
+            val eventDateTime = SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.getDefault()).parse("${event.Date} ${event.time}")
+            val calendar = Calendar.getInstance()
+            calendar.time = eventDateTime
+            calendar.add(Calendar.DAY_OF_YEAR, -1)
+            val notificationTime = calendar.timeInMillis
+
+            val intent = Intent(this, EventNotificationReceiver::class.java)
+            intent.putExtra("event_name", event.name)
+
+            val requestCode = event.id.toInt()
+            val pendingIntent = PendingIntent.getBroadcast(this, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, notificationTime, pendingIntent)
+        }
+    }
+
+    override fun onDatabaseChanged(EventID: Long?) {
+        val databasename=getSharedPreference(this,"databasename").toString()
+        val db = LocalDatabase(this, databasename)
+        val SwithEvent=db.getSwitchEventData(EventID)
+        val Eventtimer=db.getEventData(EventID)
+        if(Eventtimer!=null){
+            Eventshow.text=Eventtimer.name
+            budgetShowTextView.text=Eventtimer.budget
+            val name=Eventtimer.name
+            val ParentDirectory=File(Environment.getExternalStorageDirectory(),"Eventify")
+            if(!ParentDirectory.exists()){
+                ParentDirectory.mkdirs()
+            }
+            val EventNameDirectory=File(ParentDirectory,"$name")
+            if(!EventNameDirectory.exists()){
+                EventNameDirectory.mkdirs()
+            }
+            // Calculate remaining time until the event date
+            val eventDate=Eventtimer.Date
+            val eventTime=Eventtimer.time
+            val currentDate = Calendar.getInstance().time
+            val eventDateTime = SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.getDefault()).parse("$eventDate $eventTime")
+            val remainingTimeInMillis = eventDateTime.time - currentDate.time
+            // Start the countdown timer
+            countDownTimer = object : CountDownTimer(remainingTimeInMillis, 1000) {
+                override fun onTick(millisUntilFinished: Long) {
+                    val days = millisUntilFinished / (24 * 60 * 60 * 1000)
+                    val hours = (millisUntilFinished % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)
+                    val minutes = (millisUntilFinished % (60 * 60 * 1000)) / (60 * 1000)
+                    val seconds = (millisUntilFinished % (60 * 1000)) / 1000
+                    val remainingTime = String.format("%02dd %02dh %02dm %02ds", days, hours, minutes, seconds)
+                    EventTimerDisplay.text = remainingTime
+                }
+                override fun onFinish() {
+                    EventTimerDisplay.text = "Event Started"
+                }
+            }.start()
+        }
+        else{
+//                    Toast.makeText(this,"Event Not Found",Toast.LENGTH_SHORT).show()
+        }
+        adapter = EventLayoutAdapter(SwithEvent) { position ->
+            val popup = PopupMenu(eventshowhide.context, eventshowhide)
+            popup.menuInflater.inflate(R.menu.popup_menu, popup.menu)
+
+            popup.setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.Event_Pdf -> {
+                        val options = arrayOf("Combined", "Separate")
+
+                        MaterialAlertDialogBuilder(eventshowhide.context)
+                            .setTitle("PDF Format")
+                            .setSingleChoiceItems(options, -1) { dialog, which ->
+                                when (which) {
+                                    0 -> {
+                                        // Combined option selected
+                                        if (checkPermissions()) {
+                                            GeneratePDF()
+                                        } else {
+                                            requestPermission()
+                                        }
+                                    }
+                                    1 -> {
+                                        // Separate option selected
+                                        if (checkPermissions()) {
+                                            SepratePDF()
+                                        } else {
+                                            requestPermission()
+                                        }
+                                    }
+                                }
+                                dialog.dismiss()
+                            }
+                            .setNegativeButton("Cancel") { dialog, _ ->
+                                dialog.dismiss()
+                            }
+                            .show()
+
+                        true
+                    }
+                    R.id.event_delete -> {
+                        // Handle delete option
+                        // You can add your delete logic here
+                        true
+                    }
+                    else -> return@setOnMenuItemClickListener false
+                }
+            }
+            popup.show()
+        }
+
+        eventRecyclerView.adapter = adapter
+        eventRecyclerView.layoutManager = LinearLayoutManager(this)
+        adapter.notifyDataSetChanged()
+        swipeRefreshLayout.isRefreshing=false
+    }
+
     private fun SetAppTheme() {
         val Theme=GetThemePreference(this,"Theme")
         AppCompatDelegate.setDefaultNightMode(Theme)
@@ -714,6 +783,11 @@ fun checkPermissions():Boolean{
 
     override fun onResume() {
         super.onResume()
+//                              swipeRefreshLayout.isRefreshing=true
+//        Handler().postDelayed({
+//            swipeRefreshLayout.isRefreshing=false
+//        }
+//            ,1)
         SetAppTheme()
         showEventData()
     }
@@ -721,7 +795,7 @@ fun checkPermissions():Boolean{
      fun showEventData() {
         val databasename = getSharedPreference(this, "databasename").toString()
         val db = LocalDatabase(this, databasename)
-        val eventList = db.getAllEvents()
+        eventList = db.getAllEvents()
         val Eventtimer = db.getEventData(1)
         val budgettotdal=db.getTotalBudget()
         val budgetUnPaid=db.getTotalUnPaid()
@@ -813,10 +887,14 @@ fun checkPermissions():Boolean{
             }
             popup.show()
         }
+        ScheduleEventNotification(eventList)
+        adapter.updateData(eventList)
         eventRecyclerView.adapter = adapter
         eventRecyclerView.layoutManager = LinearLayoutManager(this)
         adapter.notifyDataSetChanged()
     }
+
+
 
     private fun DeleteEvent(event:Events):Boolean {
         val databasename = getSharedPreference(this, "databasename").toString()

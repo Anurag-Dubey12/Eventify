@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    style="@style/HolderScreen"
     tools:context=".Event_Details_Activity.GuestDetails">
 
     <ScrollView
@@ -14,7 +15,7 @@
         app:layout_constraintStart_toStartOf="parent">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
             <include
                 layout="@layout/guest_vendor_toolbar"/>
@@ -23,7 +24,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="15sp"
                 android:text="@string/guest_details"
-                android:textColor="@color/light_purple"
+                style="@style/TEXTColor"
                 android:textSize="20sp" />
 
             <TextView
@@ -32,6 +33,7 @@
                 android:layout_marginStart="5sp"
                 android:layout_marginBottom="10sp"
                 android:text="@string/name"
+                style="@style/TEXTColor"
                 android:textSize="20sp" />
 
             <EditText
@@ -40,7 +42,8 @@
                 android:layout_height="35sp"
                 android:layout_marginStart="5sp"
                 android:layout_marginBottom="10sp"
-                android:background="@drawable/valueediteffect" />
+                style="@style/EditValueStyle"
+                />
 
 
 
@@ -51,7 +54,7 @@
                     android:textSize="18sp"
                     android:layout_marginStart="5sp"
                     android:layout_weight="1"
-                    android:textColor="@color/black"
+                    style="@style/TEXTColor"
                     android:text="@string/Family_Member" />
                 <EditText
                     android:id="@+id/TotalFamilyMember"
@@ -60,7 +63,7 @@
                     android:textColor="@color/black"
                     android:layout_marginStart="5sp"
                     android:inputType="number"
-                    android:background="@drawable/valueediteffect"
+                    style="@style/EditValueStyle"
                     android:hint="@string/Total_Number" />
 <!--            <LinearLayout-->
 <!--                android:layout_width="match_parent"-->
@@ -121,6 +124,7 @@
                 android:layout_marginStart="5sp"
                 android:layout_marginBottom="10sp"
                 android:text="@string/note"
+                style="@style/TEXTColor"
                 android:textSize="20sp" />
 
             <EditText
@@ -129,7 +133,7 @@
                 android:layout_height="35sp"
                 android:layout_marginStart="5sp"
                 android:layout_marginBottom="10sp"
-                android:background="@drawable/valueediteffect" />
+                style="@style/EditValueStyle" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -236,6 +240,7 @@
                         android:layout_marginStart="5sp"
                         android:layout_marginBottom="10sp"
                         android:text="@string/phone_number"
+                        style="@style/TEXTColor"
                         android:textSize="20sp"
                         />
                     <EditText
@@ -245,7 +250,7 @@
                         android:layout_marginStart="5sp"
                         android:layout_marginBottom="10sp"
                         android:maxLength="10"
-                        android:background="@drawable/valueediteffect"
+                        style="@style/EditValueStyle"
                         android:drawableEnd="@drawable/call" />
 
 <!--                    <TextView-->
@@ -275,6 +280,7 @@
                         android:layout_marginStart="5sp"
                         android:layout_marginBottom="10sp"
                         android:text="@string/address"
+                        style="@style/TEXTColor"
                         android:textSize="20sp"
                         />
 
@@ -284,7 +290,7 @@
                         android:layout_height="35sp"
                         android:layout_marginStart="5sp"
                         android:layout_marginBottom="15sp"
-                        android:background="@drawable/valueediteffect"
+                        style="@style/EditValueStyle"
                         android:drawableEnd="@drawable/location" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

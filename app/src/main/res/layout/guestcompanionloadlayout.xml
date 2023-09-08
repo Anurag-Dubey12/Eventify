@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="10sp"
+
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -18,6 +19,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            style="@style/RecyclerBack"
             android:orientation="horizontal">
 
             <ImageView
@@ -27,10 +29,10 @@
 
             <TextView
                 android:id="@+id/guestname"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="50sp"
                 android:layout_weight="1"
-                android:textColor="@color/black"
+                style="@style/RecyclerTextColor"
                 android:textSize="20sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -42,6 +44,7 @@
         app:dividerInsetEnd="16dp"
         app:dividerInsetStart="16dp"
         android:fitsSystemWindows="true"
+        style="@style/Divider"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

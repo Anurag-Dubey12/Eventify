@@ -37,11 +37,11 @@ class GuestDetails : AppCompatActivity() {
     private lateinit var contactviewtv: ImageView
     private lateinit var guestPhoneEt: EditText
     private lateinit var guestPhonetv: TextView
-    private lateinit var AcceptenceStatus:String
+    private  var AcceptanceStatus:String=""
 //    private lateinit var guestEmailEt: EditText
 //    private lateinit var guestEmailtv: TextView
     private lateinit var guestAddresssEt: EditText
-    private lateinit var InvitationStatus:String
+    private var InvitationStatus:String=" "
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -190,38 +190,36 @@ class GuestDetails : AppCompatActivity() {
         return sharedValues.getString(key,null)
     }
     private fun AddValueToDatabase() {
-        val databasename=getSharedPreference(this,"databasename").toString()
-        val db=LocalDatabase(this,databasename)
+        val databasename = getSharedPreference(this, "databasename").toString()
+        val db = LocalDatabase(this, databasename)
         val guestName = guestNameEt.text.toString()
         val guestNote = guestNoteEt.text.toString()
         val totalFamilyMembers = TotalFamilyMember.text.toString()
         val guestPhone = guestPhoneEt.text.toString()
-//        val guestEmail = guestEmailEt.text.toString()
         val guestAddress = guestAddresssEt.text.toString()
 
-        if(Acccepted.isClickable){
-            AcceptenceStatus=Acccepted.text.toString()
-        }
-        if(Pending.isClickable){
-            AcceptenceStatus=Pending.text.toString()
-        }
-        if(Denied.isClickable){
-            AcceptenceStatus=Denied.text.toString()
-        }
-        if(invitationSentButton.isClickable){
-            InvitationStatus=invitationSentButton.text.toString()
-        }
-        if(notSentButton.isClickable){
-            InvitationStatus=notSentButton.text.toString()
+        AcceptanceStatus = when {
+            Acccepted.isClickable ->"Accepted"
+            Pending.isClickable -> "Pending"
+            Denied.isClickable -> "Denied"
+            else -> ""
         }
 
-        val GuestList= Guest(1,guestName,totalFamilyMembers,guestNote, InvitationStatus,
-        guestPhone,AcceptenceStatus,guestAddress)
+        // Modify InvitationStatus to store "Invitation Sent" or "Not Sent" based on the button state
+        InvitationStatus = when {
+            invitationSentButton.isClickable -> "Invitation Sent"
+            notSentButton.isClickable -> "Not Sent"
+            else -> ""
+        }
+
+        val GuestList = Guest(1, guestName, totalFamilyMembers, guestNote, InvitationStatus,
+            guestPhone, AcceptanceStatus, guestAddress)
         db.createGuest(GuestList)
 
         Toast.makeText(this, "Guest Added successfully", Toast.LENGTH_SHORT).show()
         finish()
     }
+
     fun isEmailValid(email: String): Boolean {
         val emailRegex = Regex("^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$")
         return email.matches(emailRegex)
@@ -241,9 +239,9 @@ class GuestDetails : AppCompatActivity() {
         val isinvitationsent=db.isInvitationsent(id)
         val (isAccepted, isDenied, isPending) = db.AcceptanceStatus(id)
 
-        if(Acccepted.isClickable){AcceptenceStatus=Acccepted.text.toString()}
-        if(Pending.isClickable){AcceptenceStatus=Pending.text.toString()}
-        if(Denied.isClickable){AcceptenceStatus=Denied.text.toString() }
+        if(Acccepted.isClickable){AcceptanceStatus=Acccepted.text.toString()}
+        if(Pending.isClickable){AcceptanceStatus=Pending.text.toString()}
+        if(Denied.isClickable){AcceptanceStatus=Denied.text.toString() }
 //        if(isinvitationsent){status="Invitation Sent" }
 //        else{ status="Not Sent" }
         accptence = when {

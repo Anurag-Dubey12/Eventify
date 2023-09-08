@@ -3,14 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        style="@style/RecyclerBack">
         <LinearLayout
             android:id="@+id/Vendor_payment_info"
             android:layout_width="200sp"
@@ -24,6 +24,7 @@
                 android:layout_height="50sp"
                 android:textStyle="bold"
                 android:textSize="20sp"
+                style="@style/RecyclerTextColor"
 
                 />
             <TextView
@@ -32,6 +33,7 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:textSize="20sp"
+                style="@style/RecyclerTextColor"
                 />
 
         </LinearLayout>
@@ -46,6 +48,7 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:textSize="16sp"
+                style="@style/RecyclerTextColor"
 
                 />
             <TextView
@@ -54,6 +57,7 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:textSize="16sp"
+                style="@style/RecyclerTextColor"
                 />
             <TextView
                 android:id="@+id/Vendorpaymentstatus"
@@ -61,9 +65,10 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:textSize="16sp"
+                style="@style/RecyclerTextColor"
                 />
         </LinearLayout>
-        <RadioButton
+        <com.google.android.material.radiobutton.MaterialRadioButton
             android:id="@+id/Radiopaid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -4,8 +4,8 @@
             <solid android:color="@android:color/transparent" />
             <stroke
                 android:width="1sp"
-            android:color="@color/black"
-            />
+                android:color="@color/white"
+                />
         </shape>
     </item>
 </layer-list>

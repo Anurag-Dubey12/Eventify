@@ -3,7 +3,6 @@ package com.example.eventmatics
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
-import android.content.SharedPreferences
 import android.widget.RemoteViews
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 

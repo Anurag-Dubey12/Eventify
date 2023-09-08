@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:id="@+id/rootLayout"
+
     android:layout_height="wrap_content"
     >
 
@@ -13,18 +14,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         android:id="@+id/cardView"
+        style="@style/RecyclerBack"
         android:layout_marginBottom="15sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_margin="10sp"
+            style="@style/RecyclerBack"
             android:layout_height="wrap_content">
             <ImageView
                 android:id="@+id/imagedataholder"
                 android:layout_width="54sp"
                 android:layout_height="54sp"
-                android:src="@drawable/taskdata"
+                style="@style/RecyclerTask"
                 />
             <LinearLayout
                 android:id="@+id/Basic_info"
@@ -39,6 +42,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="16sp"
                         android:maxLines="2"
+                        style="@style/RecyclerTextColor"
                         android:ellipsize="end"
                         android:textStyle="bold"
                         />
@@ -47,9 +51,10 @@
                         android:layout_width="150sp"
                         android:layout_height="wrap_content"
                         android:textStyle="bold"
-                        android:textColor="@color/black"
+                        style="@style/RecyclerTextColor"
                         android:textSize="16sp"
                         android:maxLines="2"
+
                         android:ellipsize="end"
                         />
 
@@ -68,7 +73,7 @@
                         android:textStyle="bold"
                         android:maxLines="1"
                         android:ellipsize="end"
-                        android:textColor="@color/black"
+                        style="@style/RecyclerTextColor"
                         android:textSize="16sp"
                         />
                 <TextView
@@ -76,7 +81,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
-                    android:textColor="@color/black"
+                    style="@style/RecyclerTextColor"
                     android:textSize="16sp"
                     />
                 <TextView
@@ -84,6 +89,7 @@
                     android:layout_width="wrap_content"
                     android:textSize="16sp"
                     android:textStyle="bold"
+                    style="@style/RecyclerTextColor"
                     android:layout_height="wrap_content"
                     />
             </LinearLayout>

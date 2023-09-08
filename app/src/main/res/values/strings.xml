@@ -18,6 +18,7 @@
     <string name="open">Open</string>
     <string name="close">Close</string>
     <string name="name">Family Name</string>
+    <string name="Vendorname">Name</string>
     <string name="budget_details">Budget Details</string>
     <string name="Category">Category</string>
     <string name="note">Note</string>

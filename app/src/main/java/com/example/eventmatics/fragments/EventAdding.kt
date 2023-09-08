@@ -147,7 +147,7 @@ class EventAdding(
             if (eventId != -1L) {
                 val dataAddedIntent = Intent("com.example.eventmatics.fragments")
                 context?.sendBroadcast(dataAddedIntent)
-//                ondataenter?.onDataEnter(event)
+                ondataenter?.onDataEnter(event)
                 dismiss()
                 Toast.makeText(context, "Event created successfully", Toast.LENGTH_SHORT).show()
                 saveToSharedPreferences(context, "databasename", eventNameText)

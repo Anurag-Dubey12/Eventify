@@ -6,9 +6,7 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.util.Log
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Budget
-import com.example.eventmatics.SQLiteDatabase.Dataclass.BudgetWithPayment
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Events
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Guest
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Task
@@ -361,7 +359,7 @@ class LocalDatabase(contex:Context,databasename:String):
 
     //Getting Specific data
     @SuppressLint("Range")
-    fun getEventData(eventId: Int): Events? {
+    fun getEventData(eventId: Long?): Events? {
         val db = readableDatabase
         val query = "SELECT * FROM $TABLE_Event WHERE $COLUMN_ID = $eventId"
         val cursor = db.rawQuery(query, null)
@@ -379,6 +377,27 @@ class LocalDatabase(contex:Context,databasename:String):
 
         cursor.close()
         return event
+    }
+    @SuppressLint("Range")
+    fun getSwitchEventData(eventId: Long?): MutableList<Events> {
+        val db = readableDatabase
+        val query = "SELECT * FROM $TABLE_Event WHERE $COLUMN_ID = $eventId"
+        val cursor = db.rawQuery(query, null)
+        val eventsList: MutableList<Events> = mutableListOf()
+
+        while (cursor.moveToNext()) {
+            val id = cursor.getLong(cursor.getColumnIndex(COLUMN_ID))
+            val eventName = cursor.getString(cursor.getColumnIndex(Event_Name))
+            val eventDate = cursor.getString(cursor.getColumnIndex(Event_Date))
+            val eventTime = cursor.getString(cursor.getColumnIndex(Event_Time))
+            val eventBudget = cursor.getString(cursor.getColumnIndex(Event_Budget))
+
+            val event = Events(id, eventName, eventDate, eventTime, eventBudget)
+            eventsList.add(event)
+        }
+
+        cursor.close()
+        return eventsList
     }
 
 

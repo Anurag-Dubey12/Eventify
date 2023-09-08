@@ -21,4 +21,110 @@
         <!-- Apply padding to avoid the content of the widget colliding with the rounded corners -->
         <item name="appWidgetPadding">16dp</item>
     </style>
+
+             <!--Light Theme-->
+    <style name="TEXTColor">
+        <item name="android:textColor">@color/black</item>
+    </style>
+    <style name="EventTextcolor">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@color/black</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="Eventinfocolor">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@color/black</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textSize">16sp</item>
+        <item name="drawableSize">80sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="View">
+        <item name="background">@color/black</item>
+    </style>
+    <style name="CardView">
+        <item name="android:background">@color/white</item>
+    </style>
+    <style name="EventTEXTColor">
+        <item name="android:textColor">@color/black</item>
+    </style>
+    <style name="EventScreen">
+        <item name="android:background">@color/white </item>
+    </style>
+    <style name="HolderScreen">
+        <item name="android:background">@color/white </item>
+    </style>
+    <style name="Task">
+        <item name="android:src">@drawable/task_icon</item>
+    </style>
+    <style name="Budget">
+        <item name="android:src">@drawable/budget_icon</item>
+    </style>
+    <style name="Vendor">
+        <item name="android:src">@drawable/vendor_icon</item>
+    </style>
+    <style name="Guest">
+        <item name="android:src">@drawable/guest_icon</item>
+    </style>
+    <style name="Task_data">
+        <item name="android:src">@drawable/taskdata</item>
+    </style>
+    <style name="Guest_data">
+        <item name="android:src">@drawable/guestdata</item>
+    </style>
+    <style name="Budget_data">
+        <item name="android:src">@drawable/budgetdata</item>
+    </style>
+    <style name="Vendor_data">
+        <item name="android:src">@drawable/vendordata</item>
+        <item name="android:height">1sp</item>
+    </style>
+    <style name="Divider">
+        <item name="android:background">@drawable/divider</item>
+    </style>
+    <style name="Screen">
+        <item name="android:background">@color/white</item>
+    </style>
+    <style name="TaskBar">
+        <item name="android:background">@color/Lemon_Chiffon</item>
+    </style>
+    <style name="TEXTInput">
+        <item name="android:background">@color/black</item>
+    </style>
+    <style name="FabStyle">
+        <item name="android:backgroundTint">@color/white</item>
+    </style>
+    <style name="EditValueStyle">
+        <item name="android:background">@drawable/valueediteffect</item>
+        <item name="android:textColorHint">@color/white</item>
+    </style>
+    <style name="NavigationDrawer">
+        <item name="android:background">@color/white</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+    <style name="RecyclerBack">
+        <item name="android:background">@color/white</item>
+        <!--        <item name="android:textColor">@color/white</item>-->
+    </style>
+    <style name="RecyclerTextColor">
+        <item name="android:textColor">@color/black</item>
+    </style>
+    <style name="RecyclerImage">
+        <item name="android:src">@drawable/budgetdata</item>
+    </style>
+    <style name="RecyclerDelete">
+        <item name="android:src">@drawable/delete</item>
+    </style>
+    <style name="RecyclerPDF">
+        <item name="android:src">@drawable/pdf</item>
+    </style>
+    <style name="RecyclerTask">
+        <item name="android:src">@drawable/task</item>
+    </style>
+    <style name="RecyclerVendor">
+        <item name="android:src">@drawable/vendor</item>
+
+    </style>
 </resources>
