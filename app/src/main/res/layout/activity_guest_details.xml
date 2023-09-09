@@ -250,6 +250,8 @@
                         android:layout_marginStart="5sp"
                         android:layout_marginBottom="10sp"
                         android:maxLength="10"
+                        android:inputType="number"
+                        android:minEms="@integer/material_motion_duration_long_1"
                         style="@style/EditValueStyle"
                         android:drawableEnd="@drawable/call" />
 
@@ -280,6 +282,7 @@
                         android:layout_marginStart="5sp"
                         android:layout_marginBottom="10sp"
                         android:text="@string/address"
+
                         style="@style/TEXTColor"
                         android:textSize="20sp"
                         />

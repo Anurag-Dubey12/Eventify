@@ -23,6 +23,11 @@ class TaskDataHolderAdpater(private val context:Context, private var taskList: M
     init {
         filteredList.addAll(taskList)
     }
+    fun UpdateList(task:MutableList<Task>){
+        this.filteredList.clear()
+        this.filteredList.addAll(task)
+        notifyDataSetChanged()
+    }
     fun setData(newList: MutableList<Task>) {
         taskList = newList
         notifyDataSetChanged()

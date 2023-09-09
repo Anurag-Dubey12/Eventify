@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    style="@style/RecyclerBack"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
@@ -15,12 +16,11 @@
             android:id="@+id/name_ascen"
             android:layout_width="380sp"
             android:layout_height="wrap_content"
-            android:text="Name ascending"
+            android:text="Alphabetic A-Z"
             android:textSize="20sp"
             android:layout_marginStart="15sp"
-            android:background="@color/light_blue_50"
-            android:layout_marginEnd="15dp"
-            android:textColor="@color/black" />
+            style="@style/RecyclerTextColor"
+            android:layout_marginEnd="15dp" />
     </androidx.cardview.widget.CardView>
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -32,12 +32,11 @@
             android:id="@+id/name_decen"
             android:layout_width="380sp"
             android:layout_height="wrap_content"
-            android:text="Name descending"
+            android:text="Task Date"
             android:textSize="20sp"
             android:layout_marginStart="15sp"
-            android:background="@color/light_blue_50"
-            android:layout_marginEnd="15dp"
-            android:textColor="@color/black" />
+            style="@style/RecyclerTextColor"
+            android:layout_marginEnd="15dp" />
     </androidx.cardview.widget.CardView>
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -49,12 +48,11 @@
             android:id="@+id/Amount_ascen"
             android:layout_width="380sp"
             android:layout_height="wrap_content"
-            android:text="Amount ascending"
+            android:text="Pending"
             android:textSize="20sp"
             android:layout_marginStart="15sp"
-            android:background="@color/light_blue_50"
             android:layout_marginEnd="15dp"
-            android:textColor="@color/black" />
+            style="@style/RecyclerTextColor" />
     </androidx.cardview.widget.CardView>
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -66,11 +64,9 @@
             android:id="@+id/Amount_decen"
             android:layout_width="380sp"
             android:layout_height="wrap_content"
-            android:text="Amount decending"
+            android:text="Completed"
             android:textSize="20sp"
             android:layout_marginStart="15sp"
-            android:background="@color/light_blue_50"
-            android:layout_marginEnd="15dp"
-            android:textColor="@color/black" />
+            android:layout_marginEnd="15dp" />
     </androidx.cardview.widget.CardView>
 </LinearLayout>

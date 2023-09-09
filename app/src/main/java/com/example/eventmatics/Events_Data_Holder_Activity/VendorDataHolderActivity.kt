@@ -36,7 +36,7 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
     lateinit var swipeRefreshLayout: SwipeRefreshLayout
     lateinit var bottomnav: BottomNavigationView
     lateinit var adapter:VendorDataHolderClass
-
+    private var vendorlist:MutableList<Vendor> = mutableListOf()
     override fun onItemclick(vendor: Vendor) {
         Intent(this,VendorDetails::class.java).also {
             it.putExtra("Selected_Item",vendor)
@@ -78,7 +78,7 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
             Handler().postDelayed({
                 val databasename=getSharedPreference(this,"databasename").toString()
                 val db=LocalDatabase(this,databasename)
-                val vendorlist=db.getAllVendors()
+                vendorlist=db.getAllVendors()
                 if(vendorlist!=null){
                     adapter=VendorDataHolderClass(this,vendorlist,this)
                     recyclerView.adapter=adapter
@@ -106,7 +106,7 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
     private fun showData() {
         val databasename=getSharedPreference(this,"databasename").toString()
         val db=LocalDatabase(this,databasename)
-        val vendorlist=db.getAllVendors()
+        vendorlist=db.getAllVendors()
         if(vendorlist!=null){
             adapter=VendorDataHolderClass(this,vendorlist,this)
             recyclerView.adapter=adapter
@@ -193,7 +193,7 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
         super.onResume()
         val databasename=getSharedPreference(this,"databasename").toString()
         val db=LocalDatabase(this,databasename)
-        val vendorlist=db.getAllVendors()
+        vendorlist=db.getAllVendors()
         if(vendorlist!=null){
             adapter=VendorDataHolderClass(this,vendorlist,this)
             recyclerView.adapter=adapter
@@ -244,39 +244,45 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
     }
 
     private fun showfilteroption() {
-
+        val FilterValue= arrayOf("Paid","Not Paid")
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Filter Data")
+            .setSingleChoiceItems(FilterValue,-1){dialog,which->
+                val SelectedFilter=FilterValue[which]
+                val FilterList=vendorlist.filter {vendor->
+                    vendor.paid==SelectedFilter
+                }
+                adapter.setdata(FilterList.toMutableList())
+                dialog.dismiss()
+            }
+            .setNeutralButton("Cancel"){dialog,_->
+                dialog.dismiss()
+            }
+            .show()
     }
 
     private fun showSortOptions() {
-        val dialogBuilder = AlertDialog.Builder(this)
-        val view = LayoutInflater.from(this).inflate(R.layout.sortpopup, null)
+        val SortValue= arrayOf("Alphabetic(A-Z)","Amount")
 
-        dialogBuilder.setView(view)
-
-        val nameAscending = view.findViewById<TextView>(R.id.name_ascen)
-        val nameDescending = view.findViewById<TextView>(R.id.name_decen)
-        val amountAscending = view.findViewById<TextView>(R.id.Amount_ascen)
-        val amountDescending = view.findViewById<TextView>(R.id.Amount_decen)
-
-        dialogBuilder.setTitle("Select list order type")
-        val dialog = dialogBuilder.create()
-        dialog.show()
-
-        nameAscending.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        nameDescending.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        amountAscending.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        amountDescending.setOnClickListener {
-            dialog.dismiss()
-        }
+        val DilogShow= MaterialAlertDialogBuilder(this)
+            .setTitle("Sort Data")
+            .setSingleChoiceItems(SortValue,-1){dialog,which->
+                when(SortValue[which]){
+                    "Alphabetic(A-Z)"->{
+                        vendorlist.sortBy { it.name }
+                        adapter.notifyDataSetChanged()
+                    }
+                    "Amount"->{
+                        vendorlist.sortBy { it.estimatedAmount }
+                        adapter.notifyDataSetChanged()
+                    }
+                }
+                dialog.dismiss()
+            }
+            .setNeutralButton("Cancel"){dialog,_->
+                dialog.dismiss()
+            }
+        DilogShow.show()
     }
 
 

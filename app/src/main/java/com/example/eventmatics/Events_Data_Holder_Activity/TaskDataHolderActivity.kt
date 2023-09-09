@@ -68,6 +68,8 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
         }
     }
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_data_holder)
@@ -87,6 +89,10 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
             when (menuItem.itemId) {
                 R.id.sort -> {
                     showSortOptions()
+                    true
+                }
+                R.id.Filter ->{
+                    showFilterOption()
                     true
                 }
                 else -> false
@@ -165,6 +171,7 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
                                 .setTitle("Delete Item")
                                 .setMessage("Do you want to delete this item?")
                                 .setPositiveButton("Delete") { dialog, which ->
+                                    adapter.removeItem(position)
                                     db.deleteTask(deleteitem)
                                     actionBtn = true
                                     recreate()
@@ -241,35 +248,53 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
         return sharedvalue.getString(key,null)
     }
     private fun showSortOptions() {
-        val dialogBuilder = AlertDialog.Builder(this)
-        val view = LayoutInflater.from(this).inflate(R.layout.sortpopup, null)
 
-        dialogBuilder.setView(view)
+        val sortvalue= arrayOf("Name","Date")
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Sort Data")
+            .setMessage("Select In Which Format you want to sort the data")
 
-        val nameAscending = view.findViewById<TextView>(R.id.name_ascen)
-        val nameDescending = view.findViewById<TextView>(R.id.name_decen)
-        val amountAscending = view.findViewById<TextView>(R.id.Amount_ascen)
-        val amountDescending = view.findViewById<TextView>(R.id.Amount_decen)
+            .setSingleChoiceItems(sortvalue,1){dialog,which->
+                when(sortvalue[which]){
+                    "Name"->{
+                        tasklist.sortBy { it.taskName }
+                        adapter.notifyDataSetChanged()
+                        }
+                    "Date"->{tasklist.sortBy { it.taskDate }
 
-        dialogBuilder.setTitle("Select list order type")
-        val dialog = dialogBuilder.create()
-        dialog.show()
+                        adapter.notifyDataSetChanged()}
+                }
+                dialog.dismiss()
+                adapter.notifyDataSetChanged()
+            }
+            .setNeutralButton("Cancel"){dialog,_->
+                dialog.dismiss()
+            }
+            .show()
+    }
+    private fun showFilterOption() {
+        val FilterOption= arrayOf("Pending","Completed")
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Filter Data")
+            .setSingleChoiceItems(FilterOption,-1){dialog,which->
+                val selectedFilter = FilterOption[which]
 
-        nameAscending.setOnClickListener {
-
-            dialog.dismiss()
-        }
-
-        nameDescending.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        amountAscending.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        amountDescending.setOnClickListener {
-            dialog.dismiss()
+                val filteredList = tasklist.filter { task ->
+                    task.taskStatus == selectedFilter
+                }
+                adapter.setData(filteredList.toMutableList())
+                dialog.dismiss()
+            }
+            .setNeutralButton("Cancel"){dialog,_->
+                dialog.dismiss()
+            }
+            .show()
+    }
+    fun gettaskstatus(status:String):Int{
+        return when(status){
+            "Pending"->0
+            "Completed"->1
+            else->2
         }
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -309,7 +334,6 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
         // Update the RecyclerView adapter with the filtered task list
         adapter.setData(filteredList as MutableList<Task>)
     }
-
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return  when(item.itemId){

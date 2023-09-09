@@ -367,43 +367,7 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
        adapter.setadapter(BudgetFilter)
 
     }
-    @SuppressLint("MissingInflatedId")
-    private fun showFilterOptions() {
-        val dialogBuilder = AlertDialog.Builder(this)
-        val view = LayoutInflater.from(this).inflate(R.layout.filterpopup, null)
 
-        dialogBuilder.setView(view)
-        dialogBuilder.setTitle("Select List To Filter")
-
-        val showAll = view.findViewById<TextView>(R.id.show_all)
-        val pendingOnly = view.findViewById<TextView>(R.id.Pending_only)
-        val paidOnly = view.findViewById<TextView>(R.id.Paid_only)
-
-        val dialog = dialogBuilder.create()
-        dialog.show()
-
-
-        showAll.setOnClickListener {
-            filteredList.clear()
-            filteredList.addAll(budgetlist)
-            adapter.updateList(filteredList)
-            dialog.dismiss()
-        }
-
-        pendingOnly.setOnClickListener {
-            filteredList.clear()
-            filteredList.addAll(budgetlist.filter { it.remaining == "Pending" })
-            adapter.updateList(filteredList)
-            dialog.dismiss()
-        }
-
-        paidOnly.setOnClickListener {
-            filteredList.clear()
-            filteredList.addAll(budgetlist.filter { it.paid== "Paid" })
-            adapter.updateList(filteredList)
-            dialog.dismiss()
-        }
-    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId){
@@ -599,46 +563,43 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
         }
     }
     private fun showSortOptions() {
-        val dialogBuilder = AlertDialog.Builder(this)
-        val view = LayoutInflater.from(this).inflate(R.layout.sortpopup, null)
+      val SortValue= arrayOf("Alphabetic(A-Z)","Amount")
 
-        dialogBuilder.setView(view)
-
-        val nameAscending = view.findViewById<TextView>(R.id.name_ascen)
-        val nameDescending = view.findViewById<TextView>(R.id.name_decen)
-        val amountAscending = view.findViewById<TextView>(R.id.Amount_ascen)
-        val amountDescending = view.findViewById<TextView>(R.id.Amount_decen)
-
-        dialogBuilder.setTitle("Select list order type")
-        val dialog = dialogBuilder.create()
-        dialog.show()
-
-        nameAscending.setOnClickListener {
-            budgetlist.sortBy { it.name }
-            adapter.notifyDataSetChanged()
-            dialog.dismiss()
-        }
-
-        nameDescending.setOnClickListener {
-            budgetlist.sortByDescending { it.name }
-            adapter.notifyDataSetChanged()
-            dialog.dismiss()
-        }
-
-        amountAscending.setOnClickListener {
-            budgetlist.sortBy { it.estimatedAmount }
-            adapter.notifyDataSetChanged()
-            dialog.dismiss()
-        }
-
-        amountDescending.setOnClickListener {
-            budgetlist.sortByDescending { it.estimatedAmount }
-            adapter.notifyDataSetChanged()
-            dialog.dismiss()
-        }
-    }
-
-
-
-
+       val DilogShow= MaterialAlertDialogBuilder(this)
+            .setTitle("Sort Data")
+            .setSingleChoiceItems(SortValue,-1){dialog,which->
+                when(SortValue[which]){
+                    "Alphabetic(A-Z)"->{
+                        budgetlist.sortBy { it.name }
+                        adapter.notifyDataSetChanged()
+                    }
+                    "Amount"->{
+                        budgetlist.sortBy { it.estimatedAmount }
+                        adapter.notifyDataSetChanged()
+                    }
+                    }
+                }
+            .setNeutralButton("Cancel"){dialog,_->
+                dialog.dismiss()
+            }
+        DilogShow.show()
+}
+    @SuppressLint("MissingInflatedId")
+    private fun showFilterOptions() {
+      val FilterValue= arrayOf("Paid","Not Paid")
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Filter Data")
+            .setSingleChoiceItems(FilterValue,-1){dialog,which->
+                val SelectedFilter=FilterValue[which]
+                val FilterList=budgetlist.filter {
+                    it.paid==SelectedFilter
+                }
+                adapter.setadapter(filteredList.toMutableList())
+                dialog.dismiss()
+            }
+            .setNeutralButton("Cancel"){dialog,_->
+                dialog.dismiss()
+            }
+            .show()
+}
 }

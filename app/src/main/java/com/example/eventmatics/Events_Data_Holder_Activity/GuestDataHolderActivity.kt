@@ -36,6 +36,7 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
     lateinit var bottomnav: BottomNavigationView
     lateinit var adapter: GuestApdater
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private var GuestList:MutableList<Guest> = mutableListOf()
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +59,10 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
                     showSortOptions()
                     true
                 }
+                R.id.Filter ->{
+                    showFilterOption()
+                    true
+                }
 
                 else -> false
             }
@@ -67,7 +72,7 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
             Handler().postDelayed({
                 val databasename=getSharedPreference(this,"databasename").toString()
                 val db=LocalDatabase(this,databasename)
-                val GuestList=db.getAllGuests()
+                 GuestList=db.getAllGuests()
                 val tot=db.getTotalInvitationsSent()
                 val nottot=db.getTotalInvitationsNotSent()
                 if(GuestList!=null){
@@ -96,6 +101,9 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
             }
         })
     }
+
+
+
     fun getSharedPreference(context: Context, key: String): String? {
         val sharedPref = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
         return sharedPref.getString(key, null)
@@ -103,7 +111,7 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
     fun showData(){
         val databasename=getSharedPreference(this,"databasename").toString()
         val db=LocalDatabase(this,databasename)
-        val GuestList=db.getAllGuests()
+        GuestList=db.getAllGuests()
         if(GuestList!=null){
             adapter=GuestApdater(this,GuestList,this)
             recyclerView.adapter=adapter
@@ -175,43 +183,45 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
         showData()
     }
     private fun showSortOptions() {
-        val dialogBuilder = AlertDialog.Builder(this)
-        val view = LayoutInflater.from(this).inflate(R.layout.sortpopup, null)
+    val SortValue= arrayOf("Alphabetic(A-Z)","No Of Family Member")
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Sort Data")
+            .setSingleChoiceItems(SortValue,-1){dialog,which->
+                when(SortValue[which]){
+                    "Alphabetic(A-Z)" ->{
+                        GuestList.sortBy { it.name }
+                        adapter.notifyDataSetChanged()
+                    }
+                    "No Of Family Member" ->{
+                        GuestList.sortBy { it.totalFamilyMembers }
+                        adapter.notifyDataSetChanged()
+                    }
 
-        dialogBuilder.setView(view)
-
-        val nameAscending = view.findViewById<TextView>(R.id.name_ascen)
-        val nameDescending = view.findViewById<TextView>(R.id.name_decen)
-        val amountAscending = view.findViewById<TextView>(R.id.Amount_ascen)
-        val amountDescending = view.findViewById<TextView>(R.id.Amount_decen)
-
-        dialogBuilder.setTitle("Select list order type")
-        val dialog = dialogBuilder.create()
-        dialog.show()
-
-        nameAscending.setOnClickListener {
-//            budgetlist.sortBy { it.eventName }
-//            adapter.notifyDataSetChanged()
+                }
+                dialog.dismiss()
+            }
+        .setNeutralButton("Cancel"){dialog,_->
             dialog.dismiss()
         }
+        .show()
+    }
+    private fun showFilterOption() {
+        val Filter= arrayOf("Invitation Sent","Not Sent")
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Sort Data")
+            .setSingleChoiceItems(Filter,-1){dialog,which->
+                val InvitationselectedFilter=Filter[which]
+                val InvitationFilterList=GuestList.filter {
+                    it.isInvitationSent==InvitationselectedFilter
+                }
+               adapter.setdata(InvitationFilterList.toMutableList())
+                dialog.dismiss()
+                }
 
-        nameDescending.setOnClickListener {
-//            budgetlist.sortByDescending { it.eventName }
-//            adapter.notifyDataSetChanged()
-            dialog.dismiss()
-        }
-
-        amountAscending.setOnClickListener {
-//            budgetlist.sortBy { it.amount }
-//            adapter.notifyDataSetChanged()
-            dialog.dismiss()
-        }
-
-        amountDescending.setOnClickListener {
-//            budgetlist.sortByDescending { it.amount }
-//            adapter.notifyDataSetChanged()
-            dialog.dismiss()
-        }
+            .setNeutralButton("Cancel"){dialog,_->
+                dialog.dismiss()
+            }
+            .show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
