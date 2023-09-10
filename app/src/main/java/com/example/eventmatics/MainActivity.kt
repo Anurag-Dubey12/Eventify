@@ -3,7 +3,6 @@ package com.example.eventmatics
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -11,12 +10,11 @@ import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.BroadcastReceiver
 import android.content.ComponentName
-import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.icu.text.SimpleDateFormat
 import android.net.Uri
@@ -28,6 +26,7 @@ import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.preference.PreferenceManager
+import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.ImageButton
@@ -38,8 +37,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.appcompat.widget.AppCompatButton
-import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -57,14 +54,18 @@ import com.example.eventmatics.Events_Data_Holder_Activity.TaskDataHolderActivit
 import com.example.eventmatics.Events_Data_Holder_Activity.VendorDataHolderActivity
 import com.example.eventmatics.Login_Activity.signin_account
 import com.example.eventmatics.NavigationDrawer.PDF_Report
+import com.example.eventmatics.NavigationDrawer.ProfileActivity
 import com.example.eventmatics.NavigationDrawer.SettingActivity
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.UserProfile
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.UserProfileDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Events
 import com.example.eventmatics.fragments.DatabaseNameHolder
 import com.example.eventmatics.fragments.EventAdding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
@@ -86,6 +87,7 @@ import org.eazegraph.lib.charts.PieChart
 import org.eazegraph.lib.models.PieModel
 import java.io.File
 import java.io.FileOutputStream
+import java.io.InputStream
 import java.util.Calendar
 import java.util.Locale
 
@@ -97,10 +99,12 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
     private lateinit var eventRecyclerView: RecyclerView
     private lateinit var taskImageButton: ImageButton
     private lateinit var budgetImageButton: ImageButton
+    private lateinit var Imageadd: ImageView
     private lateinit var guestImageButton: ImageButton
     private lateinit var vendorImageButton: ImageButton
     private lateinit var budgetInfoCardView: CardView
     private lateinit var budgetShowTextView: TextView
+    private lateinit var Nameadd: TextView
     private lateinit var Eventshow: TextView
     private lateinit var EventTimerDisplay: TextView
     private lateinit var crossimg: ImageView
@@ -109,52 +113,19 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
     private lateinit var paidAmountShowTextView: TextView
     private lateinit var eventaddbut: MaterialButton
     private lateinit var adapter: EventLayoutAdapter
-    private lateinit var bmp:Bitmap
     private  var eventList:MutableList<Events> = mutableListOf()
-    private lateinit var scalebmp:Bitmap
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var dataAddedReceiver: BroadcastReceiver
+    private lateinit var EditProfile: MaterialButton
+    private lateinit var SaveButton: MaterialButton
+    private lateinit var ProfileDialog: BottomSheetDialog
+    private lateinit var ImageAddOption: BottomSheetDialog
     private lateinit var piechart:PieChart
     private val PERMISSION_CODE=101
     private val PICK_FILE_REQUEST = 1
+    private val CAPTURE_REQ_CODE = 101
+    private val GALLERY_REQ_CODE = 201
 
-    //Have to do it
-    //BackUp And Restore
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == PICK_FILE_REQUEST && resultCode == Activity.RESULT_OK) {
-            data?.data?.let { selectedFileUri ->
-                val inputStream=contentResolver.openInputStream(selectedFileUri)
-                val content=inputStream?.bufferedReader().use { it?.readText() }
-                val gson = Gson()
-                val eventsData = gson.fromJson(content, Events::class.java)
-                try {
-                    val databasename=getSharedPreference(this,"databasename").toString()
-
-                    val dbHelper=LocalDatabase(this,databasename)
-                    val db=dbHelper.writableDatabase
-
-                   val values=ContentValues()
-                    values.put("Event_Name", eventsData.name)
-                    values.put("Event_Date", eventsData.Date)
-                    values.put("Event_Time", eventsData.time)
-                    values.put("Event_Budget", eventsData.budget)
-                    val newRowId = db.insert("Event", null, values)
-
-                    db.close()
-                    eventList.add(eventsData)
-                    adapter.notifyDataSetChanged()
-                    Toast.makeText(this, "Data has been restored successfully", Toast.LENGTH_SHORT).show()
-                }catch (e:Exception){
-                    e.printStackTrace()
-                    Log.e("RestoreData", "Error restoring data: ${e.message}")                }
-            }
-        }
-        else{
-            showEventData()
-        }
-    }
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -183,28 +154,26 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
 //        widgetButton = findViewById(R.id.widgetbutton)
         val databaseNameHolder = DatabaseNameHolder(this)
         databaseNameHolder.setDatabaseChangeListener(this)
-        //Profile Pic And User Name
-        val auth = FirebaseAuth.getInstance()
-        val storage = FirebaseStorage.getInstance()
+
+        //Load Profile Pic
+        val db=UserProfileDatabase(this)
         val headerView = navView.getHeaderView(0)
-        val userName = headerView.findViewById<TextView>(R.id.name)
-        val userPic = headerView.findViewById<CircleImageView>(R.id.profilepic)
-
-        val user = auth.currentUser
-
-        if (user != null) {
-            val name = user.displayName
-            val photoUrl = user.photoUrl
-
-            userName.text = name
-
-            if (photoUrl != null) {
-                Picasso.get().load(photoUrl).into(userPic)
-            }
-        } else {
-
+        val userprofile=headerView.findViewById<CircleImageView>(R.id.profilepic)
+        val username=headerView.findViewById<TextView>(R.id.UserNameView)
+        EditProfile=headerView.findViewById(R.id.editProfileButton)
+        EditProfile.setOnClickListener {
+            Editprofile()
         }
-
+        val Userimage=db.getUserProfilebyID(1)
+        val userimage=Userimage?.Image
+        if(Userimage!=null){
+            val image=BitmapFactory.decodeByteArray(userimage,0, userimage!!.size)
+            userprofile.setImageBitmap(image)
+        }
+        val UserName=Userimage?.name
+        if(UserName!=null){
+            username.text= UserName.toString()
+        }
 
         val actionBarDrawerToggle = ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close)
         drawerLayout.addDrawerListener(actionBarDrawerToggle)
@@ -293,6 +262,111 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
 
         navigationDrawershow()
     }
+
+    private fun Editprofile() {
+        ProfileDialog= BottomSheetDialog(this)
+        ProfileDialog.setContentView(R.layout.editprofiledialog)
+
+        ProfileDialog.show()
+
+        val db=UserProfileDatabase(this)
+        Imageadd=ProfileDialog.findViewById(R.id.uploadImage)!!
+        Nameadd=ProfileDialog.findViewById(R.id.uploadName)!!
+        SaveButton=ProfileDialog.findViewById(R.id.saveButton)!!
+
+        val UserData=db.getUserProfilebyID(1)
+        val currentname=UserData?.name ?:" "
+        val userimage=UserData?.Image
+        if(UserData!=null){
+            val image=BitmapFactory.decodeByteArray(userimage,0, userimage!!.size)
+            Imageadd.setImageBitmap(image)
+        }
+
+        Imageadd.setOnClickListener {
+            ImageUpload()
+        }
+        Nameadd.text=currentname
+
+        SaveButton.setOnClickListener {
+            ImageUpload()
+            ImageAddOption.dismiss()
+            ProfileDialog.dismiss()
+        }
+    }
+    private fun ImageUpload(){
+        ImageAddOption=BottomSheetDialog(this)
+        ImageAddOption.setContentView(R.layout.profiledialog)
+        ImageAddOption.show()
+
+        val ImageCapture=ImageAddOption.findViewById<ImageView>(R.id.ImageCapture)
+        val ImageGallery=ImageAddOption.findViewById<ImageView>(R.id.ImageGallery)
+
+        ImageGallery?.setOnClickListener {
+            if(ContextCompat.checkSelfPermission(this,android.Manifest.permission.CAMERA)!=PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(this,
+                    arrayOf( android.Manifest.permission.CAMERA),GALLERY_REQ_CODE)
+            }else{
+                Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI).also {
+                    startActivityForResult(it,GALLERY_REQ_CODE)
+                    ImageAddOption.dismiss()
+                }
+            }
+        }
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        val db=UserProfileDatabase(this)
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode== RESULT_OK){
+            when(requestCode){
+                GALLERY_REQ_CODE->{
+                    val selecteddata=data?.data
+                    if(selecteddata!=null){
+                        val GetImageByte=getImageByte(selecteddata)
+                        val userid=FirebaseAuth.getInstance().currentUser?.uid
+                        if(userid != null){
+                            val existinguser=db.getUserProfilebyID(1)
+                            if(existinguser!=null){
+                                    var UserName=Nameadd.text.toString()
+                                    var userprofile=UserProfile(1,UserName,GetImageByte)
+                                    db.updateUserProfile(userprofile)
+                                    Toast.makeText(this, "Data Updated", Toast.LENGTH_SHORT).show()
+                                val ImageBitmap=BitmapFactory.decodeByteArray(GetImageByte,0,GetImageByte.size)
+                                Imageadd.setImageBitmap(ImageBitmap)
+                            }else{
+                                    var UserName=Nameadd.text.toString()
+                                    var userprofile=UserProfile(1,UserName,GetImageByte)
+                                    db.insertUserProfile(userprofile)
+                                    Toast.makeText(this, "Image Uploaded", Toast.LENGTH_SHORT).show()
+                                val ImageBitmap=BitmapFactory.decodeByteArray(GetImageByte,0,GetImageByte.size)
+                                Imageadd.setImageBitmap(ImageBitmap)
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    fun UpdateUserProfileAndUsername(imagebyte:ByteArray,Username:String){
+        val db=UserProfileDatabase(this)
+        val User=db.getUserProfilebyID(1)
+        if(User!=null){
+            val UserProfile=UserProfile(1,Username,imagebyte)
+            db.updateUserProfile(UserProfile)
+            Toast.makeText(this, "Data Updated", Toast.LENGTH_SHORT).show()
+        }
+        else{
+            val UserProfile=UserProfile(1,Username,imagebyte)
+            db.insertUserProfile(UserProfile)
+            Toast.makeText(this, "Data Uploaded", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun getImageByte(image: Uri):ByteArray{
+        val image=contentResolver.openInputStream(image)
+        return image?.readBytes() ?: ByteArray(0)
+    }
+
     fun createNotificationChannel(){
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
             val channelId="Event_Notification"
@@ -790,6 +864,21 @@ fun checkPermissions():Boolean{
 //            ,1)
         SetAppTheme()
         showEventData()
+        //Load Profile Pic
+        val db=UserProfileDatabase(this)
+        val headerView = navView.getHeaderView(0)
+        val userprofile=headerView.findViewById<CircleImageView>(R.id.profilepic)
+        val username=headerView.findViewById<TextView>(R.id.UserNameView)
+        EditProfile=headerView.findViewById(R.id.editProfileButton)
+        EditProfile.setOnClickListener {
+            Editprofile()
+        }
+        val Userimage=db.getUserProfilebyID(1)
+        val userimage=Userimage?.Image
+        if(Userimage!=null){
+            val image=BitmapFactory.decodeByteArray(userimage,0, userimage!!.size)
+            userprofile.setImageBitmap(image)
+        }
     }
     @SuppressLint("Range")
      fun showEventData() {
@@ -936,7 +1025,7 @@ fun checkPermissions():Boolean{
 
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                android.R.id.home -> {
+                R.id.home -> {
                     // Open the drawer when the navigation button is clicked
                     drawerLayout.openDrawer(GravityCompat.START)
                     true
@@ -945,13 +1034,23 @@ fun checkPermissions():Boolean{
                     sendWhatsAppMessage()
                     true
                 }
-                R.id.nav_telegram->{
-                    val telegramUsername = "@Anuragdevloper"
-                    val telegramUri = Uri.parse("https://t.me/$telegramUsername")
+                R.id.nav_telegram -> {
+                    val userid = 1302795295
+                    val message = "Hello, this is your message!"
+                    val telegramUri = Uri.parse("tg://send?user_id=$userid&text=${Uri.encode(message)}")
                     val telegramIntent = Intent(Intent.ACTION_VIEW, telegramUri)
-                    startActivity(telegramIntent)
+                    telegramIntent.setPackage("org.telegram.messenger")
+
+                    val packageManager = packageManager
+                    val activities = packageManager.queryIntentActivities(telegramIntent, 0)
+                    if (activities.isNotEmpty()) {
+                        startActivity(telegramIntent)
+                    } else {
+                        Toast.makeText(this, "Telegram app is not installed", Toast.LENGTH_SHORT).show()
+                    }
                     true
                 }
+
                 R.id.nav_settings->{
                     try{
                         Intent(this, SettingActivity::class.java).also { startActivity(it) }
@@ -963,6 +1062,15 @@ fun checkPermissions():Boolean{
                 R.id.nav_pdf->{
                     Intent(this,PDF_Report::class.java).also { startActivity(it) }
 
+                    true
+                }
+                R.id.nav_profile->{
+                    try {
+                    Intent(this,ProfileActivity::class.java).also { startActivity(it) }
+
+                    }catch (e:Exception){
+                        Log.d("Activity","Activity ${e.message} ")
+                    }
                     true
                 }
                 R.id.nav_logout->{
@@ -991,7 +1099,6 @@ fun checkPermissions():Boolean{
                swipeRefreshLayout.isEnabled=true
 
            }
-
        })
 }
 
@@ -1053,6 +1160,8 @@ fun checkPermissions():Boolean{
     }
 
 
+    //Have to do it
+    //BackUp And Restore
 
 
 }

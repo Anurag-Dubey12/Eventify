@@ -91,6 +91,12 @@
     <style name="RecyclerImage">
         <item name="android:src">@drawable/budget_data_dark</item>
     </style>
+    <style name="Camera">
+        <item name="android:src">@drawable/camera_dark</item>
+    </style>
+    <style name="Gallery">
+        <item name="android:src">@drawable/gallery_dark</item>
+    </style>
     <style name="RecyclerDelete">
         <item name="android:src">@drawable/delete_dark</item>
     </style>

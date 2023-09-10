@@ -147,7 +147,7 @@ class account_creat : AppCompatActivity() {
             "photoUrl" to user.photoUrl.toString()
         )
 
-        firestore.collection("GoogleSignInUser")
+        firestore.collection("UserProfile")
             .document(user.uid)
             .set(userMap)
             .addOnSuccessListener {

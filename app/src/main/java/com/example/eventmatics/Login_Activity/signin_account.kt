@@ -13,6 +13,7 @@ import android.widget.Toast
 import com.example.eventmatics.MainActivity
 import com.example.eventmatics.R
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 
@@ -25,7 +26,7 @@ class signin_account : AppCompatActivity() {
     private lateinit var createacc: TextView
     private lateinit var firebaseauth: FirebaseAuth
     private lateinit var progressDialog: ProgressDialog
-    private lateinit var rProgLayout: ProgressBar
+    private lateinit var rProgLayout: LinearProgressIndicator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

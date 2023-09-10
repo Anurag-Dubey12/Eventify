@@ -19,12 +19,11 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="16dp">
-
         <ImageView
             android:id="@+id/profileImage"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:src="@drawable/profile"
+
             android:scaleType="centerCrop"
             android:contentDescription="Profile Image" />
 
@@ -36,7 +35,7 @@
             android:paddingStart="16dp">
 
             <TextView
-                android:id="@+id/usernameTextView"
+                android:id="@+id/UserName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="john_doe"
@@ -44,7 +43,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/emailTextView"
+                android:id="@+id/UserEmail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="john_doe@example.com"
@@ -52,12 +51,19 @@
                 android:textColor="@android:color/darker_gray"
                 android:layout_marginTop="8dp" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/editProfileButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Edit Profile"
-                android:layout_marginTop="8dp" />
+                android:layout_marginTop="8dp"
+                app:backgroundTint="@color/white"
+                android:textColor="@color/black"
+                app:cornerRadius="15sp"
+                app:strokeWidth="1sp"
+                app:strokeColor="@color/black"
+                android:padding="8dp"
+                />
 
         </LinearLayout>
 
