@@ -99,7 +99,7 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
     private lateinit var eventRecyclerView: RecyclerView
     private lateinit var taskImageButton: ImageButton
     private lateinit var budgetImageButton: ImageButton
-    private lateinit var Imageadd: ImageView
+    private lateinit var Imageadd: CircleImageView
     private lateinit var guestImageButton: ImageButton
     private lateinit var vendorImageButton: ImageButton
     private lateinit var budgetInfoCardView: CardView
@@ -125,6 +125,7 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
     private val PICK_FILE_REQUEST = 1
     private val CAPTURE_REQ_CODE = 101
     private val GALLERY_REQ_CODE = 201
+    private var selectedImageUri:Uri?=null
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -266,7 +267,6 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
     private fun Editprofile() {
         ProfileDialog= BottomSheetDialog(this)
         ProfileDialog.setContentView(R.layout.editprofiledialog)
-
         ProfileDialog.show()
 
         val db=UserProfileDatabase(this)
@@ -277,6 +277,9 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
         val UserData=db.getUserProfilebyID(1)
         val currentname=UserData?.name ?:" "
         val userimage=UserData?.Image
+        try{
+
+
         if(UserData!=null){
             val image=BitmapFactory.decodeByteArray(userimage,0, userimage!!.size)
             Imageadd.setImageBitmap(image)
@@ -286,11 +289,42 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
             ImageUpload()
         }
         Nameadd.text=currentname
-
+        }catch (e:Exception){
+            Log.d("Image","Crash due to:${e.message}")
+        }
         SaveButton.setOnClickListener {
-            ImageUpload()
-            ImageAddOption.dismiss()
+//            ImageUpload()
+//            ImageAddOption.dismiss()
+//            ProfileDialog.dismiss()
+
+            if(selectedImageUri!=null){
+                val GetImageByte=getImageByte(selectedImageUri!!)
+                val userid=FirebaseAuth.getInstance().currentUser?.uid
+                if(userid!=null){
+                    var username = Nameadd.text.toString()
+                    val existinguser=db.getUserProfilebyID(1)
+                    if(existinguser!=null){
+                        val userprofile=UserProfile(1,username,GetImageByte)
+                        db.updateUserProfile(userprofile)
+                        Toast.makeText(this, "Data Updated", Toast.LENGTH_SHORT).show()
+                        val image=BitmapFactory.decodeByteArray(GetImageByte,0,GetImageByte.size)
+                        Imageadd.setImageBitmap(image)
+                        recreate()
+                    }
+                    else{
+                        val userprofile=UserProfile(1,username,GetImageByte)
+                        db.insertUserProfile(userprofile)
+                        Toast.makeText(this, "Image Uploaded", Toast.LENGTH_SHORT).show()
+                        val image=BitmapFactory.decodeByteArray(GetImageByte,0,GetImageByte.size)
+                        Imageadd.setImageBitmap(image)
+                        recreate()
+                    }
+                }
+            }else{
+                Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show()
+            }
             ProfileDialog.dismiss()
+            drawerLayout.close()
         }
     }
     private fun ImageUpload(){
@@ -321,27 +355,28 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
                 GALLERY_REQ_CODE->{
                     val selecteddata=data?.data
                     if(selecteddata!=null){
-                        val GetImageByte=getImageByte(selecteddata)
-                        val userid=FirebaseAuth.getInstance().currentUser?.uid
-                        if(userid != null){
-                            val existinguser=db.getUserProfilebyID(1)
-                            if(existinguser!=null){
-                                    var UserName=Nameadd.text.toString()
-                                    var userprofile=UserProfile(1,UserName,GetImageByte)
-                                    db.updateUserProfile(userprofile)
-                                    Toast.makeText(this, "Data Updated", Toast.LENGTH_SHORT).show()
-                                val ImageBitmap=BitmapFactory.decodeByteArray(GetImageByte,0,GetImageByte.size)
-                                Imageadd.setImageBitmap(ImageBitmap)
-                            }else{
-                                    var UserName=Nameadd.text.toString()
-                                    var userprofile=UserProfile(1,UserName,GetImageByte)
-                                    db.insertUserProfile(userprofile)
-                                    Toast.makeText(this, "Image Uploaded", Toast.LENGTH_SHORT).show()
-                                val ImageBitmap=BitmapFactory.decodeByteArray(GetImageByte,0,GetImageByte.size)
-                                Imageadd.setImageBitmap(ImageBitmap)
-
-                            }
-                        }
+                        selectedImageUri=selecteddata
+//                        val GetImageByte=getImageByte(selecteddata)
+//                        val userid=FirebaseAuth.getInstance().currentUser?.uid
+//                        if(userid != null){
+//                            val existinguser=db.getUserProfilebyID(1)
+//                            if(existinguser!=null){
+//                                    var UserName=Nameadd.text.toString()
+//                                    var userprofile=UserProfile(1,UserName,GetImageByte)
+//                                    db.updateUserProfile(userprofile)
+//                                    Toast.makeText(this, "Data Updated", Toast.LENGTH_SHORT).show()
+//                                val ImageBitmap=BitmapFactory.decodeByteArray(GetImageByte,0,GetImageByte.size)
+//                                Imageadd.setImageBitmap(ImageBitmap)
+//                            }else{
+//                                    var UserName=Nameadd.text.toString()
+//                                    var userprofile=UserProfile(1,UserName,GetImageByte)
+//                                    db.insertUserProfile(userprofile)
+//                                    Toast.makeText(this, "Image Uploaded", Toast.LENGTH_SHORT).show()
+//                                val ImageBitmap=BitmapFactory.decodeByteArray(GetImageByte,0,GetImageByte.size)
+//                                Imageadd.setImageBitmap(ImageBitmap)
+//
+//                            }
+//                        }
                     }
                 }
             }
@@ -864,21 +899,6 @@ fun checkPermissions():Boolean{
 //            ,1)
         SetAppTheme()
         showEventData()
-        //Load Profile Pic
-        val db=UserProfileDatabase(this)
-        val headerView = navView.getHeaderView(0)
-        val userprofile=headerView.findViewById<CircleImageView>(R.id.profilepic)
-        val username=headerView.findViewById<TextView>(R.id.UserNameView)
-        EditProfile=headerView.findViewById(R.id.editProfileButton)
-        EditProfile.setOnClickListener {
-            Editprofile()
-        }
-        val Userimage=db.getUserProfilebyID(1)
-        val userimage=Userimage?.Image
-        if(Userimage!=null){
-            val image=BitmapFactory.decodeByteArray(userimage,0, userimage!!.size)
-            userprofile.setImageBitmap(image)
-        }
     }
     @SuppressLint("Range")
      fun showEventData() {
