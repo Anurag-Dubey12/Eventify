@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Events
@@ -34,6 +35,7 @@ class EventLayoutAdapter(
             // Call the onItemClickListener and pass the position or any other relevant data.
             onItemClickListener(position)
         }
+
         }
 
 
@@ -51,7 +53,6 @@ class EventLayoutAdapter(
             eventNameTextView.text=eventdata.name
             eventDateTextView.text=eventdata.Date
             eventTimeTextView.text=eventdata.time
-
         }
 
     }

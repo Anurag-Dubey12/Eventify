@@ -13,6 +13,7 @@ import com.example.eventmatics.SQLiteDatabase.Dataclass.Task
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Vendor
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Paymentinfo
 import com.example.eventmatics.SQLiteDatabase.Dataclass.VendorPaymentinfo
+import kotlinx.coroutines.currentCoroutineContext
 
 class LocalDatabase(contex:Context,databasename:String):
     SQLiteOpenHelper(contex,databasename,null,DATABASE_VERSION) {
@@ -562,6 +563,49 @@ class LocalDatabase(contex:Context,databasename:String):
         return taskList
     }
 
+    fun getTotalTask():Int{
+        var total=0
+        val db=readableDatabase
+        val query="SELECT COUNT(*) FROM $TABLE_TASK"
+        val Cursor=db.rawQuery(query,null)
+        Cursor?.let {
+            if(it.moveToNext()){
+                total=it.getInt(0)
+            }
+        }
+        Cursor?.close()
+        db.close()
+        return total
+    }
+    fun getTaskStatus():Int{
+        var total=0
+        val db=readableDatabase
+        val query="SELECT COUNT(*) FROM $TABLE_TASK WHERE $Task_Status = 'Completed' "
+        val cursor:Cursor?=db.rawQuery(query,null)
+        cursor?.let {
+            if(it.moveToNext()){
+                total=it.getInt(0)
+            }
+        }
+        cursor?.close()
+        db.close()
+        return total
+    }
+    fun getTaskPendingStatus():Int{
+        var total=0
+        val db=readableDatabase
+        val query="SELECT COUNT(*) FROM $TABLE_TASK WHERE $Task_Status = 'Pending'"
+        val cursor=db.rawQuery(query, null)
+        cursor?.let {
+            if (it.moveToFirst()){
+                total=it.getInt(0)
+            }
+        }
+        cursor?.close()
+        db.close()
+        return total
+    }
+
     //     Update a task
     fun updateTask(task: Task): Int {
         val db = writableDatabase
@@ -700,6 +744,20 @@ class LocalDatabase(contex:Context,databasename:String):
     }
     fun getTotalBudget(): Double {
         var totalBudget = 0.0
+        val selectQuery = "SELECT SUM(CAST(${Budget_Estimated} AS REAL)) FROM $TABLE_BUDGET"
+        val db = readableDatabase
+        val cursor: Cursor? = db.rawQuery(selectQuery, null)
+        cursor?.let {
+            if (it.moveToFirst()) {
+                totalBudget = it.getDouble(0)
+            }
+        }
+        cursor?.close()
+        db.close()
+        return totalBudget
+    }
+    fun getTotalPaidBudget(): Double {
+        var totalBudget = 0.0
         val selectQuery = "SELECT SUM(CAST(${Budget_Estimated} AS REAL)) FROM $TABLE_BUDGET WHERE $Budget_Paid= 'Paid'"
         val db = readableDatabase
         val cursor: Cursor? = db.rawQuery(selectQuery, null)
@@ -712,6 +770,21 @@ class LocalDatabase(contex:Context,databasename:String):
         db.close()
         return totalBudget
     }
+    fun getTotalNotPaidBudget(): Double {
+        var totalBudget = 0.0
+        val selectQuery = "SELECT SUM(CAST(${Budget_Estimated} AS REAL)) FROM $TABLE_BUDGET WHERE $Budget_Paid= 'Not Paid'"
+        val db = readableDatabase
+        val cursor: Cursor? = db.rawQuery(selectQuery, null)
+        cursor?.let {
+            if (it.moveToFirst()) {
+                totalBudget = it.getDouble(0)
+            }
+        }
+        cursor?.close()
+        db.close()
+        return totalBudget
+    }
+
 fun getTotalUnPaid():Double{
     var total=0.0
     val query="SELECT SUM(CAST(${Budget_Estimated} AS REAL)) FROM $TABLE_BUDGET WHERE $Budget_Paid= 'Not Paid'"
@@ -726,6 +799,7 @@ fun getTotalUnPaid():Double{
     db.close()
     return total
 }
+
 
     // Get all budgets
     @SuppressLint("Range")
@@ -754,70 +828,6 @@ fun getTotalUnPaid():Double{
         db.close()
         return budgets
     }
-
-    @SuppressLint("Range")
-//    fun GetAllBudgetWithPayment(): MutableList<BudgetWithPayment> {
-//        val budgetlist = mutableListOf<BudgetWithPayment>()
-//        val query = "SELECT $TABLE_BUDGET.* ,$TABLE_Payment.$Payment_Name, " +
-//                "$TABLE_Payment.$Payment_Amount, $TABLE_Payment.$Payment_Date, $TABLE_Payment.$Payment_Status " +
-//                "FROM $TABLE_BUDGET " +
-//                "LEFT JOIN $TABLE_Payment ON $TABLE_BUDGET.$COLUMN_ID = $TABLE_Payment.$Payment_BudgetID"
-//
-//        val db = readableDatabase
-//        val cursor: Cursor = db.rawQuery(query, null)
-//        cursor.use { cursor ->
-//            var currentBudget: BudgetWithPayment? = null
-//            while (cursor.moveToNext()) {
-//                val budgetID = cursor.getInt(cursor.getColumnIndex(COLUMN_ID))
-//                val name = cursor.getString(cursor.getColumnIndex(Budget_Name))
-//                val category = cursor.getString(cursor.getColumnIndex(Budget_Category))
-//                val note = cursor.getString(cursor.getColumnIndex(Budget_Note))
-//                val estimated = cursor.getString(cursor.getColumnIndex(Budget_Estimated))
-//                val balance = cursor.getString(cursor.getColumnIndex(Budget_Balance))
-//                val pending = cursor.getString(cursor.getColumnIndex(Budget_Pending))
-//                val paid = cursor.getString(cursor.getColumnIndex(Budget_Paid))
-//
-//                Log.d("DEBUG", "Budget_ID: $budgetID, Name: $name")
-//
-//                if (currentBudget?.budget?.id != budgetID.toLong()) {
-//                    if (currentBudget != null) {
-//                        budgetlist.add(currentBudget)
-//                    }
-//                    currentBudget = BudgetWithPayment(
-//                        Budget(
-//                            budgetID.toLong(), name, category, note, estimated, balance, pending, paid
-//                        ),
-//                        mutableListOf()
-//                    )
-//                }
-//                val paymentID = cursor.getInt(cursor.getColumnIndex(Payment_ID))
-//                if (paymentID != 0) {
-//                    val paymentName = cursor.getString(cursor.getColumnIndex(Payment_Name))
-//                    val paymentAmount = cursor.getFloat(cursor.getColumnIndex(Payment_Amount))
-//                    val paymentDate = cursor.getString(cursor.getColumnIndex(Payment_Date))
-//                    val paymentStatus = cursor.getString(cursor.getColumnIndex(Payment_Status))
-//
-//                    currentBudget?.payment?.add(
-//                        Paymentinfo(
-//                            paymentID, paymentName, paymentAmount, paymentDate, paymentStatus,
-//                            budgetID.toLong()
-//                        )
-//                    )
-//                    Log.d("DEBUG", "Payment details added for Budget ID: $budgetID")
-//                } else {
-//                    Log.d("DEBUG", "No payment details for Budget ID: $budgetID")
-//                }
-//            }
-//            currentBudget?.let {
-//                budgetlist.add(it)
-//            }
-//        }
-//        return budgetlist
-//    }
-
-
-
-
     // Update a budget
     fun updateBudget(budget: Budget): Int {
         val db = writableDatabase
@@ -1084,6 +1094,21 @@ fun getTotalUnPaid():Double{
         db.close()
         return total
     }
+    fun getTotalInvitation():Int{
+        var total=0
+        val db=readableDatabase
+        val query="SELECT COUNT(*) FROM $TABLE_GUEST"
+        val cursor=db.rawQuery(query,null)
+        cursor?.let {
+            if(cursor.moveToFirst()){
+                total=it.getInt(0)
+            }
+        }
+        cursor?.close()
+        db.close()
+        return total
+    }
+
 
     fun getTotalInvitationsNotSent(): Int {
         var total = 0
@@ -1309,6 +1334,49 @@ fun getTotalUnPaid():Double{
         db.close()
         return VendorList
     }
+    fun GetTotalVendorBudget():Double{
+        var totalBudget=0.0
+        val db=readableDatabase
+        val query="SELECT SUM(CAST(${Vendor_Estimated} AS REAL)) FROM $TABLE_VENDOR "
+        val cursor=db.rawQuery(query,null)
+        cursor?.let {
+            if(it.moveToFirst()){
+                totalBudget = it.getDouble(0)
+            }
+        }
+        cursor?.close()
+        db.close()
+        return totalBudget
+    }
+    fun GetVendorPaidAmount():Double{
+        var total=0.0
+        val db=readableDatabase
+        val query="SELECT SUM(CAST(${Vendor_Estimated} AS REAL )) FROM $TABLE_VENDOR WHERE $Vendor_Paid= 'Paid'"
+        val cursor=db.rawQuery(query,null)
+        cursor?.let {
+            if(it.moveToFirst()){
+                total=it.getDouble(0)
+            }
+        }
+        cursor?.close()
+        db.close()
+        return total
+    }
+    fun GetVendorNotPaidAmount():Double{
+        var total=0.0
+        val db=readableDatabase
+        val query="SELECT SUM(CAST(${Vendor_Estimated} AS REAL)) FROM $TABLE_VENDOR WHERE $Vendor_Paid='Not Paid'"
+        val cursor=db.rawQuery(query,null)
+        cursor?.let {
+            if(it.moveToFirst()){
+                total=it.getDouble(0)
+            }
+        }
+        cursor?.close()
+        db.close()
+        return total
+    }
+
     @SuppressLint("Range")
     fun isVendorPaid(VendorId: Long): Boolean {
         val db = readableDatabase
@@ -1322,7 +1390,6 @@ fun getTotalUnPaid():Double{
                 isPaid = true
             }
         }
-
         cursor.close()
         db.close()
         return isPaid
@@ -1364,6 +1431,7 @@ fun getTotalUnPaid():Double{
         cursor.close()
         return vendor
     }
+
 
     // Update a vendor
     fun updateVendor(vendor: Vendor): Int {

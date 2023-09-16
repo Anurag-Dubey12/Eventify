@@ -104,11 +104,21 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
     private lateinit var vendorImageButton: ImageButton
     private lateinit var budgetInfoCardView: CardView
     private lateinit var budgetShowTextView: TextView
+    private lateinit var VendorTotalAmount: TextView
+    private lateinit var TaskCompleted: TextView
+    private lateinit var VendorPendingAmount: TextView
+    private lateinit var VendorPaidAmount: TextView
+    private lateinit var TaskPending: TextView
     private lateinit var Nameadd: TextView
+    private lateinit var TotalTask: TextView
+    private lateinit var TotalInvi: TextView
+    private lateinit var TotalInvitationSent: TextView
+    private lateinit var TotalInvitationNotSent: TextView
     private lateinit var Eventshow: TextView
     private lateinit var EventTimerDisplay: TextView
     private lateinit var crossimg: ImageView
     private lateinit var eventshowhide: LinearLayout
+    private lateinit var eventActivity: LinearLayout
     private lateinit var pendingAmountShowTextView: TextView
     private lateinit var paidAmountShowTextView: TextView
     private lateinit var eventaddbut: MaterialButton
@@ -117,10 +127,12 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var dataAddedReceiver: BroadcastReceiver
     private lateinit var EditProfile: MaterialButton
+    private lateinit var Delete_Event: MaterialButton
+    private lateinit var GeneratePdf: MaterialButton
     private lateinit var SaveButton: MaterialButton
     private lateinit var ProfileDialog: BottomSheetDialog
     private lateinit var ImageAddOption: BottomSheetDialog
-    private lateinit var piechart:PieChart
+//    private lateinit var piechart:PieChart
     private val PERMISSION_CODE=101
     private val PICK_FILE_REQUEST = 1
     private val CAPTURE_REQ_CODE = 101
@@ -137,6 +149,18 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
         navView= findViewById(R.id.navView)
         eventRecyclerView = findViewById(R.id.Eventrec)
         taskImageButton = findViewById(R.id.task)
+        TaskPending = findViewById(R.id.TaskPending)
+        VendorPendingAmount = findViewById(R.id.VendorPendingAmount)
+        VendorPaidAmount = findViewById(R.id.VendorPaidAmount)
+        TotalInvi = findViewById(R.id.TotalInvi)
+        TotalInvitationSent = findViewById(R.id.TotalInviSent)
+        TotalInvitationNotSent = findViewById(R.id.TotalInvinotSent)
+        eventActivity = findViewById(R.id.eventActivity)
+        Delete_Event = findViewById(R.id.Delete_Event)
+        VendorTotalAmount = findViewById(R.id.VendorTotalAmount)
+        TaskCompleted = findViewById(R.id.TaskCompleted)
+        GeneratePdf = findViewById(R.id.GeneratePdf)
+        TotalTask = findViewById(R.id.TotalTask)
         swipeRefreshLayout= findViewById(R.id.swipeRefreshLayout)
         EventTimerDisplay = findViewById(R.id.EventTimerDisplay)
         crossimg = findViewById(R.id.crossimg)
@@ -146,13 +170,21 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
         guestImageButton = findViewById(R.id.Guest)
         vendorImageButton = findViewById(R.id.Vendor)
         Eventshow = findViewById(R.id.eventnameshow)
-        piechart = findViewById(R.id.piechart)
+//        piechart = findViewById(R.id.piechart)
 //        taskRecyclerView = findViewById(R.id.TaskRec)
         budgetInfoCardView = findViewById(R.id.budget_info)
         budgetShowTextView = findViewById(R.id.Budgetshow)
         pendingAmountShowTextView = findViewById(R.id.PendingAmountshow)
         paidAmountShowTextView = findViewById(R.id.PaidAmountshow)
+        val actionBarDrawerToggle = ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close)
+        drawerLayout.addDrawerListener(actionBarDrawerToggle)
+        actionBarDrawerToggle.syncState()
 //        widgetButton = findViewById(R.id.widgetbutton)
+        //For First Time Launch Event Create SHow
+        if (isFirstLaunch(this)) {
+            showFirstLaunchDialog()
+            setFirstLaunchFlag(this, false)
+        }
         val databaseNameHolder = DatabaseNameHolder(this)
         databaseNameHolder.setDatabaseChangeListener(this)
 
@@ -176,10 +208,6 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
             username.text= UserName.toString()
         }
 
-        val actionBarDrawerToggle = ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close)
-        drawerLayout.addDrawerListener(actionBarDrawerToggle)
-        actionBarDrawerToggle.syncState()
-
         createNotificationChannel()
 
         if (eventRecyclerView.adapter?.itemCount == 0) {
@@ -192,42 +220,87 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
             taskImageButton.setOnClickListener { CheckAndStartActivity(TaskDataHolderActivity::class.java) }
             budgetImageButton.setOnClickListener { CheckAndStartActivity(BudgetDataHolderActivity::class.java) }
             guestImageButton.setOnClickListener { CheckAndStartActivity(GuestDataHolderActivity::class.java) }
-            vendorImageButton.setOnClickListener { CheckAndStartActivity(VendorDataHolderActivity::class.java) }
-        }
+            vendorImageButton.setOnClickListener { CheckAndStartActivity(VendorDataHolderActivity::class.java) } }
         Eventshow.setOnClickListener {
-            if (eventshowhide.visibility== View.GONE && eventRecyclerView.visibility==View.GONE){
+            if (eventshowhide.visibility== View.GONE && eventRecyclerView.visibility==View.GONE && eventActivity.visibility==View.GONE){
                 eventshowhide.visibility=View.VISIBLE
                 eventRecyclerView.visibility=View.VISIBLE
                 Eventshow.visibility=View.GONE
                 eventaddbut.visibility=View.VISIBLE
+                eventActivity.visibility=View.VISIBLE
             }
             else{
                 eventshowhide.visibility=View.GONE
                 eventRecyclerView.visibility=View.GONE
                 eventaddbut.visibility=View.GONE
                 Eventshow.visibility=View.VISIBLE
+                eventActivity.visibility=View.GONE
             }
         }
         crossimg.setOnClickListener {
-            if (eventshowhide.visibility== View.VISIBLE && eventRecyclerView.visibility==View.VISIBLE){
+            if (eventshowhide.visibility== View.VISIBLE && eventRecyclerView.visibility==View.VISIBLE && eventActivity.visibility==View.VISIBLE){
                 eventshowhide.visibility=View.GONE
                 eventRecyclerView.visibility=View.GONE
                 Eventshow.visibility=View.VISIBLE
                 eventaddbut.visibility=View.GONE
+
+                eventActivity.visibility=View.GONE
             } else{
                 eventshowhide.visibility=View.VISIBLE
                 eventRecyclerView.visibility=View.VISIBLE
                 eventaddbut.visibility=View.VISIBLE
                 Eventshow.visibility=View.GONE
+                eventActivity.visibility=View.VISIBLE
             } }
         eventaddbut.setOnClickListener {
             val eventadding=EventAdding(this,supportFragmentManager,null)
             eventadding.show() }
+        GeneratePdf.setOnClickListener {
+                MaterialAlertDialogBuilder(this)
+                    .setTitle("PDF")
+                    .setMessage("Select in Which format you want pdf")
+                    .setNeutralButton("Seprate PDF"){dialog,_->
+                        if(checkPermissions()){
+                            SepratePDF()
+                            Toast.makeText(this, "PDF Generated Successfully", Toast.LENGTH_SHORT).show()
+                        }
+                        else{
+                            requestPermission()
+                        }
 
-        if (isFirstLaunch(this)) {
-            showFirstLaunchDialog()
-            setFirstLaunchFlag(this, false)
+                    }
+                    .setPositiveButton("Combined PDF"){dialog,_->
+                        if(checkPermissions()){
+                            GeneratePDF()
+                            Toast.makeText(this, "PDF Generated Successfully", Toast.LENGTH_SHORT).show()
+                        }
+                        else{
+                            requestPermission()
+                        }
+                    }
+                    .show()
+
         }
+        Delete_Event.setOnClickListener {
+            if(eventRecyclerView.adapter?.itemCount==0){
+               Delete_Event.isCheckable=false
+            }
+            else{
+            val position=0
+            val eventtodelete=eventList[position]
+            val rowaffected=DeleteEvent(eventtodelete)
+            try {
+                if(rowaffected){
+                    eventList.removeAt(position)
+                    adapter.notifyItemRemoved(position)
+                    Toast.makeText(this, "${eventtodelete.name} has been Deleted", Toast.LENGTH_SHORT).show()
+                    Log.d("Delete","Item Deleted")
+                }
+            }
+            catch (e:Exception){
+                Log.d("Delete","${e.message}")
+            }
+        }}
 //        widgetButton.setOnClickListener { addWidgetToHomeScreen() }
         swipeRefreshLayout.setOnRefreshListener {
             Handler().postDelayed({
@@ -356,44 +429,12 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
                     val selecteddata=data?.data
                     if(selecteddata!=null){
                         selectedImageUri=selecteddata
-//                        val GetImageByte=getImageByte(selecteddata)
-//                        val userid=FirebaseAuth.getInstance().currentUser?.uid
-//                        if(userid != null){
-//                            val existinguser=db.getUserProfilebyID(1)
-//                            if(existinguser!=null){
-//                                    var UserName=Nameadd.text.toString()
-//                                    var userprofile=UserProfile(1,UserName,GetImageByte)
-//                                    db.updateUserProfile(userprofile)
-//                                    Toast.makeText(this, "Data Updated", Toast.LENGTH_SHORT).show()
-//                                val ImageBitmap=BitmapFactory.decodeByteArray(GetImageByte,0,GetImageByte.size)
-//                                Imageadd.setImageBitmap(ImageBitmap)
-//                            }else{
-//                                    var UserName=Nameadd.text.toString()
-//                                    var userprofile=UserProfile(1,UserName,GetImageByte)
-//                                    db.insertUserProfile(userprofile)
-//                                    Toast.makeText(this, "Image Uploaded", Toast.LENGTH_SHORT).show()
-//                                val ImageBitmap=BitmapFactory.decodeByteArray(GetImageByte,0,GetImageByte.size)
-//                                Imageadd.setImageBitmap(ImageBitmap)
-//
-//                            }
-//                        }
+                        val getimagebyte=getImageByte(selecteddata)
+                        val image=BitmapFactory.decodeByteArray(getimagebyte,0,getimagebyte.size)
+                        Imageadd.setImageBitmap(image)
                     }
                 }
             }
-        }
-    }
-    fun UpdateUserProfileAndUsername(imagebyte:ByteArray,Username:String){
-        val db=UserProfileDatabase(this)
-        val User=db.getUserProfilebyID(1)
-        if(User!=null){
-            val UserProfile=UserProfile(1,Username,imagebyte)
-            db.updateUserProfile(UserProfile)
-            Toast.makeText(this, "Data Updated", Toast.LENGTH_SHORT).show()
-        }
-        else{
-            val UserProfile=UserProfile(1,Username,imagebyte)
-            db.insertUserProfile(UserProfile)
-            Toast.makeText(this, "Data Uploaded", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -892,11 +933,6 @@ fun checkPermissions():Boolean{
 
     override fun onResume() {
         super.onResume()
-//                              swipeRefreshLayout.isRefreshing=true
-//        Handler().postDelayed({
-//            swipeRefreshLayout.isRefreshing=false
-//        }
-//            ,1)
         SetAppTheme()
         showEventData()
     }
@@ -907,16 +943,40 @@ fun checkPermissions():Boolean{
         eventList = db.getAllEvents()
         val Eventtimer = db.getEventData(1)
         val budgettotdal=db.getTotalBudget()
+        val BudgetPaid=db.getTotalPaidBudget()
+        val BudgetNotPaid=db.getTotalNotPaidBudget()
         val budgetUnPaid=db.getTotalUnPaid()
-        if (Eventtimer != null) {
+        val TaskComtext=db.getTaskStatus()
+        val Taskpending=db.getTaskPendingStatus()
+        val totaltask=db.getTotalTask()
+        val TotalGuest=db.getTotalInvitation()
+        val VendorTotalAmt=db.GetTotalVendorBudget()
+        val VendorTotalPaid=db.GetVendorPaidAmount()
+        val VendorTotalNotPaid=db.GetVendorNotPaidAmount()
+        val TotalInvitaionSnt=db.getTotalInvitationsSent()
+        val TotalInvitaionNotSnt=db.getTotalInvitationsNotSent()
+        SetSummary(TotalInvi,TotalGuest.toString())
+        SetSummary(TotalInvitationSent,TotalInvitaionSnt.toString())
+        SetSummary(TotalInvitationNotSent,TotalInvitaionNotSnt.toString())
+        SetSummary(TaskCompleted,TaskComtext.toString())
+        SetSummary(TaskPending,Taskpending.toString())
+        SetSummary(TotalTask,totaltask.toString())
+        SetSummary(VendorTotalAmount,VendorTotalAmt.toString())
+        SetSummary(VendorPaidAmount,VendorTotalPaid.toString())
+        SetSummary(VendorPendingAmount,VendorTotalNotPaid.toString())
+        SetSummary(budgetShowTextView,budgettotdal.toString())
+        SetSummary(paidAmountShowTextView,BudgetPaid.toString())
+        SetSummary(pendingAmountShowTextView,BudgetNotPaid.toString())
+
+        if (Eventtimer !=  null) {
             Eventshow.text = Eventtimer.name
             budgetShowTextView.text = Eventtimer.budget
             val budget=Eventtimer.budget
-            piechart.clearChart()
-            piechart.addPieSlice(PieModel("Event",budget.toFloat(),Color.parseColor("#2ecc71")))
-            piechart.addPieSlice(PieModel("Paid",budgettotdal.toFloat(),Color.parseColor("#3498db")))
-            piechart.addPieSlice(PieModel("UnPaid",budgetUnPaid.toFloat(),Color.parseColor("#e74c3c")))
-            piechart.startAnimation()
+//            piechart.clearChart()
+//            piechart.addPieSlice(PieModel("Event",budget.toFloat(),Color.parseColor("#2ecc71")))
+//            piechart.addPieSlice(PieModel("Paid",budgettotdal.toFloat(),Color.parseColor("#3498db")))
+//            piechart.addPieSlice(PieModel("UnPaid",budgetUnPaid.toFloat(),Color.parseColor("#e74c3c")))
+//            piechart.startAnimation()
             paidAmountShowTextView.setText(budgettotdal.toString())
             pendingAmountShowTextView.setText(budgetUnPaid.toString())
 
@@ -951,50 +1011,7 @@ fun checkPermissions():Boolean{
         } else {
 //            Toast.makeText(this, "Event Not Found", Toast.LENGTH_SHORT).show()
         }
-
         val adapter = EventLayoutAdapter(eventList){ position ->
-//            val eventadding=EventAdding(this,supportFragmentManager,position)
-//            eventadding.show()
-            val popup=PopupMenu(this,eventRecyclerView)
-            popup.menuInflater.inflate(R.menu.popup_menu,popup.menu)
-
-            popup.setOnMenuItemClickListener {
-                when(it.itemId){
-                    R.id.Event_Pdf->{
-                        if(checkPermissions()){
-                            GeneratePDF()
-                        }
-                        else{
-                            requestPermission()
-                        }
-                        true
-                    }
-                    R.id.event_delete->{
-//                        val Event_Delete=DeleteEvent(position)
-//                        if(Event_Delete){
-//                            Toast.makeText(this,"${Eventtimer!!.name} has been Deleted",Toast.LENGTH_SHORT).show()
-//                        }
-                        val eventtodelete=eventList[position]
-                        val rowaffected=DeleteEvent(eventtodelete)
-                        try {
-
-                        if(rowaffected){
-                            eventList.removeAt(position)
-                            adapter.notifyItemRemoved(position)
-                            Toast.makeText(this, "${eventtodelete.name} has been Deleted", Toast.LENGTH_SHORT).show()
-                            Log.d("Delete","Item Deleted")
-                        }
-                        }
-                        catch (e:Exception){
-                            Log.d("Delete","${e.message}")
-
-                        }
-                        true
-                    }
-                    else-> return@setOnMenuItemClickListener false
-                }
-            }
-            popup.show()
         }
         ScheduleEventNotification(eventList)
         adapter.updateData(eventList)
@@ -1002,7 +1019,13 @@ fun checkPermissions():Boolean{
         eventRecyclerView.layoutManager = LinearLayoutManager(this)
         adapter.notifyDataSetChanged()
     }
-
+    fun SetSummary(TextField:TextView,value:String?){
+        if(value.isNullOrEmpty() || value=="0" || value=="0.0"){
+            TextField.text="No Data Found"
+        }else{
+            TextField.text=value.toString()
+        }
+    }
 
 
     private fun DeleteEvent(event:Events):Boolean {
@@ -1178,10 +1201,6 @@ fun checkPermissions():Boolean{
         unregisterReceiver(dataAddedReceiver)
 
     }
-
-
-    //Have to do it
-    //BackUp And Restore
 
 
 }

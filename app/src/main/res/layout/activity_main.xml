@@ -59,7 +59,6 @@
                 <com.google.android.material.divider.MaterialDivider
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-
                     style="@style/Divider"
                     />
                 <TextView
@@ -99,6 +98,14 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone"
                 />
+                <LinearLayout
+                    android:id="@+id/eventActivity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    >
+
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/eventaddbut"
                     android:layout_width="wrap_content"
@@ -110,10 +117,42 @@
                     android:textColor="@color/black"
                     app:cornerRadius="15sp"
                     app:strokeWidth="1sp"
+                    android:layout_marginEnd="10sp"
                     app:strokeColor="@color/black"
                     android:padding="8dp"
-                    android:visibility="gone"
                     />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/GeneratePdf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Generate PDF"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        app:backgroundTint="#FFFFFF"
+                        android:textColor="@color/black"
+                        app:cornerRadius="15sp"
+                        android:layout_marginEnd="10sp"
+                        app:strokeWidth="1sp"
+                        android:layout_gravity="right"
+                        app:strokeColor="@color/Crimson"
+                        android:padding="8dp"
+                        />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/Delete_Event"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Delete Event"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        app:backgroundTint="#d11a2a"
+                        android:textColor="@color/white"
+                        app:cornerRadius="15sp"
+                        app:strokeWidth="1sp"
+                        android:layout_gravity="right"
+                        app:strokeColor="@color/black"
+                        android:padding="8dp"
+                        />
+                </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
         <androidx.cardview.widget.CardView
@@ -276,7 +315,7 @@
            android:layout_marginTop="5sp"
             android:id="@+id/budget_info"
             android:layout_width="match_parent"
-          app:cardCornerRadius="1sp"
+          app:cardCornerRadius="15sp"
             app:cardElevation="5sp"
             android:layout_height="wrap_content">
 
@@ -286,31 +325,31 @@
                 style="@style/RecyclerBack"
                 android:orientation="vertical">
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:layout_marginStart="15sp"
                     style="@style/TEXTColor"
-                    android:text="Budget"/>
+                    android:layout_gravity="center_horizontal"
+                    android:text="Budget Summary"/>
                 <com.google.android.material.divider.MaterialDivider
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginBottom="5sp"
                     style="@style/Divider"
                     />
-               <org.eazegraph.lib.charts.PieChart
-                    android:id="@+id/piechart"
-                    android:layout_width="100sp"
-                    android:layout_height="100sp"
-                    android:animateLayoutChanges="true"
-                    android:animationCache="true"
-                    android:layout_gravity="center_horizontal"
-                    />
-
+<!--               <org.eazegraph.lib.charts.PieChart-->
+<!--                    android:id="@+id/piechart"-->
+<!--                    android:layout_width="100sp"-->
+<!--                    android:layout_height="100sp"-->
+<!--                    android:animateLayoutChanges="true"-->
+<!--                    android:animationCache="true"-->
+<!--                    android:layout_gravity="center_horizontal"-->
+<!--                    />-->
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="30sp"
                     android:orientation="horizontal">
                     <TextView
                         android:layout_width="0dp"
@@ -321,13 +360,6 @@
                         android:layout_weight="1"
                         android:text="Budget" />
 
-                    <View
-                        android:layout_width="10sp"
-                        android:layout_height="10sp"
-                        android:layout_weight="0"
-                        android:layout_gravity="center_vertical"
-                    android:background="#959494" />
-
                     <TextView
                         android:id="@+id/Budgetshow"
                         android:layout_width="0dp"
@@ -335,8 +367,7 @@
                         android:textSize="16sp"
                         android:layout_marginStart="15sp"
                         android:layout_weight="1"
-                        style="@style/TEXTColor"
-                        android:text="Not Defined" />
+                        style="@style/TEXTColor"/>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -352,12 +383,12 @@
                         android:layout_weight="1"
                         android:text="Pending" />
 
-                    <View
-                        android:layout_width="10sp"
-                        android:layout_height="10sp"
-                        android:layout_weight="0"
-                        android:layout_gravity="center_vertical"
-                        android:background="#FF63A1" />
+<!--                    <View-->
+<!--                        android:layout_width="10sp"-->
+<!--                        android:layout_height="10sp"-->
+<!--                        android:layout_weight="0"-->
+<!--                        android:layout_gravity="center_vertical"-->
+<!--                        android:background="#FF63A1" />-->
 
                     <TextView
                         android:id="@+id/PendingAmountshow"
@@ -366,8 +397,7 @@
                         android:textSize="16sp"
                         android:layout_marginStart="15sp"
                         android:layout_weight="1"
-                        style="@style/TEXTColor"
-                        android:text="0 $" />
+                        style="@style/TEXTColor"/>
 
                 </LinearLayout>
                 <LinearLayout
@@ -383,13 +413,12 @@
                         style="@style/TEXTColor"
                         android:layout_weight="1"
                         android:text="Paid" />
-
-                    <View
-                        android:layout_width="10sp"
-                        android:layout_height="10sp"
-                        android:layout_weight="0"
-                        android:layout_gravity="center_vertical"
-                        android:background="#F6D661" />
+<!--                    <View-->
+<!--                        android:layout_width="10sp"-->
+<!--                        android:layout_height="10sp"-->
+<!--                        android:layout_weight="0"-->
+<!--                        android:layout_gravity="center_vertical"-->
+<!--                        android:background="#F6D661" />-->
 
                     <TextView
                         android:id="@+id/PaidAmountshow"
@@ -398,8 +427,7 @@
                         android:textSize="16sp"
                         android:layout_marginStart="15sp"
                         android:layout_weight="1"
-                        style="@style/TEXTColor"
-                        android:text="0 $" />
+                        style="@style/TEXTColor"/>
 
                 </LinearLayout>
 
@@ -410,7 +438,7 @@
             android:layout_below="@id/budget_info"
            android:layout_marginTop="5sp"
             android:id="@+id/GuestSummary"
-            android:layout_width="200sp"
+            android:layout_width="match_parent"
           app:cardCornerRadius="15sp"
             app:cardElevation="5sp"
             android:layout_height="wrap_content">
@@ -434,34 +462,35 @@
                     style="@style/Divider"
                     android:fitsSystemWindows="true"
                     android:minWidth="5sp"/>
-                <ProgressBar
-                    android:id="@+id/progress_bar"
-                    android:layout_width="100sp"
-                    android:layout_height="100sp"
-                    android:indeterminateOnly="false"
-                    android:progress="60"
-                    android:layout_gravity="center_horizontal"
-                    android:progressDrawable="@drawable/circle"
-                    android:rotation="-90"
-                    android:indeterminate="false"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:progress="60" />
+<!--                <ProgressBar-->
+<!--                    android:id="@+id/progress_bar"-->
+<!--                    android:layout_width="100sp"-->
+<!--                    android:layout_height="100sp"-->
+<!--                    android:indeterminateOnly="false"-->
+<!--                    android:progress="60"-->
+<!--                    android:layout_gravity="center_horizontal"-->
+<!--                    android:progressDrawable="@drawable/circle"-->
+<!--                    android:rotation="-90"-->
+<!--                    android:indeterminate="false"-->
+<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                    app:layout_constraintLeft_toLeftOf="parent"-->
+<!--                    app:layout_constraintRight_toRightOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent"-->
+<!--                    tools:progress="60" />-->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="2sp"
                     android:orientation="horizontal">
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:layout_marginStart="15sp"
                         style="@style/TEXTColor"
+                        android:layout_width="0dp"
+                        android:layout_height="22dp"
                         android:layout_weight="1"
-                        android:text="Accepted" />
+                        android:layout_marginStart="15sp"
+                        android:text="Total Invitation "
+                        android:textSize="16sp" />
 
                     <View
                         android:layout_width="10sp"
@@ -471,6 +500,38 @@
                         android:background="#FF63A1" />
 
                     <TextView
+                        android:id="@+id/TotalInvi"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:layout_marginStart="15sp"
+                        android:layout_weight="1"
+                        style="@style/TEXTColor"
+                        />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        style="@style/TEXTColor"
+                        android:layout_weight="1"
+                        android:layout_marginStart="15sp"
+                        android:text="Invitation Sent" />
+
+                    <View
+                        android:layout_width="10sp"
+                        android:layout_height="10sp"
+                        android:layout_weight="0"
+                        android:layout_gravity="center_vertical"
+                        android:background="#FF63A1" />
+
+                    <TextView
+                        android:id="@+id/TotalInviSent"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:textSize="16sp"
@@ -491,16 +552,17 @@
                         android:layout_marginStart="15sp"
                         style="@style/TEXTColor"
                         android:layout_weight="1"
-                        android:text="Pending" />
+                        android:text="Inviation Not Sent" />
 
                     <View
                         android:layout_width="10sp"
                         android:layout_height="10sp"
                         android:layout_weight="0"
                         android:layout_gravity="center_vertical"
-                        android:background="@color/Lavender" />
+                        android:background="#FF63A1" />
 
                     <TextView
+                        android:id="@+id/TotalInvinotSent"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:textSize="16sp"
@@ -508,50 +570,17 @@
                         android:layout_weight="1"
                         style="@style/TEXTColor"
                      />
-
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:layout_marginStart="15sp"
-                        style="@style/TEXTColor"
-                        android:layout_weight="1"
-                        android:text="Denied" />
-
-                    <View
-                        android:layout_width="10sp"
-                        android:layout_height="10sp"
-                        android:layout_weight="0"
-                        android:layout_gravity="center_vertical"
-                        android:background="@color/Goldenrod" />
-
-                    <TextView
-
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:layout_marginStart="15sp"
-                        android:layout_weight="1"
-                        style="@style/TEXTColor"
-                      />
                 </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
         <androidx.cardview.widget.CardView
-            android:layout_below="@id/budget_info"
-            android:layout_toEndOf="@id/GuestSummary"
-           android:layout_marginTop="5sp"
-            android:layout_width="230sp"
-          app:cardCornerRadius="15sp"
+            android:layout_below="@id/GuestSummary"
+            android:layout_marginTop="5sp"
+            android:layout_width="match_parent"
+            app:cardCornerRadius="15sp"
             app:cardElevation="5sp"
             android:layout_marginStart="5sp"
-            android:layout_height="180sp">
+            android:layout_height="wrap_content">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -571,21 +600,21 @@
                     style="@style/Divider"
                     android:fitsSystemWindows="true"
                     android:minWidth="5sp"/>
-                <ProgressBar
-                    android:id="@+id/Taskprogress_bar"
-                    android:layout_width="100sp"
-                    android:layout_height="100sp"
-                    android:indeterminateOnly="false"
-                    android:progress="60"
-                    android:layout_gravity="center_horizontal"
-                    android:progressDrawable="@drawable/circle"
-                    android:rotation="-90"
-                    android:indeterminate="false"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:progress="60" />
+<!--                <ProgressBar-->
+<!--                    android:id="@+id/Taskprogress_bar"-->
+<!--                    android:layout_width="100sp"-->
+<!--                    android:layout_height="100sp"-->
+<!--                    android:indeterminateOnly="false"-->
+<!--                    android:progress="60"-->
+<!--                    android:layout_gravity="center_horizontal"-->
+<!--                    android:progressDrawable="@drawable/circle"-->
+<!--                    android:rotation="-90"-->
+<!--                    android:indeterminate="false"-->
+<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                    app:layout_constraintLeft_toLeftOf="parent"-->
+<!--                    app:layout_constraintRight_toRightOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent"-->
+<!--                    tools:progress="60" />-->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -645,6 +674,280 @@
                         android:layout_weight="1"
                         style="@style/TEXTColor"
                         />
+
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+        <androidx.cardview.widget.CardView
+            android:layout_below="@id/GuestSummary"
+            android:layout_marginTop="5sp"
+            android:layout_width="match_parent"
+            app:cardCornerRadius="15sp"
+            app:cardElevation="5sp"
+            android:id="@+id/TaskSummary"
+            android:layout_marginStart="5sp"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                style="@style/RecyclerBack"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="20sp"
+                    android:layout_gravity="center_horizontal"
+                    android:text="Task"
+                    style="@style/TEXTColor"
+                    android:textAllCaps="true"
+                    android:textStyle="bold" />
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="1sp"
+                    style="@style/Divider"
+                    android:fitsSystemWindows="true"
+                    android:minWidth="5sp"/>
+
+                <!--                <ProgressBar-->
+                <!--                    android:id="@+id/Taskprogress_bar"-->
+                <!--                    android:layout_width="100sp"-->
+                <!--                    android:layout_height="100sp"-->
+                <!--                    android:indeterminateOnly="false"-->
+                <!--                    android:progress="60"-->
+                <!--                    android:layout_gravity="center_horizontal"-->
+                <!--                    android:progressDrawable="@drawable/circle"-->
+                <!--                    android:rotation="-90"-->
+                <!--                    android:indeterminate="false"-->
+                <!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+                <!--                    app:layout_constraintLeft_toLeftOf="parent"-->
+                <!--                    app:layout_constraintRight_toRightOf="parent"-->
+                <!--                    app:layout_constraintTop_toTopOf="parent"-->
+                <!--                    tools:progress="60" />-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="2sp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/TEXTColor"
+                        android:layout_width="0dp"
+                        android:layout_height="22dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="15sp"
+                        android:text="Total Task"
+                        android:textSize="15sp" />
+
+                    <View
+                        android:layout_width="10sp"
+                        android:layout_height="10sp"
+                        android:layout_weight="0"
+                        android:layout_gravity="center_vertical"
+                        android:background="#FF63A1" />
+
+                    <TextView
+                        android:id="@+id/TotalTask"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:layout_marginStart="15sp"
+                        android:layout_weight="1"
+                        style="@style/TEXTColor"
+                        />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="2sp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/TEXTColor"
+                        android:layout_width="0dp"
+                        android:layout_height="22dp"
+                        android:layout_marginStart="15sp"
+                        android:layout_weight="1"
+                        android:text="Completed"
+                        android:textSize="15sp" />
+
+                    <View
+                        android:layout_width="10sp"
+                        android:layout_height="10sp"
+                        android:layout_weight="0"
+                        android:layout_gravity="center_vertical"
+                        android:background="#FF63A1" />
+
+                    <TextView
+                        android:id="@+id/TaskCompleted"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:layout_marginStart="15sp"
+                        android:layout_weight="1"
+                        style="@style/TEXTColor"
+                        />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        style="@style/TEXTColor"
+                        android:layout_marginStart="15sp"
+                        android:layout_weight="1"
+                        android:text="Pending" />
+
+                    <View
+                        android:layout_width="10sp"
+                        android:layout_height="10sp"
+                        android:layout_weight="0"
+                        android:layout_gravity="center_vertical"
+                        android:background="@color/Light_Pink" />
+
+                    <TextView
+                        android:id="@+id/TaskPending"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:layout_marginStart="15sp"
+                        android:layout_weight="1"
+                        style="@style/TEXTColor"
+                        />
+
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+        <androidx.cardview.widget.CardView
+            android:layout_below="@id/TaskSummary"
+            android:layout_marginTop="5sp"
+            android:layout_width="match_parent"
+            app:cardCornerRadius="15sp"
+            app:cardElevation="5sp"
+            android:layout_marginStart="5sp"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                style="@style/RecyclerBack"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="20sp"
+                    android:layout_gravity="center_horizontal"
+                    android:text="Vendor"
+                    style="@style/TEXTColor"
+                    android:textAllCaps="true"
+                    android:textStyle="bold" />
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="1sp"
+                    style="@style/Divider"
+                    android:fitsSystemWindows="true"
+                    android:minWidth="5sp"/>
+<!--                                <ProgressBar-->
+<!--                                    android:id="@+id/Taskprogress_bar"-->
+<!--                                    android:layout_width="100sp"-->
+<!--                                    android:layout_height="100sp"-->
+<!--                                    android:indeterminateOnly="false"-->
+<!--                                    android:progress="60"-->
+<!--                                    android:layout_gravity="center_horizontal"-->
+<!--                                    android:progressDrawable="@drawable/circle"-->
+<!--                                    android:rotation="-90"-->
+<!--                                    android:indeterminate="false"-->
+<!--                                    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                                    app:layout_constraintLeft_toLeftOf="parent"-->
+<!--                                    app:layout_constraintRight_toRightOf="parent"-->
+<!--                                    app:layout_constraintTop_toTopOf="parent"-->
+<!--                                    tools:progress="60" />-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:layout_marginStart="15sp"
+                        style="@style/TEXTColor"
+                        android:layout_weight="1"
+                        android:text="Budget" />
+                    <View
+                        android:layout_width="10sp"
+                        android:layout_height="10sp"
+                        android:layout_weight="0"
+                        android:layout_gravity="center_vertical"
+                        android:background="#FF63A1" />
+                    <TextView
+                        android:id="@+id/VendorTotalAmount"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:layout_marginStart="15sp"
+                        android:layout_weight="1"
+                        style="@style/TEXTColor" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:layout_marginStart="15sp"
+                        style="@style/TEXTColor"
+                        android:layout_weight="1"
+                        android:text="Pending" />
+
+                                        <View
+                                            android:layout_width="10sp"
+                                            android:layout_height="10sp"
+                                            android:layout_weight="0"
+                                            android:layout_gravity="center_vertical"
+                                            android:background="#FF63A1" />
+
+                    <TextView
+                        android:id="@+id/VendorPendingAmount"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:layout_marginStart="15sp"
+                        android:layout_weight="1"
+                        style="@style/TEXTColor" />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:layout_marginStart="15sp"
+                        style="@style/TEXTColor"
+                        android:layout_weight="1"
+                        android:text="Paid" />
+                    <View
+                        android:layout_width="10sp"
+                        android:layout_height="10sp"
+                        android:layout_weight="0"
+                        android:layout_gravity="center_vertical"
+                        android:background="#F6D661" />
+
+                    <TextView
+                        android:id="@+id/VendorPaidAmount"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:layout_marginStart="15sp"
+                        android:layout_weight="1"
+                        style="@style/TEXTColor"/>
 
                 </LinearLayout>
             </LinearLayout>
