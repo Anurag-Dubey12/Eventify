@@ -34,6 +34,9 @@ class TaskDetails : AppCompatActivity(){
     lateinit var taskPendingbut:AppCompatButton
     lateinit var TaskCombut:AppCompatButton
     var taskStatus:String=""
+    var updatedtaskStatus:String=""
+    var TaskStatus:Boolean=false
+    var taskButtonClicked: Boolean = false
     val spinnerItems = listOf(
         SpinnerItem("Accessories"),
         SpinnerItem( "Accommodation"),
@@ -87,10 +90,14 @@ class TaskDetails : AppCompatActivity(){
         }
 
         taskPendingbut.setOnClickListener {
+            TaskStatus=false
+            taskButtonClicked=true
             setButtonBackground(taskPendingbut,true)
             setButtonBackground(TaskCombut,false)
         }
         TaskCombut.setOnClickListener {
+            TaskStatus=true
+            taskButtonClicked=true
             setButtonBackground(taskPendingbut,false)
             setButtonBackground(TaskCombut,true)
         }
@@ -175,18 +182,11 @@ class TaskDetails : AppCompatActivity(){
         val TaskNoteET=taskNote.text.toString()
         val taskdate=taskdate.text.toString()
 
-        if (taskPendingbut.isClickable) {
-            taskStatus = taskPendingbut.text.toString()
-        }else if (TaskCombut.isClickable) {
-            taskStatus = TaskCombut.text.toString()
-        }
         Log.d("TaskStaus:",taskStatus)
         val Task=Task(0,taskname,category,TaskNoteET,taskStatus,taskdate)
         Db.createTask(Task)
         Toast.makeText(this, "Task Added successfully", Toast.LENGTH_SHORT).show()
-
         finish()
-
 }
     private fun UpdateData(id: Long) {
         val databasename=getSharedPreference(this,"databasename").toString()
@@ -195,34 +195,22 @@ class TaskDetails : AppCompatActivity(){
         val category = category_button.text.toString()
         val TaskNoteET = taskNote.text.toString()
         val taskdate = taskdate.text.toString()
-//        var status:String
-        val iscompleted=db.isTaskCompleted(id)
-//        if(iscompleted){
-//            status="Completed"
-//        }
-//        else if(taskPendingbut.isClickable){
-//            status="Pending"
-//        }
-//        else if(TaskCombut.isClickable){
-//            status="Completed"
-//        }
-//        else{
-//            status="Pending"
-//        }
-        if (taskPendingbut.isClickable) {
-            taskStatus = taskPendingbut.text.toString()
-        }else if (TaskCombut.isClickable) {
-            taskStatus = TaskCombut.text.toString()
-        }
-        else{
-            if(iscompleted){
-            taskStatus="Completed"
-            }
-        }
 
-        val task=Task(id,taskname,category,TaskNoteET,taskStatus,taskdate)
+//        val isCompleted=db.isTaskCompleted(id)
+        if(!taskButtonClicked){
+            val selectedTask: Task? = intent.getParcelableExtra("selected_task")
+            val previousdata=selectedTask?.taskStatus
+            Log.d("Button_Status","The Status Of  A Button is :$previousdata")
+            updatedtaskStatus=previousdata.toString()
+        }
+        else if(TaskStatus){
+            updatedtaskStatus="Completed"
+        }else{
+            updatedtaskStatus="Pending"
+        }
+        val task=Task(id,taskname,category,TaskNoteET,updatedtaskStatus,taskdate)
         db.updateTask(task)
-        Toast.makeText(this, "Task Updated successfully", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Task Data Updated successfully", Toast.LENGTH_SHORT).show()
         finish()
     }
 }

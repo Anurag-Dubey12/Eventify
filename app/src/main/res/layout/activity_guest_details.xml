@@ -161,39 +161,39 @@
                     android:text="@string/not_sent" />
 
             </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10sp"
-                android:orientation="horizontal">
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginBottom="10sp"-->
+<!--                android:orientation="horizontal">-->
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/Accepted"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="15sp"
-                    android:layout_weight="1"
-                    android:backgroundTint="#F2FFCA"
-                    android:textColor="@color/black"
-                    android:text="Accepted" />
+<!--                <com.google.android.material.button.MaterialButton-->
+<!--                    android:id="@+id/Accepted"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginEnd="15sp"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:backgroundTint="#F2FFCA"-->
+<!--                    android:textColor="@color/black"-->
+<!--                    android:text="Accepted" />-->
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/Pending"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:backgroundTint="#F2FFCA"
-                    android:textColor="@color/black"
-                    android:text="Pending" />
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/Denied"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:backgroundTint="#F2FFCA"
-                    android:textColor="@color/black"
-                    android:text="Denied" />
-            </LinearLayout>
+<!--                <com.google.android.material.button.MaterialButton-->
+<!--                    android:id="@+id/Pending"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:backgroundTint="#F2FFCA"-->
+<!--                    android:textColor="@color/black"-->
+<!--                    android:text="Pending" />-->
+<!--                <com.google.android.material.button.MaterialButton-->
+<!--                    android:id="@+id/Denied"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:backgroundTint="#F2FFCA"-->
+<!--                    android:textColor="@color/black"-->
+<!--                    android:text="Denied" />-->
+<!--            </LinearLayout>-->
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"

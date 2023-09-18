@@ -213,23 +213,36 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
                                  newPaidStatus="Paid"
                                  NewBalance=bal.toFloat()
                              }
-
-                          MaterialAlertDialogBuilder(this@BudgetDataHolderActivity)
-                              .setTitle("Budget Payment")
-                              .setMessage("What is the Status of the Budget Payment?")
-                              .setPositiveButton("PAID"){dialog,_->
-                                  db.updateBudgetPaid(budget.id, newPaidStatus,"$NewBalance")
-                                  recreate()
-                              }
-                              .setNegativeButton("UNPAID"){dialog,_->
-                                  db.updateBudgetPaid(budget.id, newPaidStatus,"$NewBalance")
-                                  recreate()
-                              }
-                              .setNeutralButton("Cancel"){dialog,_->
-                                  dialog.dismiss()
-                                  recreate()
-                              }
-                              .show()
+                            when(currentPaidStatus){
+                                "Paid"->{
+                                    MaterialAlertDialogBuilder(this@BudgetDataHolderActivity)
+                                        .setTitle("Budget Payment")
+                                        .setMessage("Is the Status of the Budget Payment is Not Paid?")
+                                        .setPositiveButton("Not Paid"){dialog,_->
+                                            db.updateBudgetPaid(budget.id, newPaidStatus,"$NewBalance")
+                                            recreate()
+                                        }
+                                        .setNeutralButton("Cancel"){dialog,_->
+                                            dialog.dismiss()
+                                            recreate()
+                                        }
+                                        .show()
+                                }
+                                "Not Paid"->{
+                                    MaterialAlertDialogBuilder(this@BudgetDataHolderActivity)
+                                        .setTitle("Budget Payment")
+                                        .setMessage("Is the Status of the Budget Payment is Paid?")
+                                        .setPositiveButton("PAID"){dialog,_->
+                                            db.updateBudgetPaid(budget.id, newPaidStatus,"$NewBalance")
+                                            recreate()
+                                        }
+                                        .setNeutralButton("Cancel"){dialog,_->
+                                            dialog.dismiss()
+                                            recreate()
+                                        }
+                                        .show()
+                                }
+                            }
                     }
                         //Payment Gateway code
 //                        val budget = BudgetList[position]
@@ -316,22 +329,6 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
 //        }
 //
 //    }
-    private fun updateBudgetAndUI(budgetId: Long, newStatus: String): Boolean {
-        val databasename = getSharedPreference(this, "databasename").toString()
-        val db = LocalDatabase(this, databasename)
-        val updatedRows = db.updateBudgetPaid(budgetId, newStatus, "0.0")
-        val BudgetList = db.getAllBudgets()
-
-        if (updatedRows > 0) {
-            val positionToUpdate = BudgetList.indexOfFirst { it.id == budgetId }
-            if (positionToUpdate != -1) {
-                BudgetList[positionToUpdate].paid = newStatus
-                adapter.notifyItemChanged(positionToUpdate)
-                return true
-            }
-        }
-        return false
-    }
 
     override fun onResume() {
         super.onResume()
