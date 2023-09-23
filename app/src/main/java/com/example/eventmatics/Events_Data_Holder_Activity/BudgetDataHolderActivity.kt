@@ -86,13 +86,7 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
         budgetAdd.setOnClickListener {
             Intent(this,BudgetDetails::class.java).also { startActivity(it) }
         }
-        recyclerView.setOnLongClickListener {
 
-            true
-        }
-        if(recyclerView.adapter?.itemCount==0){
-
-        }
         swipeRefreshLayout.setOnRefreshListener {
             Handler().postDelayed({
                 val databasename=getSharedPreference(this,"databasename").toString()

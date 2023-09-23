@@ -10,6 +10,13 @@
         android:visible="false"
         />
     <item
+        android:id="@+id/delete_EventAll"
+        android:title="Delete"
+        android:icon="@drawable/delete"
+        app:showAsAction="always"
+        android:visible="false"
+        />
+    <item
         android:id="@+id/action_search"
         android:title="Search"
         android:icon="@android:drawable/ic_search_category_default"

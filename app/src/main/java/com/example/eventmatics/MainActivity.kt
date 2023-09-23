@@ -114,9 +114,14 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
     private lateinit var TotalInvi: TextView
     private lateinit var TotalInvitationSent: TextView
     private lateinit var TotalInvitationNotSent: TextView
-    private lateinit var Eventshow: TextView
+    private lateinit var Eventshow: MaterialButton
+    private lateinit var BudgetSummary: TextView
+    private lateinit var GuestSummary: TextView
+    private lateinit var TaskSummary: TextView
+    private lateinit var VendorSummary: TextView
+    private lateinit var eventname: TextView
     private lateinit var EventTimerDisplay: TextView
-    private lateinit var crossimg: ImageView
+//    private lateinit var crossimg: ImageView
     private lateinit var eventshowhide: LinearLayout
     private lateinit var eventActivity: LinearLayout
     private lateinit var pendingAmountShowTextView: TextView
@@ -151,8 +156,13 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
         taskImageButton = findViewById(R.id.task)
         TaskPending = findViewById(R.id.TaskPending)
         VendorPendingAmount = findViewById(R.id.VendorPendingAmount)
+        eventname = findViewById(R.id.eventname)
         VendorPaidAmount = findViewById(R.id.VendorPaidAmount)
         TotalInvi = findViewById(R.id.TotalInvi)
+        BudgetSummary = findViewById(R.id.BudgetSummary)
+        TaskSummary = findViewById(R.id.TaskSummaryText)
+        VendorSummary = findViewById(R.id.VendorSummary)
+        GuestSummary = findViewById(R.id.GuestSummaryText)
         TotalInvitationSent = findViewById(R.id.TotalInviSent)
         TotalInvitationNotSent = findViewById(R.id.TotalInvinotSent)
         eventActivity = findViewById(R.id.eventActivity)
@@ -163,13 +173,14 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
         TotalTask = findViewById(R.id.TotalTask)
         swipeRefreshLayout= findViewById(R.id.swipeRefreshLayout)
         EventTimerDisplay = findViewById(R.id.EventTimerDisplay)
-        crossimg = findViewById(R.id.crossimg)
+//        crossimg = findViewById(R.id.crossimg)
         eventaddbut = findViewById(R.id.eventaddbut)
         budgetImageButton = findViewById(R.id.budget)
         eventshowhide = findViewById(R.id.eventshowhide)
         guestImageButton = findViewById(R.id.Guest)
         vendorImageButton = findViewById(R.id.Vendor)
         Eventshow = findViewById(R.id.eventnameshow)
+
 //        piechart = findViewById(R.id.piechart)
 //        taskRecyclerView = findViewById(R.id.TaskRec)
         budgetInfoCardView = findViewById(R.id.budget_info)
@@ -185,6 +196,7 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
             showFirstLaunchDialog()
             setFirstLaunchFlag(this, false)
         }
+        Editprofile()
         val databaseNameHolder = DatabaseNameHolder(this)
         databaseNameHolder.setDatabaseChangeListener(this)
 
@@ -207,51 +219,31 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
         if(UserName!=null){
             username.text= UserName.toString()
         }
-
         createNotificationChannel()
-
         if (eventRecyclerView.adapter?.itemCount == 0) {
             EventTimerDisplay.text=" "
-            Eventshow.text=" "
+            eventname.text=" "
             val eventAdding = EventAdding(this, supportFragmentManager, null)
-            eventAdding.show()
-        }
+            eventAdding.show() }
         else {
+            GuestSummary.setOnClickListener { CheckAndStartActivity(GuestDataHolderActivity::class.java) }
+            TaskSummary.setOnClickListener { CheckAndStartActivity(TaskDataHolderActivity::class.java) }
+            BudgetSummary.setOnClickListener { CheckAndStartActivity(BudgetDataHolderActivity::class.java) }
+            VendorSummary.setOnClickListener { CheckAndStartActivity(VendorDataHolderActivity::class.java) }
             taskImageButton.setOnClickListener { CheckAndStartActivity(TaskDataHolderActivity::class.java) }
             budgetImageButton.setOnClickListener { CheckAndStartActivity(BudgetDataHolderActivity::class.java) }
             guestImageButton.setOnClickListener { CheckAndStartActivity(GuestDataHolderActivity::class.java) }
             vendorImageButton.setOnClickListener { CheckAndStartActivity(VendorDataHolderActivity::class.java) } }
         Eventshow.setOnClickListener {
-            if (eventshowhide.visibility== View.GONE && eventRecyclerView.visibility==View.GONE && eventActivity.visibility==View.GONE){
-                eventshowhide.visibility=View.VISIBLE
-                eventRecyclerView.visibility=View.VISIBLE
-                Eventshow.visibility=View.GONE
-                eventaddbut.visibility=View.VISIBLE
-                eventActivity.visibility=View.VISIBLE
-            }
-            else{
-                eventshowhide.visibility=View.GONE
-                eventRecyclerView.visibility=View.GONE
-                eventaddbut.visibility=View.GONE
-                Eventshow.visibility=View.VISIBLE
-                eventActivity.visibility=View.GONE
-            }
-        }
-        crossimg.setOnClickListener {
-            if (eventshowhide.visibility== View.VISIBLE && eventRecyclerView.visibility==View.VISIBLE && eventActivity.visibility==View.VISIBLE){
-                eventshowhide.visibility=View.GONE
-                eventRecyclerView.visibility=View.GONE
-                Eventshow.visibility=View.VISIBLE
-                eventaddbut.visibility=View.GONE
+            val isRecyclerViewVisible = eventRecyclerView.visibility == View.VISIBLE
+            val isActivityVisible = eventActivity.visibility == View.VISIBLE
 
-                eventActivity.visibility=View.GONE
-            } else{
-                eventshowhide.visibility=View.VISIBLE
-                eventRecyclerView.visibility=View.VISIBLE
-                eventaddbut.visibility=View.VISIBLE
-                Eventshow.visibility=View.GONE
-                eventActivity.visibility=View.VISIBLE
-            } }
+            Eventshow.icon = if (isRecyclerViewVisible) getDrawable(R.drawable.show_event) else getDrawable(R.drawable.up_arrow)
+            eventRecyclerView.visibility = if (isRecyclerViewVisible) View.GONE else View.VISIBLE
+            eventaddbut.visibility = if (isRecyclerViewVisible) View.GONE else View.VISIBLE
+            eventActivity.visibility = if (isActivityVisible) View.GONE else View.VISIBLE
+        }
+
         eventaddbut.setOnClickListener {
             val eventadding=EventAdding(this,supportFragmentManager,null)
             eventadding.show() }
@@ -382,7 +374,7 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
                         Toast.makeText(this, "Data Updated", Toast.LENGTH_SHORT).show()
                         val image=BitmapFactory.decodeByteArray(GetImageByte,0,GetImageByte.size)
                         Imageadd.setImageBitmap(image)
-                        recreate()
+//                        recreate()
                     }
                     else{
                         val userprofile=UserProfile(1,username,GetImageByte)
@@ -390,7 +382,7 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
                         Toast.makeText(this, "Image Uploaded", Toast.LENGTH_SHORT).show()
                         val image=BitmapFactory.decodeByteArray(GetImageByte,0,GetImageByte.size)
                         Imageadd.setImageBitmap(image)
-                        recreate()
+//                        recreate()
                     }
                 }
             }else{
@@ -1201,6 +1193,4 @@ fun checkPermissions():Boolean{
         unregisterReceiver(dataAddedReceiver)
 
     }
-
-
 }

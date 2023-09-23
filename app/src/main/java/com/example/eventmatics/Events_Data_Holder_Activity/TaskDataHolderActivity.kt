@@ -3,7 +3,6 @@ package com.example.eventmatics.Events_Data_Holder_Activity
 
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -15,14 +14,14 @@ import android.graphics.Paint
 import android.graphics.pdf.PdfDocument
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.TextView
+import android.view.View
+import android.widget.CheckBox
 import android.widget.Toast
 import androidx.annotation.NonNull
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
@@ -36,12 +35,11 @@ import com.example.eventmatics.Event_Details_Activity.TaskDetails
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Task
+import com.example.eventmatics.SwipeGesture.AbstractClass.SwipeControllerActions
 import com.example.eventmatics.SwipeGesture.SwipeToDelete
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.BaseTransientBottomBar
-import com.google.android.material.snackbar.Snackbar
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -54,9 +52,11 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
     private lateinit var adapter: TaskDataHolderAdpater
     private lateinit var recyclerView: RecyclerView
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var Data_Item_Selected: CheckBox
     private var isRecyclerViewEmpty = true
     private  val NUMBER_OF_COLUMNS = 6
     lateinit var bmp:Bitmap
+    private lateinit var swipeController: SwipeToDelete
     lateinit var scalebmp:Bitmap
     private var tasklist: MutableList<Task> = mutableListOf()
     val PERMISSION_CODE=101
@@ -67,9 +67,6 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
             startActivity(this)
         }
     }
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_data_holder)
@@ -79,9 +76,10 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
         bottomnav=findViewById(R.id.bottomNavigationView)
         bottomnav.background=null
         swipeRefreshLayout=findViewById(R.id.swipeRefreshLayout)
+
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
+        showTaskData()
         taskAdd.setOnClickListener {
             Intent(this,TaskDetails::class.java).also { startActivity(it) }
         }
@@ -109,24 +107,17 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
         })
 
         swipeRefreshLayout.setOnRefreshListener {
-            val databsename=getSharedPreference(this,"databasename").toString()
-            val db=LocalDatabase(this,databsename)
-            tasklist=db.getAllTasks()
-            isRecyclerViewEmpty = tasklist.isNullOrEmpty()
-            if(tasklist!=null){
-                //Recycler view
-                adapter = TaskDataHolderAdpater(this,tasklist,this)
-                recyclerView?.adapter = adapter
-
-                recyclerView.layoutManager = LinearLayoutManager(this)
+            Handler().postDelayed({
+                showTaskData()
                 swipeRefreshLayout.isRefreshing=false
-            }
+            },1000
+            )
+            showTaskData()
             invalidateOptionsMenu()
         }
         swipeRefreshLayout.setProgressViewEndTarget(true,150)
         showTaskData()
 //        loadOriginalTaskList()
-
     }
 
 
@@ -157,7 +148,6 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
 //            swipeRefreshLayout.isRefreshing=false
         }
         val swipe=object :SwipeToDelete(this){
-            @SuppressLint("SuspiciousIndentation")
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position=viewHolder.adapterPosition
                 var actionBtn=false
@@ -174,27 +164,20 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
                                     adapter.removeItem(position)
                                     db.deleteTask(deleteitem)
                                     actionBtn = true
-                                    recreate()
+//                                    recreate()
                                 }
                                 .setNegativeButton("Cancel") { dialog, which ->
                                     tasklist.add(position, deleteitem)
                                     adapter.notifyItemInserted(position)
                                 }
 
-//                                .setOnDismissListener {
-//                                    if (!actionBtn) {
-//                                        // If the dialog is dismissed without choosing an option, recreate
-//                                        recreate()
-//                                    }
-//                                }
                                 .show()
                         }
                     }
-
                     ItemTouchHelper.RIGHT->{
                         if(position!=RecyclerView.NO_POSITION){
-                        val Task=tasklist[position]
-                        val position=viewHolder.adapterPosition
+                            val Task=tasklist[position]
+                            val position=viewHolder.adapterPosition
 
                             val TaskStatus=Task.taskStatus
 
@@ -235,10 +218,10 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
                             }
 
 
-                }
-            }
-        }}}
-        val touchHelper=ItemTouchHelper(swipe)
+                        }
+                    }
+                }}}
+        val touchHelper= ItemTouchHelper(swipe)
         touchHelper.attachToRecyclerView(recyclerView)
         invalidateOptionsMenu()
     }

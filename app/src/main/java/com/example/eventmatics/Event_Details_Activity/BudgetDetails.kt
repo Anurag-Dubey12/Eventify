@@ -147,7 +147,6 @@ class BudgetDetails : AppCompatActivity(),BudgetFragment.OnDataEnter{
           R.id.Check->{
               val selected_item:Budget?=intent.getParcelableExtra("selected_item")
               if (selected_item!=null){
-
                   UpdateDatabase(selected_item.id,paymentlist)
               }
               else{

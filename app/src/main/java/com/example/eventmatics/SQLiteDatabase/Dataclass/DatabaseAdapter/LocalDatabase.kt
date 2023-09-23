@@ -626,6 +626,33 @@ class LocalDatabase(contex:Context,databasename:String):
         return rowsAffected
     }
 
+    //Delete Multiple Item
+    fun DeleteMultipleTask(tasks:MutableList<Task>):Int{
+        val db=writableDatabase
+        var rowsaffected=0
+        db.beginTransaction()
+        try{
+            for(task in tasks){
+                val result=db.delete(
+                    TABLE_TASK,
+                    "$COLUMN_ID = ?",
+                    arrayOf(task.id.toString())
+                )
+                if(result>0){
+                    rowsaffected+=result
+                }
+                else{
+
+                }
+            }
+            db.setTransactionSuccessful()
+        }finally {
+            db.endTransaction()
+            db.close()
+        }
+        return rowsaffected
+    }
+
     // Delete a task
     fun deleteTask(task: Task): Int {
         val db = writableDatabase

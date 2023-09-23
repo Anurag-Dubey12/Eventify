@@ -19,6 +19,7 @@ import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDat
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.NamesDatabase
 import com.example.eventmatics.getSharedPreference
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.shadow.ShadowRenderer
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -39,14 +40,15 @@ class SettingActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         Sharedpref = getSharedPreferences(sharedperfkey, Context.MODE_PRIVATE)
-
+        val current=Sharedpref.getInt(sharedperfkey,AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        setAppTheme(current)
         val themegroup:RadioGroup=findViewById(R.id.themeRadioGroup)
          LocalBackupbutton=findViewById(R.id.LocalBackupbutton)
         resetDataButton=findViewById(R.id.resetDataButton)
         Loadbackup=findViewById(R.id.LoadBackup)
 //        DriveBackupbutton=findViewById(R.id.DriveBackupbutton)
 
-        val current=AppCompatDelegate.getDefaultNightMode()
+
         val radiobut=when(current){
             AppCompatDelegate.MODE_NIGHT_YES->R.id.darkThemeRadioButton
             else->R.id.lightThemeRadioButton
@@ -156,9 +158,7 @@ class SettingActivity : AppCompatActivity() {
 
 
     private fun setAppTheme(mode:Int){
-
         AppCompatDelegate.setDefaultNightMode(mode)
-        recreate()
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId){

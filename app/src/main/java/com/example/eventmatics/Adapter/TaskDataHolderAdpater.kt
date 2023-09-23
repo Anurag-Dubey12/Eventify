@@ -5,6 +5,8 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView.OnItemLongClickListener
+import android.widget.CheckBox
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
@@ -12,14 +14,15 @@ import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Task
 
-class TaskDataHolderAdpater(private val context:Context, private var taskList: MutableList<Task>
-                            , private val itemClickListener: OnItemClickListener) : RecyclerView.Adapter<TaskDataHolderAdpater.ViewHolder>() {
+class TaskDataHolderAdpater(private val context:Context,
+                            private var taskList: MutableList<Task>,
+                            private val itemClickListener: OnItemClickListener) :
+                            RecyclerView.Adapter<TaskDataHolderAdpater.ViewHolder>() {
     private var filteredList: MutableList<Task> = mutableListOf()
     fun removeItem(position: Int) {
         taskList.removeAt(position)
         notifyItemRemoved(position)
     }
-
     init {
         filteredList.addAll(taskList)
     }
@@ -42,15 +45,12 @@ class TaskDataHolderAdpater(private val context:Context, private var taskList: M
     interface OnItemClickListener {
         fun onItemClick(task: Task)
     }
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val data = taskList[position]
         holder.bind(data,position)
         holder.itemView.setOnClickListener {
             itemClickListener.onItemClick(data)
-        }
-        holder.itemView.setOnLongClickListener {
-            removeItem(position)
-            true // Return 'true' to indicate that the long click event is consumed.
         }
     }
 
@@ -66,6 +66,7 @@ class TaskDataHolderAdpater(private val context:Context, private var taskList: M
         private val task_category: TextView = itemView.findViewById(R.id.task_category)
         private val task_note: TextView = itemView.findViewById(R.id.task_note)
         private val cardView: CardView = itemView.findViewById(R.id.cardView)
+        private val Data_Item_Selected: CheckBox = itemView.findViewById(R.id.Item_selected)
         fun bind(data: Task,position: Int) {
             taskNameTextView.text = data.taskName
             taskInfoTextView.text = data.taskStatus

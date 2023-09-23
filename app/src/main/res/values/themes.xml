@@ -3,6 +3,7 @@
     <style name="Base.Theme.Eventmatics" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:statusBarColor">@color/black</item>
     </style>
 
     <style name="Theme.Eventmatics" parent="Base.Theme.Eventmatics" />
@@ -31,6 +32,7 @@
         <item name="android:background">@color/white</item>
         <item name="android:textAlignment">center</item>
         <item name="android:textSize">16sp</item>
+        <item name="drawableSize">80sp</item>
         <item name="android:textStyle">bold</item>
     </style>
     <style name="Eventinfocolor">
@@ -131,6 +133,21 @@
     </style>
     <style name="RecyclerVendor">
         <item name="android:src">@drawable/vendor</item>
-
     </style>
+    <style name="Summary">
+        <item name="android:textColor">@color/black</item>
+<!--        <item name="drawableEndCompat">@drawable/more</item>-->
+<!--        <item name="android:drawableEnd">@drawable/more</item>-->
+<!--        <item name="android:drawablePadding">200sp</item>-->
+<!--        <item name="android:layout_gravity">center_horizontal</item>-->
+    </style>
+<style name="showevent">
+    <item name="android:backgroundTint">#BC7AF9</item>
+    <item name="icon">@drawable/show_event</item>
+    <item name="iconSize">30sp</item>
+    <item name="cornerRadius">15sp</item>
+    <item name="iconGravity">textEnd</item>
+    <item name="strokeColor">@color/black</item>
+    <item name="strokeWidth">1sp</item>
+</style>
 </resources>
