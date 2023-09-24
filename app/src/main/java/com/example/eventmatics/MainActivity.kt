@@ -196,7 +196,6 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
             showFirstLaunchDialog()
             setFirstLaunchFlag(this, false)
         }
-        Editprofile()
         val databaseNameHolder = DatabaseNameHolder(this)
         databaseNameHolder.setDatabaseChangeListener(this)
 
@@ -241,6 +240,7 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
             Eventshow.icon = if (isRecyclerViewVisible) getDrawable(R.drawable.show_event) else getDrawable(R.drawable.up_arrow)
             eventRecyclerView.visibility = if (isRecyclerViewVisible) View.GONE else View.VISIBLE
             eventaddbut.visibility = if (isRecyclerViewVisible) View.GONE else View.VISIBLE
+            eventname.visibility=if(isRecyclerViewVisible) View.GONE else View.VISIBLE
             eventActivity.visibility = if (isActivityVisible) View.GONE else View.VISIBLE
         }
 
@@ -248,6 +248,10 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
             val eventadding=EventAdding(this,supportFragmentManager,null)
             eventadding.show() }
         GeneratePdf.setOnClickListener {
+            if(eventRecyclerView.adapter?.itemCount==0){
+                Toast.makeText(this, "Create Event First ", Toast.LENGTH_SHORT).show()
+            }else{
+
                 MaterialAlertDialogBuilder(this)
                     .setTitle("PDF")
                     .setMessage("Select in Which format you want pdf")
@@ -272,10 +276,11 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
                     }
                     .show()
 
+            }
         }
         Delete_Event.setOnClickListener {
             if(eventRecyclerView.adapter?.itemCount==0){
-               Delete_Event.isCheckable=false
+                Toast.makeText(this, "Create Event First ", Toast.LENGTH_SHORT).show()
             }
             else{
             val position=0
@@ -374,7 +379,7 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
                         Toast.makeText(this, "Data Updated", Toast.LENGTH_SHORT).show()
                         val image=BitmapFactory.decodeByteArray(GetImageByte,0,GetImageByte.size)
                         Imageadd.setImageBitmap(image)
-//                        recreate()
+                        recreate()
                     }
                     else{
                         val userprofile=UserProfile(1,username,GetImageByte)
@@ -382,7 +387,7 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
                         Toast.makeText(this, "Image Uploaded", Toast.LENGTH_SHORT).show()
                         val image=BitmapFactory.decodeByteArray(GetImageByte,0,GetImageByte.size)
                         Imageadd.setImageBitmap(image)
-//                        recreate()
+                        recreate()
                     }
                 }
             }else{
@@ -961,7 +966,7 @@ fun checkPermissions():Boolean{
         SetSummary(pendingAmountShowTextView,BudgetNotPaid.toString())
 
         if (Eventtimer !=  null) {
-            Eventshow.text = Eventtimer.name
+            eventname.text = Eventtimer.name
             budgetShowTextView.text = Eventtimer.budget
             val budget=Eventtimer.budget
 //            piechart.clearChart()

@@ -1,146 +1,156 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:cardCornerRadius="10dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.EventAdding">
+    android:layout_height="match_parent">
 
-    <LinearLayout
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        style="@style/EventScreen"
-        android:padding="16dp">
+        app:cardCornerRadius="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5"
+        tools:context=".fragments.EventAdding">
 
-<!--        <ImageView-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="30dp"-->
-<!--            android:src="@drawable/eventaddimg" />-->
-
-        <TextView
+        <LinearLayout
+            style="@style/EventScreen"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Create a new event"
-            android:textSize="20sp"
-            android:layout_marginEnd="15dp"
-            android:textAlignment="center"
-            style="@style/TEXTColor" />
+            android:orientation="vertical"
+            android:padding="16dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Set up an event and start planning it"
-            android:textSize="20sp"
-            android:layout_marginEnd="15dp"
-            android:textAlignment="center"
-            style="@style/TEXTColor"
-            android:layout_marginBottom="15dp" />
+            <!--        <ImageView-->
+            <!--            android:layout_width="match_parent"-->
+            <!--            android:layout_height="wrap_content"-->
+            <!--            android:layout_marginTop="30dp"-->
+            <!--            android:src="@drawable/eventaddimg" />-->
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:boxStrokeColor="#FF6600"
-            app:hintTextColor="#070707"
-            app:boxStrokeWidth="0dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/eventname"
+            <TextView
+                style="@style/TEXTColor"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="10dp"
-                android:textIsSelectable="true"
-                android:hint="Name"
+                android:layout_marginEnd="15dp"
+                android:text="Create a new event"
+                android:textAlignment="center"
+                android:textSize="20sp" />
+
+            <TextView
                 style="@style/TEXTColor"
-                android:layout_marginBottom="10dp"
-                tools:ignore="RtlSymmetry" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:boxStrokeColor="#FF6600"
-            app:hintTextColor="#070707"
-            app:boxStrokeWidth="0dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/eventdate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="10dp"
-                android:textIsSelectable="true"
-                android:inputType="none"
-                android:hint="Date"
-                android:drawableEnd="@drawable/calender"
-                style="@style/TEXTColor"
-                tools:ignore="RtlSymmetry" />
-        </com.google.android.material.textfield.TextInputLayout>
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:boxStrokeColor="#FF6600"
-            app:hintTextColor="#070707"
-            app:boxStrokeWidth="0dp">
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="15dp"
+                android:text="Set up an event and start planning it"
+                android:textAlignment="center"
+                android:textSize="20sp" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/eventtime"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="10dp"
-                android:textIsSelectable="true"
-                android:hint="Time"
-                android:drawableEnd="@drawable/clock"
-                style="@style/TEXTColor"
-                android:layout_marginBottom="10dp"
-                tools:ignore="RtlSymmetry" />
-        </com.google.android.material.textfield.TextInputLayout>
+                app:boxStrokeColor="#FF6600"
+                app:boxStrokeWidth="0dp"
+                app:hintTextColor="#070707">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:boxStrokeColor="#FF6600"
-            app:hintTextColor="#070707"
-            app:boxStrokeWidth="0dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/eventname"
+                    style="@style/TEXTColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:hint="Name"
+                    android:paddingStart="10dp"
+                    android:textIsSelectable="true"
+                    tools:ignore="RtlSymmetry" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/eventbudget"
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="10dp"
-                android:textIsSelectable="true"
-                android:inputType="numberDecimal"
-                android:hint="Budget"
-                android:maxLength="8"
-                android:layout_marginBottom="10sp"
-                style="@style/TEXTColor"
-                tools:ignore="RtlSymmetry" />
-        </com.google.android.material.textfield.TextInputLayout>
+                app:boxStrokeColor="#FF6600"
+                app:boxStrokeWidth="0dp"
+                app:hintTextColor="#070707">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/eventcreatebut"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="Create"
-            android:textSize="20sp"
-            app:backgroundTint="@color/white"
-            android:textColor="@color/black"
-            app:cornerRadius="15sp"
-            app:strokeWidth="1sp"
-            app:strokeColor="@color/black"
-            android:padding="8dp" />
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/eventeditbut"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="Update"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:visibility="gone"
-            android:background="@drawable/category_button"
-            android:textStyle="bold" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/eventdate"
+                    style="@style/TEXTColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/calender"
+                    android:hint="Date"
+                    android:inputType="none"
+                    android:paddingStart="10dp"
+                    android:textIsSelectable="true"
+                    tools:ignore="RtlSymmetry" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-    </LinearLayout>
-</androidx.cardview.widget.CardView>
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:boxStrokeColor="#FF6600"
+                app:boxStrokeWidth="0dp"
+                app:hintTextColor="#070707">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/eventtime"
+                    style="@style/TEXTColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:drawableEnd="@drawable/clock"
+                    android:hint="Time"
+                    android:paddingStart="10dp"
+                    android:textIsSelectable="true"
+                    tools:ignore="RtlSymmetry" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:boxStrokeColor="#FF6600"
+                app:boxStrokeWidth="0dp"
+                app:hintTextColor="#070707">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/eventbudget"
+                    style="@style/TEXTColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10sp"
+                    android:hint="Budget"
+                    android:inputType="numberDecimal"
+                    android:maxLength="8"
+                    android:paddingStart="10dp"
+                    android:textIsSelectable="true"
+                    tools:ignore="RtlSymmetry" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/eventcreatebut"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:padding="8dp"
+                android:text="Create"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                app:backgroundTint="@color/white"
+                app:cornerRadius="15sp"
+                app:strokeColor="@color/black"
+                app:strokeWidth="1sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/eventeditbut"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="@drawable/category_button"
+                android:text="Update"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

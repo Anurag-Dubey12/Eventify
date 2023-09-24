@@ -876,6 +876,25 @@ fun getTotalUnPaid():Double{
         db.close()
         return rowsAffected
     }
+    fun updatePayment(paymentId: Int, newPayment: Paymentinfo): Boolean {
+        val db = writableDatabase
+
+        // Define the values to update
+        val values = ContentValues().apply {
+            put(Payment_Name, newPayment.name)
+            put(Payment_Amount, newPayment.amount)
+            put(Payment_Date, newPayment.date)
+            put(Payment_Status, newPayment.status)
+            put(Payment_BudgetID, newPayment.budgetid)
+        }
+        val rowsAffected = db.update(TABLE_Payment, values, "$Payment_ID = ?", arrayOf(paymentId.toString()))
+
+        db.close()
+
+        // Check if the update was successful
+        return rowsAffected > 0
+    }
+
 
     // Delete a budget
     fun deleteBudget(budget: Budget): Int {
@@ -938,6 +957,21 @@ fun getTotalUnPaid():Double{
         }
 
         return paymentList
+    }
+
+    fun getTotalPaymentAmount():Int{
+        var total =0
+        val db=readableDatabase
+        val query="SELECT SUM(CAST(${Payment_Amount} AS REAL)) FROM $TABLE_Payment WHERE $Payment_Status='Paid'"
+        val cursor=db.rawQuery(query,null)
+        cursor?.let {
+            if(it.moveToFirst()){
+                total=it.getInt(0)
+            }
+        }
+        cursor.close()
+        db.close()
+        return total
     }
 
     @SuppressLint("Range")

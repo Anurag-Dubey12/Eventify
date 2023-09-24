@@ -1,295 +1,317 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_height="match_parent"
     style="@style/HolderScreen"
-    android:layout_width="match_parent">
-    <RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Event_Details_Activity.BudgetDetails">
+
+    <ScrollView
+        style="@style/HolderScreen"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:context=".Event_Details_Activity.BudgetDetails">
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5">
 
-        <include
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            layout="@layout/guest_vendor_toolbar"/>
-        <LinearLayout
-            android:layout_marginTop="75sp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            >
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/vendor_details"
-                android:textSize="20sp"
-                style="@style/TEXTColor"
-                android:layout_marginBottom="15sp"
-                />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/vendor_name"
-                android:textSize="20sp"
-                style="@style/TEXTColor"
-                />
-            <EditText
-                android:id="@+id/VendorNameET"
-                android:layout_width="match_parent"
-                android:layout_height="35sp"
-                style="@style/EditValueStyle"
-                android:layout_marginBottom="10sp"
-                android:inputType="text" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/Category"
-                android:textSize="20sp"
-                style="@style/TEXTColor"
-                android:layout_marginBottom="10sp"
-                />
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/vendorcategory_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableEnd="@drawable/drop_arrow"
-                style="@style/EditValueStyle"
-                android:text="@string/select_a_category"
-                android:layout_marginBottom="10sp"
+            android:layout_height="wrap_content">
 
-                />
-            <TextView
+            <include
+                layout="@layout/guest_vendor_toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/note"
-                android:textSize="20sp"
-                style="@style/TEXTColor"
-                android:layout_marginBottom="10sp"
-                />
+                android:layout_height="wrap_content" />
 
-            <EditText
-                android:id="@+id/VendorNoteET"
-                android:layout_width="match_parent"
-                android:layout_height="35sp"
-                android:layout_marginBottom="10sp"
-                style="@style/EditValueStyle" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/estimated_amount"
-                android:textSize="20sp"
-                style="@style/TEXTColor"
-                android:layout_marginBottom="10sp"
-                />
-            <EditText
-                android:id="@+id/VendorEstimated_Amount"
-                android:layout_width="match_parent"
-                android:layout_height="35sp"
-                android:inputType="numberDecimal"
-                style="@style/EditValueStyle"
-                android:layout_marginBottom="10sp"
-                />
             <LinearLayout
                 android:layout_width="match_parent"
-                android:id="@+id/Balancefeild"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:orientation="horizontal">
+                android:layout_height="match_parent"
+                android:layout_marginTop="75sp"
+                android:orientation="vertical">
+
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="40sp"
-                    android:text="@string/balance"
-                    android:textSize="20sp"
-                    />
-                <TextView
-                    android:id="@+id/VendorBalancetv"
+                    style="@style/TEXTColor"
                     android:layout_width="match_parent"
-                    android:layout_height="40sp"
-                    android:textSize="20sp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15sp"
+                    android:text="@string/vendor_details"
+                    android:textSize="20sp" />
+
+                <TextView
+                    style="@style/TEXTColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/vendor_name"
+                    android:textSize="20sp" />
+
+                <EditText
+                    android:id="@+id/VendorNameET"
+                    style="@style/EditValueStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="35sp"
+                    android:layout_marginBottom="10sp"
+                    android:inputType="text" />
+
+                <TextView
+                    style="@style/TEXTColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10sp"
+                    android:text="@string/Category"
+                    android:textSize="20sp" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/vendorcategory_button"
+                    style="@style/EditValueStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10sp"
+                    android:drawableEnd="@drawable/drop_arrow"
+                    android:text="@string/select_a_category"
+
                     />
-            </LinearLayout>
 
-<!--            <TextView-->
-<!--                android:id="@+id/VendorRemainingET"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="35sp"-->
-<!--                android:visibility="gone"-->
-<!--                android:textSize="20sp"-->
-<!--                android:text="@string/pending"-->
-<!--                android:background="@drawable/valueediteffect"-->
-<!--                />-->
-<!--            <TextView-->
-<!--                android:id="@+id/VendorPaidET"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="35sp"-->
-<!--                android:text="@string/paid"-->
-<!--                android:visibility="gone"-->
-<!--                android:background="@drawable/valueediteffect"-->
-<!--                android:textSize="20sp"-->
+                <TextView
+                    style="@style/TEXTColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10sp"
+                    android:text="@string/note"
+                    android:textSize="20sp" />
 
-<!--                />-->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10sp"
-                android:background="@drawable/valueediteffect"
-                app:cardElevation="1sp">
+                <EditText
+                    android:id="@+id/VendorNoteET"
+                    style="@style/EditValueStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="35sp"
+                    android:layout_marginBottom="10sp" />
+
+                <TextView
+                    style="@style/TEXTColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10sp"
+                    android:text="@string/estimated_amount"
+                    android:textSize="20sp" />
+
+                <EditText
+                    android:id="@+id/VendorEstimated_Amount"
+                    style="@style/EditValueStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="35sp"
+                    android:layout_marginBottom="10sp"
+                    android:inputType="numberDecimal" />
+
+                <LinearLayout
+                    android:id="@+id/Balancefeild"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="40sp"
+                        android:text="@string/balance"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/VendorBalancetv"
+                        android:layout_width="match_parent"
+                        android:layout_height="40sp"
+                        android:textSize="20sp" />
+                </LinearLayout>
+
+                <!--            <TextView-->
+                <!--                android:id="@+id/VendorRemainingET"-->
+                <!--                android:layout_width="match_parent"-->
+                <!--                android:layout_height="35sp"-->
+                <!--                android:visibility="gone"-->
+                <!--                android:textSize="20sp"-->
+                <!--                android:text="@string/pending"-->
+                <!--                android:background="@drawable/valueediteffect"-->
+                <!--                />-->
+                <!--            <TextView-->
+                <!--                android:id="@+id/VendorPaidET"-->
+                <!--                android:layout_width="match_parent"-->
+                <!--                android:layout_height="35sp"-->
+                <!--                android:text="@string/paid"-->
+                <!--                android:visibility="gone"-->
+                <!--                android:background="@drawable/valueediteffect"-->
+                <!--                android:textSize="20sp"-->
+
+                <!--                />-->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10sp"
+                    android:background="@drawable/valueediteffect"
+                    app:cardElevation="1sp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="5sp"
+                                android:layout_marginEnd="210sp"
+                                android:layout_marginBottom="10sp"
+                                android:text="@string/contact_details"
+                                android:textColor="@color/light_purple"
+                                android:textSize="20sp" />
+
+                            <ImageView
+                                android:id="@+id/Vendorviewtv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/drop_arrow"
+
+                                />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/VendorPhonetv"
+                            style="@style/TEXTColor"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5sp"
+                            android:layout_marginBottom="10sp"
+                            android:text="@string/phone_number"
+                            android:textSize="20sp" />
+
+                        <EditText
+                            android:id="@+id/VendortPhoneEt"
+                            style="@style/EditValueStyle"
+                            android:layout_width="400sp"
+                            android:layout_height="35sp"
+                            android:layout_marginStart="5sp"
+                            android:layout_marginBottom="10sp"
+                            android:drawableEnd="@drawable/call"
+                            android:inputType="phone"
+                            android:maxLength="10" />
+
+                        <TextView
+                            android:id="@+id/VendorEmailtv"
+                            style="@style/TEXTColor"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5sp"
+                            android:layout_marginBottom="10sp"
+                            android:text="@string/email_id"
+                            android:textSize="20sp"
+
+                            />
+
+                        <EditText
+                            android:id="@+id/VendorEmailEt"
+                            style="@style/EditValueStyle"
+                            android:layout_width="400sp"
+                            android:layout_height="35sp"
+                            android:layout_marginStart="5sp"
+                            android:layout_marginBottom="10sp"
+                            android:drawableEnd="@drawable/email"
+                            android:inputType="textEmailAddress"
+                            android:maxLines="2" />
+
+                        <TextView
+                            android:id="@+id/Vendorwebsitetv"
+                            style="@style/TEXTColor"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5sp"
+                            android:layout_marginBottom="10sp"
+                            android:text="@string/website"
+                            android:textSize="20sp"
+
+                            />
+
+                        <EditText
+                            android:id="@+id/VendorwebsiteEt"
+                            style="@style/EditValueStyle"
+                            android:layout_width="400sp"
+                            android:layout_height="35sp"
+                            android:layout_marginStart="5sp"
+                            android:layout_marginBottom="10sp"
+                            android:inputType="textUri"
+
+                            />
+
+                        <TextView
+                            android:id="@+id/VendorAddressstv"
+                            style="@style/TEXTColor"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5sp"
+                            android:layout_marginBottom="10sp"
+                            android:text="@string/address"
+                            android:textSize="20sp"
+
+                            />
+
+                        <EditText
+                            android:id="@+id/VendorAddresssEt"
+                            style="@style/EditValueStyle"
+                            android:layout_width="400sp"
+                            android:layout_height="35sp"
+                            android:layout_marginStart="5sp"
+                            android:layout_marginBottom="15sp"
+                            android:drawableEnd="@drawable/location" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10sp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/TEXTColor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="35sp"
+                        android:text="@string/payments"
+                        android:textColor="@color/light_purple"
+                        android:textSize="20sp" />
+
+                    <ImageView
+                        android:id="@+id/PaymentAdd"
+                        android:layout_width="30sp"
+                        android:layout_height="30sp"
+                        android:layout_marginStart="260sp"
+                        android:src="@drawable/addfab" />
+
+                </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
-                    <LinearLayout
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/vendorpaymenttrans"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="5sp"
-                            android:layout_marginBottom="10sp"
-                            android:layout_marginEnd="210sp"
-                            android:text="@string/contact_details"
-                            android:textColor="@color/light_purple"
-                            android:textSize="20sp"
-                            />
-                        <ImageView
-                            android:id="@+id/Vendorviewtv"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/drop_arrow"
+                        android:layout_height="190sp" />
+                    <!--                <View-->
+                    <!--                    android:layout_width="300dp"-->
+                    <!--                    android:layout_height="1dp"-->
+                    <!--                    android:background="#58F4DD"-->
+                    <!--                    android:layout_gravity="center"-->
+                    <!--                    />-->
 
-                            />
-                    </LinearLayout>
-                    <TextView
-                        android:id="@+id/VendorPhonetv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5sp"
-                        android:layout_marginBottom="10sp"
-                        android:text="@string/phone_number"
-                        android:textSize="20sp"
-                        style="@style/TEXTColor"
-                        />
-
-                    <EditText
-                        android:id="@+id/VendortPhoneEt"
-                        android:layout_width="400sp"
-                        android:layout_height="35sp"
-                        android:layout_marginStart="5sp"
-                        android:inputType="phone"
-                        android:maxLength="10"
-                        android:layout_marginBottom="10sp"
-                        style="@style/EditValueStyle"
-                        android:drawableEnd="@drawable/call" />
-
-                    <TextView
-                        android:id="@+id/VendorEmailtv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5sp"
-                        android:layout_marginBottom="10sp"
-                        android:text="@string/email_id"
-                        style="@style/TEXTColor"
-                        android:textSize="20sp"
-
-                        />
-
-                    <EditText
-                        android:id="@+id/VendorEmailEt"
-                        android:layout_width="400sp"
-                        android:layout_height="35sp"
-                        android:layout_marginStart="5sp"
-                        android:maxLines="2"
-                        android:layout_marginBottom="10sp"
-                        style="@style/EditValueStyle"
-                        android:drawableEnd="@drawable/email"
-                        android:inputType="textEmailAddress" />
-                    <TextView
-                        android:id="@+id/Vendorwebsitetv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5sp"
-                        android:layout_marginBottom="10sp"
-                        android:text="@string/website"
-                        style="@style/TEXTColor"
-                        android:textSize="20sp"
-
-                        />
-
-                    <EditText
-                        android:id="@+id/VendorwebsiteEt"
-                        android:layout_width="400sp"
-                        android:layout_height="35sp"
-                        android:layout_marginStart="5sp"
-                        android:inputType="textUri"
-                        android:layout_marginBottom="10sp"
-                        style="@style/EditValueStyle"
-
-                        />
-                    <TextView
-                        android:id="@+id/VendorAddressstv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5sp"
-                        android:layout_marginBottom="10sp"
-                        android:text="@string/address"
-                        style="@style/TEXTColor"
-                        android:textSize="20sp"
-
-                        />
-
-                    <EditText
-                        android:id="@+id/VendorAddresssEt"
-                        android:layout_width="400sp"
-                        android:layout_height="35sp"
-                        android:layout_marginStart="5sp"
-                        android:layout_marginBottom="15sp"
-                        style="@style/EditValueStyle"
-                        android:drawableEnd="@drawable/location" />
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
-            <LinearLayout
-                android:layout_marginTop="10sp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="35sp"
-                    android:textSize="20sp"
-                    android:text="@string/payments"
-                    style="@style/TEXTColor"
-                    android:textColor="@color/light_purple"
-                    />
-                <ImageView
-                    android:id="@+id/PaymentAdd"
-                    android:layout_width="30sp"
-                    android:layout_height="30sp"
-                    android:src="@drawable/addfab"
-                    android:layout_marginStart="260sp"
-                    />
-
             </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/vendorpaymenttrans"
-                    android:layout_width="match_parent"
-                    android:layout_height="190sp"/>
-<!--                <View-->
-<!--                    android:layout_width="300dp"-->
-<!--                    android:layout_height="1dp"-->
-<!--                    android:background="#58F4DD"-->
-<!--                    android:layout_gravity="center"-->
-<!--                    />-->
-
-            </LinearLayout>
-        </LinearLayout>
-    </RelativeLayout>
-</ScrollView>
+        </RelativeLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -189,6 +189,7 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
                             dialog.dismiss()
                             recreate()
                         }
+                        .show()
                 }
                     }
                     ItemTouchHelper.RIGHT->{

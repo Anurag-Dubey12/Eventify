@@ -1,161 +1,178 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_height="match_parent"
     style="@style/HolderScreen"
-    android:layout_width="match_parent">
-    <RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Event_Details_Activity.TaskDetails">
+
+    <ScrollView
+        style="@style/HolderScreen"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:context=".Event_Details_Activity.TaskDetails">
-        <include
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5">
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            layout="@layout/budget_menu"/>
-        <LinearLayout
-            android:layout_marginTop="75sp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            >
-            <TextView
+            android:layout_height="wrap_content">
+
+            <include
+                layout="@layout/budget_menu"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/task_name"
-                style="@style/TEXTColor"
-                android:textSize="20sp"
-                />
-            <EditText
-                android:id="@+id/TaskNameET"
-                android:layout_width="match_parent"
-                android:layout_height="35sp"
-                style="@style/EditValueStyle"
-                android:layout_marginBottom="10sp"
-                android:inputType="text" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/Category"
-                android:textSize="20sp"
-                style="@style/TEXTColor"
-                android:layout_marginBottom="10sp"
-                />
-            <TextView
-                android:id="@+id/Taskcategory_button"
-                android:layout_width="match_parent"
-                android:layout_height="40sp"
-                android:textAlignment="center"
-                android:paddingTop="10sp"
-                android:textStyle="bold"
-                style="@style/EditValueStyle"
-                android:text="@string/select_a_category"
-                android:layout_marginBottom="10sp"
-                app:drawableEndCompat="@drawable/drop_arrow" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/note"
-                style="@style/TEXTColor"
-                android:textSize="20sp"
-                android:layout_marginBottom="10sp"
-                />
-            <EditText
-                android:id="@+id/TaskNoteET"
-                android:layout_width="match_parent"
-                android:layout_height="35sp"
-                style="@style/EditValueStyle"
-                android:layout_marginBottom="10sp"
-                />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Task Status"
-                android:textSize="20sp"
-                style="@style/TEXTColor"
-                android:layout_marginBottom="10sp"
-                />
+                android:layout_height="wrap_content" />
+
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10sp"
-                android:layout_marginBottom="10sp"
-                android:orientation="horizontal">
+                android:layout_height="match_parent"
+                android:layout_marginTop="75sp"
+                android:orientation="vertical">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/TaskPendingbut"
-                    android:layout_width="0dp"
+                <TextView
+                    style="@style/TEXTColor"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="10sp"
-                    android:layout_weight="1"
-                    android:backgroundTint="#F2FFCA"
-                    android:textColor="@color/black"
-                    android:text="@string/taskpending" />
+                    android:text="@string/task_name"
+                    android:textSize="20sp" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/Taskcombut"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/black"
+                <EditText
+                    android:id="@+id/TaskNameET"
+                    style="@style/EditValueStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="35sp"
+                    android:layout_marginBottom="10sp"
+                    android:inputType="text" />
+
+                <TextView
+                    style="@style/TEXTColor"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="#F2FFCA"
-                    android:text="@string/completed" />
+                    android:layout_marginBottom="10sp"
+                    android:text="@string/Category"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/Taskcategory_button"
+                    style="@style/EditValueStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="40sp"
+                    android:layout_marginBottom="10sp"
+                    android:paddingTop="10sp"
+                    android:text="@string/select_a_category"
+                    android:textAlignment="center"
+                    android:textStyle="bold"
+                    app:drawableEndCompat="@drawable/drop_arrow" />
+
+                <TextView
+                    style="@style/TEXTColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10sp"
+                    android:text="@string/note"
+                    android:textSize="20sp" />
+
+                <EditText
+                    android:id="@+id/TaskNoteET"
+                    style="@style/EditValueStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="35sp"
+                    android:layout_marginBottom="10sp" />
+
+                <TextView
+                    style="@style/TEXTColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10sp"
+                    android:text="Task Status"
+                    android:textSize="20sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10sp"
+                    android:layout_marginBottom="10sp"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/TaskPendingbut"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10sp"
+                        android:layout_weight="1"
+                        android:backgroundTint="#F2FFCA"
+                        android:text="@string/taskpending"
+                        android:textColor="@color/black" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/Taskcombut"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:backgroundTint="#F2FFCA"
+                        android:text="@string/completed"
+                        android:textColor="@color/black" />
+                </LinearLayout>
+
+                <TextView
+                    style="@style/TEXTColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/date"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/taskdate"
+                    style="@style/EditValueStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/calender"
+                    android:hint="Select Your Task Date"
+                    android:textSize="20sp" />
+
+                <!--            <LinearLayout-->
+                <!--                android:layout_marginTop="10sp"-->
+                <!--                android:layout_width="match_parent"-->
+                <!--                android:layout_height="wrap_content"-->
+                <!--                android:orientation="horizontal">-->
+                <!--                <TextView-->
+                <!--                    android:layout_width="wrap_content"-->
+                <!--                    android:layout_height="35sp"-->
+                <!--                    android:textSize="20sp"-->
+                <!--                    android:text="@string/subtasks"-->
+                <!--                    android:textColor="@color/light_purple"-->
+                <!--                    />-->
+                <!--                <ImageView-->
+                <!--                    android:id="@+id/TaskAdd"-->
+                <!--                    android:layout_width="30sp"-->
+                <!--                    android:layout_height="30sp"-->
+                <!--                    android:src="@drawable/add"-->
+                <!--                    android:layout_marginStart="260sp"-->
+                <!--                    />-->
+
+                <!--            </LinearLayout>-->
+                <!--            <LinearLayout-->
+                <!--                android:layout_width="match_parent"-->
+                <!--                android:layout_height="wrap_content"-->
+                <!--                android:orientation="vertical">-->
+                <!--                <androidx.recyclerview.widget.RecyclerView-->
+                <!--                    android:id="@+id/subtaskrcv"-->
+                <!--                    android:layout_width="match_parent"-->
+                <!--                    android:layout_height="wrap_content"/>-->
+                <!--                <View-->
+                <!--                    android:layout_width="300dp"-->
+                <!--                    android:layout_height="1dp"-->
+                <!--                    android:background="#58F4DD"-->
+                <!--                    android:layout_gravity="center"-->
+                <!--                    />-->
+
+                <!--            </LinearLayout>-->
             </LinearLayout>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/date"
-                style="@style/TEXTColor"
-                android:textSize="20sp"
-                />
-            <TextView
-                android:id="@+id/taskdate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Select Your Task Date"
-                android:drawableEnd="@drawable/calender"
-                style="@style/EditValueStyle"
-                android:textSize="20sp"
-                />
+        </RelativeLayout>
+    </ScrollView>
 
-<!--            <LinearLayout-->
-<!--                android:layout_marginTop="10sp"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:orientation="horizontal">-->
-<!--                <TextView-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="35sp"-->
-<!--                    android:textSize="20sp"-->
-<!--                    android:text="@string/subtasks"-->
-<!--                    android:textColor="@color/light_purple"-->
-<!--                    />-->
-<!--                <ImageView-->
-<!--                    android:id="@+id/TaskAdd"-->
-<!--                    android:layout_width="30sp"-->
-<!--                    android:layout_height="30sp"-->
-<!--                    android:src="@drawable/add"-->
-<!--                    android:layout_marginStart="260sp"-->
-<!--                    />-->
-
-<!--            </LinearLayout>-->
-<!--            <LinearLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:orientation="vertical">-->
-<!--                <androidx.recyclerview.widget.RecyclerView-->
-<!--                    android:id="@+id/subtaskrcv"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"/>-->
-<!--                <View-->
-<!--                    android:layout_width="300dp"-->
-<!--                    android:layout_height="1dp"-->
-<!--                    android:background="#58F4DD"-->
-<!--                    android:layout_gravity="center"-->
-<!--                    />-->
-
-<!--            </LinearLayout>-->
-        </LinearLayout>
-    </RelativeLayout>
-</ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

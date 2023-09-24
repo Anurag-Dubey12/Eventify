@@ -9,10 +9,13 @@ import android.widget.CheckBox
 import android.widget.RadioButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.eventmatics.Adapter.BudgetDataHolderAdapter
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Paymentinfo
 
-class PaymentActivityAdapter(private val context: Context, private val paymentList: MutableList<Paymentinfo>) :
+class PaymentActivityAdapter(private val context: Context, private val paymentList: MutableList<Paymentinfo>
+,private val itemClickListener: OnItemClickListener
+) :
     RecyclerView.Adapter<PaymentActivityAdapter.PaymentInfoViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PaymentInfoViewHolder {
@@ -20,17 +23,18 @@ class PaymentActivityAdapter(private val context: Context, private val paymentLi
             .inflate(R.layout.payment_info, parent, false)
         return PaymentInfoViewHolder(view)
     }
+    interface OnItemClickListener{
+        fun onItemClick(payment:Paymentinfo)
+    }
 
     override fun onBindViewHolder(holder: PaymentInfoViewHolder, position: Int) {
         val payment = paymentList[position]
         holder.bind(payment)
-//        holder.itemView.setOnClickListener {
-//            itemClickListener.onItemClick(payment)
-//        }
+        holder.itemView.setOnClickListener {
+            itemClickListener.onItemClick(payment)
+        }
     }
-//interface OnItemClickListener{
-//    fun onItemClick(payment:Paymentinfo)
-//}
+
     override fun getItemCount(): Int {
         return paymentList.size
     }

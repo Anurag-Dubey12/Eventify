@@ -1,6 +1,8 @@
 package com.example.eventmatics.Event_Details_Activity
 
 import android.content.Context
+import android.content.Intent
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -14,6 +16,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.Adapter.CategoryAdapter
@@ -25,15 +28,20 @@ import com.example.eventmatics.SQLiteDatabase.Dataclass.Paymentinfo
 import com.example.eventmatics.data_class.SpinnerItem
 import com.example.eventmatics.fragments.BudgetFragment
 
-class BudgetDetails : AppCompatActivity(),BudgetFragment.OnDataEnter{
+class BudgetDetails : AppCompatActivity(),BudgetFragment.OnDataEnter,
+    PaymentActivityAdapter.OnItemClickListener, BudgetFragment.OnDataUpdated{
     lateinit var nameEditText:EditText
     lateinit var  balanceET: TextView
+    lateinit var  totalPayment: TextView
     lateinit var  PaidET: TextView
     lateinit var  PaymentRecycler: RecyclerView
     lateinit var  Paymentadd: ImageView
     lateinit var  addapyment: LinearLayout
+    lateinit var  warning_Message: LinearLayout
     lateinit var  adapter: PaymentActivityAdapter
-    var paymentlist:MutableList<Paymentinfo> = mutableListOf()
+    val paymentlist: MutableList<Paymentinfo> = mutableListOf()
+    val paymentSet: MutableSet<Paymentinfo> = mutableSetOf()
+
     lateinit var EstimatedEt: EditText
     val fragmentManager = supportFragmentManager
     lateinit var NoteET: EditText
@@ -58,9 +66,30 @@ class BudgetDetails : AppCompatActivity(),BudgetFragment.OnDataEnter{
     override fun ondataenter(userdata: Paymentinfo) {
         if (!paymentlist.contains(userdata)) {
             paymentlist.add(userdata)
-            adapter.notifyDataSetChanged()
         }
     }
+    override fun ondataupdate(userdata: Paymentinfo) {
+        val databasename = getSharedPreference(this, "databasename").toString()
+        val db = LocalDatabase(this, databasename)
+        db.updatePayment(userdata.id,userdata)
+        Log.d("Payment_Info","Details are:${userdata?.id},${userdata?.name}")
+    }
+    private fun showBudgetFragment(payment: Paymentinfo?) {
+        val fragmentManager = supportFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        val fragment = BudgetFragment(this, fragmentManager, null,payment)
+        fragment.arguments = Bundle().apply {
+            putParcelable("Payment", payment)
+//            Log.d("Payment_Info","Details are:${payment?.id},${payment?.name}")
+        }
+        fragment.show(fragmentTransaction, "budgetFragmentTag")
+    }
+
+    override fun onItemClick(payment: Paymentinfo) {
+        showBudgetFragment(payment)
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_budget_details)
@@ -68,13 +97,14 @@ class BudgetDetails : AppCompatActivity(),BudgetFragment.OnDataEnter{
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        //Id's
         nameEditText = findViewById(R.id.NameET)
         EstimatedEt = findViewById(R.id.Estimated_Amount)
         NoteET = findViewById(R.id.NoteET)
+        totalPayment = findViewById(R.id.totalPayment)
         PaymentRecycler = findViewById(R.id.PaymentRecycler)
         Paymentadd = findViewById(R.id.paymentadd)
         balanceET = findViewById(R.id.Balancetv)
+        warning_Message = findViewById(R.id.warning_Message)
         PaymentBalance = findViewById(R.id.PaymentBalance)
         addapyment = findViewById(R.id.addapyment)
         categoryselection = findViewById(R.id.categoryselection)
@@ -82,9 +112,7 @@ class BudgetDetails : AppCompatActivity(),BudgetFragment.OnDataEnter{
         categoryselection.setOnClickListener {
             showCategoryPopup()
         }
-
         val selected_item:Budget?=intent.getParcelableExtra("selected_item")
-//        val selected_item_payment:Paymentinfo?=intent.getParcelableExtra("Selected_Item")
 
         if (selected_item!=null){
             PaymentBalance.visibility=View.VISIBLE
@@ -96,34 +124,44 @@ class BudgetDetails : AppCompatActivity(),BudgetFragment.OnDataEnter{
             balanceET.setText(selected_item.balance)
             EstimatedEt.setText(selected_item.estimatedAmount)
 
-            val id = selected_item?.id!!.toInt()
-
+            val id = selected_item.id.toInt()
             val databasename = getSharedPreference(this@BudgetDetails, "databasename").toString()
             val databasehelper = LocalDatabase(this@BudgetDetails, databasename)
             val paymentData = databasehelper.getPaymentsForBudget(id)
             for (payment in paymentData) {
                 Log.d("PaymentData", "ID: ${payment.id}, Name: ${payment.name}, Amount: ${payment.amount}")
             }
-            adapter= PaymentActivityAdapter(this,paymentData)
+            paymentSet.clear()
+            paymentSet.addAll(paymentData)
+            val paymentList = paymentSet.toList()
+            adapter = PaymentActivityAdapter(this, paymentList.toMutableList(),this)
             PaymentRecycler.adapter = adapter
             PaymentRecycler.layoutManager = LinearLayoutManager(this)
-            paymentlist.clear()
-            paymentlist.addAll(paymentData)
-            adapter.notifyDataSetChanged()
+
+            val totalPaymentAmount =databasehelper.getTotalPaymentAmount()
+            totalPayment.setText(totalPaymentAmount.toString())
+            Log.d("payment","The total amount is :$totalPaymentAmount")
+            val estimatedAmount = EstimatedEt.text.toString().toFloatOrNull() ?: 0.0f
+            val balance = estimatedAmount - totalPaymentAmount
+            balanceET.text = balance.toString()
+            if(totalPaymentAmount>balance){
+                warning_Message.visibility=View.VISIBLE
+                balanceET.setTextColor(ContextCompat.getColor(this,R.color.Red))
+            }
         }
 
-         budgetFragment= BudgetFragment(this, supportFragmentManager, selected_item?.id)
+         budgetFragment= BudgetFragment(this, supportFragmentManager, selected_item?.id,null)
         budgetFragment.setUserDataListner(this)
-        adapter = PaymentActivityAdapter(this@BudgetDetails, paymentlist)
+        budgetFragment.setUserDataUpdateListner(this)
+//        adapter = PaymentActivityAdapter(this@BudgetDetails, paymentlist)
 
         Paymentadd.setOnClickListener {
             showpaymentsheet()
         }
-    }
 
+    }
     private fun showpaymentsheet() {
         budgetFragment.show(supportFragmentManager, "budgetFragmentTag")
-
     }
 
     private fun showCategoryPopup() {
@@ -202,37 +240,6 @@ class BudgetDetails : AppCompatActivity(),BudgetFragment.OnDataEnter{
         finish()
     }
 
-//    private fun UpdateDatabase(id: Long) {
-//        val name = nameEditText.text.toString()
-//        val totalamt = EstimatedEt.text.toString().toFloat()
-//        val Totalamount=totalamt.toString()
-//        val note=NoteET.text.toString()
-//        val category=categoryselection.text.toString()
-//        val balance=balanceET.text.toString()
-//
-//        if (name.isEmpty()) {
-//            nameEditText.error = "Please enter a name"
-//            return }
-//        if (totalamt==0f) {
-//            EstimatedEt.error = "Please enter an amount"
-//            return
-//        }
-//        val status:String
-//        val databasename=getSharedPreference(this,"databasename").toString()
-//        val db=LocalDatabase(this,databasename)
-//        val isBudgetPaid=db.isBudgetPaid(id)
-//        if(isBudgetPaid){
-//            status="Paid"
-//        }
-//        else{
-//            status="Not Paid"
-//        }
-//        val budget=Budget(id,name,category,note,Totalamount,balance,"","$status")
-//        db.updateBudget(budget)
-//        Toast.makeText(this, "Budget Updated successfully", Toast.LENGTH_SHORT).show()
-//        finish()
-//    }
-
     private fun AddValueToDataBase() {
         val name = nameEditText.text.toString()
         val totalamt = EstimatedEt.text.toString().toFloat()
@@ -248,7 +255,6 @@ class BudgetDetails : AppCompatActivity(),BudgetFragment.OnDataEnter{
             EstimatedEt.error = "Please enter an amount"
             return
         }
-
         val id=0
         val databasename=getSharedPreference(this,"databasename").toString()
         val db=LocalDatabase(this,databasename)
@@ -263,6 +269,8 @@ class BudgetDetails : AppCompatActivity(),BudgetFragment.OnDataEnter{
         menuInflater.inflate(R.menu.budget_menu,menu)
         return super.onCreateOptionsMenu(menu)
     }
+
+
 
 
 }
