@@ -153,6 +153,30 @@
 </style>
     <style name="show_warning">
         <item name="android:src">@drawable/information</item>
-
+    </style>
+    <style name="GoogleMaterialButton" >
+        <item name="android:layout_gravity">center</item> <!-- Positioning within its container -->
+        <item name="android:layout_marginBottom">15dp</item> <!-- Bottom margin -->
+        <item name="android:text">@string/continue_with_google</item> <!-- Button text -->
+        <item name="android:textColor">@color/black</item> <!-- Text color -->
+        <item name="android:textSize">18sp</item> <!-- Text size -->
+        <item name="android:textStyle">bold</item> <!-- Text style -->
+        <item name="backgroundTint">@color/Sky_Blue</item> <!-- Background color -->
+        <item name="cornerRadius">15sp</item> <!-- Corner radius -->
+        <item name="android:drawableEnd">@drawable/google</item> <!-- Drawable at the end of the text -->
+        <item name="strokeColor">@color/black</item> <!-- Stroke (border) color -->
+        <item name="strokeWidth">1sp</item> <!-- Stroke (border) width -->
+    </style>
+    <style name="MaterialButton" >
+        <item name="android:layout_gravity">center</item> <!-- Positioning within its container -->
+        <item name="android:layout_marginBottom">15dp</item> <!-- Bottom margin -->
+        <item name="android:text">@string/continue_with_google</item> <!-- Button text -->
+        <item name="android:textColor">@color/black</item> <!-- Text color -->
+        <item name="android:textSize">18sp</item> <!-- Text size -->
+        <item name="android:textStyle">bold</item> <!-- Text style -->
+        <item name="backgroundTint">@color/white</item> <!-- Background color -->
+        <item name="cornerRadius">15sp</item> <!-- Corner radius -->
+        <item name="strokeColor">@color/black</item> <!-- Stroke (border) color -->
+        <item name="strokeWidth">1sp</item> <!-- Stroke (border) width -->
     </style>
 </resources>

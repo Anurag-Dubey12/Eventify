@@ -40,7 +40,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.getSystemService
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -190,7 +189,6 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
         val actionBarDrawerToggle = ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close)
         drawerLayout.addDrawerListener(actionBarDrawerToggle)
         actionBarDrawerToggle.syncState()
-//        widgetButton = findViewById(R.id.widgetbutton)
         //For First Time Launch Event Create SHow
         if (isFirstLaunch(this)) {
             showFirstLaunchDialog()
@@ -198,7 +196,7 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
         }
         val databaseNameHolder = DatabaseNameHolder(this)
         databaseNameHolder.setDatabaseChangeListener(this)
-
+//        showEventData()
         //Load Profile Pic
         val db=UserProfileDatabase(this)
         val headerView = navView.getHeaderView(0)
@@ -233,6 +231,7 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
             budgetImageButton.setOnClickListener { CheckAndStartActivity(BudgetDataHolderActivity::class.java) }
             guestImageButton.setOnClickListener { CheckAndStartActivity(GuestDataHolderActivity::class.java) }
             vendorImageButton.setOnClickListener { CheckAndStartActivity(VendorDataHolderActivity::class.java) } }
+
         Eventshow.setOnClickListener {
             val isRecyclerViewVisible = eventRecyclerView.visibility == View.VISIBLE
             val isActivityVisible = eventActivity.visibility == View.VISIBLE
@@ -240,7 +239,6 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
             Eventshow.icon = if (isRecyclerViewVisible) getDrawable(R.drawable.show_event) else getDrawable(R.drawable.up_arrow)
             eventRecyclerView.visibility = if (isRecyclerViewVisible) View.GONE else View.VISIBLE
             eventaddbut.visibility = if (isRecyclerViewVisible) View.GONE else View.VISIBLE
-            eventname.visibility=if(isRecyclerViewVisible) View.GONE else View.VISIBLE
             eventActivity.visibility = if (isActivityVisible) View.GONE else View.VISIBLE
         }
 
@@ -263,7 +261,6 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
                         else{
                             requestPermission()
                         }
-
                     }
                     .setPositiveButton("Combined PDF"){dialog,_->
                         if(checkPermissions()){
@@ -275,7 +272,6 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
                         }
                     }
                     .show()
-
             }
         }
         Delete_Event.setOnClickListener {
@@ -348,13 +344,10 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
         val currentname=UserData?.name ?:" "
         val userimage=UserData?.Image
         try{
-
-
         if(UserData!=null){
             val image=BitmapFactory.decodeByteArray(userimage,0, userimage!!.size)
             Imageadd.setImageBitmap(image)
         }
-
         Imageadd.setOnClickListener {
             ImageUpload()
         }
@@ -478,7 +471,7 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
         val Eventtimer=db.getEventData(EventID)
         if(Eventtimer!=null){
             Eventshow.text=Eventtimer.name
-            budgetShowTextView.text=Eventtimer.budget
+            eventname.text=Eventtimer.budget
             val name=Eventtimer.name
             val ParentDirectory=File(Environment.getExternalStorageDirectory(),"Eventify")
             if(!ParentDirectory.exists()){
@@ -552,8 +545,12 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
                         true
                     }
                     R.id.event_delete -> {
-                        // Handle delete option
-                        // You can add your delete logic here
+                        try {
+                        db.deleteEvent(Eventtimer!!)
+                        }catch (e:Exception){
+                            e.printStackTrace()
+                            Log.d("Event_Delete","Event Could Not Be Deleted Because:${e.message}")
+                        }
                         true
                     }
                     else -> return@setOnMenuItemClickListener false
@@ -942,7 +939,7 @@ fun checkPermissions():Boolean{
         val budgettotdal=db.getTotalBudget()
         val BudgetPaid=db.getTotalPaidBudget()
         val BudgetNotPaid=db.getTotalNotPaidBudget()
-        val budgetUnPaid=db.getTotalUnPaid()
+//        val budgetUnPaid=db.getTotalUnPaid()
         val TaskComtext=db.getTaskStatus()
         val Taskpending=db.getTaskPendingStatus()
         val totaltask=db.getTotalTask()
@@ -967,26 +964,12 @@ fun checkPermissions():Boolean{
 
         if (Eventtimer !=  null) {
             eventname.text = Eventtimer.name
-            budgetShowTextView.text = Eventtimer.budget
-            val budget=Eventtimer.budget
-//            piechart.clearChart()
-//            piechart.addPieSlice(PieModel("Event",budget.toFloat(),Color.parseColor("#2ecc71")))
-//            piechart.addPieSlice(PieModel("Paid",budgettotdal.toFloat(),Color.parseColor("#3498db")))
-//            piechart.addPieSlice(PieModel("UnPaid",budgetUnPaid.toFloat(),Color.parseColor("#e74c3c")))
-//            piechart.startAnimation()
-            paidAmountShowTextView.setText(budgettotdal.toString())
-            pendingAmountShowTextView.setText(budgetUnPaid.toString())
-
-            // Calculate remaining time until the event date
             val eventDate = Eventtimer.Date
             val eventTime = Eventtimer.time
             val currentDate = Calendar.getInstance().time
             val eventDateTime = SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.getDefault()).parse("$eventDate $eventTime")
-
             if (eventDateTime != null) {
                 val remainingTimeInMillis = eventDateTime.time - currentDate.time
-
-                // Start the countdown timer
                 countDownTimer?.cancel() // Cancel any existing timer to avoid overlapping
                 countDownTimer = object : CountDownTimer(remainingTimeInMillis, 1000) {
                     override fun onTick(millisUntilFinished: Long) {
@@ -1014,7 +997,7 @@ fun checkPermissions():Boolean{
         adapter.updateData(eventList)
         eventRecyclerView.adapter = adapter
         eventRecyclerView.layoutManager = LinearLayoutManager(this)
-        adapter.notifyDataSetChanged()
+
     }
     fun SetSummary(TextField:TextView,value:String?){
         if(value.isNullOrEmpty() || value=="0" || value=="0.0"){
@@ -1030,6 +1013,7 @@ fun checkPermissions():Boolean{
         val db = LocalDatabase(this, databasename)
         db.deleteEvent(event)
         Toast.makeText(this,"Event Removed",Toast.LENGTH_SHORT).show()
+        recreate()
         return true
     }
 

@@ -42,7 +42,6 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
             it.putExtra("Selected_Item",vendor)
             startActivity(it)
         }
-
     }
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {

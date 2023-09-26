@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:title="Eventify"
-            android:titleMarginStart="30sp"
+            android:titleMarginStart="@dimen/_30sdp"
             android:background="@color/Lemon_Chiffon"
             app:layout_scrollFlags="scroll|enterAlways"/>
 
@@ -39,7 +39,7 @@
             android:id="@+id/eventinfo"
             android:layout_below="@id/toolbar"
             android:layout_width="match_parent"
-            android:layout_marginTop="2sp"
+            android:layout_marginTop="@dimen/_1sdp"
             app:cardCornerRadius="1sp"
             android:layout_height="wrap_content">
             <LinearLayout
@@ -50,7 +50,7 @@
                     android:id="@+id/EventTimerDisplay"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="24sp"
+                    android:textSize="@dimen/_24sdp"
                     android:textStyle="bold"
                     android:textAlignment="center"
                     style="@style/Eventinfocolor"
@@ -67,13 +67,13 @@
                     android:layout_height="wrap_content">
                     <TextView
                         android:id="@+id/eventname"
-                        android:layout_width="350sp"
-                        android:layout_height="50sp"
+                        android:layout_width="@dimen/_270sdp"
+                        android:layout_height="@dimen/_40sdp"
                         style="@style/EventTextcolor" />
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/eventnameshow"
                         android:layout_width="match_parent"
-                        android:layout_height="50sp"
+                        android:layout_height="@dimen/_40sdp"
                         android:layout_toEndOf="@id/eventname"
                         style="@style/showevent"
                         />
@@ -82,11 +82,11 @@
                     android:id="@+id/eventshowhide"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
+                   android:visibility="gone"
                     android:orientation="horizontal">
                     <TextView
                         android:id="@+id/eventtv"
-                        android:layout_width="250sp"
+                        android:layout_width="@dimen/_250sdp"
                         android:layout_height="wrap_content"
                         android:text="Events"
                         android:layout_weight="1"
@@ -95,13 +95,6 @@
                         android:textStyle="bold"
                         style="@style/TEXTColor"
                         />
-<!--                    <ImageView-->
-<!--                        android:id="@+id/crossimg"-->
-<!--                        android:layout_width="50sp"-->
-<!--                        android:layout_height="40sp"-->
-<!--                        android:layout_weight="1"-->
-<!--                        android:src="@drawable/cross"-->
-<!--                        />-->
                 </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
@@ -117,7 +110,6 @@
                     android:orientation="horizontal"
                     android:visibility="gone"
                     >
-
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/eventaddbut"
                     android:layout_width="wrap_content"
@@ -169,11 +161,11 @@
         </androidx.cardview.widget.CardView>
         <androidx.cardview.widget.CardView
             android:id="@+id/menuimagebut"
-           android:layout_marginTop="5sp"
+           android:layout_marginTop="@dimen/_4sdp"
             android:layout_below="@id/eventinfo"
             android:layout_width="match_parent"
-          app:cardCornerRadius="1sp"
-            app:cardElevation="5sp"
+          app:cardCornerRadius="@dimen/_1sdp"
+            app:cardElevation="@dimen/_4sdp"
             android:layout_height="wrap_content">
             <LinearLayout
                 android:layout_width="match_parent"
@@ -185,11 +177,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Menu"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/_14sdp"
                     style="@style/TEXTColor"
-                    android:layout_marginStart="15sp"
+                    android:layout_marginStart="@dimen/_10sdp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="10sp"
+                    android:layout_marginBottom="@dimen/_8sdp"
                     />
                 <com.google.android.material.divider.MaterialDivider
                     android:layout_width="match_parent"
@@ -201,7 +193,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
-                    android:layout_marginBottom="15sp"
+                    android:layout_marginBottom="@dimen/_10sdp"
                     >
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -210,17 +202,17 @@
 
                     <ImageButton
                         android:id="@+id/task"
-                        android:layout_width="80sp"
-                        android:layout_height="80sp"
+                        android:layout_width="@dimen/_65sdp"
+                        android:layout_height="@dimen/_70sdp"
                         style="@style/Task"
                         android:background="@color/white"
-                        android:layout_marginEnd="20sp"
+                        android:layout_marginEnd="@dimen/_12sdp"
                         />
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textSize="16sp"
-                            android:layout_marginStart="15sp"
+                            android:layout_marginStart="@dimen/_15sdp"
                             style="@style/TEXTColor"
                             android:text="Task"/>
                     </LinearLayout>
@@ -231,17 +223,17 @@
 
                         <ImageButton
                             android:id="@+id/budget"
-                            android:layout_width="80sp"
-                            android:layout_height="80sp"
+                            android:layout_width="@dimen/_65sdp"
+                            android:layout_height="@dimen/_70sdp"
                             style="@style/Budget"
                             android:background="@color/white"
-                            android:layout_marginEnd="20sp"
+                            android:layout_marginEnd="@dimen/_12sdp"
                             />
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textSize="16sp"
-                            android:layout_marginStart="15sp"
+                            android:layout_marginStart="@dimen/_15sdp"
                             style="@style/TEXTColor"
                             android:text="Budget"/>
                     </LinearLayout>
@@ -252,17 +244,17 @@
 
                         <ImageButton
                             android:id="@+id/Guest"
-                            android:layout_width="80sp"
-                            android:layout_height="80sp"
+                            android:layout_width="@dimen/_65sdp"
+                            android:layout_height="@dimen/_70sdp"
                             style="@style/Guest"
                             android:background="@color/white"
-                            android:layout_marginEnd="20sp"
+                            android:layout_marginEnd="@dimen/_12sdp"
                             />
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textSize="16sp"
-                            android:layout_marginStart="15sp"
+                            android:layout_marginStart="@dimen/_15sdp"
                             style="@style/TEXTColor"
                             android:text="Guest"/>
                     </LinearLayout>
@@ -273,16 +265,17 @@
 
                         <ImageButton
                             android:id="@+id/Vendor"
-                            android:layout_width="80sp"
-                            android:layout_height="80sp"
-                            style="@style/Vendor"                            android:background="@color/white"
-                            android:layout_marginEnd="20sp"
+                            android:layout_width="@dimen/_65sdp"
+                            android:layout_height="@dimen/_70sdp"
+                            style="@style/Vendor"
+                            android:background="@color/white"
+                            android:layout_marginEnd="@dimen/_12sdp"
                             />
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textSize="16sp"
-                            android:layout_marginStart="15sp"
+                            android:layout_marginStart="@dimen/_15sdp"
                             style="@style/TEXTColor"
                             android:text="Vendor"/>
                     </LinearLayout>
@@ -324,11 +317,11 @@
 
         <androidx.cardview.widget.CardView
             android:layout_below="@id/menuimagebut"
-           android:layout_marginTop="5sp"
+           android:layout_marginTop="@dimen/_5sdp"
             android:id="@+id/budget_info"
             android:layout_width="match_parent"
-            app:cardCornerRadius="15sp"
-            app:cardElevation="5sp"
+            app:cardCornerRadius="@dimen/_12sdp"
+            app:cardElevation="@dimen/_5sdp"
             android:layout_height="wrap_content">
 
             <LinearLayout
@@ -336,26 +329,24 @@
                 android:layout_height="match_parent"
                 style="@style/RecyclerBack"
                 android:orientation="vertical">
-
-
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
                 <TextView
-                    android:layout_width="200sp"
-                    android:layout_height="20sp"
+                    android:layout_width="@dimen/_170sdp"
+                    android:layout_height="@dimen/_15sdp"
                     android:textStyle="bold"
                     style="@style/Summary"
                     android:layout_weight="1"
                     android:textAllCaps="true"
-                    android:layout_marginEnd="100sp"
-                    android:layout_marginStart="10sp"
+                    android:layout_marginEnd="@dimen/_100sdp"
+                    android:layout_marginStart="@dimen/_10sdp"
                     android:text="Budget Summary"/>
                     <TextView
                     android:id="@+id/BudgetSummary"
                     android:layout_width="wrap_content"
-                    android:layout_height="20sp"
+                    android:layout_height="@dimen/_15sdp"
                     android:textStyle="bold"
                         style="@style/Summary"
                     android:textAllCaps="true"
@@ -375,44 +366,30 @@
 <!--                    android:animationCache="true"-->
 <!--                    android:layout_gravity="center_horizontal"-->
 <!--                    />-->
-                <ProgressBar
-                    android:id="@+id/horizontalProgressBar"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="10dp"
-                    android:progressDrawable="@drawable/custom_progress_bar" />
-                <TextView
-                    android:id="@+id/startValueTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Start: 0"
-                    android:layout_gravity="start"/>
-
-                <TextView
-                    android:id="@+id/endValueTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="End: 100%"
-                    android:layout_gravity="end"/>
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="30sp"
+                    android:layout_height="@dimen/_22sdp"
                     android:orientation="horizontal">
                     <TextView
-                        android:layout_width="0dp"
+                        android:layout_width="0sp"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:layout_marginStart="15sp"
+                        android:textSize="@dimen/_13sdp"
+                        android:layout_marginStart="@dimen/_12sdp"
                         style="@style/TEXTColor"
                         android:layout_weight="1"
                         android:text="Budget" />
-
+                    <View
+                        android:layout_width="@dimen/_8sdp"
+                        android:layout_height="@dimen/_8sdp"
+                        android:layout_weight="0"
+                        android:layout_gravity="center_vertical"
+                        android:background="#FF63A1" />
                     <TextView
                         android:id="@+id/Budgetshow"
-                        android:layout_width="0dp"
+                        android:layout_width="0sp"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:layout_marginStart="15sp"
+                        android:textSize="@dimen/_13sdp"
+                        android:layout_marginStart="@dimen/_12sdp"
                         android:layout_weight="1"
                         style="@style/TEXTColor"/>
                 </LinearLayout>
@@ -424,25 +401,25 @@
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:layout_marginStart="15sp"
+                        android:textSize="@dimen/_13sdp"
+                        android:layout_marginStart="@dimen/_12sdp"
                         style="@style/TEXTColor"
                         android:layout_weight="1"
                         android:text="Pending" />
 
-<!--                    <View-->
-<!--                        android:layout_width="10sp"-->
-<!--                        android:layout_height="10sp"-->
-<!--                        android:layout_weight="0"-->
-<!--                        android:layout_gravity="center_vertical"-->
-<!--                        android:background="#FF63A1" />-->
+                    <View
+                        android:layout_width="@dimen/_8sdp"
+                        android:layout_height="@dimen/_8sdp"
+                        android:layout_weight="0"
+                        android:layout_gravity="center_vertical"
+                        android:background="#FF63A1" />
 
                     <TextView
                         android:id="@+id/PendingAmountshow"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:layout_marginStart="15sp"
+                        android:textSize="@dimen/_13sdp"
+                        android:layout_marginStart="@dimen/_12sdp"
                         android:layout_weight="1"
                         style="@style/TEXTColor"/>
 
@@ -455,24 +432,24 @@
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:layout_marginStart="15sp"
+                        android:textSize="@dimen/_13sdp"
+                        android:layout_marginStart="@dimen/_12sdp"
                         style="@style/TEXTColor"
                         android:layout_weight="1"
                         android:text="Paid" />
-<!--                    <View-->
-<!--                        android:layout_width="10sp"-->
-<!--                        android:layout_height="10sp"-->
-<!--                        android:layout_weight="0"-->
-<!--                        android:layout_gravity="center_vertical"-->
-<!--                        android:background="#F6D661" />-->
+                    <View
+                        android:layout_width="@dimen/_8sdp"
+                        android:layout_height="@dimen/_8sdp"
+                        android:layout_weight="0"
+                        android:layout_gravity="center_vertical"
+                        android:background="#F6D661" />
 
                     <TextView
                         android:id="@+id/PaidAmountshow"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:layout_marginStart="15sp"
+                        android:textSize="@dimen/_13sdp"
+                        android:layout_marginStart="@dimen/_12sdp"
                         android:layout_weight="1"
                         style="@style/TEXTColor"/>
 
@@ -499,20 +476,21 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
                     <TextView
-                        android:layout_width="190sp"
-                        android:layout_height="20sp"
+                        android:layout_width="@dimen/_170sdp"
+                        android:layout_height="@dimen/_15sdp"
+                        android:layout_marginStart="@dimen/_10sdp"
+                        android:layout_marginEnd="@dimen/_100sdp"
                         android:layout_gravity="center_horizontal"
                         android:text="Guest Summary"
                         style="@style/Summary"
                         android:textAllCaps="true"
-                        android:layout_marginEnd="100sp"
-                        android:layout_marginStart="10sp"
+                        android:layout_weight="1"
                         android:textStyle="bold"
                         />
                     <TextView
                         android:id="@+id/GuestSummaryText"
                         android:layout_width="wrap_content"
-                        android:layout_height="20sp"
+                        android:layout_height="@dimen/_15sdp"
                         android:textStyle="bold"
                         style="@style/Summary"
                         android:textAllCaps="true"
@@ -549,11 +527,12 @@
                     <TextView
                         style="@style/TEXTColor"
                         android:layout_width="0dp"
-                        android:layout_height="22dp"
+                        android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:layout_marginStart="15sp"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:textSize="@dimen/_13sdp"
                         android:text="Total Invitation "
-                        android:textSize="16sp" />
+                        />
 
                     <View
                         android:layout_width="10sp"
@@ -566,8 +545,8 @@
                         android:id="@+id/TotalInvi"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:layout_marginStart="15sp"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:textSize="@dimen/_13sdp"
                         android:layout_weight="1"
                         style="@style/TEXTColor"
                         />
@@ -580,10 +559,10 @@
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:textSize="@dimen/_13sdp"
                         style="@style/TEXTColor"
                         android:layout_weight="1"
-                        android:layout_marginStart="15sp"
                         android:text="Invitation Sent" />
 
                     <View
@@ -597,8 +576,8 @@
                         android:id="@+id/TotalInviSent"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:layout_marginStart="15sp"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:textSize="@dimen/_13sdp"
                         android:layout_weight="1"
                         style="@style/TEXTColor"
                         />
@@ -611,8 +590,8 @@
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:layout_marginStart="15sp"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:textSize="@dimen/_13sdp"
                         style="@style/TEXTColor"
                         android:layout_weight="1"
                         android:text="Inviation Not Sent" />
@@ -628,8 +607,8 @@
                         android:id="@+id/TotalInvinotSent"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:layout_marginStart="15sp"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:textSize="@dimen/_13sdp"
                         android:layout_weight="1"
                         style="@style/TEXTColor"
                      />
@@ -760,19 +739,20 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:layout_width="190sp"
-                        android:layout_height="20sp"
+                        android:layout_width="@dimen/_170sdp"
+                        android:layout_height="@dimen/_15sdp"
+                        android:layout_marginStart="@dimen/_10sdp"
+                        android:layout_marginEnd="@dimen/_100sdp"
                         android:layout_gravity="center_horizontal"
                         android:text="Task Summary"
                         style="@style/Summary"
                         android:textAllCaps="true"
-                        android:layout_marginEnd="100sp"
-                        android:layout_marginStart="10sp"
+                        android:layout_weight="1"
                         android:textStyle="bold" />
                     <TextView
                         android:id="@+id/TaskSummaryText"
                         android:layout_width="wrap_content"
-                        android:layout_height="20sp"
+                        android:layout_height="@dimen/_15sdp"
                         android:textStyle="bold"
                         style="@style/Summary"
                         android:textAllCaps="true"
@@ -812,9 +792,10 @@
                         android:layout_width="0dp"
                         android:layout_height="22dp"
                         android:layout_weight="1"
-                        android:layout_marginStart="15sp"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:textSize="@dimen/_13sdp"
                         android:text="Total Task"
-                        android:textSize="15sp" />
+                        />
 
                     <View
                         android:layout_width="10sp"
@@ -827,8 +808,8 @@
                         android:id="@+id/TotalTask"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:layout_marginStart="15sp"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:textSize="@dimen/_13sdp"
                         android:layout_weight="1"
                         style="@style/TEXTColor"
                         />
@@ -843,10 +824,11 @@
                         style="@style/TEXTColor"
                         android:layout_width="0dp"
                         android:layout_height="22dp"
-                        android:layout_marginStart="15sp"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:textSize="@dimen/_13sdp"
                         android:layout_weight="1"
                         android:text="Completed"
-                        android:textSize="15sp" />
+                        />
 
                     <View
                         android:layout_width="10sp"
@@ -859,8 +841,8 @@
                         android:id="@+id/TaskCompleted"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:layout_marginStart="15sp"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:textSize="@dimen/_13sdp"
                         android:layout_weight="1"
                         style="@style/TEXTColor"
                         />
@@ -873,9 +855,9 @@
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:textSize="@dimen/_13sdp"
                         style="@style/TEXTColor"
-                        android:layout_marginStart="15sp"
                         android:layout_weight="1"
                         android:text="Pending" />
 
@@ -890,8 +872,8 @@
                         android:id="@+id/TaskPending"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:layout_marginStart="15sp"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:textSize="@dimen/_13sdp"
                         android:layout_weight="1"
                         style="@style/TEXTColor"
                         />
@@ -916,19 +898,20 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
                     <TextView
-                        android:layout_width="190sp"
-                        android:layout_height="20sp"
+                        android:layout_width="@dimen/_170sdp"
+                        android:layout_height="@dimen/_15sdp"
+                        android:layout_marginStart="@dimen/_10sdp"
+                        android:layout_marginEnd="@dimen/_100sdp"
                         android:layout_gravity="center_horizontal"
                         android:text="Vendor Summary"
+                        android:layout_weight="1"
                         style="@style/Summary"
                         android:textAllCaps="true"
-                        android:layout_marginEnd="100sp"
-                        android:layout_marginStart="10sp"
                         android:textStyle="bold" />
                     <TextView
                         android:id="@+id/VendorSummary"
                         android:layout_width="wrap_content"
-                        android:layout_height="20sp"
+                        android:layout_height="@dimen/_15sdp"
                         android:textStyle="bold"
                         style="@style/Summary"
                         android:textAllCaps="true"
@@ -963,8 +946,8 @@
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:layout_marginStart="15sp"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:textSize="@dimen/_13sdp"
                         style="@style/TEXTColor"
                         android:layout_weight="1"
                         android:text="Budget" />
@@ -978,8 +961,8 @@
                         android:id="@+id/VendorTotalAmount"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:layout_marginStart="15sp"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:textSize="@dimen/_13sdp"
                         android:layout_weight="1"
                         style="@style/TEXTColor" />
                 </LinearLayout>
@@ -991,8 +974,8 @@
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:layout_marginStart="15sp"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:textSize="@dimen/_13sdp"
                         style="@style/TEXTColor"
                         android:layout_weight="1"
                         android:text="Pending" />
@@ -1008,8 +991,8 @@
                         android:id="@+id/VendorPendingAmount"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:layout_marginStart="15sp"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:textSize="@dimen/_13sdp"
                         android:layout_weight="1"
                         style="@style/TEXTColor" />
 
@@ -1022,8 +1005,8 @@
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:layout_marginStart="15sp"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:textSize="@dimen/_13sdp"
                         style="@style/TEXTColor"
                         android:layout_weight="1"
                         android:text="Paid" />
@@ -1038,8 +1021,8 @@
                         android:id="@+id/VendorPaidAmount"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:layout_marginStart="15sp"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:textSize="@dimen/_13sdp"
                         android:layout_weight="1"
                         style="@style/TEXTColor"/>
 

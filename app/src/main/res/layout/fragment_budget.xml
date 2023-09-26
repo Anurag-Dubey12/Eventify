@@ -21,16 +21,17 @@
             style="@style/TEXTColor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10sp"
+            android:layout_marginBottom="@dimen/_7sdp"
             android:text="Name"
-            android:textSize="18sp" />
+            android:textStyle="bold"
+            android:textSize="@dimen/_17sdp" />
 
         <EditText
             android:id="@+id/editTextName"
             style="@style/EditValueStyle"
             android:layout_width="match_parent"
-            android:layout_height="30sp"
-            android:layout_marginBottom="10sp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_marginBottom="@dimen/_7sdp"
             android:hint="Enter Name"
             android:inputType="text" />
 
@@ -38,16 +39,17 @@
             style="@style/RecyclerTextColor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10sp"
+            android:layout_marginBottom="@dimen/_7sdp"
             android:text="@string/amount"
-            android:textSize="18sp" />
+            android:textStyle="bold"
+            android:textSize="@dimen/_17sdp" />
 
         <EditText
             android:id="@+id/editTextAmount"
             style="@style/EditValueStyle"
             android:layout_width="match_parent"
-            android:layout_height="30sp"
-            android:layout_marginBottom="10sp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_marginBottom="@dimen/_7sdp"
             android:hint="@string/amount"
             android:inputType="numberDecimal" />
 
@@ -55,14 +57,16 @@
             style="@style/RecyclerTextColor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10sp"
+            android:layout_marginBottom="@dimen/_7sdp"
+            android:textSize="@dimen/_17sdp"
+            android:textStyle="bold"
             android:text="@string/payment_status"
-            android:textSize="18sp" />
+            />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10sp"
+            android:layout_marginBottom="@dimen/_7sdp"
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
@@ -71,26 +75,26 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="15sp"
                 android:layout_weight="1"
-                android:padding="8dp"
+                android:padding="@dimen/_8sdp"
                 android:text="Pending"
                 android:textColor="@color/black"
                 app:backgroundTint="@color/white"
-                app:cornerRadius="15sp"
+                app:cornerRadius="@dimen/_15sdp"
                 app:strokeColor="@color/black"
-                app:strokeWidth="1sp" />
+                app:strokeWidth="@dimen/_1sdp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonPaid"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:padding="8dp"
+                android:padding="@dimen/_7sdp"
                 android:text="Paid"
                 android:textColor="@color/black"
                 app:backgroundTint="@color/white"
-                app:cornerRadius="15sp"
+                app:cornerRadius="@dimen/_15sdp"
                 app:strokeColor="@color/black"
-                app:strokeWidth="1sp" />
+                app:strokeWidth="@dimen/_1sdp" />
 
         </LinearLayout>
 
@@ -98,9 +102,11 @@
             style="@style/RecyclerTextColor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10sp"
+            android:layout_marginBottom="@dimen/_7sdp"
+            android:textSize="@dimen/_17sdp"
+            android:textStyle="bold"
             android:text="@string/expired_date"
-            android:textSize="16sp" />
+            />
 
         <TextView
             android:id="@+id/editTextDate"

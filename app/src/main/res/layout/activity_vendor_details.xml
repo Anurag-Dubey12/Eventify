@@ -37,22 +37,24 @@
                     style="@style/TEXTColor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="15sp"
+                    android:layout_marginBottom="@dimen/_15sdp"
                     android:text="@string/vendor_details"
-                    android:textSize="20sp" />
+                    android:textSize="@dimen/_17sdp" />
 
                 <TextView
                     style="@style/TEXTColor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/vendor_name"
-                    android:textSize="20sp" />
+                    android:layout_marginStart="@dimen/_7sdp"
+                    android:textSize="@dimen/_17sdp" />
 
                 <EditText
                     android:id="@+id/VendorNameET"
                     style="@style/EditValueStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="35sp"
+                    android:layout_width="@dimen/_300sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_gravity="center"
                     android:layout_marginBottom="10sp"
                     android:inputType="text" />
 
@@ -62,13 +64,15 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10sp"
                     android:text="@string/Category"
+                    android:layout_marginStart="@dimen/_7sdp"
                     android:textSize="20sp" />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/vendorcategory_button"
                     style="@style/EditValueStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/_300sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_gravity="center"
                     android:layout_marginBottom="10sp"
                     android:drawableEnd="@drawable/drop_arrow"
                     android:text="@string/select_a_category"
@@ -81,13 +85,15 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10sp"
                     android:text="@string/note"
+                    android:layout_marginStart="@dimen/_7sdp"
                     android:textSize="20sp" />
 
                 <EditText
                     android:id="@+id/VendorNoteET"
                     style="@style/EditValueStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="35sp"
+                    android:layout_width="@dimen/_300sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_gravity="center"
                     android:layout_marginBottom="10sp" />
 
                 <TextView
@@ -95,14 +101,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10sp"
+                    android:layout_marginStart="@dimen/_7sdp"
                     android:text="@string/estimated_amount"
                     android:textSize="20sp" />
 
                 <EditText
                     android:id="@+id/VendorEstimated_Amount"
                     style="@style/EditValueStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="35sp"
+                    android:layout_width="@dimen/_300sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_gravity="center"
                     android:layout_marginBottom="10sp"
                     android:inputType="numberDecimal" />
 
@@ -125,27 +133,8 @@
                         android:layout_height="40sp"
                         android:textSize="20sp" />
                 </LinearLayout>
-
-                <!--            <TextView-->
-                <!--                android:id="@+id/VendorRemainingET"-->
-                <!--                android:layout_width="match_parent"-->
-                <!--                android:layout_height="35sp"-->
-                <!--                android:visibility="gone"-->
-                <!--                android:textSize="20sp"-->
-                <!--                android:text="@string/pending"-->
-                <!--                android:background="@drawable/valueediteffect"-->
-                <!--                />-->
-                <!--            <TextView-->
-                <!--                android:id="@+id/VendorPaidET"-->
-                <!--                android:layout_width="match_parent"-->
-                <!--                android:layout_height="35sp"-->
-                <!--                android:text="@string/paid"-->
-                <!--                android:visibility="gone"-->
-                <!--                android:background="@drawable/valueediteffect"-->
-                <!--                android:textSize="20sp"-->
-
-                <!--                />-->
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/ContactDetails"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10sp"
@@ -186,7 +175,7 @@
                             style="@style/TEXTColor"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="5sp"
+                            android:layout_marginStart="@dimen/_7sdp"
                             android:layout_marginBottom="10sp"
                             android:text="@string/phone_number"
                             android:textSize="20sp" />
@@ -194,9 +183,9 @@
                         <EditText
                             android:id="@+id/VendortPhoneEt"
                             style="@style/EditValueStyle"
-                            android:layout_width="400sp"
-                            android:layout_height="35sp"
-                            android:layout_marginStart="5sp"
+                            android:layout_width="@dimen/_300sdp"
+                            android:layout_height="@dimen/_30sdp"
+                            android:layout_gravity="center"
                             android:layout_marginBottom="10sp"
                             android:drawableEnd="@drawable/call"
                             android:inputType="phone"
@@ -207,7 +196,7 @@
                             style="@style/TEXTColor"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="5sp"
+                            android:layout_marginStart="@dimen/_7sdp"
                             android:layout_marginBottom="10sp"
                             android:text="@string/email_id"
                             android:textSize="20sp"
@@ -217,9 +206,9 @@
                         <EditText
                             android:id="@+id/VendorEmailEt"
                             style="@style/EditValueStyle"
-                            android:layout_width="400sp"
-                            android:layout_height="35sp"
-                            android:layout_marginStart="5sp"
+                            android:layout_width="@dimen/_300sdp"
+                            android:layout_height="@dimen/_30sdp"
+                            android:layout_gravity="center"
                             android:layout_marginBottom="10sp"
                             android:drawableEnd="@drawable/email"
                             android:inputType="textEmailAddress"
@@ -230,7 +219,7 @@
                             style="@style/TEXTColor"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="5sp"
+                            android:layout_marginStart="@dimen/_7sdp"
                             android:layout_marginBottom="10sp"
                             android:text="@string/website"
                             android:textSize="20sp"
@@ -240,9 +229,9 @@
                         <EditText
                             android:id="@+id/VendorwebsiteEt"
                             style="@style/EditValueStyle"
-                            android:layout_width="400sp"
-                            android:layout_height="35sp"
-                            android:layout_marginStart="5sp"
+                            android:layout_width="@dimen/_300sdp"
+                            android:layout_height="@dimen/_30sdp"
+                            android:layout_gravity="center"
                             android:layout_marginBottom="10sp"
                             android:inputType="textUri"
 
@@ -253,7 +242,7 @@
                             style="@style/TEXTColor"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="5sp"
+                            android:layout_marginStart="@dimen/_7sdp"
                             android:layout_marginBottom="10sp"
                             android:text="@string/address"
                             android:textSize="20sp"
@@ -263,18 +252,20 @@
                         <EditText
                             android:id="@+id/VendorAddresssEt"
                             style="@style/EditValueStyle"
-                            android:layout_width="400sp"
-                            android:layout_height="35sp"
-                            android:layout_marginStart="5sp"
+                            android:layout_width="@dimen/_300sdp"
+                            android:layout_height="@dimen/_30sdp"
+                            android:layout_gravity="center"
                             android:layout_marginBottom="15sp"
                             android:drawableEnd="@drawable/location" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
                 <LinearLayout
+                    android:id="@+id/paymentLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10sp"
+                    android:visibility="gone"
                     android:orientation="horizontal">
 
                     <TextView
@@ -295,8 +286,10 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/paymentDetails"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:visibility="gone"
                     android:orientation="vertical">
 
                     <androidx.recyclerview.widget.RecyclerView

@@ -69,8 +69,7 @@ class BudgetDetails : AppCompatActivity(),BudgetFragment.OnDataEnter,
         }
     }
     override fun ondataupdate(userdata: Paymentinfo) {
-        val databasename = getSharedPreference(this, "databasename").toString()
-        val db = LocalDatabase(this, databasename)
+        val db = LocalDatabase(this, getSharedPreference(this, "databasename").toString())
         db.updatePayment(userdata.id,userdata)
         Log.d("Payment_Info","Details are:${userdata?.id},${userdata?.name}")
     }

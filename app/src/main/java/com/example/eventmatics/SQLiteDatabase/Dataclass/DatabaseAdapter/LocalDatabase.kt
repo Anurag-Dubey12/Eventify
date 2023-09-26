@@ -876,24 +876,7 @@ fun getTotalUnPaid():Double{
         db.close()
         return rowsAffected
     }
-    fun updatePayment(paymentId: Int, newPayment: Paymentinfo): Boolean {
-        val db = writableDatabase
 
-        // Define the values to update
-        val values = ContentValues().apply {
-            put(Payment_Name, newPayment.name)
-            put(Payment_Amount, newPayment.amount)
-            put(Payment_Date, newPayment.date)
-            put(Payment_Status, newPayment.status)
-            put(Payment_BudgetID, newPayment.budgetid)
-        }
-        val rowsAffected = db.update(TABLE_Payment, values, "$Payment_ID = ?", arrayOf(paymentId.toString()))
-
-        db.close()
-
-        // Check if the update was successful
-        return rowsAffected > 0
-    }
 
 
     // Delete a budget
@@ -1052,17 +1035,37 @@ fun getTotalUnPaid():Double{
         return paymentList
     }
 
-    fun updatePayment(payment: Paymentinfo): Int {
+    fun updatePayment(paymentId: Int, newPayment: Paymentinfo): Boolean {
         val db = writableDatabase
+
+
         val values = ContentValues().apply {
-            put(Payment_ID, payment.id)
-            put(Payment_Name, payment.name)
-            put(Payment_Amount, payment.amount)
-            put(Payment_Status, payment.status)
-            put(Payment_Date, payment.date)
-            put(Payment_BudgetID, payment.budgetid)
+            put(Payment_Name, newPayment.name)
+            put(Payment_Amount, newPayment.amount)
+            put(Payment_Date, newPayment.date)
+            put(Payment_Status, newPayment.status)
+            put(Payment_BudgetID, newPayment.budgetid)
         }
-        return db.update(TABLE_Payment, values, "$Payment_ID = ?", arrayOf(payment.id.toString()))
+        val rowsAffected = db.update(TABLE_Payment, values, "$Payment_ID = ?", arrayOf(paymentId.toString()))
+
+        db.close()
+
+        return rowsAffected > 0
+    }
+
+    fun updateVendorPayment(paymentId:Int,newPayment: VendorPaymentinfo):Boolean{
+        val db=writableDatabase
+
+        val values=ContentValues().apply {
+            put(Vendor_Payment_Name,newPayment.name)
+            put(Vendor_Payment_Amount,newPayment.amount)
+            put(Vendor_Payment_Date,newPayment.date)
+            put(Vendor_Payment_Status,newPayment.status)
+            put(Payment_VendorID,newPayment.VendorId)
+        }
+        val rowafftected=db.update(TABLE_Payment,values,"$Payment_ID = ?", arrayOf(paymentId.toString()))
+        db.close()
+        return  rowafftected>0
     }
 
     // Create new guest

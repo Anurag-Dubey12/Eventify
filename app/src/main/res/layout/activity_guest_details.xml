@@ -23,46 +23,48 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15sp"
+                android:layout_marginBottom="@dimen/_10sdp"
                 android:text="@string/guest_details"
                 style="@style/TEXTColor"
-                android:textSize="20sp" />
+                android:textStyle="bold"
+                android:textSize="@dimen/_17sdp"
+                />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5sp"
-                android:layout_marginBottom="10sp"
+                android:layout_marginStart="@dimen/_4sdp"
+                android:layout_marginBottom="@dimen/_7sdp"
+                android:textSize="@dimen/_17sdp"
+                android:textStyle="bold"
                 android:text="@string/name"
                 style="@style/TEXTColor"
-                android:textSize="20sp" />
-
+                />
             <EditText
                 android:id="@+id/GuestNameEt"
-                android:layout_width="400sp"
-                android:layout_height="35sp"
-                android:layout_marginStart="5sp"
-                android:layout_marginBottom="10sp"
+                android:layout_width="@dimen/_300sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_marginStart="@dimen/_4sdp"
+                android:layout_marginBottom="@dimen/_7sdp"
                 style="@style/EditValueStyle"
                 />
-
-
-
                 <TextView
-                    android:layout_width="400sp"
-                    android:layout_height="35sp"
-                    android:layout_marginEnd="10sp"
+                    android:layout_width="@dimen/_300sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_marginStart="@dimen/_4sdp"
+                    android:layout_marginBottom="@dimen/_7sdp"
                     android:textSize="18sp"
-                    android:layout_marginStart="5sp"
+                    android:textStyle="bold"
                     android:layout_weight="1"
                     style="@style/TEXTColor"
                     android:text="@string/Family_Member" />
                 <EditText
                     android:id="@+id/TotalFamilyMember"
-                    android:layout_width="400sp"
-                    android:layout_height="35sp"
+                    android:layout_width="@dimen/_300sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_marginStart="@dimen/_4sdp"
+                    android:layout_marginBottom="@dimen/_7sdp"
                     android:textColor="@color/black"
-                    android:layout_marginStart="5sp"
                     android:inputType="number"
                     style="@style/EditValueStyle"
                     android:hint="@string/Total_Number" />
@@ -122,18 +124,20 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5sp"
-                android:layout_marginBottom="10sp"
+                android:layout_marginStart="@dimen/_4sdp"
+                android:layout_marginBottom="@dimen/_7sdp"
+                android:textSize="@dimen/_17sdp"
                 android:text="@string/note"
+                android:textStyle="bold"
                 style="@style/TEXTColor"
-                android:textSize="20sp" />
+                />
 
             <EditText
                 android:id="@+id/GuestNoteET"
-                android:layout_width="400sp"
-                android:layout_height="35sp"
-                android:layout_marginStart="5sp"
-                android:layout_marginBottom="10sp"
+                android:layout_width="@dimen/_300sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_marginStart="@dimen/_4sdp"
+                android:layout_marginBottom="@dimen/_7sdp"
                 style="@style/EditValueStyle" />
 
             <LinearLayout
@@ -146,7 +150,7 @@
                     android:id="@+id/Invitaionsentbut"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="15sp"
+                    android:layout_marginEnd="@dimen/_12sdp"
                     android:layout_weight="1"
                     android:backgroundTint="#F2FFCA"
                     android:textColor="@color/black"
@@ -215,6 +219,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5sp"
                         android:layout_marginBottom="10sp"
+                            android:textStyle="bold"
                         android:layout_weight="1"
                         android:text="@string/contacts_details"
                         android:textColor="@color/light_purple"
@@ -238,18 +243,19 @@
                         android:id="@+id/GuestPhonetv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="5sp"
-                        android:layout_marginBottom="10sp"
+                        android:layout_marginStart="@dimen/_4sdp"
+                        android:layout_marginBottom="@dimen/_7sdp"
+                        android:textSize="@dimen/_17sdp"
                         android:text="@string/phone_number"
+                        android:textStyle="bold"
                         style="@style/TEXTColor"
-                        android:textSize="20sp"
                         />
                     <EditText
                         android:id="@+id/GuestPhoneEt"
-                        android:layout_width="400sp"
-                        android:layout_height="35sp"
-                        android:layout_marginStart="5sp"
-                        android:layout_marginBottom="10sp"
+                        android:layout_width="@dimen/_300sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_marginStart="@dimen/_4sdp"
+                        android:layout_marginBottom="@dimen/_7sdp"
                         android:maxLength="10"
                         android:inputType="number"
                         android:minEms="@integer/material_motion_duration_long_1"
@@ -280,20 +286,20 @@
                         android:id="@+id/GuestAddressstv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="5sp"
-                        android:layout_marginBottom="10sp"
+                        android:layout_marginStart="@dimen/_4sdp"
+                        android:layout_marginBottom="@dimen/_7sdp"
+                        android:textSize="@dimen/_17sdp"
+                        android:textStyle="bold"
                         android:text="@string/address"
-
                         style="@style/TEXTColor"
-                        android:textSize="20sp"
                         />
 
                     <EditText
                         android:id="@+id/GuestAddresssEt"
-                        android:layout_width="400sp"
-                        android:layout_height="35sp"
-                        android:layout_marginStart="5sp"
-                        android:layout_marginBottom="15sp"
+                        android:layout_width="@dimen/_300sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_marginStart="@dimen/_4sdp"
+                        android:layout_marginBottom="@dimen/_7sdp"
                         style="@style/EditValueStyle"
                         android:drawableEnd="@drawable/location" />
                 </LinearLayout>

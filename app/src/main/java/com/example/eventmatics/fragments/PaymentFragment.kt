@@ -21,22 +21,15 @@ class PaymentFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         val view=inflater.inflate(com.example.eventmatics.R.layout.fragment_payment, container, false)
         amountEdt = view.findViewById(com.example.eventmatics.R.id.idEdtAmount);
         payBtn = view.findViewById(com.example.eventmatics.R.id.idBtnPay);
         payBtn.setOnClickListener {
-            // on below line we are getting
-            // amount that is entered by user.
             val samount = amountEdt.text.toString()
-
-            // rounding off the amount.
             val amount = Math.round(samount.toFloat() * 100)
-
-            // initialize Razorpay account.
             val checkout = Checkout()
 
-            // set your id as below
+
             checkout.setKeyID("Enter your key id here")
 
             // set image

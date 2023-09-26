@@ -10,7 +10,7 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/_50sdp"
         android:fitsSystemWindows="true"
         android:background="@android:color/transparent"
         >
@@ -20,7 +20,8 @@
             android:layout_height="?attr/actionBarSize"
             app:title="Task"
             style="@style/TEXTColor"
-            app:layout_scrollFlags="scroll|enterAlways"/>
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:titleCentered="true"/>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

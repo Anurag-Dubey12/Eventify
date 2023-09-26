@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:background="@color/light_purple"
             android:logo="@drawable/back_arrow"
-            android:titleMarginStart="30sp"
+            android:titleMarginStart="@dimen/_30sdp"
             app:title="Setting" />
 
         <androidx.cardview.widget.CardView
@@ -34,25 +34,25 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/notificationsSwitch"
-                    style="@style/TEXTColor"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:padding="8dp"
-                    android:text="Enable Notifications"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+<!--                <com.google.android.material.materialswitch.MaterialSwitch-->
+<!--                    android:id="@+id/notificationsSwitch"-->
+<!--                    style="@style/TEXTColor"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:checked="true"-->
+<!--                    android:padding="8dp"-->
+<!--                    android:text="Enable Notifications"-->
+<!--                    android:textSize="15sp"-->
+<!--                    android:textStyle="bold" />-->
 
                 <TextView
                     android:id="@+id/themeTextView"
                     style="@style/TEXTColor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="8dp"
+                    android:paddingTop="@dimen/_8sdp"
                     android:text="Select Theme"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/_18sdp"
                     android:textStyle="bold" />
 
                 <RadioGroup
@@ -67,7 +67,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:checked="true"
-                        android:paddingLeft="16dp"
+                        android:paddingStart="@dimen/_15sdp"
                         android:text="Light Theme" />
 
                     <RadioButton
@@ -75,51 +75,17 @@
                         style="@style/TEXTColor"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="16dp"
+                        android:paddingStart="@dimen/_15sdp"
                         android:text="Dark Theme" />
                 </RadioGroup>
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
-
-        <!--    <androidx.cardview.widget.CardView-->
-        <!--        android:layout_width="match_parent"-->
-        <!--        android:layout_height="wrap_content"-->
-        <!--        android:layout_marginTop="16dp"-->
-        <!--        android:padding="16dp">-->
-
-        <!--        <LinearLayout-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:background="@drawable/valueediteffect"-->
-        <!--            android:orientation="horizontal"-->
-        <!--            android:gravity="center_vertical">-->
-
-        <!--            <TextView-->
-        <!--                android:id="@+id/backupLabelTextView"-->
-        <!--                android:layout_width="0dp"-->
-        <!--                android:layout_height="wrap_content"-->
-        <!--              android:textStyle="bold"-->
-        <!--                android:textColor="@color/black"-->
-        <!--                android:layout_weight="1"-->
-        <!--                android:text="Take Backup "-->
-        <!--                android:textSize="18sp" />-->
-
-        <!--            <androidx.appcompat.widget.AppCompatButton-->
-        <!--                android:id="@+id/backupButton"-->
-        <!--                android:layout_width="wrap_content"-->
-        <!--                android:layout_height="wrap_content"-->
-        <!--                android:text="Backup Data"-->
-        <!--                android:background="@drawable/addpaymentbutton"-->
-        <!--                android:padding="8dp" />-->
-
-        <!--        </LinearLayout>-->
-        <!--    </androidx.cardview.widget.CardView>-->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:padding="16dp">
+            android:layout_marginTop="@dimen/_16sdp"
+            android:padding="@dimen/_16sdp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -134,7 +100,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text=" Take Local Backup "
-                    android:textSize="16sp"
+                    android:textSize="@dimen/_15sdp"
                     android:textStyle="bold" />
 
                 <com.google.android.material.button.MaterialButton
@@ -142,13 +108,13 @@
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="8dp"
+                    android:padding="@dimen/_8sdp"
                     android:text="Local Backup"
                     android:textColor="@color/black"
                     app:backgroundTint="@color/white"
-                    app:cornerRadius="15sp"
+                    app:cornerRadius="@dimen/_15sdp"
                     app:strokeColor="@color/black"
-                    app:strokeWidth="1sp" />
+                    app:strokeWidth="@dimen/_1sdp" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -156,8 +122,8 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:padding="16dp">
+            android:layout_marginTop="@dimen/_16sdp"
+            android:padding="@dimen/_16sdp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -172,20 +138,20 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Load Data"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/_15sdp"
                     android:textStyle="bold" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/LoadBackup"
-                    android:layout_width="wrap_content"
+                    android:layout_width="@dimen/_100sdp"
                     android:layout_height="wrap_content"
-                    android:padding="8dp"
-                    android:text="Load "
+                    android:padding="@dimen/_8sdp"
+                    android:text="Load"
                     android:textColor="@color/black"
                     app:backgroundTint="@color/white"
-                    app:cornerRadius="15sp"
+                    app:cornerRadius="@dimen/_15sdp"
                     app:strokeColor="@color/black"
-                    app:strokeWidth="1sp" />
+                    app:strokeWidth="@dimen/_1sdp" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -193,8 +159,8 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:padding="16dp">
+            android:layout_marginTop="@dimen/_16sdp"
+            android:padding="@dimen/_16sdp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -209,20 +175,20 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Reset Data"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/_15sdp"
                     android:textStyle="bold" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/resetDataButton"
-                    android:layout_width="wrap_content"
+                    android:layout_width="@dimen/_100sdp"
                     android:layout_height="wrap_content"
-                    android:padding="8dp"
+                    android:padding="@dimen/_8sdp"
                     android:text="Reset"
                     android:textColor="@color/black"
                     app:backgroundTint="@color/white"
-                    app:cornerRadius="15sp"
+                    app:cornerRadius="@dimen/_15sdp"
                     app:strokeColor="@color/black"
-                    app:strokeWidth="1sp" />
+                    app:strokeWidth="@dimen/_1sdp" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -232,14 +198,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="16dp"
-            android:padding="8dp"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:padding="@dimen/_8sdp"
             android:text="Save"
             android:textColor="@color/black"
             app:backgroundTint="@color/white"
-            app:cornerRadius="15sp"
+            app:cornerRadius="@dimen/_15sdp"
             app:strokeColor="@color/black"
-            app:strokeWidth="1sp" />
+            app:strokeWidth="@dimen/_1sdp" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -12,7 +12,8 @@ import com.example.eventmatics.SQLiteDatabase.Dataclass.VendorPaymentinfo
 import com.google.android.material.radiobutton.MaterialRadioButton
 
 class VendorPaymentActivityAdapter(private val context: Context,
-                                   private val paymentList: MutableList<VendorPaymentinfo>) :
+                                   private val paymentList: MutableList<VendorPaymentinfo>,
+    private val onitemclicklistener:OnItemClickListener) :
     RecyclerView.Adapter<VendorPaymentActivityAdapter.PaymentInfoViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PaymentInfoViewHolder {
@@ -20,14 +21,17 @@ class VendorPaymentActivityAdapter(private val context: Context,
             .inflate(R.layout.vendor_payment_info, parent, false)
         return PaymentInfoViewHolder(view)
     }
+    interface OnItemClickListener{
+        fun onitemclick(paymentList: VendorPaymentinfo)
+    }
 
 
     override fun onBindViewHolder(holder: PaymentInfoViewHolder, position: Int) {
         val payment = paymentList[position]
         holder.bind(payment)
-//        holder.itemView.setOnClickListener {
-//            itemClickListener.onItemClick(payment)
-//        }
+        holder.itemView.setOnClickListener {
+            onitemclicklistener.onitemclick(payment)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -40,7 +44,7 @@ class VendorPaymentActivityAdapter(private val context: Context,
         private val Vendorpaymentdate: TextView = itemView.findViewById(R.id.Vendorpaymentdate)
         private val Vendorpaymentstatus: TextView = itemView.findViewById(R.id.Vendorpaymentstatus)
         private val Vendortid: TextView = itemView.findViewById(R.id.Vendortid)
-        private val paidRadioButton: MaterialRadioButton = itemView.findViewById(R.id.Radiopaid)
+//        private val paidRadioButton: MaterialRadioButton = itemView.findViewById(R.id.Radiopaid)
         fun bind(payment: VendorPaymentinfo) {
             VendorPaymentName.text = payment.name
             Vendorpaymentstatus.text = payment.status

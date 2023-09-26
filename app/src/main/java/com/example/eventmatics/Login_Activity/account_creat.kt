@@ -18,6 +18,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
@@ -27,8 +28,8 @@ import java.lang.Exception
 class account_creat : AppCompatActivity() {
     private lateinit var emailField: EditText
     private lateinit var passField: EditText
-    private lateinit var createButton: Button
-    private lateinit var googleLoginButton: Button
+    private lateinit var createButton: MaterialButton
+    private lateinit var googleLoginButton: MaterialButton
     private lateinit var alreadyHaveAccountText: TextView
     private lateinit var progressDialog: ProgressDialog
     private lateinit var firestore: FirebaseFirestore

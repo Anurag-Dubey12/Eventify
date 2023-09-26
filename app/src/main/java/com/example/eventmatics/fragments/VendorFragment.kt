@@ -2,6 +2,7 @@ package com.example.eventmatics.fragments
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,18 +17,23 @@ import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Paymentinfo
 import com.example.eventmatics.SQLiteDatabase.Dataclass.VendorPaymentinfo
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.datepicker.MaterialDatePicker
 import java.util.Calendar
 
 class VendorFragment(private val context: Context,private var fragmentManager:FragmentManager,
-                     private val VendorId:Long?) : BottomSheetDialogFragment() {
+                     private val VendorId:Long?,
+    val paymentinfo:VendorPaymentinfo?) : BottomSheetDialogFragment() {
     private lateinit var editTextName: EditText
     private lateinit var editTextAmount: EditText
     private lateinit var vendorButtonPending: AppCompatButton
     private lateinit var vendorButtonPaid: AppCompatButton
     private lateinit var vendorexpireDate: TextView
-    private lateinit var buttonSubmit: AppCompatButton
+    private lateinit var buttonSubmit: MaterialButton
+    private var isPaid:Boolean=false
+    private var isButtonClicked:Boolean=false
     var paymentStatus :String=" "
+    var updatepaymentStatus :String=" "
 
     interface PendingAmountlistener{
         fun onPendingAmountSelected(amount:Float)
@@ -41,11 +47,18 @@ class VendorFragment(private val context: Context,private var fragmentManager:Fr
     interface UserDataListener {
         fun onUserDataEntered(userData: VendorPaymentinfo)
     }
+    interface UserDataUpdateListener{
+        fun onuserupdate(userData: VendorPaymentinfo)
+    }
+    private var userupdatelistener:UserDataUpdateListener?=null
 
     private var userDataListener: UserDataListener? = null
     // Setter method for the UserDataListener
     fun setUserDataListener(listener:UserDataListener) {
         userDataListener = listener
+    }
+    fun setUserUpdateLsustenr(listener:UserDataUpdateListener){
+        userupdatelistener=listener
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -64,13 +77,17 @@ class VendorFragment(private val context: Context,private var fragmentManager:Fr
         vendorexpireDate = view.findViewById(R.id.editTextDate)
         buttonSubmit = view.findViewById(R.id.buttonSubmit)
 
-        clearfield()
+//        clearfield()
         vendorButtonPending.setOnClickListener {
+            isPaid=false
+            isButtonClicked=true
             setButtonBackground(vendorButtonPending,true)
             setButtonBackground(vendorButtonPaid,false)
         }
 
         vendorButtonPaid.setOnClickListener {
+            isButtonClicked=true
+            isPaid=true
             setButtonBackground(vendorButtonPaid,true)
             setButtonBackground(vendorButtonPending,false)
         }
@@ -78,15 +95,41 @@ class VendorFragment(private val context: Context,private var fragmentManager:Fr
             showDatePicker()
         }
         buttonSubmit.setOnClickListener {
+            val Payment:VendorPaymentinfo?=arguments?.getParcelable("VendorPayment")
+            if(Payment!=null){
+                val name=editTextName.text.toString()
+                val amount=editTextAmount.text.toString().toFloat()
+                val date=vendorexpireDate.text.toString()
+                if(!isButtonClicked){
+                    val PreviousStatus=Payment.status
+                    Log.d("Previous","Previous Status Of Vendor is:$PreviousStatus")
+                    updatepaymentStatus=PreviousStatus
+                }
+                else if (isPaid){
+                    updatepaymentStatus="Paid"
+                }else{
+                    updatepaymentStatus="Pending"
+                }
+                val payment=VendorPaymentinfo(Payment.id,name,amount,date,updatepaymentStatus,Payment.VendorId)
+                userupdatelistener?.onuserupdate(payment)
+                Toast.makeText(context,"Data Added",Toast.LENGTH_SHORT).show()
+                dismiss()
+            }
+            else{
             val name=editTextName.text.toString()
             val amount=editTextAmount.text.toString().toFloat()
             val date=vendorexpireDate.text.toString()
-            if(vendorButtonPaid.isClickable){ paymentStatus=vendorButtonPaid.text.toString()}
-            if(vendorButtonPending.isClickable){ paymentStatus=vendorButtonPending.text.toString()}
+                if(isPaid){
+                    paymentStatus="Paid"
+                }
+                else{
+                    paymentStatus="Pending"
+                }
             val payment= VendorPaymentinfo(0,name,amount,date,paymentStatus, VendorId!!)
             userDataListener?.onUserDataEntered(payment)
             Toast.makeText(context,"Data Added",Toast.LENGTH_SHORT).show()
             dismiss()
+            }
         }
     }
 fun clearfield(){
@@ -96,6 +139,24 @@ fun clearfield(){
     setButtonBackground(vendorButtonPaid,false)
     setButtonBackground(vendorButtonPending,false)
 }
+    override fun onResume() {
+        super.onResume()
+        val Payment:VendorPaymentinfo?=arguments?.getParcelable("VendorPayment")
+        if(Payment!=null){
+            editTextName.setText(Payment.name.toString())
+            editTextAmount.setText(Payment.amount.toString())
+            vendorexpireDate.text = Payment.date
+            Log.d("BudgetFragment", "onViewCreated: payment = ${vendorexpireDate}")
+            Log.d("BudgetFragment", "onViewCreated: etName = $editTextName")
+
+            if (Payment?.status == "Paid") {
+                vendorButtonPaid.performClick()
+            } else {
+                vendorButtonPending.performClick()
+            }
+        }
+//        clearFieldsAndButtons()
+    }
     private fun showDatePicker() {
         val calendar = Calendar.getInstance()
         val day = calendar.get(Calendar.DAY_OF_MONTH)

@@ -17,14 +17,14 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.5">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="30sp"
-            android:background="@color/Lavender_Blush"
-            android:title="Manage Event"
-            android:titleMarginStart="30sp"
-            app:titleTextColor="@color/black" />
+<!--        <androidx.appcompat.widget.Toolbar-->
+<!--            android:id="@+id/toolbar"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="@dimen/_30sdp"-->
+<!--            android:background="@color/Lavender_Blush"-->
+<!--            android:title="Manage Event"-->
+<!--            android:titleMarginStart="@dimen/_30sdp"-->
+<!--            app:titleTextColor="@color/black" />-->
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefreshLayout"

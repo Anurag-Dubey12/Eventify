@@ -35,12 +35,10 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/app_logo"
             android:orientation="vertical"
-
             >
-
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="199dp"
+                android:layout_height="@dimen/_199sdp"
                 android:contentDescription="@string/app_logo"
                 android:src="@drawable/welcome" />
 
@@ -48,7 +46,7 @@
 
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="@dimen/_10sdp"
                 android:text="@string/welcome_back_sir"
                 android:textAlignment="center"
                 android:textColor="#F19800"
@@ -56,7 +54,7 @@
                 android:textStyle="bold" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="400sp"
+                android:layout_width="@dimen/_300sdp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:autofillHints="emailAddress"
@@ -72,8 +70,8 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/alreadyemail"
-                    android:layout_width="400sp"
-                    android:layout_height="60dp"
+                    android:layout_width="@dimen/_300sdp"
+                    android:layout_height="@dimen/_50sdp"
                     android:layout_marginBottom="10dp"
                     android:hint="@string/email_address"
                     android:inputType="textEmailAddress"
@@ -84,7 +82,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="400sp"
+                android:layout_width="@dimen/_300sdp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:textColorHint="@color/black"
@@ -97,7 +95,7 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/alreadypassfield"
-                    android:layout_width="400sp"
+                    android:layout_width="@dimen/_300sdp"
                     android:layout_height="60dp"
                     android:layout_marginBottom="10dp"
                     android:hint="@string/password"
@@ -116,30 +114,19 @@
                 android:textColor="#00bbff"
                 android:textSize="16sp"
                 android:textStyle="bold" />
-
-            <androidx.appcompat.widget.AppCompatButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/login_button"
-                android:layout_width="300sp"
-                android:layout_height="65dp"
-                android:layout_gravity="center"
-                android:layout_marginBottom="10dp"
-                android:background="@drawable/button_shape"
+                android:layout_width="@dimen/_300sdp"
+                android:layout_height="@dimen/_50sdp"
                 android:text="@string/log_in"
-                android:textAllCaps="false"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <androidx.appcompat.widget.AppCompatButton
+                style="@style/MaterialButton"
+                />
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/google_login"
-                android:layout_width="300sp"
-                android:layout_height="65dp"
-                android:layout_gravity="center"
-                android:layout_marginBottom="10dp"
-                android:background="@drawable/google_login_button"
-                android:text="@string/continue_with_google"
-                android:textColor="@color/white"
-                android:textStyle="bold" />
-
+                android:layout_width="@dimen/_300sdp"
+                android:layout_height="@dimen/_50sdp"
+                style="@style/GoogleMaterialButton"
+                />
             <TextView
                 android:id="@+id/createaccount"
                 android:layout_width="match_parent"
@@ -151,6 +138,5 @@
                 android:textSize="18dp"
                 android:textStyle="bold" />
         </LinearLayout>
-        <!--    </androidx.cardview.widget.CardView>-->
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

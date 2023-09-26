@@ -260,16 +260,6 @@ class GuestDetails : AppCompatActivity() {
         } else {
             updateInvitationStatus = "Not Sent"
         }
-//        if (Acccepted.isPressed) {
-//            Acceptance = "Accepted"
-//        } else if (Pending.isPressed) {
-//            Acceptance = "Pending"
-//        } else if (Denied.isPressed) {
-//            Acceptance = "Denied"
-//        }
-//        if(isinvitationsent){
-//            updateInvitationStatus="Invitation Sent" }
-//        else{ updateInvitationStatus="Not Sent" }
 
         val GuestList= Guest(id,guestName,totalFamilyMembers,guestNote, updateInvitationStatus,
             guestPhone,guestAddress)
