@@ -9,14 +9,15 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
-
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
 
     <application
@@ -29,6 +30,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Eventmatics"
         tools:targetApi="31">
+        <activity
+            android:name=".NavigationDrawer.EventList"
+            android:exported="false" />
         <activity
             android:name=".NavigationDrawer.PDF_Report"
             android:exported="false" />
@@ -80,9 +84,6 @@
             android:name=".Events_Data_Holder_Activity.TaskDataHolderActivity"
             android:exported="false" />
         <activity
-            android:name=".Navigation.navigation"
-            android:exported="false" />
-        <activity
             android:name=".Event_Details_Activity.TaskDetails"
             android:exported="false" />
         <activity
@@ -95,11 +96,8 @@
             android:name=".Event_Details_Activity.VendorDetails"
             android:exported="false" />
         <activity
-            android:name=".EventAdd"
-            android:exported="false" />
-        <activity
             android:name=".Login_Activity.signin_account"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".Login_Activity.account_creat"
             android:exported="false" />

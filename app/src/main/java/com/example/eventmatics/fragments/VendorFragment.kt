@@ -1,5 +1,6 @@
 package com.example.eventmatics.fragments
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -18,6 +19,8 @@ import com.example.eventmatics.SQLiteDatabase.Dataclass.Paymentinfo
 import com.example.eventmatics.SQLiteDatabase.Dataclass.VendorPaymentinfo
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
 import java.util.Calendar
 
@@ -68,6 +71,7 @@ class VendorFragment(private val context: Context,private var fragmentManager:Fr
         return view
     }
 
+    @SuppressLint("SuspiciousIndentation")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         editTextName = view.findViewById(R.id.editTextName)
@@ -158,6 +162,8 @@ fun clearfield(){
 //        clearFieldsAndButtons()
     }
     private fun showDatePicker() {
+        val constraint=CalendarConstraints.Builder()
+            .setValidator(DateValidatorPointForward.now())
         val calendar = Calendar.getInstance()
         val day = calendar.get(Calendar.DAY_OF_MONTH)
         val month = calendar.get(Calendar.MONTH)
@@ -166,6 +172,7 @@ fun clearfield(){
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setTitleText("Select Date")
             .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+            .setCalendarConstraints(constraint.build())
             .build()
 
         datePicker.addOnPositiveButtonClickListener { selectedDate ->

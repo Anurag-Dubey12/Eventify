@@ -1077,7 +1077,7 @@ fun getTotalUnPaid():Double{
             put(NOTE, guest.note)
             put(GUEST_STATUS, guest.isInvitationSent)
             put(GUEST_CONTACT, guest.phoneNumber)
-//            put(GUEST_Acceptence_Status, guest.Acceptence)
+            put(GUEST_Acceptence_Status, guest.Acceptence)
             put(GUEST_ADDRESS, guest.address)
         }
         val id = db.insert(TABLE_GUEST, null, values)
@@ -1101,9 +1101,9 @@ fun getTotalUnPaid():Double{
                     val note = it.getString(it.getColumnIndex(NOTE))
                     val status = it.getString(it.getColumnIndex(GUEST_STATUS))
                     val contact = it.getString(it.getColumnIndex(GUEST_CONTACT))
-//                    val Acceptence = it.getString(it.getColumnIndex(GUEST_Acceptence_Status))
+                    val Acceptence = it.getString(it.getColumnIndex(GUEST_Acceptence_Status))
                     val address = it.getString(it.getColumnIndex(GUEST_ADDRESS))
-                    val guest = Guest(id, name, totalFamilyMembers, note, status, contact, address)
+                    val guest = Guest(id, name, totalFamilyMembers, note, status, contact,Acceptence, address)
                     guests.add(guest)
                 } while (it.moveToNext())
             }
@@ -1134,10 +1134,10 @@ fun getTotalUnPaid():Double{
                 val guestNote = cursor.getString(cursor.getColumnIndex(NOTE))
                 val guestStatus = cursor.getString(cursor.getColumnIndex(GUEST_STATUS))
                 val guestContact = cursor.getString(cursor.getColumnIndex(GUEST_CONTACT))
-//                val Acceptence = cursor.getString(cursor.getColumnIndex(GUEST_Acceptence_Status))
+                val Acceptence = cursor.getString(cursor.getColumnIndex(GUEST_Acceptence_Status))
                 val guestAddress = cursor.getString(cursor.getColumnIndex(GUEST_ADDRESS))
 
-                GuestList.add(Guest(Guestid, guestName, totalFamilyMembers, guestNote, guestStatus, guestContact, guestAddress))
+                GuestList.add(Guest(Guestid, guestName, totalFamilyMembers, guestNote, guestStatus, guestContact, Acceptence,guestAddress))
             }while (cursor.moveToNext())
         }
         db.close()
@@ -1205,42 +1205,6 @@ fun getTotalUnPaid():Double{
         db.close()
         return isinvitationsent
     }
-//    @SuppressLint("Range")
-//    fun AcceptanceStatus(Guestid: Long): Triple<Boolean, Boolean, Boolean> {
-//        val db = readableDatabase
-//        val query = "SELECT $GUEST_Acceptence_Status FROM $TABLE_GUEST WHERE $COLUMN_ID = ?"
-//        val cursor: Cursor = db.rawQuery(query, arrayOf(Guestid.toString()))
-//        var isAcceptance = false
-//        var isDenied = false
-//        var isPending = false
-//
-//        if (cursor.moveToFirst()) {
-//            val acceptanceStatus = cursor.getString(cursor.getColumnIndex(GUEST_Acceptence_Status))
-//            when (acceptanceStatus) {
-//                "Accepted" -> {
-//                    isAcceptance = true
-//                    isDenied = false
-//                    isPending = false
-//                }
-//                "Pending" -> {
-//                    isAcceptance = false
-//                    isDenied = false
-//                    isPending = true
-//                }
-//                "Denied" -> {
-//                    isAcceptance = false
-//                    isDenied = true
-//                    isPending = false
-//                }
-//            }
-//        }
-//
-//        cursor.close()
-//        db.close()
-//
-//        return Triple(isAcceptance, isDenied, isPending)
-//    }
-
 
     //Getting Specific data from Guest
     @SuppressLint("Range")
@@ -1257,9 +1221,10 @@ fun getTotalUnPaid():Double{
             val guestStatus = cursor.getString(cursor.getColumnIndex(GUEST_STATUS))
             val guestContact = cursor.getString(cursor.getColumnIndex(GUEST_CONTACT))
 //            val guestEmail = cursor.getString(cursor.getColumnIndex(GUEST_Acceptence_Status))
+            val Acceptence = cursor.getString(cursor.getColumnIndex(GUEST_Acceptence_Status))
             val guestAddress = cursor.getString(cursor.getColumnIndex(GUEST_ADDRESS))
 
-            guest = Guest(guestId.toLong(), guestName, totalFamilyMembers, guestNote, guestStatus, guestContact, guestAddress)
+            guest = Guest(guestId.toLong(), guestName, totalFamilyMembers, guestNote, guestStatus, guestContact, Acceptence,guestAddress)
         }
 
         cursor.close()
@@ -1278,7 +1243,7 @@ fun getTotalUnPaid():Double{
             put(NOTE, guest.note)
             put(GUEST_STATUS, guest.isInvitationSent)
             put(GUEST_CONTACT, guest.phoneNumber)
-//            put(GUEST_Acceptence_Status, guest.Acceptence)
+            put(GUEST_Acceptence_Status, guest.Acceptence)
             put(GUEST_ADDRESS, guest.address)
         }
         val rowsAffected = db.update(

@@ -18,6 +18,8 @@ import com.example.eventmatics.SQLiteDatabase.Dataclass.Budget
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Paymentinfo
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
 import java.util.Calendar
 
@@ -144,9 +146,12 @@ class BudgetFragment(private val context: Context, private val fragmentManager: 
         return sharedvalue.getString(key,null)
     }
     private fun showDatePicker() {
+        val constraint=CalendarConstraints.Builder()
+            .setValidator(DateValidatorPointForward.now())
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setTitleText("Select Date")
             .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+            .setCalendarConstraints(constraint.build())
             .build()
 
         datePicker.addOnPositiveButtonClickListener { selectedDate ->

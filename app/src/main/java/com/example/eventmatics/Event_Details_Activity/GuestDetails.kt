@@ -31,18 +31,28 @@ class GuestDetails : AppCompatActivity() {
     private lateinit var guestNoteEt: EditText
     private lateinit var TotalFamilyMember: EditText
     private lateinit var invitationSentButton:  Button
-//    private lateinit var Pending:  Button
-//    private lateinit var Acccepted:  Button
-//    private lateinit var Denied:  Button
+    private lateinit var Pending:  Button
+    private lateinit var Acccepted:  Button
+    private lateinit var Denied:  Button
     private lateinit var notSentButton:  Button
     private lateinit var contactviewtv: ImageView
     private lateinit var guestPhoneEt: EditText
     private lateinit var guestPhonetv: TextView
+    private lateinit var GuestAddressstv: TextView
     private lateinit var guestAddresssEt: EditText
     private var InvitationStatus:String=" "
     private var updateInvitationStatus:String=" "
     private var isInvitationSent: Boolean = false
     private var isButtonClicked:Boolean=false
+    private var isAccceptanceButtonClicked:Boolean=false
+    private var isAccceptanceButtonClick:Boolean=false
+    private var isPendinfButtonClicked:Boolean=false
+    private var isDeniedButtonClicked:Boolean=false
+    private var  isAccepted:Boolean=false
+    private var  isPending:Boolean=false
+    private var  isDenied:Boolean=false
+    private var AccceptanceStatus=""
+    private var UpdatedAccceptanceStatus=""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,11 +65,12 @@ class GuestDetails : AppCompatActivity() {
         guestNameEt = findViewById(R.id.GuestNameEt)
         contactviewtv=findViewById(R.id.contactviewtv)
         guestNoteEt =findViewById(R.id.GuestNoteET)
+        GuestAddressstv =findViewById(R.id.GuestAddressstv)
         TotalFamilyMember =findViewById(R.id.TotalFamilyMember)
         invitationSentButton = findViewById(R.id.Invitaionsentbut)
-//        Pending = findViewById(R.id.Pending)
-//        Denied = findViewById(R.id.Denied)
-//        Acccepted = findViewById(R.id.Accepted)
+        Pending = findViewById(R.id.Pending)
+        Denied = findViewById(R.id.Denied)
+        Acccepted = findViewById(R.id.Accepted)
         notSentButton = findViewById(R.id.NotSentBut)
         guestPhoneEt = findViewById(R.id.GuestPhoneEt)
 //        guestEmailEt = findViewById(R.id.GuestEmailEt)
@@ -67,24 +78,30 @@ class GuestDetails : AppCompatActivity() {
 //        guestEmailtv=findViewById(R.id.GuestEmailtv)
         guestAddresssEt=findViewById(R.id.GuestAddresssEt)
 
-//        Acccepted.setOnClickListener {
-//            AcceptanceStatus="Accepted"
-//            setButtonBackground(Acccepted,true)
-//            setButtonBackground(Pending,false)
-//            setButtonBackground(Denied,false)
-//        }
-//        Pending.setOnClickListener {
-//            AcceptanceStatus="Pending"
-//            setButtonBackground(Acccepted,false)
-//            setButtonBackground(Pending,true)
-//            setButtonBackground(Denied,false)
-//        }
-//        Denied.setOnClickListener {
-//            AcceptanceStatus="Denied"
-//            setButtonBackground(Acccepted,false)
-//            setButtonBackground(Pending,false)
-//            setButtonBackground(Denied,true)
-//        }
+        Acccepted.setOnClickListener {
+            isAccepted=true
+            isAccceptanceButtonClicked=true
+            isAccceptanceButtonClick=true
+            setButtonBackground(Acccepted,true)
+            setButtonBackground(Pending,false)
+            setButtonBackground(Denied,false)
+        }
+        Pending.setOnClickListener {
+            isPending=true
+            isPendinfButtonClicked=true
+            isAccceptanceButtonClick=true
+            setButtonBackground(Acccepted,false)
+            setButtonBackground(Pending,true)
+            setButtonBackground(Denied,false)
+        }
+        Denied.setOnClickListener {
+            isDenied=false
+            isDeniedButtonClicked=true
+            isAccceptanceButtonClick=true
+            setButtonBackground(Acccepted,false)
+            setButtonBackground(Pending,false)
+            setButtonBackground(Denied,true)
+        }
         invitationSentButton.setOnClickListener {
             InvitationStatus="Invitation Sent"
             isInvitationSent = true
@@ -111,27 +128,26 @@ class GuestDetails : AppCompatActivity() {
 //            guestEmailEt.setText(selectedlist.email)
             guestAddresssEt.setText(selectedlist.address)
 
-//            when (selectedlist.Acceptence) {
-//                "Pending" -> {
-//                    setButtonBackground(Acccepted, false)
-//                    setButtonBackground(Pending, true)
-//                    setButtonBackground(Denied, false)
-//                }
-//                "Accepted" -> {
-//                    setButtonBackground(Acccepted, true)
-//                    setButtonBackground(Pending, false)
-//                    setButtonBackground(Denied, false)
-//                }
-//                "Denied" -> {
-//                    setButtonBackground(Acccepted, false)
-//                    setButtonBackground(Pending, false)
-//                    setButtonBackground(Denied, true)
-//                }
-//                else -> {
-//                }
-//            }
+            when (selectedlist.Acceptence) {
+                "Pending" -> {
+                    setButtonBackground(Acccepted, false)
+                    setButtonBackground(Pending, true)
+                    setButtonBackground(Denied, false)
+                }
+                "Accepted" -> {
+                    setButtonBackground(Acccepted, true)
+                    setButtonBackground(Pending, false)
+                    setButtonBackground(Denied, false)
+                }
+                "Denied" -> {
+                    setButtonBackground(Acccepted, false)
+                    setButtonBackground(Pending, false)
+                    setButtonBackground(Denied, true)
+                }
+                else -> {
+                }
+            }
             if(selectedlist.isInvitationSent=="Invitation Sent"){
-//                InvitationStatus="Invitation Sent"
                 setButtonBackground(invitationSentButton,true)
                 setButtonBackground(notSentButton,false)
             }
@@ -145,24 +161,17 @@ class GuestDetails : AppCompatActivity() {
 
 
     private fun guestinfoview() {
-        if(guestPhonetv.visibility== View.VISIBLE  && guestAddresssEt.visibility== View.VISIBLE &&
-            guestPhoneEt.visibility== View.VISIBLE && guestAddresssEt.visibility== View.VISIBLE){
+        val isVisible= guestPhonetv.visibility==View.VISIBLE
+        val visibility=if(isVisible) View.GONE else View.VISIBLE
+        val drawableimage=if(isVisible) R.drawable.drop_arrow else R.drawable.uparrow
 
-            guestPhonetv.visibility=View.GONE
-//            guestEmailtv.visibility=View.GONE
-            guestAddresssEt.visibility=View.GONE
-            guestPhoneEt.visibility=View.GONE
-//            guestEmailEt.visibility=View.GONE
-            guestAddresssEt.visibility=View.GONE
-        }
-        else{
-            guestPhonetv.visibility=View.VISIBLE
-//            guestEmailtv.visibility=View.VISIBLE
-            guestAddresssEt.visibility=View.VISIBLE
-            guestPhoneEt.visibility=View.VISIBLE
-//            guestEmailEt.visibility=View.VISIBLE
-            guestAddresssEt.visibility=View.VISIBLE
-        }
+        val componetview= listOf(
+            guestPhonetv,guestAddresssEt,
+            guestPhoneEt,guestAddresssEt,
+            GuestAddressstv
+        )
+        componetview.forEach { it.visibility = visibility }
+        contactviewtv.setImageResource(drawableimage)
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.guest_vendor_menu,menu)
@@ -209,23 +218,19 @@ class GuestDetails : AppCompatActivity() {
         val totalFamilyMembers = TotalFamilyMember.text.toString()
         val guestPhone = guestPhoneEt.text.toString()
         val guestAddress = guestAddresssEt.text.toString()
-
-//        AcceptanceStatus = when {
-//            Acccepted.isClickable ->"Accepted"
-//            Pending.isClickable -> "Pending"
-//            Denied.isClickable -> "Denied"
-//            else -> ""
-//        }
-
-        // Modify InvitationStatus to store "Invitation Sent" or "Not Sent" based on the button state
-//        InvitationStatus = when {
-//            invitationSentButton.isClickable -> "Invitation Sent"
-//            notSentButton.isClickable -> "Not Sent"
-//            else -> ""
-//        }
-
+        if(isAccepted){
+            AccceptanceStatus="Accepted"
+        }else if (isPending){
+            AccceptanceStatus="Pending"
+        }
+        else if (isDenied){
+            AccceptanceStatus="Denied"
+        }else{
+            AccceptanceStatus=" "
+        }
+        Log.d("AccceptanceStatus","The Acceptance Status is:$AccceptanceStatus")
         val GuestList = Guest(1, guestName, totalFamilyMembers, guestNote, InvitationStatus,
-            guestPhone, guestAddress)
+            guestPhone, AccceptanceStatus,guestAddress)
         db.createGuest(GuestList)
 
         Toast.makeText(this, "Guest Added successfully", Toast.LENGTH_SHORT).show()
@@ -243,12 +248,8 @@ class GuestDetails : AppCompatActivity() {
         val guestNote = guestNoteEt.text.toString()
         val totalFamilyMembers = TotalFamilyMember.text.toString()
         val guestPhone = guestPhoneEt.text.toString()
-//        val guestEmail = guestEmailEt.text.toString()
-
         val guestAddress = guestAddresssEt.text.toString()
 
-//        val isinvitationsent=db.isInvitationsent(id)
-//        val (isAccepted, isDenied, isPending) = db.AcceptanceStatus(id)
         if(!isButtonClicked){
             val selectedlist:Guest?=intent.getParcelableExtra("selected_list")
             val InvitationStatus=selectedlist?.isInvitationSent
@@ -261,11 +262,24 @@ class GuestDetails : AppCompatActivity() {
             updateInvitationStatus = "Not Sent"
         }
 
-        val GuestList= Guest(id,guestName,totalFamilyMembers,guestNote, updateInvitationStatus,
-            guestPhone,guestAddress)
-        Log.d("GuestDetails", "updateDatabase - updateInvitationStatus: $updateInvitationStatus")
-        Log.d("GuestDetails", "updateDatabase - id: $id")
+        if(!isAccceptanceButtonClick){
+            val selectedlist:Guest?=intent.getParcelableExtra("selected_list")
+            val AcceptenceStatus=selectedlist?.Acceptence
+            UpdatedAccceptanceStatus=AcceptenceStatus.toString()
+        }else if(isAccceptanceButtonClicked){
+            UpdatedAccceptanceStatus="Accepted"
+        }
+        else if(isPendinfButtonClicked){
+            UpdatedAccceptanceStatus="Pending"
+        }
+        else if(isDeniedButtonClicked){
+            UpdatedAccceptanceStatus="Denied"
+        }
 
+        val GuestList= Guest(id,guestName,totalFamilyMembers,guestNote, updateInvitationStatus,
+            guestPhone,UpdatedAccceptanceStatus,guestAddress)
+        Log.d("GuestDetails", "updateDatabase - updateInvitationStatus: $UpdatedAccceptanceStatus")
+        Log.d("GuestDetails", "updateDatabase - id: $id")
         db.updateGuest(GuestList)
         Toast.makeText(this, "Guest Updated successfully", Toast.LENGTH_SHORT).show()
         finish()

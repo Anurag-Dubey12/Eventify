@@ -27,7 +27,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_scrollFlags="scroll|enterAlways"
-                app:title="BUDGET"
+                app:title="Guest"
                 app:titleCentered="true" />
 
         </com.google.android.material.appbar.AppBarLayout>

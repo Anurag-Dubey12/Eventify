@@ -1,22 +1,21 @@
 package com.example.eventmatics.Adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
-import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
-import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.NamesDatabase
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseNameDataClass
-import com.example.eventmatics.fragments.DatabaseNameHolder
-import com.example.eventmatics.getSharedPreference
+import com.google.android.material.button.MaterialButton
 
-class EventDatabaseAdapter(val context: Context,private val DatabaseList: List<DatabaseNameDataClass>
-, private val onItemClick: (position: Int) -> Unit) :RecyclerView.Adapter<EventDatabaseAdapter.Viewholder>() {
+class EventDatabaseAdapter(val context: Context,private var DatabaseList: List<DatabaseNameDataClass>
+, private val onItemClick: (position: Int) -> Unit,
+                           val onDatabaseChangeClick: (newDatabaseName: String) -> Unit) :RecyclerView.Adapter<EventDatabaseAdapter.Viewholder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventDatabaseAdapter.Viewholder {
         val view=LayoutInflater.from(parent.context).inflate(R.layout.databaseholder,parent,false)
         return Viewholder(view)
@@ -26,6 +25,10 @@ class EventDatabaseAdapter(val context: Context,private val DatabaseList: List<D
         val databaselist=DatabaseList[position]
         holder.bind(databaselist)
     }
+    fun updateData(newList: List<DatabaseNameDataClass>) {
+        DatabaseList = newList
+        notifyDataSetChanged()
+    }
 
     override fun getItemCount(): Int {
         return DatabaseList.size
@@ -34,11 +37,14 @@ class EventDatabaseAdapter(val context: Context,private val DatabaseList: List<D
         val DatabaseName=itemview.findViewById<TextView>(R.id.DatabaseName)
         val DatabaseTime=itemview.findViewById<TextView>(R.id.DatabaseTime)
         val DatabaseDate=itemview.findViewById<TextView>(R.id.DatabaseDate)
-        val DatabaseChange:ImageView=itemview.findViewById(R.id.DatabaseChange)
+        val DatabaseChange:MaterialButton=itemview.findViewById(R.id.DatabaseChange)
         val DatabaseDelete:ImageView=itemview.findViewById(R.id.DatabaseDelete)
         init {
-            itemView.setOnClickListener {
-                onItemClick(adapterPosition)
+            DatabaseChange.setOnClickListener {
+                val newDatabaseName = DatabaseList[adapterPosition].DatabaseName
+                // Notify the parent activity about the database change
+                onDatabaseChangeClick(newDatabaseName)
+                Log.d("NewDatabase","The New Database is $newDatabaseName")
             }
         }
         fun bind(DatabaseList: DatabaseNameDataClass){

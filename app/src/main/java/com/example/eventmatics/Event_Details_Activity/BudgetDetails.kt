@@ -24,6 +24,7 @@ import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.PaymentA
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Budget
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Paymentinfo
 import com.example.eventmatics.data_class.SpinnerItem
 import com.example.eventmatics.fragments.BudgetFragment
@@ -217,8 +218,9 @@ class BudgetDetails : AppCompatActivity(),BudgetFragment.OnDataEnter,
         }
 
         val status: String
-        val databasename = getSharedPreference(this, "databasename").toString()
-        val db = LocalDatabase(this, databasename)
+//        val databasename = getSharedPreference(this, "databasename").toString()
+        val db= DatabaseManager.getDatabase(this)
+//        val db = LocalDatabase(this, databasename)
         val isBudgetPaid = db.isBudgetPaid(id)
         if (isBudgetPaid) {
             status = "Paid"
@@ -268,8 +270,4 @@ class BudgetDetails : AppCompatActivity(),BudgetFragment.OnDataEnter,
         menuInflater.inflate(R.menu.budget_menu,menu)
         return super.onCreateOptionsMenu(menu)
     }
-
-
-
-
 }

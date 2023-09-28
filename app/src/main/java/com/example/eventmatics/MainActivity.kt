@@ -15,7 +15,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.icu.text.SimpleDateFormat
 import android.net.Uri
 import android.os.Build
@@ -32,7 +31,6 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -46,20 +44,20 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.eventmatics.Adapter.EventLayoutAdapter
-import com.example.eventmatics.BroadCastReceiver.EventNotificationReceiver
 import com.example.eventmatics.Events_Data_Holder_Activity.BudgetDataHolderActivity
 import com.example.eventmatics.Events_Data_Holder_Activity.GuestDataHolderActivity
 import com.example.eventmatics.Events_Data_Holder_Activity.TaskDataHolderActivity
 import com.example.eventmatics.Events_Data_Holder_Activity.VendorDataHolderActivity
 import com.example.eventmatics.Login_Activity.signin_account
+import com.example.eventmatics.NavigationDrawer.EventList
 import com.example.eventmatics.NavigationDrawer.PDF_Report
 import com.example.eventmatics.NavigationDrawer.ProfileActivity
 import com.example.eventmatics.NavigationDrawer.SettingActivity
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.UserProfile
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.UserProfileDatabase
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Events
-import com.example.eventmatics.fragments.DatabaseNameHolder
 import com.example.eventmatics.fragments.EventAdding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -69,8 +67,6 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.storage.FirebaseStorage
-import com.google.gson.Gson
 import com.itextpdf.text.Document
 import com.itextpdf.text.Element
 import com.itextpdf.text.PageSize
@@ -80,17 +76,13 @@ import com.itextpdf.text.pdf.PdfPCell
 import com.itextpdf.text.pdf.PdfPTable
 import com.itextpdf.text.pdf.PdfReader
 import com.itextpdf.text.pdf.PdfWriter
-import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
-import org.eazegraph.lib.charts.PieChart
-import org.eazegraph.lib.models.PieModel
 import java.io.File
 import java.io.FileOutputStream
-import java.io.InputStream
 import java.util.Calendar
 import java.util.Locale
 
-class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListener{
+class MainActivity : AppCompatActivity(){
     lateinit var drawerLayout: DrawerLayout
     lateinit var navView: NavigationView
     lateinit var toogle:ActionBarDrawerToggle
@@ -194,8 +186,6 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
             showFirstLaunchDialog()
             setFirstLaunchFlag(this, false)
         }
-        val databaseNameHolder = DatabaseNameHolder(this)
-        databaseNameHolder.setDatabaseChangeListener(this)
 //        showEventData()
         //Load Profile Pic
         val db=UserProfileDatabase(this)
@@ -454,115 +444,11 @@ class MainActivity : AppCompatActivity(),DatabaseNameHolder.DatabaseChangeListen
             calendar.add(Calendar.DAY_OF_YEAR, -1)
             val notificationTime = calendar.timeInMillis
 
-            val intent = Intent(this, EventNotificationReceiver::class.java)
-            intent.putExtra("event_name", event.name)
-
             val requestCode = event.id.toInt()
             val pendingIntent = PendingIntent.getBroadcast(this, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, notificationTime, pendingIntent)
         }
-    }
-
-    override fun onDatabaseChanged(EventID: Long?) {
-        val databasename=getSharedPreference(this,"databasename").toString()
-        val db = LocalDatabase(this, databasename)
-        val SwithEvent=db.getSwitchEventData(EventID)
-        val Eventtimer=db.getEventData(EventID)
-        if(Eventtimer!=null){
-            Eventshow.text=Eventtimer.name
-            eventname.text=Eventtimer.budget
-            val name=Eventtimer.name
-            val ParentDirectory=File(Environment.getExternalStorageDirectory(),"Eventify")
-            if(!ParentDirectory.exists()){
-                ParentDirectory.mkdirs()
-            }
-            val EventNameDirectory=File(ParentDirectory,"$name")
-            if(!EventNameDirectory.exists()){
-                EventNameDirectory.mkdirs()
-            }
-            // Calculate remaining time until the event date
-            val eventDate=Eventtimer.Date
-            val eventTime=Eventtimer.time
-            val currentDate = Calendar.getInstance().time
-            val eventDateTime = SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.getDefault()).parse("$eventDate $eventTime")
-            val remainingTimeInMillis = eventDateTime.time - currentDate.time
-            // Start the countdown timer
-            countDownTimer = object : CountDownTimer(remainingTimeInMillis, 1000) {
-                override fun onTick(millisUntilFinished: Long) {
-                    val days = millisUntilFinished / (24 * 60 * 60 * 1000)
-                    val hours = (millisUntilFinished % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)
-                    val minutes = (millisUntilFinished % (60 * 60 * 1000)) / (60 * 1000)
-                    val seconds = (millisUntilFinished % (60 * 1000)) / 1000
-                    val remainingTime = String.format("%02dd %02dh %02dm %02ds", days, hours, minutes, seconds)
-                    EventTimerDisplay.text = remainingTime
-                }
-                override fun onFinish() {
-                    EventTimerDisplay.text = "Event Started"
-                }
-            }.start()
-        }
-        else{
-//                    Toast.makeText(this,"Event Not Found",Toast.LENGTH_SHORT).show()
-        }
-        adapter = EventLayoutAdapter(SwithEvent) { position ->
-            val popup = PopupMenu(eventshowhide.context, eventshowhide)
-            popup.menuInflater.inflate(R.menu.popup_menu, popup.menu)
-
-            popup.setOnMenuItemClickListener {
-                when (it.itemId) {
-                    R.id.Event_Pdf -> {
-                        val options = arrayOf("Combined", "Separate")
-
-                        MaterialAlertDialogBuilder(eventshowhide.context)
-                            .setTitle("PDF Format")
-                            .setSingleChoiceItems(options, -1) { dialog, which ->
-                                when (which) {
-                                    0 -> {
-                                        // Combined option selected
-                                        if (checkPermissions()) {
-                                            GeneratePDF()
-                                        } else {
-                                            requestPermission()
-                                        }
-                                    }
-                                    1 -> {
-                                        // Separate option selected
-                                        if (checkPermissions()) {
-                                            SepratePDF()
-                                        } else {
-                                            requestPermission()
-                                        }
-                                    }
-                                }
-                                dialog.dismiss()
-                            }
-                            .setNegativeButton("Cancel") { dialog, _ ->
-                                dialog.dismiss()
-                            }
-                            .show()
-
-                        true
-                    }
-                    R.id.event_delete -> {
-                        try {
-                        db.deleteEvent(Eventtimer!!)
-                        }catch (e:Exception){
-                            e.printStackTrace()
-                            Log.d("Event_Delete","Event Could Not Be Deleted Because:${e.message}")
-                        }
-                        true
-                    }
-                    else -> return@setOnMenuItemClickListener false
-                }
-            }
-            popup.show()
-        }
-
-        eventRecyclerView.adapter = adapter
-        eventRecyclerView.layoutManager = LinearLayoutManager(this)
-        adapter.notifyDataSetChanged()
-        swipeRefreshLayout.isRefreshing=false
     }
 
     private fun SetAppTheme() {
@@ -931,9 +817,9 @@ fun checkPermissions():Boolean{
         showEventData()
     }
     @SuppressLint("Range")
-     fun showEventData() {
-        val databasename = getSharedPreference(this, "databasename").toString()
-        val db = LocalDatabase(this, databasename)
+    fun showEventData() {
+//        val db = LocalDatabase(this, getSharedPreference(this, "databasename").toString())
+        val db=DatabaseManager.getDatabase(this)
         eventList = db.getAllEvents()
         val Eventtimer = db.getEventData(1)
         val budgettotdal=db.getTotalBudget()
@@ -993,10 +879,12 @@ fun checkPermissions():Boolean{
         }
         val adapter = EventLayoutAdapter(eventList){ position ->
         }
+
         ScheduleEventNotification(eventList)
         adapter.updateData(eventList)
         eventRecyclerView.adapter = adapter
         eventRecyclerView.layoutManager = LinearLayoutManager(this)
+        adapter.notifyDataSetChanged()
 
     }
     fun SetSummary(TextField:TextView,value:String?){
@@ -1006,7 +894,6 @@ fun checkPermissions():Boolean{
             TextField.text=value.toString()
         }
     }
-
 
     private fun DeleteEvent(event:Events):Boolean {
         val databasename = getSharedPreference(this, "databasename").toString()
@@ -1089,12 +976,7 @@ fun checkPermissions():Boolean{
                     true
                 }
                 R.id.nav_profile->{
-                    try {
-                    Intent(this,ProfileActivity::class.java).also { startActivity(it) }
-
-                    }catch (e:Exception){
-                        Log.d("Activity","Activity ${e.message} ")
-                    }
+                    Intent(this, ProfileActivity::class.java).also { startActivity(it) }
                     true
                 }
                 R.id.nav_logout->{
@@ -1102,8 +984,7 @@ fun checkPermissions():Boolean{
                     true
                 }
                 R.id.nav_manage_event->{
-                    val EventName=DatabaseNameHolder(this)
-                    EventName.show()
+                    Intent(this, EventList::class.java).also { startActivity(it) }
                     true
                 }
                 R.id.widget->{
@@ -1182,4 +1063,5 @@ fun checkPermissions():Boolean{
         unregisterReceiver(dataAddedReceiver)
 
     }
+
 }

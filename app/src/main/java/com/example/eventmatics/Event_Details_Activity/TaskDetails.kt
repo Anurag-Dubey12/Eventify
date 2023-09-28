@@ -22,6 +22,8 @@ import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.Task
 import com.example.eventmatics.data_class.SpinnerItem
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
 import java.util.Calendar
 
@@ -107,7 +109,6 @@ class TaskDetails : AppCompatActivity(){
         category_button.setOnClickListener {
             ShowTaskCategory()
         }
-
     }
     private fun ShowTaskCategory() {
         val spinnerAdapter = CategoryAdapter(this, spinnerItems)
@@ -128,10 +129,12 @@ class TaskDetails : AppCompatActivity(){
     }
 
     private fun showdatepicker() {
-
+        val constraint=CalendarConstraints.Builder()
+            .setValidator(DateValidatorPointForward.now())
         val datepicker=MaterialDatePicker.Builder.datePicker()
             .setTitleText("Select Task Date")
             .setSelection(MaterialDatePicker.thisMonthInUtcMilliseconds())
+            .setCalendarConstraints(constraint.build())
             .build()
 
         datepicker.addOnPositiveButtonClickListener {selectedDate->
