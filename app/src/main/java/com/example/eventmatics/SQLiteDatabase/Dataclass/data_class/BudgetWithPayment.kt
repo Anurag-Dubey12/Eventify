@@ -1,4 +1,4 @@
-package com.example.eventmatics.SQLiteDatabase.Dataclass
+package com.example.eventmatics.SQLiteDatabase.Dataclass.data_class
 
 data class BudgetWithPayment(
     val budget: Budget,

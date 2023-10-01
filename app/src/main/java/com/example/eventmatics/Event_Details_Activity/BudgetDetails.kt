@@ -1,8 +1,6 @@
 package com.example.eventmatics.Event_Details_Activity
 
 import android.content.Context
-import android.content.Intent
-import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -22,10 +20,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.Adapter.CategoryAdapter
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.PaymentActivityAdapter
 import com.example.eventmatics.R
-import com.example.eventmatics.SQLiteDatabase.Dataclass.Budget
+import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Budget
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
-import com.example.eventmatics.SQLiteDatabase.Dataclass.Paymentinfo
+import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Paymentinfo
 import com.example.eventmatics.data_class.SpinnerItem
 import com.example.eventmatics.fragments.BudgetFragment
 
@@ -112,7 +110,7 @@ class BudgetDetails : AppCompatActivity(),BudgetFragment.OnDataEnter,
         categoryselection.setOnClickListener {
             showCategoryPopup()
         }
-        val selected_item:Budget?=intent.getParcelableExtra("selected_item")
+        val selected_item: Budget?=intent.getParcelableExtra("selected_item")
 
         if (selected_item!=null){
             PaymentBalance.visibility=View.VISIBLE
@@ -183,7 +181,7 @@ class BudgetDetails : AppCompatActivity(),BudgetFragment.OnDataEnter,
                 true
             }
           R.id.Check->{
-              val selected_item:Budget?=intent.getParcelableExtra("selected_item")
+              val selected_item: Budget?=intent.getParcelableExtra("selected_item")
               if (selected_item!=null){
                   UpdateDatabase(selected_item.id,paymentlist)
               }
@@ -259,7 +257,7 @@ class BudgetDetails : AppCompatActivity(),BudgetFragment.OnDataEnter,
         val id=0
         val databasename=getSharedPreference(this,"databasename").toString()
         val db=LocalDatabase(this,databasename)
-        val budget=Budget(id.toLong(),name,category,note,Totalamount,balance,"","Not Paid")
+        val budget= Budget(id.toLong(),name,category,note,Totalamount,balance,"","Not Paid")
         db.createBudget(budget)
         Toast.makeText(this, "Budget Added successfully", Toast.LENGTH_SHORT).show()
         finish()

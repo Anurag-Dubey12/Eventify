@@ -4,16 +4,14 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RadioButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
-import com.example.eventmatics.SQLiteDatabase.Dataclass.VendorPaymentinfo
-import com.google.android.material.radiobutton.MaterialRadioButton
+import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.VendorPaymentinfo
 
 class VendorPaymentActivityAdapter(private val context: Context,
                                    private val paymentList: MutableList<VendorPaymentinfo>,
-    private val onitemclicklistener:OnItemClickListener) :
+                                   private val onitemclicklistener:OnItemClickListener) :
     RecyclerView.Adapter<VendorPaymentActivityAdapter.PaymentInfoViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PaymentInfoViewHolder {

@@ -10,7 +10,7 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
-import com.example.eventmatics.SQLiteDatabase.Dataclass.Vendor
+import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Vendor
 
 class VendorDataHolderClass(private val context: Context,private var vendorList:MutableList<Vendor>
 ,private val OnItemClickListener:onItemClickListener): RecyclerView.Adapter<VendorDataHolderClass.ViewHolder>() {
@@ -57,7 +57,7 @@ interface onItemClickListener{
         val vendorAddressTextView: TextView = itemView.findViewById(R.id.VendorAddress)
         val VendorPaid: TextView = itemView.findViewById(R.id.VendorPaid)
         val cardview: CardView = itemView.findViewById(R.id.vendorcardview)!!
-        fun bind(vendor:Vendor,position: Int){
+        fun bind(vendor: Vendor, position: Int){
             vendorNameTextView.text=vendor.name
             budgetCategoryTextView.text=vendor.category
             vendorPhoneTextView.text=vendor.phonenumber

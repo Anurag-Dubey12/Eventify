@@ -6,12 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
-import android.widget.RadioButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.eventmatics.Adapter.BudgetDataHolderAdapter
 import com.example.eventmatics.R
-import com.example.eventmatics.SQLiteDatabase.Dataclass.Paymentinfo
+import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Paymentinfo
 
 class PaymentActivityAdapter(private val context: Context, private val paymentList: MutableList<Paymentinfo>
 ,private val itemClickListener: OnItemClickListener
@@ -24,7 +22,7 @@ class PaymentActivityAdapter(private val context: Context, private val paymentLi
         return PaymentInfoViewHolder(view)
     }
     interface OnItemClickListener{
-        fun onItemClick(payment:Paymentinfo)
+        fun onItemClick(payment: Paymentinfo)
     }
 
     override fun onBindViewHolder(holder: PaymentInfoViewHolder, position: Int) {

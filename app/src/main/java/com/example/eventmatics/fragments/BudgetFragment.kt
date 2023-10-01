@@ -14,8 +14,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import com.example.eventmatics.R
-import com.example.eventmatics.SQLiteDatabase.Dataclass.Budget
-import com.example.eventmatics.SQLiteDatabase.Dataclass.Paymentinfo
+import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Paymentinfo
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.datepicker.CalendarConstraints

@@ -13,6 +13,8 @@ import android.widget.TextView
 import android.widget.Toast
 import com.example.eventmatics.MainActivity
 import com.example.eventmatics.R
+import com.example.eventmatics.SQLiteDatabase.Dataclass.AuthenticationUid
+import com.example.eventmatics.getSharedPreference
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -46,7 +48,6 @@ class account_creat : AppCompatActivity() {
         alreadyHaveAccountText = findViewById(R.id.alreadyfield)
         progressDialog = ProgressDialog(this)
         firestore = FirebaseFirestore.getInstance()
-
         firebaseAuth = FirebaseAuth.getInstance()
 
         createButton.setOnClickListener {
@@ -61,15 +62,15 @@ class account_creat : AppCompatActivity() {
                 passField.error = "Please Enter the Password"
                 return@setOnClickListener
             }
-
             firebaseAuth.createUserWithEmailAndPassword(email, password)
-                .addOnSuccessListener {
-                    firestore.collection("User")
-                        .document(firebaseAuth.uid.toString())
-                        .set(UserDetails(email, password))
+                .addOnSuccessListener { authResult ->
+                    val firebaseUser = authResult.user
+                    val userUid = firebaseUser?.uid
 
-                    Intent(this, MainActivity::class.java).also {
-                        startActivity(it)
+                    if (userUid != null) {
+                        AuthenticationUid.saveUserUid(this,userUid)
+                        val intent = Intent(this, MainActivity::class.java)
+                        startActivity(intent)
                         Toast.makeText(this, "Logging Successfully!", Toast.LENGTH_SHORT).show()
                         progressDialog.cancel()
                     }
@@ -93,6 +94,12 @@ class account_creat : AppCompatActivity() {
                 startActivity(it)
             }
         }
+    }
+    fun saveUidToSharedPreferences(uid:String){
+        val sp= getSharedPreferences("UserUid", MODE_PRIVATE)
+        val editor=sp.edit()
+        editor.putString("useruid",uid)
+        editor.apply()
     }
 
     private fun googleSignIn() {

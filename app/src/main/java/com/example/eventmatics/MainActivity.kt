@@ -48,16 +48,18 @@ import com.example.eventmatics.Events_Data_Holder_Activity.BudgetDataHolderActiv
 import com.example.eventmatics.Events_Data_Holder_Activity.GuestDataHolderActivity
 import com.example.eventmatics.Events_Data_Holder_Activity.TaskDataHolderActivity
 import com.example.eventmatics.Events_Data_Holder_Activity.VendorDataHolderActivity
+import com.example.eventmatics.Login_Activity.Login_SignUp_Option
 import com.example.eventmatics.Login_Activity.signin_account
 import com.example.eventmatics.NavigationDrawer.EventList
 import com.example.eventmatics.NavigationDrawer.PDF_Report
 import com.example.eventmatics.NavigationDrawer.ProfileActivity
 import com.example.eventmatics.NavigationDrawer.SettingActivity
+import com.example.eventmatics.SQLiteDatabase.Dataclass.AuthenticationUid
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.UserProfile
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.UserProfileDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
-import com.example.eventmatics.SQLiteDatabase.Dataclass.Events
+import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Events
 import com.example.eventmatics.fragments.EventAdding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -112,7 +114,6 @@ class MainActivity : AppCompatActivity(){
     private lateinit var VendorSummary: TextView
     private lateinit var eventname: TextView
     private lateinit var EventTimerDisplay: TextView
-//    private lateinit var crossimg: ImageView
     private lateinit var eventshowhide: LinearLayout
     private lateinit var eventActivity: LinearLayout
     private lateinit var pendingAmountShowTextView: TextView
@@ -128,10 +129,7 @@ class MainActivity : AppCompatActivity(){
     private lateinit var SaveButton: MaterialButton
     private lateinit var ProfileDialog: BottomSheetDialog
     private lateinit var ImageAddOption: BottomSheetDialog
-//    private lateinit var piechart:PieChart
     private val PERMISSION_CODE=101
-    private val PICK_FILE_REQUEST = 1
-    private val CAPTURE_REQ_CODE = 101
     private val GALLERY_REQ_CODE = 201
     private var selectedImageUri:Uri?=null
 
@@ -164,16 +162,12 @@ class MainActivity : AppCompatActivity(){
         TotalTask = findViewById(R.id.TotalTask)
         swipeRefreshLayout= findViewById(R.id.swipeRefreshLayout)
         EventTimerDisplay = findViewById(R.id.EventTimerDisplay)
-//        crossimg = findViewById(R.id.crossimg)
         eventaddbut = findViewById(R.id.eventaddbut)
         budgetImageButton = findViewById(R.id.budget)
         eventshowhide = findViewById(R.id.eventshowhide)
         guestImageButton = findViewById(R.id.Guest)
         vendorImageButton = findViewById(R.id.Vendor)
         Eventshow = findViewById(R.id.eventnameshow)
-
-//        piechart = findViewById(R.id.piechart)
-//        taskRecyclerView = findViewById(R.id.TaskRec)
         budgetInfoCardView = findViewById(R.id.budget_info)
         budgetShowTextView = findViewById(R.id.Budgetshow)
         pendingAmountShowTextView = findViewById(R.id.PendingAmountshow)
@@ -181,12 +175,14 @@ class MainActivity : AppCompatActivity(){
         val actionBarDrawerToggle = ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close)
         drawerLayout.addDrawerListener(actionBarDrawerToggle)
         actionBarDrawerToggle.syncState()
+
+        val userUid = AuthenticationUid.getUserUid(this)!!
+        Log.d("useruid","The Uid is :$userUid")
         //For First Time Launch Event Create SHow
         if (isFirstLaunch(this)) {
             showFirstLaunchDialog()
             setFirstLaunchFlag(this, false)
         }
-//        showEventData()
         //Load Profile Pic
         val db=UserProfileDatabase(this)
         val headerView = navView.getHeaderView(0)
@@ -239,7 +235,6 @@ class MainActivity : AppCompatActivity(){
             if(eventRecyclerView.adapter?.itemCount==0){
                 Toast.makeText(this, "Create Event First ", Toast.LENGTH_SHORT).show()
             }else{
-
                 MaterialAlertDialogBuilder(this)
                     .setTitle("PDF")
                     .setMessage("Select in Which format you want pdf")
@@ -284,7 +279,6 @@ class MainActivity : AppCompatActivity(){
                 Log.d("Delete","${e.message}")
             }
         }}
-//        widgetButton.setOnClickListener { addWidgetToHomeScreen() }
         swipeRefreshLayout.setOnRefreshListener {
             Handler().postDelayed({
                showEventData()
@@ -329,7 +323,6 @@ class MainActivity : AppCompatActivity(){
         Imageadd=ProfileDialog.findViewById(R.id.uploadImage)!!
         Nameadd=ProfileDialog.findViewById(R.id.uploadName)!!
         SaveButton=ProfileDialog.findViewById(R.id.saveButton)!!
-
         val UserData=db.getUserProfilebyID(1)
         val currentname=UserData?.name ?:" "
         val userimage=UserData?.Image
@@ -346,15 +339,12 @@ class MainActivity : AppCompatActivity(){
             Log.d("Image","Crash due to:${e.message}")
         }
         SaveButton.setOnClickListener {
-//            ImageUpload()
-//            ImageAddOption.dismiss()
-//            ProfileDialog.dismiss()
-
             if(selectedImageUri!=null){
                 val GetImageByte=getImageByte(selectedImageUri!!)
                 val userid=FirebaseAuth.getInstance().currentUser?.uid
                 if(userid!=null){
-                    var username = Nameadd.text.toString()
+
+                  var  username = Nameadd.text.toString()
                     val existinguser=db.getUserProfilebyID(1)
                     if(existinguser!=null){
                         val userprofile=UserProfile(1,username,GetImageByte)
@@ -417,12 +407,10 @@ class MainActivity : AppCompatActivity(){
             }
         }
     }
-
     fun getImageByte(image: Uri):ByteArray{
         val image=contentResolver.openInputStream(image)
         return image?.readBytes() ?: ByteArray(0)
     }
-
     fun createNotificationChannel(){
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
             val channelId="Event_Notification"
@@ -456,6 +444,7 @@ class MainActivity : AppCompatActivity(){
         AppCompatDelegate.setDefaultNightMode(Theme)
     }
     fun CheckAndStartActivity(targetActivity:Class<*>){
+        val uid =AuthenticationUid.getUserUid(this)!!
         if (eventRecyclerView.adapter?.itemCount==0){
             val eventAdding=EventAdding(this,supportFragmentManager,null)
             eventAdding.show()
@@ -703,7 +692,7 @@ class MainActivity : AppCompatActivity(){
 
     }
     fun SepratePDF(){
-        val db = LocalDatabase(this, getSharedPreference(this, "databasename").toString())
+         val db=DatabaseManager.getDatabase(this)
         val eventDetails = db.getEventData(1)
         val eventName = eventDetails?.name
 
@@ -721,7 +710,7 @@ class MainActivity : AppCompatActivity(){
         GenerateBudgetPDF(db, EventDirectroy)
     }
     fun GeneratePDF() {
-        val db = LocalDatabase(this, getSharedPreference(this, "databasename").toString())
+         val db=DatabaseManager.getDatabase(this)
         val eventDetails = db.getEventData(1)
         val eventName = eventDetails?.name
 
@@ -770,35 +759,21 @@ class MainActivity : AppCompatActivity(){
 
         document.close()
     }
+    fun checkPermissions() = ContextCompat.checkSelfPermission(applicationContext, WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(applicationContext, READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
 
-    
-    private fun wrapText(text: String, maxLength: Int): String {
-        val regex = "(.{$maxLength})"
-        return text.replace(regex.toRegex(), "$1\n")
-    }
-fun checkPermissions():Boolean{
-    val writepermission=ContextCompat.checkSelfPermission(applicationContext, WRITE_EXTERNAL_STORAGE)
-    val readpermission=ContextCompat.checkSelfPermission(applicationContext, READ_EXTERNAL_STORAGE)
-    return writepermission==PackageManager.PERMISSION_GRANTED && readpermission==PackageManager.PERMISSION_GRANTED
-
-}
     private fun requestPermission() {
         ActivityCompat.requestPermissions(this, arrayOf(
             WRITE_EXTERNAL_STORAGE,
             READ_EXTERNAL_STORAGE
         ),PERMISSION_CODE)
     }
-
-
-    fun getSharedPreference(context: Context, key: String): String? {
-        val sharedPref = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
-        return sharedPref.getString(key, null)
-    }
     fun GetThemePreference(context:Context,key:String):Int{
         val shared=context.getSharedPreferences("Theme",Context.MODE_PRIVATE)
         return shared.getInt(key,AppCompatDelegate.MODE_NIGHT_NO)
     }
     private fun showFirstLaunchDialog() {
+       val uid=AuthenticationUid.getUserUid(this)!!
         val eventAdding=EventAdding(this,supportFragmentManager,null)
         eventAdding.show()
     }
@@ -818,14 +793,13 @@ fun checkPermissions():Boolean{
     }
     @SuppressLint("Range")
     fun showEventData() {
-//        val db = LocalDatabase(this, getSharedPreference(this, "databasename").toString())
         val db=DatabaseManager.getDatabase(this)
+        val uid=AuthenticationUid.getUserUid(this)!!
         eventList = db.getAllEvents()
         val Eventtimer = db.getEventData(1)
         val budgettotdal=db.getTotalBudget()
         val BudgetPaid=db.getTotalPaidBudget()
         val BudgetNotPaid=db.getTotalNotPaidBudget()
-//        val budgetUnPaid=db.getTotalUnPaid()
         val TaskComtext=db.getTaskStatus()
         val Taskpending=db.getTaskPendingStatus()
         val totaltask=db.getTotalTask()
@@ -856,7 +830,7 @@ fun checkPermissions():Boolean{
             val eventDateTime = SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.getDefault()).parse("$eventDate $eventTime")
             if (eventDateTime != null) {
                 val remainingTimeInMillis = eventDateTime.time - currentDate.time
-                countDownTimer?.cancel() // Cancel any existing timer to avoid overlapping
+                countDownTimer?.cancel()
                 countDownTimer = object : CountDownTimer(remainingTimeInMillis, 1000) {
                     override fun onTick(millisUntilFinished: Long) {
                         val days = millisUntilFinished / (24 * 60 * 60 * 1000)
@@ -866,7 +840,6 @@ fun checkPermissions():Boolean{
                         val remainingTime = String.format("%02dd %02dh %02dm %02ds", days, hours, minutes, seconds)
                         EventTimerDisplay.text = remainingTime
                     }
-
                     override fun onFinish() {
                         EventTimerDisplay.text = "Event Started"
                     }
@@ -874,8 +847,6 @@ fun checkPermissions():Boolean{
             } else {
                 Log.e("CountdownError", "Error parsing event date and time.")
             }
-        } else {
-//            Toast.makeText(this, "Event Not Found", Toast.LENGTH_SHORT).show()
         }
         val adapter = EventLayoutAdapter(eventList){ position ->
         }
@@ -895,9 +866,8 @@ fun checkPermissions():Boolean{
         }
     }
 
-    private fun DeleteEvent(event:Events):Boolean {
-        val databasename = getSharedPreference(this, "databasename").toString()
-        val db = LocalDatabase(this, databasename)
+    private fun DeleteEvent(event: Events):Boolean {
+        val db = DatabaseManager.getDatabase(this)
         db.deleteEvent(event)
         Toast.makeText(this,"Event Removed",Toast.LENGTH_SHORT).show()
         recreate()
@@ -917,7 +887,7 @@ fun checkPermissions():Boolean{
         val appWidgetManager = AppWidgetManager.getInstance(context)
         val myWidgetProvider = ComponentName(context, EventWidget::class.java)
 
-        // Check if the widget is already added
+        // Checking if the widget is already added
         if (appWidgetManager.isRequestPinAppWidgetSupported) {
             val successCallback = PendingIntent.getBroadcast(
                 context,
@@ -980,7 +950,7 @@ fun checkPermissions():Boolean{
                     true
                 }
                 R.id.nav_logout->{
-                   userlogout()
+                    userLogout()
                     true
                 }
                 R.id.nav_manage_event->{
@@ -1007,29 +977,18 @@ fun checkPermissions():Boolean{
        })
 }
 
-    private fun userlogout() {
-        val googleSIgnInClient= GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN)
-        googleSIgnInClient.signOut().addOnCompleteListener (this){task->
-            if (task.isSuccessful){
-                Intent(this,signin_account::class.java).also { startActivity(it) }
-                finish()
-                Toast.makeText(this,"You Have been Logout Successfully",Toast.LENGTH_SHORT).show()
-            }
-            else{
-                Toast.makeText(this,"Something went wrong",Toast.LENGTH_SHORT).show()
-            }
-        }
-        val currentUser = FirebaseAuth.getInstance().currentUser
-        if(currentUser!=null){
-            FirebaseAuth.getInstance().signOut()
-            Intent(this,signin_account::class.java).also { startActivity(it) }
+    private fun userLogout() {
+        val googleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN)
+        googleSignInClient.signOut().addOnCompleteListener(this) { task ->
+            val intentClass = if (task.isSuccessful) Login_SignUp_Option::class.java else signin_account::class.java
+            startActivity(Intent(this, intentClass))
             finish()
-            Toast.makeText(this,"You Have been Logout Successfully",Toast.LENGTH_SHORT).show()
-
-        }else{
-            Toast.makeText(this,"Something went wrong",Toast.LENGTH_SHORT).show()
+            val message = if (task.isSuccessful) "Logout Successful" else "Something went wrong"
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
         }
+        FirebaseAuth.getInstance().signOut()
     }
+
 
     private fun sendWhatsAppMessage() {
         // Phone number of the recipient
@@ -1059,9 +1018,9 @@ fun checkPermissions():Boolean{
     }
     override fun onDestroy() {
         super.onDestroy()
-        // Unregister the broadcast receiver to avoid memory leaks
         unregisterReceiver(dataAddedReceiver)
 
     }
+
 
 }

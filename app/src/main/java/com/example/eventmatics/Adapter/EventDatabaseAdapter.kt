@@ -9,8 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
-import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
-import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseNameDataClass
+import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.DatabaseNameDataClass
 import com.google.android.material.button.MaterialButton
 
 class EventDatabaseAdapter(val context: Context,private var DatabaseList: List<DatabaseNameDataClass>
@@ -25,7 +24,7 @@ class EventDatabaseAdapter(val context: Context,private var DatabaseList: List<D
         val databaselist=DatabaseList[position]
         holder.bind(databaselist)
     }
-    fun updateData(newList: List<DatabaseNameDataClass>) {
+    fun updateData(newList: MutableList<DatabaseNameDataClass>) {
         DatabaseList = newList
         notifyDataSetChanged()
     }

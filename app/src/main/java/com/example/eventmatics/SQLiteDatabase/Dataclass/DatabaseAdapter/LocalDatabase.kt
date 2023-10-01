@@ -6,14 +6,14 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.example.eventmatics.SQLiteDatabase.Dataclass.Budget
-import com.example.eventmatics.SQLiteDatabase.Dataclass.Events
-import com.example.eventmatics.SQLiteDatabase.Dataclass.Guest
-import com.example.eventmatics.SQLiteDatabase.Dataclass.Task
-import com.example.eventmatics.SQLiteDatabase.Dataclass.Vendor
-import com.example.eventmatics.SQLiteDatabase.Dataclass.Paymentinfo
-import com.example.eventmatics.SQLiteDatabase.Dataclass.VendorPaymentinfo
-import kotlinx.coroutines.currentCoroutineContext
+import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Budget
+import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.DatabaseNameDataClass
+import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Events
+import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Guest
+import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Task
+import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Vendor
+import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Paymentinfo
+import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.VendorPaymentinfo
 
 class LocalDatabase(contex:Context,databasename:String):
     SQLiteOpenHelper(contex,databasename,null,DATABASE_VERSION) {
@@ -36,6 +36,7 @@ class LocalDatabase(contex:Context,databasename:String):
         private const val Event_Date = "Event_Date"
         private const val Event_Time = "Event_Time"
         private const val Event_Budget = "Event_Budget"
+        private const val UserID = "UserID"
 
         //Task Column Name
         private const val Task_Name = "Task_Name"
@@ -100,7 +101,8 @@ class LocalDatabase(contex:Context,databasename:String):
                 "$Event_Name TEXT," +
                 "$Event_Date TEXT," +
                 "$Event_Time TEXT," +
-                "$Event_Budget TEXT" +
+                "$Event_Budget TEXT," +
+                "$UserID TEXT "+
                 ")"
         db?.execSQL(createEventTableQuery)
 
@@ -187,7 +189,8 @@ class LocalDatabase(contex:Context,databasename:String):
                     "$Event_Name TEXT," +
                     "$Event_Date TEXT," +
                     "$Event_Time TEXT," +
-                    "$Event_Budget TEXT" +
+                    "$Event_Budget TEXT," +
+                    "$UserID TEXT "+
                     ")"
             db?.execSQL(createEventTableQuery)
         }
@@ -290,13 +293,14 @@ class LocalDatabase(contex:Context,databasename:String):
             put(Event_Date, event.Date)
             put(Event_Time, event.time)
             put(Event_Budget, event.budget)
+            put(UserID, event.userid)
         }
         val id = db.insert(TABLE_Event, null, values)
         db.close()
         return id
     }
     @SuppressLint("Range")
-    fun GetEvent(name:String):Events?{
+    fun GetEvent(name:String): Events?{
         val db=readableDatabase
         val selection="$Event_Name = ?"
         val selectionargs= arrayOf(selection)
@@ -309,15 +313,16 @@ class LocalDatabase(contex:Context,databasename:String):
             null,
             null
         )
-        var event:Events?=null
+        var event: Events?=null
         if(cursor!=null && cursor.moveToFirst()){
             val id = cursor.getLong(cursor.getColumnIndex(COLUMN_ID))
             val name = cursor.getString(cursor.getColumnIndex(Event_Name))
             val date = cursor.getString(cursor.getColumnIndex(Event_Date))
             val time = cursor.getString(cursor.getColumnIndex(Event_Time))
             val budget = cursor.getString(cursor.getColumnIndex(Event_Budget))
+            val userid = cursor.getString(cursor.getColumnIndex(UserID))
 
-            event = Events(id, name, date, time, budget)
+            event = Events(id, name, date, time, budget,userid)
         }
         cursor?.close()
         db.close()
@@ -334,8 +339,8 @@ class LocalDatabase(contex:Context,databasename:String):
     }
 
     @SuppressLint("Range")
-    fun getAllEvents(): MutableList<Events> {
-        val events = ArrayList<Events>()
+    fun getAllEventsforadapter(): MutableList<DatabaseNameDataClass> {
+        val databaseNames = ArrayList<DatabaseNameDataClass>()
         val selectQuery = "SELECT * FROM $TABLE_Event"
         val db = readableDatabase
         val cursor: Cursor? = db.rawQuery(selectQuery, null)
@@ -346,12 +351,63 @@ class LocalDatabase(contex:Context,databasename:String):
                     val name = it.getString(it.getColumnIndex(Event_Name))
                     val date = it.getString(it.getColumnIndex(Event_Date))
                     val time = it.getString(it.getColumnIndex(Event_Time))
+                    val uid = cursor.getString(cursor.getColumnIndex(UserID))
+                    val databaseNameDataClass = DatabaseNameDataClass(id, name, date,time,uid)
+                    databaseNames.add(databaseNameDataClass)
+                } while (it.moveToNext())
+            }
+        }
+        cursor?.close()
+        db.close()
+        return databaseNames
+    }
+
+    @SuppressLint("Range")
+    fun getAllEvents(): MutableList<Events> {
+        val events = ArrayList<Events>()
+        val selectQuery = "SELECT * FROM $TABLE_Event LIMIT 1"
+        val db = readableDatabase
+        val cursor: Cursor? = db.rawQuery(selectQuery, null)
+        cursor?.let {
+            if (it.moveToFirst()) {
+                do {
+                    val id = it.getLong(it.getColumnIndex(COLUMN_ID))
+                    val name = it.getString(it.getColumnIndex(Event_Name))
+                    val date = it.getString(it.getColumnIndex(Event_Date))
+                    val time = it.getString(it.getColumnIndex(Event_Time))
                     val budget = it.getString(it.getColumnIndex(Event_Budget))
-                    val event = Events(id,name, date, time, budget)
+                    val userid = cursor.getString(cursor.getColumnIndex(UserID))
+                    val event = Events(id,name, date, time, budget,userid)
                     events.add(event)
                 } while (it.moveToNext())
             }
         }
+        cursor?.close()
+        db.close()
+        return events
+    }
+    @SuppressLint("Range")
+    fun getAllEventsForUser(uid: String): MutableList<Events> {
+        val events = ArrayList<Events>()
+        val selectQuery = "SELECT * FROM $TABLE_Event WHERE $UserID = ?"
+        val db = readableDatabase
+        val cursor: Cursor? = db.rawQuery(selectQuery, arrayOf(uid))
+
+        cursor?.let {
+            if (it.moveToFirst()) {
+                do {
+                    val id = it.getLong(it.getColumnIndex(COLUMN_ID))
+                    val name = it.getString(it.getColumnIndex(Event_Name))
+                    val date = it.getString(it.getColumnIndex(Event_Date))
+                    val time = it.getString(it.getColumnIndex(Event_Time))
+                    val budget = it.getString(it.getColumnIndex(Event_Budget))
+                    val uid=it.getString(it.getColumnIndex(UserID))
+                    val event = Events(id, name, date, time, budget, uid)
+                    events.add(event)
+                } while (it.moveToNext())
+            }
+        }
+
         cursor?.close()
         db.close()
         return events
@@ -372,35 +428,13 @@ class LocalDatabase(contex:Context,databasename:String):
             val eventDate = cursor.getString(cursor.getColumnIndex(Event_Date))
             val eventTime = cursor.getString(cursor.getColumnIndex(Event_Time))
             val eventBudget = cursor.getString(cursor.getColumnIndex(Event_Budget))
-
-            event = Events( id,eventName, eventDate, eventTime, eventBudget)
+            val userid = cursor.getString(cursor.getColumnIndex(UserID))
+            event = Events( id,eventName, eventDate, eventTime, eventBudget,userid)
         }
 
         cursor.close()
         return event
     }
-    @SuppressLint("Range")
-    fun getSwitchEventData(eventId: Long?): MutableList<Events> {
-        val db = readableDatabase
-        val query = "SELECT * FROM $TABLE_Event WHERE $COLUMN_ID = $eventId"
-        val cursor = db.rawQuery(query, null)
-        val eventsList: MutableList<Events> = mutableListOf()
-
-        while (cursor.moveToNext()) {
-            val id = cursor.getLong(cursor.getColumnIndex(COLUMN_ID))
-            val eventName = cursor.getString(cursor.getColumnIndex(Event_Name))
-            val eventDate = cursor.getString(cursor.getColumnIndex(Event_Date))
-            val eventTime = cursor.getString(cursor.getColumnIndex(Event_Time))
-            val eventBudget = cursor.getString(cursor.getColumnIndex(Event_Budget))
-
-            val event = Events(id, eventName, eventDate, eventTime, eventBudget)
-            eventsList.add(event)
-        }
-
-        cursor.close()
-        return eventsList
-    }
-
 
 //     Update an event
     fun updateEvent(event: Events): Int {
@@ -757,7 +791,6 @@ class LocalDatabase(contex:Context,databasename:String):
         db.close()
         return isPaid
     }
-
     //Function to update Budget Value
     fun updateBudgetPaid(id:Long,newvalue:String,newBalanceValue:String):Int{
         val db=writableDatabase

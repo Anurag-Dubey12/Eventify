@@ -1,21 +1,20 @@
 package com.example.eventmatics.NavigationDrawer
 
-import android.annotation.SuppressLint
-import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.view.MenuItem
 import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.eventmatics.Adapter.EventDatabaseAdapter
 import com.example.eventmatics.R
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.eventmatics.SQLiteDatabase.Dataclass.AuthenticationUid
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.NamesDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
-import com.example.eventmatics.getSharedPreference
+import com.google.android.material.appbar.MaterialToolbar
 
 class EventList : AppCompatActivity() {
     private lateinit var  databaseRecycler:RecyclerView
@@ -24,6 +23,9 @@ class EventList : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_event_list)
+        val toolbar: MaterialToolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         databaseRecycler = findViewById(R.id.DatabaseRecycler)!!
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)!!
 
@@ -34,6 +36,7 @@ class EventList : AppCompatActivity() {
         adapter = EventDatabaseAdapter(this, emptyList(),{ position, ->
         }) {name->
             DatabaseManager.changeDatabaseName(this,name)
+            Toast.makeText(this,"Event Change to $name",Toast.LENGTH_SHORT).show()
         }
 
         databaseRecycler.adapter = adapter
@@ -43,8 +46,11 @@ class EventList : AppCompatActivity() {
 
     private fun showEventData() {
         try {
+//            val databasenames =DatabaseManager.getDatabase(this)
             val databasenames = NamesDatabase(this)
-            val databaseNames = databasenames.getAllEventNames()
+            val uid=AuthenticationUid.getUserUid(this)
+            Log.d("UerUid","This is EVentList userid:$uid")
+            val databaseNames = databasenames.getAllEventNamesWithoutDuplicatesForUser(uid.toString())
             adapter.updateData(databaseNames)
         }
         catch (e:Exception){
@@ -53,18 +59,23 @@ class EventList : AppCompatActivity() {
         }
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId){
+            android.R.id.home->{
+                onBackPressed()
+                true
+            }
+
+            else->super.onOptionsItemSelected(item)
+        }}
 
     private fun refreshData() {
-        // Simulate data refreshing with a delay
         Handler().postDelayed({
-            val databasename = getSharedPreference(this, "databasename").toString()
             val databasenames = NamesDatabase(this)
-            val databaseNames = databasenames.getAllEventNames()
-
-            // Update the adapter data with the refreshed database names
+            val uid=AuthenticationUid.getUserUid(this)
+            val databaseNames = databasenames.getAllEventNamesWithoutDuplicatesForUser(uid.toString())
             adapter.updateData(databaseNames)
-
             swipeRefreshLayout.isRefreshing = false
-        }, 3000)
+        }, 1000)
     }
 }

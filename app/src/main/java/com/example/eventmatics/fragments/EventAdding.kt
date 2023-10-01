@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -12,18 +13,17 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatDialog
 import androidx.fragment.app.FragmentManager
 import com.example.eventmatics.R
+import com.example.eventmatics.SQLiteDatabase.Dataclass.AuthenticationUid
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
-import com.example.eventmatics.SQLiteDatabase.Dataclass.Events
+import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Events
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import java.util.Calendar
-import android.content.BroadcastReceiver
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.NamesDatabase
-import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseNameDataClass
+import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.DatabaseNameDataClass
 import com.google.android.material.datepicker.CalendarConstraints
-import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.DateValidatorPointForward
 
 
@@ -38,7 +38,7 @@ class EventAdding(
     private lateinit var createButton: Button
     private lateinit var EditButton: Button
     interface OnDataEnter{
-        fun onDataEnter(event:Events)
+        fun onDataEnter(event: Events)
     }
     private var ondataenter:OnDataEnter?=null
 
@@ -68,47 +68,47 @@ class EventAdding(
         )
         eventDate.setText(todayFormattedDate)
         eventTime.setText(todayFormattedTime)
-        if (eventId != null) {
-            // Retrieve data from SQLite using the eventId for editing
-            val eventData = getEventDataFromSQLite(eventId)
-            eventName.setText(eventData.name)
-//            val newName=eventName.setText(eventData.name)
-            eventDate.setText(eventData.Date)
-            eventTime.setText(eventData.time)
-            eventBudget.setText(eventData.budget)
-            createButton.visibility= View.GONE
-            EditButton.visibility=View.VISIBLE
-
-            EditButton.setOnClickListener {
-                val eventNameText = eventName.text.toString()
-                val eventDateText = eventDate.text.toString()
-                val eventTimeText = eventTime.text.toString()
-                val eventBudgetText = eventBudget.text.toString()
-                val event = Events(0, eventNameText, eventDateText, eventTimeText, eventBudgetText)
-                val databaseHelper = LocalDatabase(context, eventNameText)
-                databaseHelper.updateEvent(event)
-                Toast.makeText(context, "Event updated successfully", Toast.LENGTH_SHORT).show()
-
-                // Remove the previous shared preference
-                val previousEventName = getSharedPreference(context, "databasename").toString()
-                val sharedPreferences = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
-                val editor: SharedPreferences.Editor = sharedPreferences.edit()
-                editor.remove(previousEventName)
-                editor.apply()
-
-                // Save the new shared preference
-                saveToSharedPreferences(context, "databasename", eventNameText)
-
-                // Set the updated values back to the TextInputEditText fields
-                eventName.setText(eventNameText)
-                eventDate.setText(eventDateText)
-                eventTime.setText(eventTimeText)
-                eventBudget.setText(eventBudgetText)
-
-                dismiss()
-            }
-
-        }
+//        if (eventId != null) {
+//            // Retrieve data from SQLite using the eventId for editing
+//            val eventData = getEventDataFromSQLite(eventId)
+//            eventName.setText(eventData.name)
+////            val newName=eventName.setText(eventData.name)
+//            eventDate.setText(eventData.Date)
+//            eventTime.setText(eventData.time)
+//            eventBudget.setText(eventData.budget)
+//            createButton.visibility= View.GONE
+//            EditButton.visibility=View.VISIBLE
+//
+//            EditButton.setOnClickListener {
+//                val eventNameText = eventName.text.toString()
+//                val eventDateText = eventDate.text.toString()
+//                val eventTimeText = eventTime.text.toString()
+//                val eventBudgetText = eventBudget.text.toString()
+//                val event = Events(0, eventNameText, eventDateText, eventTimeText, eventBudgetText)
+//                val databaseHelper = LocalDatabase(context, eventNameText)
+//                databaseHelper.updateEvent(event)
+//                Toast.makeText(context, "Event updated successfully", Toast.LENGTH_SHORT).show()
+//
+//                // Remove the previous shared preference
+//                val previousEventName = getSharedPreference(context, "databasename").toString()
+//                val sharedPreferences = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
+//                val editor: SharedPreferences.Editor = sharedPreferences.edit()
+//                editor.remove(previousEventName)
+//                editor.apply()
+//
+//                // Save the new shared preference
+//                saveToSharedPreferences(context, "databasename", eventNameText)
+//
+//                // Set the updated values back to the TextInputEditText fields
+//                eventName.setText(eventNameText)
+//                eventDate.setText(eventDateText)
+//                eventTime.setText(eventTimeText)
+//                eventBudget.setText(eventBudgetText)
+//
+//                dismiss()
+//            }
+//
+//        }
         eventDate.setOnClickListener { showDatePicker() }
         eventTime.setOnClickListener { showTimePicker() }
 
@@ -134,16 +134,19 @@ class EventAdding(
                 eventTime.error = "Select Time"
                 return@setOnClickListener
             }
+
             val databaseHelper = LocalDatabase(context, databasename)
             val Databasename=NamesDatabase(context)
             if (databaseHelper.isEventNameExists(eventNameText)) {
                 Toast.makeText(context, "Event name must be unique", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            val event = Events(0, eventNameText, eventDateText, eventTimeText, eventBudgetText)
-            val names=DatabaseNameDataClass(0,eventNameText,eventDateText,eventTimeText)
+            val uid=AuthenticationUid.getUserUid(context)!!
+            val event = Events(0, eventNameText, eventDateText, eventTimeText, eventBudgetText,uid)
+            val names= DatabaseNameDataClass(0,eventNameText,eventDateText,eventTimeText, uid)
+            Log.d("UerUid","This is EventAdding userid:$names")
             val eventId = databaseHelper.createEvent(event)
-            val Eventlist=Databasename.createDatabase(names)
+            Databasename.createDatabase(names)
             if (eventId != -1L) {
                 val dataAddedIntent = Intent("com.example.eventmatics.fragments")
                 context?.sendBroadcast(dataAddedIntent)

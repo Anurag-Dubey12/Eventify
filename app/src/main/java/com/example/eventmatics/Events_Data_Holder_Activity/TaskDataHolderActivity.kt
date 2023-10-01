@@ -18,7 +18,6 @@ import android.os.Handler
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.CheckBox
 import android.widget.Toast
 import androidx.annotation.NonNull
@@ -34,8 +33,7 @@ import com.example.eventmatics.Adapter.TaskDataHolderAdpater
 import com.example.eventmatics.Event_Details_Activity.TaskDetails
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
-import com.example.eventmatics.SQLiteDatabase.Dataclass.Task
-import com.example.eventmatics.SwipeGesture.AbstractClass.SwipeControllerActions
+import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Task
 import com.example.eventmatics.SwipeGesture.SwipeToDelete
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder

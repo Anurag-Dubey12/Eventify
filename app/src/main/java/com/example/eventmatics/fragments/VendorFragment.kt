@@ -15,8 +15,7 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import com.example.eventmatics.R
-import com.example.eventmatics.SQLiteDatabase.Dataclass.Paymentinfo
-import com.example.eventmatics.SQLiteDatabase.Dataclass.VendorPaymentinfo
+import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.VendorPaymentinfo
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.datepicker.CalendarConstraints
@@ -26,7 +25,7 @@ import java.util.Calendar
 
 class VendorFragment(private val context: Context,private var fragmentManager:FragmentManager,
                      private val VendorId:Long?,
-    val paymentinfo:VendorPaymentinfo?) : BottomSheetDialogFragment() {
+    val paymentinfo: VendorPaymentinfo?) : BottomSheetDialogFragment() {
     private lateinit var editTextName: EditText
     private lateinit var editTextAmount: EditText
     private lateinit var vendorButtonPending: AppCompatButton
@@ -99,7 +98,7 @@ class VendorFragment(private val context: Context,private var fragmentManager:Fr
             showDatePicker()
         }
         buttonSubmit.setOnClickListener {
-            val Payment:VendorPaymentinfo?=arguments?.getParcelable("VendorPayment")
+            val Payment: VendorPaymentinfo?=arguments?.getParcelable("VendorPayment")
             if(Payment!=null){
                 val name=editTextName.text.toString()
                 val amount=editTextAmount.text.toString().toFloat()
@@ -114,7 +113,8 @@ class VendorFragment(private val context: Context,private var fragmentManager:Fr
                 }else{
                     updatepaymentStatus="Pending"
                 }
-                val payment=VendorPaymentinfo(Payment.id,name,amount,date,updatepaymentStatus,Payment.VendorId)
+                val payment=
+                    VendorPaymentinfo(Payment.id,name,amount,date,updatepaymentStatus,Payment.VendorId)
                 userupdatelistener?.onuserupdate(payment)
                 Toast.makeText(context,"Data Added",Toast.LENGTH_SHORT).show()
                 dismiss()
@@ -145,7 +145,7 @@ fun clearfield(){
 }
     override fun onResume() {
         super.onResume()
-        val Payment:VendorPaymentinfo?=arguments?.getParcelable("VendorPayment")
+        val Payment: VendorPaymentinfo?=arguments?.getParcelable("VendorPayment")
         if(Payment!=null){
             editTextName.setText(Payment.name.toString())
             editTextAmount.setText(Payment.amount.toString())

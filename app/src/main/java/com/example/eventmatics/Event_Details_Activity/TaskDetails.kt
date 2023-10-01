@@ -15,12 +15,10 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.example.eventmatics.Adapter.CategoryAdapter
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
-import com.example.eventmatics.SQLiteDatabase.Dataclass.Task
+import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Task
 import com.example.eventmatics.data_class.SpinnerItem
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointForward
@@ -186,7 +184,7 @@ class TaskDetails : AppCompatActivity(){
         val taskdate=taskdate.text.toString()
 
         Log.d("TaskStaus:",taskStatus)
-        val Task=Task(0,taskname,category,TaskNoteET,taskStatus,taskdate)
+        val Task= Task(0,taskname,category,TaskNoteET,taskStatus,taskdate)
         Db.createTask(Task)
         Toast.makeText(this, "Task Added successfully", Toast.LENGTH_SHORT).show()
         finish()
@@ -211,7 +209,7 @@ class TaskDetails : AppCompatActivity(){
         }else{
             updatedtaskStatus="Pending"
         }
-        val task=Task(id,taskname,category,TaskNoteET,updatedtaskStatus,taskdate)
+        val task= Task(id,taskname,category,TaskNoteET,updatedtaskStatus,taskdate)
         db.updateTask(task)
         Toast.makeText(this, "Task Data Updated successfully", Toast.LENGTH_SHORT).show()
         finish()

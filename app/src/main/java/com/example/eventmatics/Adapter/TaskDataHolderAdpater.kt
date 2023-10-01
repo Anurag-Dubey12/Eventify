@@ -5,14 +5,13 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView.OnItemLongClickListener
 import android.widget.CheckBox
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
-import com.example.eventmatics.SQLiteDatabase.Dataclass.Task
+import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Task
 
 class TaskDataHolderAdpater(private val context:Context,
                             private var taskList: MutableList<Task>,
@@ -67,7 +66,7 @@ class TaskDataHolderAdpater(private val context:Context,
         private val task_note: TextView = itemView.findViewById(R.id.task_note)
         private val cardView: CardView = itemView.findViewById(R.id.cardView)
         private val Data_Item_Selected: CheckBox = itemView.findViewById(R.id.Item_selected)
-        fun bind(data: Task,position: Int) {
+        fun bind(data: Task, position: Int) {
             taskNameTextView.text = data.taskName
             taskInfoTextView.text = data.taskStatus
             taskDateTextView.text = data.taskDate

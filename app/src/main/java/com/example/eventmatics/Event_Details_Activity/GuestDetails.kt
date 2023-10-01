@@ -1,6 +1,5 @@
 package com.example.eventmatics.Event_Details_Activity
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ContentResolver
 import android.content.Context
@@ -8,8 +7,6 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.ContactsContract
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -21,10 +18,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import androidx.core.widget.addTextChangedListener
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
-import com.example.eventmatics.SQLiteDatabase.Dataclass.Guest
+import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Guest
 
 class GuestDetails : AppCompatActivity() {
     private lateinit var guestNameEt: EditText
@@ -119,7 +115,7 @@ class GuestDetails : AppCompatActivity() {
         contactviewtv.setOnClickListener {
             guestinfoview()
         }
-        val selectedlist:Guest?=intent.getParcelableExtra("selected_list")
+        val selectedlist: Guest?=intent.getParcelableExtra("selected_list")
         if(selectedlist!=null){
             guestNameEt.setText(selectedlist.name)
             TotalFamilyMember.setText(selectedlist.totalFamilyMembers)
@@ -191,7 +187,7 @@ class GuestDetails : AppCompatActivity() {
                 true
             }
             R.id.Check->{
-                val selectedlist:Guest?=intent.getParcelableExtra("selected_list")
+                val selectedlist: Guest?=intent.getParcelableExtra("selected_list")
                 if(selectedlist!=null){
                     updateDatabase(selectedlist.id)
                 }else{
@@ -251,7 +247,7 @@ class GuestDetails : AppCompatActivity() {
         val guestAddress = guestAddresssEt.text.toString()
 
         if(!isButtonClicked){
-            val selectedlist:Guest?=intent.getParcelableExtra("selected_list")
+            val selectedlist: Guest?=intent.getParcelableExtra("selected_list")
             val InvitationStatus=selectedlist?.isInvitationSent
             Log.d("Guest_Invitation","The Previous Status is :$InvitationStatus")
             updateInvitationStatus=InvitationStatus.toString()
@@ -263,7 +259,7 @@ class GuestDetails : AppCompatActivity() {
         }
 
         if(!isAccceptanceButtonClick){
-            val selectedlist:Guest?=intent.getParcelableExtra("selected_list")
+            val selectedlist: Guest?=intent.getParcelableExtra("selected_list")
             val AcceptenceStatus=selectedlist?.Acceptence
             UpdatedAccceptanceStatus=AcceptenceStatus.toString()
         }else if(isAccceptanceButtonClicked){

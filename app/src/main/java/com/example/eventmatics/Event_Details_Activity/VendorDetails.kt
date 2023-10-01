@@ -26,8 +26,8 @@ import com.example.eventmatics.Adapter.CategoryAdapter
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.VendorPaymentActivityAdapter
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
-import com.example.eventmatics.SQLiteDatabase.Dataclass.Vendor
-import com.example.eventmatics.SQLiteDatabase.Dataclass.VendorPaymentinfo
+import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Vendor
+import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.VendorPaymentinfo
 import com.example.eventmatics.data_class.SpinnerItem
 import com.example.eventmatics.fragments.VendorFragment
 
@@ -83,7 +83,7 @@ class VendorDetails : AppCompatActivity(),VendorFragment.UserDataListener,
         db.updateVendorPayment(userData.id,userData)
         Log.d("VendorNew","The New Data Are:${userData?.id},${userData?.name}")
     }
-    fun showVendorFragment(payment:VendorPaymentinfo){
+    fun showVendorFragment(payment: VendorPaymentinfo){
         val FragmentManagger=supportFragmentManager
         val fragmenttran=FragmentManagger.beginTransaction()
         val Vendor=VendorFragment(this,FragmentManagger,null,payment)
@@ -127,7 +127,7 @@ class VendorDetails : AppCompatActivity(),VendorFragment.UserDataListener,
 
         categoryButton.setOnClickListener { showvendorcategory() }
         vendorViewTV.setOnClickListener { infoshow() }
-        val Selected_Item:Vendor?=intent.getParcelableExtra("Selected_Item")
+        val Selected_Item: Vendor?=intent.getParcelableExtra("Selected_Item")
         if(Selected_Item!=null){
             Balancefeild.visibility=View.VISIBLE
             paymentLayout.visibility=View.VISIBLE
@@ -214,7 +214,7 @@ class VendorDetails : AppCompatActivity(),VendorFragment.UserDataListener,
                     true
             }
                 R.id.Check->{
-                    val Selected_Item:Vendor?=intent.getParcelableExtra("Selected_Item")
+                    val Selected_Item: Vendor?=intent.getParcelableExtra("Selected_Item")
                     if(Selected_Item!=null){
                         UpdateDatabase(Selected_Item.id,paymentlist)
                     }else{
@@ -270,7 +270,7 @@ class VendorDetails : AppCompatActivity(),VendorFragment.UserDataListener,
         val vendorAddress = vendorAddressET.text.toString()
 
         val databasename=getSharedPreference(this,"databasename").toString()
-        val vendor=Vendor(0,vendorName,category,vendorNote,estimatedAmount,vendorBalance,"","Not Paid",vendorPhone,vendorEmail,vendorWebsite,vendorAddress)
+        val vendor= Vendor(0,vendorName,category,vendorNote,estimatedAmount,vendorBalance,"","Not Paid",vendorPhone,vendorEmail,vendorWebsite,vendorAddress)
         val db=LocalDatabase(this,databasename)
         db.createVendor(vendor)
         Toast.makeText(this, "Vendor Added successfully", Toast.LENGTH_SHORT).show()
@@ -296,7 +296,7 @@ class VendorDetails : AppCompatActivity(),VendorFragment.UserDataListener,
         else{
             status="Not Paid"
         }
-        val vendor=Vendor(id,vendorName,category,vendorNote,estimatedAmount,vendorBalance,"",
+        val vendor= Vendor(id,vendorName,category,vendorNote,estimatedAmount,vendorBalance,"",
             status,vendorPhone,vendorEmail,vendorWebsite,vendorAddress)
         db.updateVendor(vendor)
         for(payment in paymentList){

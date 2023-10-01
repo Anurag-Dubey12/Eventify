@@ -3,12 +3,10 @@ package com.example.eventmatics.Adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
-import com.example.eventmatics.SQLiteDatabase.Dataclass.Events
+import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Events
 
 class EventLayoutAdapter(
     var eventdata:MutableList<Events>,
@@ -49,7 +47,7 @@ class EventLayoutAdapter(
         val eventTimeTextView: TextView = item.findViewById(R.id.eventtimetv)
         val textViewOptions: TextView = item.findViewById(R.id.textViewOptions)
 //        val itemedit: ImageView = item.findViewById(R.id.itemedit)
-        fun bind(eventdata:Events){
+        fun bind(eventdata: Events){
             eventNameTextView.text=eventdata.name
             eventDateTextView.text=eventdata.Date
             eventTimeTextView.text=eventdata.time

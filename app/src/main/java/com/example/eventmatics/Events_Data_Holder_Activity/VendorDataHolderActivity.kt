@@ -6,14 +6,10 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.TextView
 import androidx.annotation.NonNull
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,13 +18,11 @@ import com.example.eventmatics.Adapter.VendorDataHolderClass
 import com.example.eventmatics.Event_Details_Activity.VendorDetails
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
-import com.example.eventmatics.SQLiteDatabase.Dataclass.Vendor
+import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Vendor
 import com.example.eventmatics.SwipeGesture.BudgetSwipeToDelete
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.BaseTransientBottomBar
-import com.google.android.material.snackbar.Snackbar
 
 class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onItemClickListener {
     private lateinit var recyclerView: RecyclerView
