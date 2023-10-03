@@ -58,6 +58,7 @@ dependencies {
     //swiperefresh and swipe decorator
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'it.xabaras.android:recyclerview-swipedecorator:1.4'
+    implementation 'com.github.nabil6391:LottieSwipeRefreshLayout:1.0.0'
 
     implementation 'com.razorpay:checkout:1.6.34'
 
@@ -71,11 +72,15 @@ dependencies {
 
     implementation 'com.intuit.sdp:sdp-android:1.1.0'
 
+
     //Drive Backup
 //    implementation('com.google.api-client:google-api-client-android:1.23.0')
 //    implementation('com.google.apis:google-api-services-drive:v3-rev136-1.25.0')
 
     implementation 'de.hdodenhof:circleimageview:3.1.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     implementation 'com.github.bumptech.glide:glide:4.15.1'

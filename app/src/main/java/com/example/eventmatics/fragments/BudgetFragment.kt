@@ -1,6 +1,5 @@
 package com.example.eventmatics.fragments
 
-
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -22,43 +21,48 @@ import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
 import java.util.Calendar
 
-class BudgetFragment(private val context: Context, private val fragmentManager: FragmentManager,
-                     private val budgetId: Long?,private val payment: Paymentinfo?) : BottomSheetDialogFragment() {
+class BudgetFragment(
+    private val context: Context,
+    private val fragmentManager: FragmentManager,
+    private val budgetId: Long?,
+    private val payment: Paymentinfo?
+) : BottomSheetDialogFragment() {
+
     private lateinit var etName: EditText
     private lateinit var etAmount: EditText
     private lateinit var buttonPending: MaterialButton
     private lateinit var buttonPaid: MaterialButton
     private lateinit var etDate: TextView
     private lateinit var buttonSubmit: MaterialButton
-    private  var isPaid:Boolean=false
-    var status:String=""
-    var updatedstatus:String=""
+    private var isPaid: Boolean = false
+    private var isButtonClicked: Boolean = false
+    private var status: String = ""
+    private var updatedStatus: String = ""
+
+    interface OnDataEnter {
+        fun onDataEnter(userdata: Paymentinfo)
+    }
+
+    interface OnDataUpdated {
+        fun onDataUpdate(userdata: Paymentinfo)
+    }
+
+    private var userDataEnter: OnDataEnter? = null
+    private var userDataUpdate: OnDataUpdated? = null
+
+    fun setUserDataListener(listener: OnDataEnter) {
+        userDataEnter = listener
+    }
+
+    fun setUserDataUpdateListener(listener: OnDataUpdated) {
+        userDataUpdate = listener
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_budget, container, false)
-
-        return view
-    }
-    interface OnDataEnter{
-        fun ondataenter(userdata: Paymentinfo)
-    }
-    interface OnDataUpdated{
-        fun ondataupdate(userdata: Paymentinfo)
-    }
-    private var userdataenter:OnDataEnter?=null
-    private var userdataupdate:OnDataUpdated?=null
-
-    fun setUserDataListner(listener:OnDataEnter){
-        userdataenter=listener
-    }
-    fun setUserDataUpdateListner(listener:OnDataEnter){
-        userdataenter=listener
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         etName = view.findViewById(R.id.editTextName)
         etAmount = view.findViewById(R.id.editTextAmount)
         buttonPending = view.findViewById(R.id.buttonPending)
@@ -66,60 +70,65 @@ class BudgetFragment(private val context: Context, private val fragmentManager: 
         etDate = view.findViewById(R.id.editTextDate)
         buttonSubmit = view.findViewById(R.id.buttonSubmit)
 
-//        clearFieldsAndButtons()
         etDate.setOnClickListener { showDatePicker() }
 
         buttonPending.setOnClickListener {
-            isPaid=false
-            setButtonBackground(buttonPending,true)
-            setButtonBackground(buttonPaid,false)
+            isPaid = false
+            isButtonClicked = true
+            setButtonBackground(buttonPending, true)
+            setButtonBackground(buttonPaid, false)
         }
-        buttonPaid.setOnClickListener {
-            isPaid=true
-            setButtonBackground(buttonPaid,true)
-            setButtonBackground(buttonPending,false)
 
+        buttonPaid.setOnClickListener {
+            isPaid = true
+            isButtonClicked = true
+            setButtonBackground(buttonPaid, true)
+            setButtonBackground(buttonPending, false)
         }
+
         buttonSubmit.setOnClickListener {
-            val Payment_data: Paymentinfo? = arguments?.getParcelable("Payment")
-            if(Payment_data!=null){
+            val paymentData: Paymentinfo? = arguments?.getParcelable("Payment")
+            if (paymentData != null) {
                 val name = etName.text.toString()
                 val amount = etAmount.text.toString().toFloat()
                 val date = etDate.text.toString()
-                if(isPaid){
-                    status="Paid"
-                }else{
-                    status="Pending"
+                updatedStatus = if (!isButtonClicked) {
+                    paymentData.status
+                } else if (isPaid) {
+                    "Paid"
+                } else {
+                    "Pending"
                 }
-                val payment= Paymentinfo(Payment_data.id,name,amount,date,status, Payment_data.budgetid)
-                userdataupdate?.ondataupdate(payment)
-                Log.d("BudgetFragment", "onViewCreated: etName = $payment")
-                Toast.makeText(context,"Data Modifies",Toast.LENGTH_SHORT).show()
+                val payment = Paymentinfo(
+                    paymentData.id,
+                    name,
+                    amount,
+                    date,
+                    updatedStatus,
+                    paymentData.budgetid
+                )
+                userDataUpdate?.onDataUpdate(payment)
+                Toast.makeText(context, "Data Modified", Toast.LENGTH_SHORT).show()
                 dismiss()
-            }else{
+            } else {
                 val name = etName.text.toString()
                 val amount = etAmount.text.toString().toFloat()
                 val date = etDate.text.toString()
-                if(isPaid){
-                    status="Paid"
-                }else{
-                    status="Pending"
+                status = if (isPaid) {
+                    "Paid"
+                } else {
+                    "Pending"
                 }
-                val payment= Paymentinfo(0,name,amount,date,status, budgetId!!)
-                userdataenter?.ondataenter(payment)
-                Toast.makeText(context,"Data Added",Toast.LENGTH_SHORT).show()
+                val payment = Paymentinfo(0, name, amount, date, status, budgetId!!)
+                userDataUpdate?.onDataUpdate(payment)
+                Toast.makeText(context, "Data Added", Toast.LENGTH_SHORT).show()
                 dismiss()
             }
-
         }
+
+        return view
     }
-    private fun clearFieldsAndButtons() {
-        etName.text.clear()
-        etAmount.text.clear()
-        etDate.text = null
-        setButtonBackground(buttonPending, false)
-        setButtonBackground(buttonPaid, false)
-    }
+
     override fun onResume() {
         super.onResume()
         val Payment_data: Paymentinfo? = arguments?.getParcelable("Payment")
@@ -140,19 +149,14 @@ class BudgetFragment(private val context: Context, private val fragmentManager: 
 //        clearFieldsAndButtons()
     }
 
-    fun getSharedPreference(context: Context, key: String): String?{
-        val sharedvalue=context.getSharedPreferences("Database", Context.MODE_PRIVATE)
-        return sharedvalue.getString(key,null)
-    }
     private fun showDatePicker() {
-        val constraint=CalendarConstraints.Builder()
+        val constraint = CalendarConstraints.Builder()
             .setValidator(DateValidatorPointForward.now())
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setTitleText("Select Date")
             .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
             .setCalendarConstraints(constraint.build())
             .build()
-
         datePicker.addOnPositiveButtonClickListener { selectedDate ->
             val selectedCalendar = Calendar.getInstance()
             selectedCalendar.timeInMillis = selectedDate
@@ -166,9 +170,8 @@ class BudgetFragment(private val context: Context, private val fragmentManager: 
         datePicker.show(fragmentManager, "datePicker")
     }
 
-    fun setButtonBackground(button: Button, isSelected: Boolean) {
+    private fun setButtonBackground(button: Button, isSelected: Boolean) {
         val backgroundColor = if (isSelected) R.color.light_blue else R.color.white
         button.backgroundTintList = ContextCompat.getColorStateList(requireContext(), backgroundColor)
     }
 }
-

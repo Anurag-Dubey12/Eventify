@@ -12,6 +12,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.example.eventmatics.MainActivity
 import com.example.eventmatics.R
+import com.example.eventmatics.SQLiteDatabase.Dataclass.AuthenticationUid
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.firebase.auth.FirebaseAuth
@@ -41,7 +42,6 @@ class signin_account : AppCompatActivity() {
         forgetpas = findViewById(R.id.forgetpass)
         firebaseauth = FirebaseAuth.getInstance()
         progressDialog = ProgressDialog(this)
-
         rProgLayout.visibility=View.GONE
         loginButton.setOnClickListener {
             val email = alreadyEmail.text.toString()
@@ -59,8 +59,12 @@ class signin_account : AppCompatActivity() {
                 progressDialog.setCanceledOnTouchOutside(false)
                 progressDialog.show()
 
-                firebaseauth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
-                    if (it.isSuccessful) {
+                firebaseauth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener {task->
+                    if (task.isSuccessful) {
+                       val firebaseuser=firebaseauth.currentUser
+                        val uid=firebaseuser?.uid
+                        AuthenticationUid.saveUserUid(this, uid.toString())
                         rProgLayout.visibility = View.VISIBLE
                         Intent(this, MainActivity::class.java).also { intent ->
                             startActivity(intent)
@@ -87,7 +91,6 @@ class signin_account : AppCompatActivity() {
 
         checksignin()
     }
-
     private fun checksignin() {
         val loggoogleaccount = GoogleSignIn.getLastSignedInAccount(this)
         if (loggoogleaccount != null) {

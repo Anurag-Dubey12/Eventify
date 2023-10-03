@@ -18,7 +18,7 @@
         <LinearLayout
             android:id="@+id/payment_info"
             android:layout_width="200sp"
-            android:layout_toRightOf="@id/Radiopaid"
+            android:layout_toRightOf="@id/EditPayment"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
@@ -73,14 +73,12 @@
                 />
         </LinearLayout>
 
-        <com.google.android.material.checkbox.MaterialCheckBox
-            android:id="@+id/Radiopaid"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ImageView
+            android:id="@+id/EditPayment"
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
             android:gravity="center_vertical"
-            style="Widget.MaterialComponents.CompoundButton.RadioButton"
-            android:tooltipText="Payment Paid"
-            android:checked="false"
+            android:src="@drawable/edit"
             />
     </RelativeLayout>
 

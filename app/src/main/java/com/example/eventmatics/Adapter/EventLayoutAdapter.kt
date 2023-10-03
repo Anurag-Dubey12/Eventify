@@ -9,7 +9,7 @@ import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Events
 
 class EventLayoutAdapter(
-    var eventdata:MutableList<Events>,
+    private var eventdata:MutableList<Events>,
     private val onItemClickListener: (position: Int) -> Unit):RecyclerView.Adapter<EventLayoutAdapter.EventViewHolder>() {
 
 
@@ -42,9 +42,9 @@ class EventLayoutAdapter(
       return eventdata.size
     }
     inner class EventViewHolder(item: View):RecyclerView.ViewHolder(item){
-        val eventNameTextView: TextView = item.findViewById(R.id.eventnametv)
-        val eventDateTextView: TextView = item.findViewById(R.id.eventdatetv)
-        val eventTimeTextView: TextView = item.findViewById(R.id.eventtimetv)
+        private val eventNameTextView: TextView = item.findViewById(R.id.eventnametv)
+        private val eventDateTextView: TextView = item.findViewById(R.id.eventdatetv)
+        private val eventTimeTextView: TextView = item.findViewById(R.id.eventtimetv)
         val textViewOptions: TextView = item.findViewById(R.id.textViewOptions)
 //        val itemedit: ImageView = item.findViewById(R.id.itemedit)
         fun bind(eventdata: Events){

@@ -18,8 +18,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.Adapter.CategoryAdapter
@@ -30,11 +32,17 @@ import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Vendor
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.VendorPaymentinfo
 import com.example.eventmatics.data_class.SpinnerItem
 import com.example.eventmatics.fragments.VendorFragment
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.DateValidatorPointForward
+import com.google.android.material.datepicker.MaterialDatePicker
+import java.util.Calendar
 
-class VendorDetails : AppCompatActivity(),VendorFragment.UserDataListener,
-    VendorPaymentActivityAdapter.OnItemClickListener,VendorFragment.UserDataUpdateListener{
+class VendorDetails : AppCompatActivity(),
+    VendorPaymentActivityAdapter.OnItemClickListener{
 
-//    val fragmentmanager:FragmentManager=supportFragmentManager
+    val fragmentManager = supportFragmentManager
     private lateinit var vendorNameET: EditText
     private lateinit var categoryButton: Button
     private lateinit var vendorNoteET: EditText
@@ -59,6 +67,19 @@ class VendorDetails : AppCompatActivity(),VendorFragment.UserDataListener,
     var paymentset:MutableSet<VendorPaymentinfo> = mutableSetOf()
     lateinit var adapter: VendorPaymentActivityAdapter
     lateinit var vendorFragment:VendorFragment
+
+    //Payment Id
+    private lateinit var editTextName: EditText
+    private lateinit var editTextAmount: EditText
+    private lateinit var vendorButtonPending: AppCompatButton
+    private lateinit var vendorButtonPaid: AppCompatButton
+    private lateinit var vendorexpireDate: TextView
+    private lateinit var buttonSubmit: MaterialButton
+    private var isPaid:Boolean=false
+    private var isButtonClicked:Boolean=false
+    var paymentStatus :String=" "
+    var updatepaymentStatus :String=" "
+
     val spinnerItems = listOf(
         SpinnerItem("Accessories"),
         SpinnerItem( "Accommodation"),
@@ -74,24 +95,68 @@ class VendorDetails : AppCompatActivity(),VendorFragment.UserDataListener,
         SpinnerItem( "Transportation")
     )
 
-    override fun onUserDataEntered(userData: VendorPaymentinfo) {
-        paymentlist.add(userData)
-        adapter.notifyDataSetChanged()
-    }
-    override fun onuserupdate(userData: VendorPaymentinfo) {
-        val db = LocalDatabase(this, getSharedPreference(this, "databasename").toString())
-        db.updateVendorPayment(userData.id,userData)
-        Log.d("VendorNew","The New Data Are:${userData?.id},${userData?.name}")
-    }
     fun showVendorFragment(payment: VendorPaymentinfo){
-        val FragmentManagger=supportFragmentManager
-        val fragmenttran=FragmentManagger.beginTransaction()
-        val Vendor=VendorFragment(this,FragmentManagger,null,payment)
-        Vendor.arguments=Bundle().apply {
-            putParcelable("VendorPayment",payment)
-        }
-        Vendor.show(fragmenttran,"VendorFragmenttag")
+       updatepaymentsheet(payment)
     }
+
+    private fun updatepaymentsheet(payment: VendorPaymentinfo) {
+        val dialogview= BottomSheetDialog(this)
+        dialogview.setContentView(R.layout.fragment_vendor)
+        dialogview.show()
+        editTextName = dialogview.findViewById(R.id.editTextName)!!
+        editTextAmount = dialogview.findViewById(R.id.editTextAmount)!!
+        vendorButtonPending = dialogview.findViewById(R.id.vendorbuttonPending)!!
+        vendorButtonPaid = dialogview.findViewById(R.id.vendorbuttonPaid)!!
+        vendorexpireDate = dialogview.findViewById(R.id.editTextDate)!!
+        buttonSubmit = dialogview.findViewById(R.id.buttonSubmit)!!
+
+        if(payment!=null){
+            editTextName.setText(payment.name.toString())
+            editTextAmount.setText(payment.amount.toString())
+            vendorexpireDate.text = payment.date
+
+            if (payment?.status == "Paid") {
+                setButtonBackground(vendorButtonPending,true)
+                setButtonBackground(vendorButtonPaid,false)
+            } else {
+                setButtonBackground(vendorButtonPending,false)
+                setButtonBackground(vendorButtonPaid,true)
+            }
+        }
+        vendorButtonPending.setOnClickListener {
+            isPaid=false
+            isButtonClicked=true
+            setButtonBackground(vendorButtonPending,true)
+            setButtonBackground(vendorButtonPaid,false)
+        }
+
+        vendorButtonPaid.setOnClickListener {
+            isButtonClicked=true
+            isPaid=true
+            setButtonBackground(vendorButtonPaid,true)
+            setButtonBackground(vendorButtonPending,false)
+        }
+        vendorexpireDate.setOnClickListener {
+            showDatePicker()
+        }
+        buttonSubmit.setOnClickListener {
+            val Selected_Item: Vendor?=intent.getParcelableExtra("Selected_Item")
+            val name=editTextName.text.toString()
+            val amount=editTextAmount.text.toString().toFloat()
+            val date=vendorexpireDate.text.toString()
+            if(isPaid){
+                paymentStatus="Paid"
+            }
+            else{
+                paymentStatus="Pending"
+            }
+            val payment= VendorPaymentinfo(0,name,amount,date,paymentStatus, Selected_Item?.id!!)
+            paymentlist.add(payment)
+            Toast.makeText(this,"Data Added",Toast.LENGTH_SHORT).show()
+            dialogview.dismiss()
+        }
+    }
+
     override fun onitemclick(paymentList: VendorPaymentinfo) {
        showVendorFragment(paymentList)
 
@@ -156,16 +221,89 @@ class VendorDetails : AppCompatActivity(),VendorFragment.UserDataListener,
             paymentlist.addAll(Payment)
             adapter.notifyDataSetChanged()
         }
-        vendorFragment= VendorFragment(this,supportFragmentManager,Selected_Item?.id,null)
-        vendorFragment.setUserDataListener(this)
         adapter= VendorPaymentActivityAdapter(this,paymentlist,this)
 
         PaymentAdd.setOnClickListener {
-            vendorFragment.show(supportFragmentManager,"VendorFragmentManager")
+            showpaymentsheet()
         }
 
     }
+private fun showpaymentsheet(){
+    val dialogview= BottomSheetDialog(this)
+    dialogview.setContentView(R.layout.fragment_vendor)
+    dialogview.show()
+    editTextName = dialogview.findViewById(R.id.editTextName)!!
+    editTextAmount = dialogview.findViewById(R.id.editTextAmount)!!
+    vendorButtonPending = dialogview.findViewById(R.id.vendorbuttonPending)!!
+    vendorButtonPaid = dialogview.findViewById(R.id.vendorbuttonPaid)!!
+    vendorexpireDate = dialogview.findViewById(R.id.editTextDate)!!
+    buttonSubmit = dialogview.findViewById(R.id.buttonSubmit)!!
+    vendorButtonPending.setOnClickListener {
+        isPaid=false
+        isButtonClicked=true
+        setButtonBackground(vendorButtonPending,true)
+        setButtonBackground(vendorButtonPaid,false)
+    }
 
+    vendorButtonPaid.setOnClickListener {
+        isButtonClicked=true
+        isPaid=true
+        setButtonBackground(vendorButtonPaid,true)
+        setButtonBackground(vendorButtonPending,false)
+    }
+    vendorexpireDate.setOnClickListener {
+        showDatePicker()
+    }
+    buttonSubmit.setOnClickListener {
+        val Selected_Item: Vendor?=intent.getParcelableExtra("Selected_Item")
+            val name=editTextName.text.toString()
+            val amount=editTextAmount.text.toString().toFloat()
+            val date=vendorexpireDate.text.toString()
+            if(isPaid){
+                paymentStatus="Paid"
+            }
+            else{
+                paymentStatus="Pending"
+            }
+            val payment= VendorPaymentinfo(0,name,amount,date,paymentStatus, Selected_Item?.id!!)
+            paymentlist.add(payment)
+            Toast.makeText(this,"Data Added",Toast.LENGTH_SHORT).show()
+            dialogview.dismiss()
+        }
+
+
+}
+    private fun showDatePicker() {
+        val constraint= CalendarConstraints.Builder()
+            .setValidator(DateValidatorPointForward.now())
+        val calendar = Calendar.getInstance()
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val month = calendar.get(Calendar.MONTH)
+        val year = calendar.get(Calendar.YEAR)
+
+        val datePicker = MaterialDatePicker.Builder.datePicker()
+            .setTitleText("Select Date")
+            .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+            .setCalendarConstraints(constraint.build())
+            .build()
+
+        datePicker.addOnPositiveButtonClickListener { selectedDate ->
+            val selectedCalendar = Calendar.getInstance()
+            selectedCalendar.timeInMillis = selectedDate
+            val selectedDay = selectedCalendar.get(Calendar.DAY_OF_MONTH)
+            val selectedMonth = selectedCalendar.get(Calendar.MONTH)
+            val selectedYear = selectedCalendar.get(Calendar.YEAR)
+            val formattedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
+            vendorexpireDate.setText(formattedDate)
+        }
+
+        datePicker.show(fragmentManager, "datePicker")
+    }
+
+    fun setButtonBackground(button:Button,isSelected:Boolean){
+        var backgroundcolor=if(isSelected) R.color.light_blue else R.color.white
+        button.backgroundTintList= ContextCompat.getColorStateList(this,backgroundcolor)
+    }
     private fun infoshow() {
         val isVisible = vendorPhoneTV.visibility == View.VISIBLE
         val visibility = if (isVisible) View.GONE else View.VISIBLE

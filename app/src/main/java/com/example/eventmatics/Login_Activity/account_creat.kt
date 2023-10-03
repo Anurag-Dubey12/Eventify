@@ -95,12 +95,7 @@ class account_creat : AppCompatActivity() {
             }
         }
     }
-    fun saveUidToSharedPreferences(uid:String){
-        val sp= getSharedPreferences("UserUid", MODE_PRIVATE)
-        val editor=sp.edit()
-        editor.putString("useruid",uid)
-        editor.apply()
-    }
+
 
     private fun googleSignIn() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

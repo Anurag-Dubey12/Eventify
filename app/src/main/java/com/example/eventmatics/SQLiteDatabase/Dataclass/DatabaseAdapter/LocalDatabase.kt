@@ -937,6 +937,25 @@ fun getTotalUnPaid():Double{
         db.insert(TABLE_Payment, null, values)
         db.close()
     }
+    fun updatePayment(paymentId: Long, payment: Paymentinfo): Int {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put(Payment_Name, payment.name)
+            put(Payment_Amount, payment.amount)
+            put(Payment_Date, payment.date)
+            put(Payment_Status, payment.status)
+            put(Payment_BudgetID, payment.budgetid)
+        }
+
+        val selection = "$Payment_ID = ?"
+        val selectionArgs = arrayOf(paymentId.toString())
+
+        val rowsAffected = db.update(TABLE_Payment, values, selection, selectionArgs)
+        db.close()
+        return rowsAffected
+    }
+
+
     fun createVendorPayment(payment: VendorPaymentinfo) {
         val db = writableDatabase
         val values = ContentValues().apply {
@@ -974,6 +993,8 @@ fun getTotalUnPaid():Double{
 
         return paymentList
     }
+
+
 
     fun getTotalPaymentAmount():Int{
         var total =0
@@ -1034,6 +1055,26 @@ fun getTotalUnPaid():Double{
         return paymentlist
     }
 
+        fun updatePaymentsForBudget(budgetId: Long, updatedPayments: List<Paymentinfo>) {
+            val db = writableDatabase
+
+            // First, delete all existing payments for the given budget
+            val deleteQuery = "DELETE FROM $TABLE_Payment WHERE $Payment_BudgetID = ?"
+            db.execSQL(deleteQuery, arrayOf(budgetId))
+
+            // Then, insert the updated payments
+            for (payment in updatedPayments) {
+                val values = ContentValues().apply {
+                    put(Payment_Name, payment.name)
+                    put(Payment_Amount, payment.amount)
+                    put(Payment_Date, payment.date)
+                    put(Payment_Status, payment.status)
+                    put(Payment_BudgetID, budgetId)
+                }
+
+                db.insert(TABLE_Payment, null, values)
+            }
+        }
 
     fun deletePaymentsForBudget(budgetId: Int) {
         val db = writableDatabase
@@ -1079,7 +1120,7 @@ fun getTotalUnPaid():Double{
             put(Payment_Status, newPayment.status)
             put(Payment_BudgetID, newPayment.budgetid)
         }
-        val rowsAffected = db.update(TABLE_Payment, values, "$Payment_ID = ?", arrayOf(paymentId.toString()))
+        val rowsAffected = db.updateWithOnConflict(TABLE_Payment, values, "$Payment_ID = ?", arrayOf(paymentId.toString()),SQLiteDatabase.CONFLICT_REPLACE)
 
         db.close()
 

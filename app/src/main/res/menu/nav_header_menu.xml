@@ -13,17 +13,12 @@
         android:icon="@drawable/setting"
         android:title="@string/settings" />
     <item
-        android:id="@+id/nav_pdf"
-        android:icon="@drawable/pdfreport"
-        android:title="@string/pdf_report" />
-    <item
         android:id="@+id/nav_manage_event"
         android:icon="@drawable/event"
         android:title="Manage Event" />
             <item
                 android:id="@+id/widget"
                 android:icon="@drawable/widget"
-
                 android:title="Widget" />
     </menu>
     </item>
@@ -33,11 +28,6 @@
     <item android:title="@string/user_information">
         <menu>
 
-            <item
-                android:id="@+id/nav_profile"
-                android:icon="@drawable/profile"
-                android:title="@string/profile"
-                />
             <item
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/logout"

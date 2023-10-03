@@ -183,6 +183,12 @@ class TaskDetails : AppCompatActivity(){
         val TaskNoteET=taskNote.text.toString()
         val taskdate=taskdate.text.toString()
 
+        if(TaskStatus){
+            taskStatus="Completed"
+        }
+        else{
+            taskStatus="Pending"
+        }
         Log.d("TaskStaus:",taskStatus)
         val Task= Task(0,taskname,category,TaskNoteET,taskStatus,taskdate)
         Db.createTask(Task)

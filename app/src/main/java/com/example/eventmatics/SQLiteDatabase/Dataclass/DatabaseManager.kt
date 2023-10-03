@@ -24,6 +24,7 @@ object DatabaseManager {
         editor.apply()
     }
 
+
     fun getDatabase(context: Context): LocalDatabase {
         // Check if the database is null or if the database name has changed
         val currentDatabaseName = getSharedPreference(context, "databasename").toString()

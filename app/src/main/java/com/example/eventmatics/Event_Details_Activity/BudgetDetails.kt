@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -26,19 +27,26 @@ import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Paymentinfo
 import com.example.eventmatics.data_class.SpinnerItem
 import com.example.eventmatics.fragments.BudgetFragment
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.DateValidatorPointForward
+import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import java.util.Calendar
 
-class BudgetDetails : AppCompatActivity(),BudgetFragment.OnDataEnter,
-    PaymentActivityAdapter.OnItemClickListener, BudgetFragment.OnDataUpdated{
+class BudgetDetails : AppCompatActivity(),
+    PaymentActivityAdapter.OnItemClickListener{
     lateinit var nameEditText:EditText
     lateinit var  balanceET: TextView
     lateinit var  totalPayment: TextView
-    lateinit var  PaidET: TextView
     lateinit var  PaymentRecycler: RecyclerView
     lateinit var  Paymentadd: ImageView
     lateinit var  addapyment: LinearLayout
     lateinit var  warning_Message: LinearLayout
     lateinit var  adapter: PaymentActivityAdapter
     val paymentlist: MutableList<Paymentinfo> = mutableListOf()
+    val updatedpaymentlist: MutableList<Paymentinfo> = mutableListOf()
     val paymentSet: MutableSet<Paymentinfo> = mutableSetOf()
 
     lateinit var EstimatedEt: EditText
@@ -48,6 +56,18 @@ class BudgetDetails : AppCompatActivity(),BudgetFragment.OnDataEnter,
     lateinit var PaymentBalance: LinearLayout
     lateinit var categoryselection: TextView
 
+
+    //Payment ID
+    private lateinit var etName: EditText
+    private lateinit var etAmount: EditText
+    private lateinit var buttonPending: MaterialButton
+    private lateinit var buttonPaid: MaterialButton
+    private lateinit var etDate: TextView
+    private lateinit var buttonSubmit: MaterialButton
+    private var isPaid: Boolean = false
+    private var isButtonClicked: Boolean = false
+    private var status: String = ""
+    private var updatedStatus: String = ""
     val spinnerItems = listOf(
         SpinnerItem("Accessories"),
         SpinnerItem( "Accommodation"),
@@ -62,29 +82,14 @@ class BudgetDetails : AppCompatActivity(),BudgetFragment.OnDataEnter,
         SpinnerItem( "Reception"),
         SpinnerItem( "Transportation")
     )
-    override fun ondataenter(userdata: Paymentinfo) {
-        if (!paymentlist.contains(userdata)) {
-            paymentlist.add(userdata)
-        }
-    }
-    override fun ondataupdate(userdata: Paymentinfo) {
-        val db = LocalDatabase(this, getSharedPreference(this, "databasename").toString())
-        db.updatePayment(userdata.id,userdata)
-        Log.d("Payment_Info","Details are:${userdata?.id},${userdata?.name}")
-    }
+
     private fun showBudgetFragment(payment: Paymentinfo?) {
-        val fragmentManager = supportFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        val fragment = BudgetFragment(this, fragmentManager, null,payment)
-        fragment.arguments = Bundle().apply {
-            putParcelable("Payment", payment)
-//            Log.d("Payment_Info","Details are:${payment?.id},${payment?.name}")
-        }
-        fragment.show(fragmentTransaction, "budgetFragmentTag")
+        updatepaymentsheet(payment)
     }
 
     override fun onItemClick(payment: Paymentinfo) {
         showBudgetFragment(payment)
+        Log.d("PaymentDetails","The Detials Are:$payment")
     }
 
 
@@ -123,8 +128,7 @@ class BudgetDetails : AppCompatActivity(),BudgetFragment.OnDataEnter,
             EstimatedEt.setText(selected_item.estimatedAmount)
 
             val id = selected_item.id.toInt()
-            val databasename = getSharedPreference(this@BudgetDetails, "databasename").toString()
-            val databasehelper = LocalDatabase(this@BudgetDetails, databasename)
+            val databasehelper = DatabaseManager.getDatabase(this)
             val paymentData = databasehelper.getPaymentsForBudget(id)
             for (payment in paymentData) {
                 Log.d("PaymentData", "ID: ${payment.id}, Name: ${payment.name}, Amount: ${payment.amount}")
@@ -148,18 +152,132 @@ class BudgetDetails : AppCompatActivity(),BudgetFragment.OnDataEnter,
             }
         }
 
-         budgetFragment= BudgetFragment(this, supportFragmentManager, selected_item?.id,null)
-        budgetFragment.setUserDataListner(this)
-        budgetFragment.setUserDataUpdateListner(this)
-//        adapter = PaymentActivityAdapter(this@BudgetDetails, paymentlist)
-
         Paymentadd.setOnClickListener {
             showpaymentsheet()
         }
 
     }
+private fun updatepaymentsheet(payment: Paymentinfo?){
+    val dialogview=BottomSheetDialog(this)
+    dialogview.setContentView(R.layout.fragment_budget)
+    dialogview.show()
+    etName = dialogview.findViewById(R.id.editTextName)!!
+    etAmount = dialogview.findViewById(R.id.editTextAmount)!!
+    buttonPending = dialogview.findViewById(R.id.buttonPending)!!
+    buttonPaid = dialogview.findViewById(R.id.buttonPaid)!!
+    etDate = dialogview.findViewById(R.id.editTextDate)!!
+    buttonSubmit = dialogview.findViewById(R.id.buttonSubmit)!!
+
+    if (payment != null) {
+        etName.setText(payment.name.toString())
+        etAmount.setText(payment.amount.toString())
+        etDate.text = payment.date
+        if (payment?.status == "Paid") {
+            setButtonBackground(buttonPaid, true)
+            setButtonBackground(buttonPending, false)
+        } else {
+            setButtonBackground(buttonPaid, false)
+            setButtonBackground(buttonPending, true)
+        }
+    }
+
+    buttonPending.setOnClickListener {
+        isPaid = false
+        isButtonClicked = true
+        setButtonBackground(buttonPending, true)
+        setButtonBackground(buttonPaid, false)
+    }
+
+    buttonPaid.setOnClickListener {
+        isPaid = true
+        isButtonClicked = true
+        setButtonBackground(buttonPaid, true)
+        setButtonBackground(buttonPending, false)
+    }
+
+    buttonSubmit.setOnClickListener {
+        val selected_item: Budget?=intent.getParcelableExtra("selected_item")
+        val name = etName.text.toString()
+        val amount = etAmount.text.toString().toFloat()
+        val date = etDate.text.toString()
+        status = if (isPaid) {
+            "Paid"
+        } else {
+            "Pending"
+        }
+        val payment = Paymentinfo(payment!!.id, name, amount, date, status,selected_item!!.id)
+        paymentlist.add(payment)
+        adapter.notifyDataSetChanged()
+        dialogview.dismiss()
+    }
+    etDate.setOnClickListener { showDatePicker() }
+}
     private fun showpaymentsheet() {
-        budgetFragment.show(supportFragmentManager, "budgetFragmentTag")
+        val dialogview=BottomSheetDialog(this)
+        dialogview.setContentView(R.layout.fragment_budget)
+        dialogview.show()
+        etName = dialogview.findViewById(R.id.editTextName)!!
+        etAmount = dialogview.findViewById(R.id.editTextAmount)!!
+        buttonPending = dialogview.findViewById(R.id.buttonPending)!!
+        buttonPaid = dialogview.findViewById(R.id.buttonPaid)!!
+        etDate = dialogview.findViewById(R.id.editTextDate)!!
+        buttonSubmit = dialogview.findViewById(R.id.buttonSubmit)!!
+        buttonPending.setOnClickListener {
+            isPaid = false
+            isButtonClicked = true
+            setButtonBackground(buttonPending, true)
+            setButtonBackground(buttonPaid, false)
+        }
+
+        buttonPaid.setOnClickListener {
+            isPaid = true
+            isButtonClicked = true
+            setButtonBackground(buttonPaid, true)
+            setButtonBackground(buttonPending, false)
+        }
+
+        buttonSubmit.setOnClickListener {
+            val selected_item: Budget?=intent.getParcelableExtra("selected_item")
+            val name = etName.text.toString()
+            val amount = etAmount.text.toString().toFloat()
+            val date = etDate.text.toString()
+            status = if (isPaid) {
+                "Paid"
+            } else {
+                "Pending"
+            }
+            val payment = Paymentinfo(0, name, amount, date, status,selected_item!!.id)
+            paymentlist.add(payment)
+            adapter.notifyDataSetChanged()
+            dialogview.dismiss()
+
+        }
+        etDate.setOnClickListener { showDatePicker() }
+    }
+
+    private fun showDatePicker() {
+        val constraint = CalendarConstraints.Builder()
+            .setValidator(DateValidatorPointForward.now())
+        val datePicker = MaterialDatePicker.Builder.datePicker()
+            .setTitleText("Select Date")
+            .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+            .setCalendarConstraints(constraint.build())
+            .build()
+        datePicker.addOnPositiveButtonClickListener { selectedDate ->
+            val selectedCalendar = Calendar.getInstance()
+            selectedCalendar.timeInMillis = selectedDate
+            val selectedDay = selectedCalendar.get(Calendar.DAY_OF_MONTH)
+            val selectedMonth = selectedCalendar.get(Calendar.MONTH)
+            val selectedYear = selectedCalendar.get(Calendar.YEAR)
+            val formattedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
+            etDate.setText(formattedDate)
+        }
+        datePicker.show(fragmentManager, "datePicker")
+    }
+
+    private fun setButtonBackground(button: Button, isSelected: Boolean) {
+        val backgroundColor = if (isSelected) R.color.light_blue else R.color.white
+        button.backgroundTintList = ContextCompat.getColorStateList(this, backgroundColor)
     }
 
     private fun showCategoryPopup() {
@@ -216,9 +334,7 @@ class BudgetDetails : AppCompatActivity(),BudgetFragment.OnDataEnter,
         }
 
         val status: String
-//        val databasename = getSharedPreference(this, "databasename").toString()
         val db= DatabaseManager.getDatabase(this)
-//        val db = LocalDatabase(this, databasename)
         val isBudgetPaid = db.isBudgetPaid(id)
         if (isBudgetPaid) {
             status = "Paid"
@@ -231,7 +347,13 @@ class BudgetDetails : AppCompatActivity(),BudgetFragment.OnDataEnter,
 
         for (payment in paymentList) {
             if (payment.budgetid == id) {
+                val existinguser=db.getPaymentsForBudget(payment.id)
+                if(existinguser!=null){
+                    db.updatePayment(payment.id,payment)
+                }else{
                 db.createPayment(payment)
+
+                }
             }
         }
 
@@ -255,15 +377,12 @@ class BudgetDetails : AppCompatActivity(),BudgetFragment.OnDataEnter,
             return
         }
         val id=0
-        val databasename=getSharedPreference(this,"databasename").toString()
-        val db=LocalDatabase(this,databasename)
+        val db= DatabaseManager.getDatabase(this)
         val budget= Budget(id.toLong(),name,category,note,Totalamount,balance,"","Not Paid")
         db.createBudget(budget)
         Toast.makeText(this, "Budget Added successfully", Toast.LENGTH_SHORT).show()
         finish()
     }
-
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.budget_menu,menu)
         return super.onCreateOptionsMenu(menu)

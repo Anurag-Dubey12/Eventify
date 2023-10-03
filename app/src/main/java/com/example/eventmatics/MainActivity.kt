@@ -1,11 +1,10 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.eventmatics
 
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.annotation.SuppressLint
-import android.app.AlarmManager
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.BroadcastReceiver
@@ -51,8 +50,6 @@ import com.example.eventmatics.Events_Data_Holder_Activity.VendorDataHolderActiv
 import com.example.eventmatics.Login_Activity.Login_SignUp_Option
 import com.example.eventmatics.Login_Activity.signin_account
 import com.example.eventmatics.NavigationDrawer.EventList
-import com.example.eventmatics.NavigationDrawer.PDF_Report
-import com.example.eventmatics.NavigationDrawer.ProfileActivity
 import com.example.eventmatics.NavigationDrawer.SettingActivity
 import com.example.eventmatics.SQLiteDatabase.Dataclass.AuthenticationUid
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
@@ -85,35 +82,34 @@ import java.util.Calendar
 import java.util.Locale
 
 class MainActivity : AppCompatActivity(){
-    lateinit var drawerLayout: DrawerLayout
-    lateinit var navView: NavigationView
-    lateinit var toogle:ActionBarDrawerToggle
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var navView: NavigationView
     private var countDownTimer:CountDownTimer?=null
     private lateinit var eventRecyclerView: RecyclerView
     private lateinit var taskImageButton: ImageButton
     private lateinit var budgetImageButton: ImageButton
-    private lateinit var Imageadd: CircleImageView
+    private lateinit var imageadd: CircleImageView
     private lateinit var guestImageButton: ImageButton
     private lateinit var vendorImageButton: ImageButton
     private lateinit var budgetInfoCardView: CardView
     private lateinit var budgetShowTextView: TextView
-    private lateinit var VendorTotalAmount: TextView
-    private lateinit var TaskCompleted: TextView
-    private lateinit var VendorPendingAmount: TextView
-    private lateinit var VendorPaidAmount: TextView
-    private lateinit var TaskPending: TextView
-    private lateinit var Nameadd: TextView
-    private lateinit var TotalTask: TextView
-    private lateinit var TotalInvi: TextView
-    private lateinit var TotalInvitationSent: TextView
-    private lateinit var TotalInvitationNotSent: TextView
-    private lateinit var Eventshow: MaterialButton
-    private lateinit var BudgetSummary: TextView
-    private lateinit var GuestSummary: TextView
-    private lateinit var TaskSummary: TextView
-    private lateinit var VendorSummary: TextView
+    private lateinit var vendorTotalAmount: TextView
+    private lateinit var taskCompleted: TextView
+    private lateinit var vendorPendingAmount: TextView
+    private lateinit var vendorPaidAmount: TextView
+    private lateinit var taskPending: TextView
+    private lateinit var nameadd: TextView
+    private lateinit var totalTask: TextView
+    private lateinit var totalInvi: TextView
+    private lateinit var totalInvitationSent: TextView
+    private lateinit var totalInvitationNotSent: TextView
+    private lateinit var eventshow: MaterialButton
+    private lateinit var budgetSummary: TextView
+    private lateinit var guestSummary: TextView
+    private lateinit var taskSummary: TextView
+    private lateinit var vendorSummary: TextView
     private lateinit var eventname: TextView
-    private lateinit var EventTimerDisplay: TextView
+    private lateinit var eventTimerDisplay: TextView
     private lateinit var eventshowhide: LinearLayout
     private lateinit var eventActivity: LinearLayout
     private lateinit var pendingAmountShowTextView: TextView
@@ -123,14 +119,14 @@ class MainActivity : AppCompatActivity(){
     private  var eventList:MutableList<Events> = mutableListOf()
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var dataAddedReceiver: BroadcastReceiver
-    private lateinit var EditProfile: MaterialButton
-    private lateinit var Delete_Event: MaterialButton
-    private lateinit var GeneratePdf: MaterialButton
-    private lateinit var SaveButton: MaterialButton
-    private lateinit var ProfileDialog: BottomSheetDialog
-    private lateinit var ImageAddOption: BottomSheetDialog
-    private val PERMISSION_CODE=101
-    private val GALLERY_REQ_CODE = 201
+    private lateinit var editprofile: MaterialButton
+    private lateinit var deleteEvent: MaterialButton
+    private lateinit var generatePdf: MaterialButton
+    private lateinit var saveButton: MaterialButton
+    private lateinit var profileDialog: BottomSheetDialog
+    private lateinit var imageAddOption: BottomSheetDialog
+    private val permissioncode=101
+    private val galley_req_code = 201
     private var selectedImageUri:Uri?=null
 
     @SuppressLint("MissingInflatedId")
@@ -143,31 +139,31 @@ class MainActivity : AppCompatActivity(){
         navView= findViewById(R.id.navView)
         eventRecyclerView = findViewById(R.id.Eventrec)
         taskImageButton = findViewById(R.id.task)
-        TaskPending = findViewById(R.id.TaskPending)
-        VendorPendingAmount = findViewById(R.id.VendorPendingAmount)
+        taskPending = findViewById(R.id.TaskPending)
+        vendorPendingAmount = findViewById(R.id.VendorPendingAmount)
         eventname = findViewById(R.id.eventname)
-        VendorPaidAmount = findViewById(R.id.VendorPaidAmount)
-        TotalInvi = findViewById(R.id.TotalInvi)
-        BudgetSummary = findViewById(R.id.BudgetSummary)
-        TaskSummary = findViewById(R.id.TaskSummaryText)
-        VendorSummary = findViewById(R.id.VendorSummary)
-        GuestSummary = findViewById(R.id.GuestSummaryText)
-        TotalInvitationSent = findViewById(R.id.TotalInviSent)
-        TotalInvitationNotSent = findViewById(R.id.TotalInvinotSent)
+        vendorPaidAmount = findViewById(R.id.VendorPaidAmount)
+        totalInvi = findViewById(R.id.TotalInvi)
+        budgetSummary = findViewById(R.id.BudgetSummary)
+        taskSummary = findViewById(R.id.TaskSummaryText)
+        vendorSummary = findViewById(R.id.VendorSummary)
+        guestSummary = findViewById(R.id.GuestSummaryText)
+        totalInvitationSent = findViewById(R.id.TotalInviSent)
+        totalInvitationNotSent = findViewById(R.id.TotalInvinotSent)
         eventActivity = findViewById(R.id.eventActivity)
-        Delete_Event = findViewById(R.id.Delete_Event)
-        VendorTotalAmount = findViewById(R.id.VendorTotalAmount)
-        TaskCompleted = findViewById(R.id.TaskCompleted)
-        GeneratePdf = findViewById(R.id.GeneratePdf)
-        TotalTask = findViewById(R.id.TotalTask)
+        deleteEvent = findViewById(R.id.Delete_Event)
+        vendorTotalAmount = findViewById(R.id.VendorTotalAmount)
+        taskCompleted = findViewById(R.id.TaskCompleted)
+        generatePdf = findViewById(R.id.GeneratePdf)
+        totalTask = findViewById(R.id.TotalTask)
         swipeRefreshLayout= findViewById(R.id.swipeRefreshLayout)
-        EventTimerDisplay = findViewById(R.id.EventTimerDisplay)
+        eventTimerDisplay = findViewById(R.id.EventTimerDisplay)
         eventaddbut = findViewById(R.id.eventaddbut)
         budgetImageButton = findViewById(R.id.budget)
         eventshowhide = findViewById(R.id.eventshowhide)
         guestImageButton = findViewById(R.id.Guest)
         vendorImageButton = findViewById(R.id.Vendor)
-        Eventshow = findViewById(R.id.eventnameshow)
+        eventshow = findViewById(R.id.eventnameshow)
         budgetInfoCardView = findViewById(R.id.budget_info)
         budgetShowTextView = findViewById(R.id.Budgetshow)
         pendingAmountShowTextView = findViewById(R.id.PendingAmountshow)
@@ -188,41 +184,40 @@ class MainActivity : AppCompatActivity(){
         val headerView = navView.getHeaderView(0)
         val userprofile=headerView.findViewById<CircleImageView>(R.id.profilepic)
         val username=headerView.findViewById<TextView>(R.id.UserNameView)
-        EditProfile=headerView.findViewById(R.id.editProfileButton)
-        EditProfile.setOnClickListener {
-            Editprofile()
+        editprofile=headerView.findViewById(R.id.editProfileButton)
+        editprofile.setOnClickListener {
+            editprofiledialog()
         }
-        val Userimage=db.getUserProfilebyID(1)
-        val userimage=Userimage?.Image
-        if(Userimage!=null){
+        val userImagedb=db.getUserProfilebyID(1)
+        val userimage=userImagedb?.Image
+        if(userimage!=null){
             val image=BitmapFactory.decodeByteArray(userimage,0, userimage!!.size)
             userprofile.setImageBitmap(image)
         }
-        val UserName=Userimage?.name
-        if(UserName!=null){
-            username.text= UserName.toString()
+        val userName=userImagedb?.name
+        if(userName!=null){
+            username.text= userName.toString()
         }
-        createNotificationChannel()
         if (eventRecyclerView.adapter?.itemCount == 0) {
-            EventTimerDisplay.text=" "
+            eventTimerDisplay.text=" "
             eventname.text=" "
             val eventAdding = EventAdding(this, supportFragmentManager, null)
             eventAdding.show() }
         else {
-            GuestSummary.setOnClickListener { CheckAndStartActivity(GuestDataHolderActivity::class.java) }
-            TaskSummary.setOnClickListener { CheckAndStartActivity(TaskDataHolderActivity::class.java) }
-            BudgetSummary.setOnClickListener { CheckAndStartActivity(BudgetDataHolderActivity::class.java) }
-            VendorSummary.setOnClickListener { CheckAndStartActivity(VendorDataHolderActivity::class.java) }
-            taskImageButton.setOnClickListener { CheckAndStartActivity(TaskDataHolderActivity::class.java) }
-            budgetImageButton.setOnClickListener { CheckAndStartActivity(BudgetDataHolderActivity::class.java) }
-            guestImageButton.setOnClickListener { CheckAndStartActivity(GuestDataHolderActivity::class.java) }
-            vendorImageButton.setOnClickListener { CheckAndStartActivity(VendorDataHolderActivity::class.java) } }
+            guestSummary.setOnClickListener { checkAndStartActivity(GuestDataHolderActivity::class.java) }
+            taskSummary.setOnClickListener { checkAndStartActivity(TaskDataHolderActivity::class.java) }
+            budgetSummary.setOnClickListener { checkAndStartActivity(BudgetDataHolderActivity::class.java) }
+            vendorSummary.setOnClickListener { checkAndStartActivity(VendorDataHolderActivity::class.java) }
+            taskImageButton.setOnClickListener { checkAndStartActivity(TaskDataHolderActivity::class.java) }
+            budgetImageButton.setOnClickListener { checkAndStartActivity(BudgetDataHolderActivity::class.java) }
+            guestImageButton.setOnClickListener { checkAndStartActivity(GuestDataHolderActivity::class.java) }
+            vendorImageButton.setOnClickListener { checkAndStartActivity(VendorDataHolderActivity::class.java) } }
 
-        Eventshow.setOnClickListener {
+        eventshow.setOnClickListener {
             val isRecyclerViewVisible = eventRecyclerView.visibility == View.VISIBLE
             val isActivityVisible = eventActivity.visibility == View.VISIBLE
 
-            Eventshow.icon = if (isRecyclerViewVisible) getDrawable(R.drawable.show_event) else getDrawable(R.drawable.up_arrow)
+            eventshow.icon = if (isRecyclerViewVisible) getDrawable(R.drawable.show_event) else getDrawable(R.drawable.up_arrow)
             eventRecyclerView.visibility = if (isRecyclerViewVisible) View.GONE else View.VISIBLE
             eventaddbut.visibility = if (isRecyclerViewVisible) View.GONE else View.VISIBLE
             eventActivity.visibility = if (isActivityVisible) View.GONE else View.VISIBLE
@@ -231,25 +226,25 @@ class MainActivity : AppCompatActivity(){
         eventaddbut.setOnClickListener {
             val eventadding=EventAdding(this,supportFragmentManager,null)
             eventadding.show() }
-        GeneratePdf.setOnClickListener {
+        generatePdf.setOnClickListener {
             if(eventRecyclerView.adapter?.itemCount==0){
                 Toast.makeText(this, "Create Event First ", Toast.LENGTH_SHORT).show()
             }else{
                 MaterialAlertDialogBuilder(this)
                     .setTitle("PDF")
                     .setMessage("Select in Which format you want pdf")
-                    .setNeutralButton("Seprate PDF"){dialog,_->
+                    .setNeutralButton("Seprate PDF"){_,_->
                         if(checkPermissions()){
-                            SepratePDF()
+                            sepratePDF()
                             Toast.makeText(this, "PDF Generated Successfully", Toast.LENGTH_SHORT).show()
                         }
                         else{
                             requestPermission()
                         }
                     }
-                    .setPositiveButton("Combined PDF"){dialog,_->
+                    .setPositiveButton("Combined PDF"){_,_->
                         if(checkPermissions()){
-                            GeneratePDF()
+                            generatePDF()
                             Toast.makeText(this, "PDF Generated Successfully", Toast.LENGTH_SHORT).show()
                         }
                         else{
@@ -259,14 +254,14 @@ class MainActivity : AppCompatActivity(){
                     .show()
             }
         }
-        Delete_Event.setOnClickListener {
+        deleteEvent.setOnClickListener {
             if(eventRecyclerView.adapter?.itemCount==0){
                 Toast.makeText(this, "Create Event First ", Toast.LENGTH_SHORT).show()
             }
             else{
             val position=0
             val eventtodelete=eventList[position]
-            val rowaffected=DeleteEvent(eventtodelete)
+            val rowaffected=deleteEvent(eventtodelete)
             try {
                 if(rowaffected){
                     eventList.removeAt(position)
@@ -314,137 +309,106 @@ class MainActivity : AppCompatActivity(){
         navigationDrawershow()
     }
 
-    private fun Editprofile() {
-        ProfileDialog= BottomSheetDialog(this)
-        ProfileDialog.setContentView(R.layout.editprofiledialog)
-        ProfileDialog.show()
+    private fun editprofiledialog() {
+        profileDialog= BottomSheetDialog(this)
+        profileDialog.setContentView(R.layout.editprofiledialog)
+        profileDialog.show()
 
         val db=UserProfileDatabase(this)
-        Imageadd=ProfileDialog.findViewById(R.id.uploadImage)!!
-        Nameadd=ProfileDialog.findViewById(R.id.uploadName)!!
-        SaveButton=ProfileDialog.findViewById(R.id.saveButton)!!
-        val UserData=db.getUserProfilebyID(1)
-        val currentname=UserData?.name ?:" "
-        val userimage=UserData?.Image
+        imageadd=profileDialog.findViewById(R.id.uploadImage)!!
+        nameadd=profileDialog.findViewById(R.id.uploadName)!!
+        saveButton=profileDialog.findViewById(R.id.saveButton)!!
+        val userData=db.getUserProfilebyID(1)
+        val currentname=userData?.name ?:" "
+        val userimage=userData?.Image
         try{
-        if(UserData!=null){
+        if(userData!=null){
             val image=BitmapFactory.decodeByteArray(userimage,0, userimage!!.size)
-            Imageadd.setImageBitmap(image)
+            imageadd.setImageBitmap(image)
         }
-        Imageadd.setOnClickListener {
-            ImageUpload()
+        imageadd.setOnClickListener {
+            imageUploaddialog()
         }
-        Nameadd.text=currentname
+        nameadd.text=currentname
         }catch (e:Exception){
             Log.d("Image","Crash due to:${e.message}")
         }
-        SaveButton.setOnClickListener {
+        saveButton.setOnClickListener {
             if(selectedImageUri!=null){
-                val GetImageByte=getImageByte(selectedImageUri!!)
+                val getImageByte=getImageByte(selectedImageUri!!)
                 val userid=FirebaseAuth.getInstance().currentUser?.uid
                 if(userid!=null){
 
-                  var  username = Nameadd.text.toString()
+                  val  username = nameadd.text.toString()
                     val existinguser=db.getUserProfilebyID(1)
                     if(existinguser!=null){
-                        val userprofile=UserProfile(1,username,GetImageByte)
+                        val userprofile=UserProfile(1,username,getImageByte)
                         db.updateUserProfile(userprofile)
                         Toast.makeText(this, "Data Updated", Toast.LENGTH_SHORT).show()
-                        val image=BitmapFactory.decodeByteArray(GetImageByte,0,GetImageByte.size)
-                        Imageadd.setImageBitmap(image)
+                        val image=BitmapFactory.decodeByteArray(getImageByte,0,getImageByte.size)
+                        imageadd.setImageBitmap(image)
                         recreate()
                     }
                     else{
-                        val userprofile=UserProfile(1,username,GetImageByte)
+                        val userprofile=UserProfile(1,username,getImageByte)
                         db.insertUserProfile(userprofile)
                         Toast.makeText(this, "Image Uploaded", Toast.LENGTH_SHORT).show()
-                        val image=BitmapFactory.decodeByteArray(GetImageByte,0,GetImageByte.size)
-                        Imageadd.setImageBitmap(image)
+                        val image=BitmapFactory.decodeByteArray(getImageByte,0,getImageByte.size)
+                        imageadd.setImageBitmap(image)
                         recreate()
                     }
                 }
             }else{
                 Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show()
             }
-            ProfileDialog.dismiss()
+            profileDialog.dismiss()
             drawerLayout.close()
         }
     }
-    private fun ImageUpload(){
-        ImageAddOption=BottomSheetDialog(this)
-        ImageAddOption.setContentView(R.layout.profiledialog)
-        ImageAddOption.show()
+    private fun imageUploaddialog(){
+        imageAddOption=BottomSheetDialog(this)
+        imageAddOption.setContentView(R.layout.profiledialog)
+        imageAddOption.show()
+        
+        val imageGallery=imageAddOption.findViewById<ImageView>(R.id.ImageGallery)
 
-        val ImageCapture=ImageAddOption.findViewById<ImageView>(R.id.ImageCapture)
-        val ImageGallery=ImageAddOption.findViewById<ImageView>(R.id.ImageGallery)
-
-        ImageGallery?.setOnClickListener {
+        imageGallery?.setOnClickListener {
             if(ContextCompat.checkSelfPermission(this,android.Manifest.permission.CAMERA)!=PackageManager.PERMISSION_GRANTED){
                 ActivityCompat.requestPermissions(this,
-                    arrayOf( android.Manifest.permission.CAMERA),GALLERY_REQ_CODE)
+                    arrayOf( android.Manifest.permission.CAMERA),galley_req_code)
             }else{
                 Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI).also {
-                    startActivityForResult(it,GALLERY_REQ_CODE)
-                    ImageAddOption.dismiss()
+                    startActivityForResult(it,galley_req_code)
+                    imageAddOption.dismiss()
                 }
             }
         }
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        val db=UserProfileDatabase(this)
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode== RESULT_OK){
             when(requestCode){
-                GALLERY_REQ_CODE->{
+                galley_req_code->{
                     val selecteddata=data?.data
                     if(selecteddata!=null){
                         selectedImageUri=selecteddata
                         val getimagebyte=getImageByte(selecteddata)
                         val image=BitmapFactory.decodeByteArray(getimagebyte,0,getimagebyte.size)
-                        Imageadd.setImageBitmap(image)
+                        imageadd.setImageBitmap(image)
                     }
                 }
             }
         }
     }
-    fun getImageByte(image: Uri):ByteArray{
-        val image=contentResolver.openInputStream(image)
-        return image?.readBytes() ?: ByteArray(0)
+    private fun getImageByte(image: Uri):ByteArray{
+        val userimage=contentResolver.openInputStream(image)
+        return userimage?.readBytes() ?: ByteArray(0)
     }
-    fun createNotificationChannel(){
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
-            val channelId="Event_Notification"
-            val channelName="Event Notification"
-            val importance=NotificationManager.IMPORTANCE_HIGH
-            val channel=NotificationChannel(channelId,channelName,importance)
-            val notificationManager=getSystemService(NotificationManager::class.java)
-            notificationManager?.createNotificationChannel(channel)
-        }
-
+    private fun setAppTheme() {
+        val theme=getThemePreference(this,"Theme")
+        AppCompatDelegate.setDefaultNightMode(theme)
     }
-    @SuppressLint("ScheduleExactAlarm")
-    fun ScheduleEventNotification(events: List<Events>) {
-        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        for (event in events) {
-            val eventDateTime = SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.getDefault()).parse("${event.Date} ${event.time}")
-            val calendar = Calendar.getInstance()
-            calendar.time = eventDateTime
-            calendar.add(Calendar.DAY_OF_YEAR, -1)
-            val notificationTime = calendar.timeInMillis
-
-            val requestCode = event.id.toInt()
-            val pendingIntent = PendingIntent.getBroadcast(this, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, notificationTime, pendingIntent)
-        }
-    }
-
-    private fun SetAppTheme() {
-        val Theme=GetThemePreference(this,"Theme")
-        AppCompatDelegate.setDefaultNightMode(Theme)
-    }
-    fun CheckAndStartActivity(targetActivity:Class<*>){
-        val uid =AuthenticationUid.getUserUid(this)!!
+    private fun checkAndStartActivity(targetActivity:Class<*>){
         if (eventRecyclerView.adapter?.itemCount==0){
             val eventAdding=EventAdding(this,supportFragmentManager,null)
             eventAdding.show()
@@ -455,50 +419,50 @@ class MainActivity : AppCompatActivity(){
         }
     }
 
-    fun createDataCell(data: String, font: com.itextpdf.text.Font): PdfPCell {
+    private fun createDataCell(data: String, font: com.itextpdf.text.Font): PdfPCell {
     val cell = PdfPCell(Paragraph(data, font))
     cell.borderColor = com.itextpdf.text.BaseColor.BLACK
     cell.borderWidth = 1f
     return cell
 }
-    fun GeneratedTaskPDF(db:LocalDatabase, pdfPath: File){
-        val Event_Details=db.getEventData(1)
-        val EventName=Event_Details?.name
-        val Task_Details=db.getAllTasks()
+    private fun generatedTaskPDF(db:LocalDatabase, pdfPath: File){
+        val eventdetails=db.getEventData(1)
+        val eventname=eventdetails?.name
+        val taskDetails=db.getAllTasks()
         val pdffirectory=File(Environment.getExternalStorageDirectory(),"Eventify")
         if(!pdffirectory.exists()){
             pdffirectory.mkdirs()
         }
-        val ChildDirectory=File(pdffirectory,"$EventName")
-        if(!ChildDirectory.exists()){
-            ChildDirectory.mkdirs()
+        val childDirectory=File(pdffirectory,"$eventname")
+        if(!childDirectory.exists()){
+            childDirectory.mkdirs()
         }
-        val pdfFilePath=File(ChildDirectory,"TaskReport.pdf")
+        val pdfFilePath=File(childDirectory,"TaskReport.pdf")
         try {
             pdfFilePath.createNewFile()
             val document=Document(PageSize.A4)
             val pdfWriter= PdfWriter.getInstance(document,FileOutputStream(pdfFilePath))
             document.open()
-            val TaskTitle=com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.TIMES_ROMAN,20f,com.itextpdf.text.Font.BOLD)
+            val taskTitle=com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.TIMES_ROMAN,20f,com.itextpdf.text.Font.BOLD)
             val dataFont=com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.TIMES_ROMAN,12f)
 
-            val title=Paragraph("Task Details",TaskTitle)
+            val title=Paragraph("Task Details",taskTitle)
             title.alignment=Element.ALIGN_CENTER
             document.add(title)
 
-            val Taskcolumn= listOf("No","Name","Task Category","Note","Task Status","Task Date")
-            val TaskColumnSize=Taskcolumn.size
+            val taskcolumn= listOf("No","Name","Task Category","Note","Task Status","Task Date")
+            val taskcolumnSize=taskcolumn.size
 
-            val table=PdfPTable(TaskColumnSize)
+            val table=PdfPTable(taskcolumnSize)
             table.widthPercentage=100f
 
-            for(column in Taskcolumn){
+            for(column in taskcolumn){
                 val cell=PdfPCell(Paragraph(column,dataFont))
                 cell.borderColor=com.itextpdf.text.BaseColor.BLACK
                 cell.borderWidth=1f
                 table.addCell(cell)
             }
-            for(task in Task_Details){
+            for(task in taskDetails){
                 table.addCell(createDataCell(task.id.toString(),dataFont))
                 table.addCell(createDataCell(task.taskName,dataFont))
                 table.addCell(createDataCell(task.category,dataFont))
@@ -515,26 +479,26 @@ class MainActivity : AppCompatActivity(){
             Log.e("PDF", "Failed to generate PDF file: ${e.message}")        }
     }
     @SuppressLint("SuspiciousIndentation")
-    fun GenerateBudgetPDF(db:LocalDatabase, pdfPath: File){
-        val Budget_Details=db.getAllBudgets()
-        val Event_Details=db.getEventData(1)
-        val EventName=Event_Details?.name
+    fun generateBudgetPDF(db:LocalDatabase, pdfPath: File){
+        val budgetdetails=db.getAllBudgets()
+        val eventdetails=db.getEventData(1)
+        val eventname=eventdetails?.name
 
-        val ParentDirectory=File(Environment.getExternalStorageDirectory(),"Eventify")
-        if(!ParentDirectory.exists()){
-            ParentDirectory.mkdirs()
+        val parentDirectory=File(Environment.getExternalStorageDirectory(),"Eventify")
+        if(!parentDirectory.exists()){
+            parentDirectory.mkdirs()
         }
-        val EventDirectroy=File(ParentDirectory,"$EventName")
-        if(!EventDirectroy.exists()){
-            EventDirectroy.mkdirs()
+        val eventDirectroy=File(parentDirectory,"$eventname")
+        if(!eventDirectroy.exists()){
+            eventDirectroy.mkdirs()
         }
-        val PdfFilePath=File(EventDirectroy,"BudgetReport.pdf")
+        val pdfFilePath=File(eventDirectroy,"BudgetReport.pdf")
 
             try {
-                PdfFilePath.createNewFile()
+                pdfFilePath.createNewFile()
 
                 val document = Document(PageSize.A4)
-                val pdfWriter = PdfWriter.getInstance(document, FileOutputStream(PdfFilePath))
+                val pdfWriter = PdfWriter.getInstance(document, FileOutputStream(pdfFilePath))
                 document.open()
 
                 val titleFont = com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.TIMES_ROMAN, 20f, com.itextpdf.text.Font.BOLD)
@@ -558,7 +522,7 @@ class MainActivity : AppCompatActivity(){
                 }
 
 
-                for (budget in Budget_Details) {
+                for (budget in budgetdetails) {
                     table.addCell(createDataCell(budget.id.toString(), dataFont))
                     table.addCell(createDataCell(budget.name, dataFont))
                     table.addCell(createDataCell(budget.category, dataFont))
@@ -574,53 +538,53 @@ class MainActivity : AppCompatActivity(){
                 Log.e("PDF", "Failed to generate PDF file: ${e.message}")
             }
     }
-    fun GenerateGuestPDF(db:LocalDatabase, pdfPath: File){
-        val Guest_Details=db.getAllGuests()
-        val Event_Details=db.getEventData(1)
-        val Event_Name=Event_Details?.name
-        val ParentDirectory=File(Environment.getExternalStorageDirectory(),"Eventify")
-        if(!ParentDirectory.exists()){
-            ParentDirectory.mkdirs()
+    private fun generateGuestPDF(db:LocalDatabase, pdfPath: File){
+        val guestdetails=db.getAllGuests()
+        val eventdetails=db.getEventData(1)
+        val eventname=eventdetails?.name
+        val parentDirectory=File(Environment.getExternalStorageDirectory(),"Eventify")
+        if(!parentDirectory.exists()){
+            parentDirectory.mkdirs()
         }
-        val EventDirectroy=File(ParentDirectory,"$Event_Name")
-        if(!EventDirectroy.exists()){
-            EventDirectroy.mkdirs()
+        val eventDirectroy=File(parentDirectory,"$eventname")
+        if(!eventDirectroy.exists()){
+            eventDirectroy.mkdirs()
         }
-        val PdfFilePath=File(EventDirectroy,"GuestReport.pdf")
+        val pdfFilePath=File(eventDirectroy,"GuestReport.pdf")
         try{
-            PdfFilePath.createNewFile()
+            pdfFilePath.createNewFile()
             val document=Document(PageSize.A4)
-            val pdfWriter=PdfWriter.getInstance(document,FileOutputStream(PdfFilePath))
+            val pdfWriter=PdfWriter.getInstance(document,FileOutputStream(pdfFilePath))
             document.open()
 
-            val GuestTitle=com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.TIMES_ROMAN,20f,com.itextpdf.text.Font.BOLD)
+            val guestTitle=com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.TIMES_ROMAN,20f,com.itextpdf.text.Font.BOLD)
             val datafont=com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.TIMES_ROMAN,12f)
 
-            val Title=Paragraph("Guest Details",GuestTitle)
-            Title.alignment=Element.ALIGN_CENTER
-            document.add(Title)
+            val title=Paragraph("Guest Details",guestTitle)
+            title.alignment=Element.ALIGN_CENTER
+            document.add(title)
 
-            val GuestColumnName = listOf(
+            val guestColumnName = listOf(
         "No", "Family Name", "Total Member", "Note",
         "Invitation", "Phone Number", "Address")
-            val GuestColumnSize=GuestColumnName.size
+            val guestColumnSize=guestColumnName.size
 
-            val table=PdfPTable(GuestColumnSize)
+            val table=PdfPTable(guestColumnSize)
             table.widthPercentage=100f
-            for(column in GuestColumnName){
+            for(column in guestColumnName){
                 val cell=PdfPCell(Paragraph(column,datafont))
                 cell.borderColor=com.itextpdf.text.BaseColor.BLACK
                 cell.borderWidth=1f
                 table.addCell(cell)
             }
-            for(Guest in Guest_Details){
-                table.addCell(createDataCell(Guest.id.toString(),datafont))
-                table.addCell(createDataCell(Guest.name,datafont))
-                table.addCell(createDataCell(Guest.totalFamilyMembers,datafont))
-                table.addCell(createDataCell(Guest.note,datafont))
-                table.addCell(createDataCell(Guest.isInvitationSent,datafont))
-                table.addCell(createDataCell(Guest.phoneNumber,datafont))
-                table.addCell(createDataCell(Guest.address,datafont))
+            for(guest in guestdetails){
+                table.addCell(createDataCell(guest.id.toString(),datafont))
+                table.addCell(createDataCell(guest.name,datafont))
+                table.addCell(createDataCell(guest.totalFamilyMembers,datafont))
+                table.addCell(createDataCell(guest.note,datafont))
+                table.addCell(createDataCell(guest.isInvitationSent,datafont))
+                table.addCell(createDataCell(guest.phoneNumber,datafont))
+                table.addCell(createDataCell(guest.address,datafont))
             }
             document.add(table)
             document.close()
@@ -629,48 +593,48 @@ class MainActivity : AppCompatActivity(){
             Log.d("PDF","File Failed To Generate ${e.message}")
         }
     }
-    fun GeneratedVendorPDF(db: LocalDatabase, pdfPath: File){
-        val Vendor_Details=db.getAllVendors()
-        val Event_Details=db.getEventData(1)
-        val Event_Name=Event_Details?.name
-        val ParentDirectory=File(Environment.getExternalStorageDirectory(),"Eventify")
-        if(!ParentDirectory.exists()){
-            ParentDirectory.mkdirs()
+    private fun generatedVendorPDF(db: LocalDatabase, pdfPath: File){
+        val vendorDetails=db.getAllVendors()
+        val eventDetails=db.getEventData(1)
+        val eventName=eventDetails?.name
+        val parentDirectory=File(Environment.getExternalStorageDirectory(),"Eventify")
+        if(!parentDirectory.exists()){
+            parentDirectory.mkdirs()
         }
-        val EventDirectroy=File(ParentDirectory,"$Event_Name")
-        if(!EventDirectroy.exists()){
-            EventDirectroy.mkdirs()
+        val eventDirectroy=File(parentDirectory,"$eventName")
+        if(!eventDirectroy.exists()){
+            eventDirectroy.mkdirs()
         }
-        val PdfFilePath=File(EventDirectroy,"VendorReport.pdf")
+        val pdfFilePath=File(eventDirectroy,"VendorReport.pdf")
         try {
-            PdfFilePath.createNewFile()
+            pdfFilePath.createNewFile()
             val document=Document(PageSize.A4)
-            val pdfWriter=PdfWriter.getInstance(document,FileOutputStream(PdfFilePath))
+            val pdfWriter=PdfWriter.getInstance(document,FileOutputStream(pdfFilePath))
             document.open()
 
-            val VendorTitle=com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.TIMES_ROMAN,20f,com.itextpdf.text.Font.BOLD)
+            val vendorTitle=com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.TIMES_ROMAN,20f,com.itextpdf.text.Font.BOLD)
             val dataFont=com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.TIMES_ROMAN,15f)
 
-            val Title=Paragraph("Vendor Details",VendorTitle)
-            Title.alignment=Element.ALIGN_CENTER
-            document.add(Title)
+            val title=Paragraph("Vendor Details",vendorTitle)
+            title.alignment=Element.ALIGN_CENTER
+            document.add(title)
 
-            val VendorcolumnNames = listOf(
+            val vendorcolumnNames = listOf(
         "No","Name", "Category", "Estimated Amount", "Balance",
         "Notes", "Phone Number",
         "Email", "Website", "Address")
-            val VendorColumnSize=VendorcolumnNames.size
+            val vendorColumnSize=vendorcolumnNames.size
 
-            val table=PdfPTable(VendorColumnSize)
+            val table=PdfPTable(vendorColumnSize)
             table.widthPercentage=100f
 
-            for(column in VendorcolumnNames){
+            for(column in vendorcolumnNames){
                 val cell=PdfPCell(Paragraph(column,dataFont))
                 cell.borderColor=com.itextpdf.text.BaseColor.BLACK
                 cell.borderWidth=1f
                 table.addCell(cell)
             }
-            for (vendor in Vendor_Details){
+            for (vendor in vendorDetails){
                 table.addCell(createDataCell(vendor.id.toString(),dataFont))
                 table.addCell(createDataCell(vendor.name,dataFont))
                 table.addCell(createDataCell(vendor.name,dataFont))
@@ -691,50 +655,50 @@ class MainActivity : AppCompatActivity(){
         }
 
     }
-    fun SepratePDF(){
+    private fun sepratePDF(){
          val db=DatabaseManager.getDatabase(this)
         val eventDetails = db.getEventData(1)
         val eventName = eventDetails?.name
 
-        val ParentDirectory = File(Environment.getExternalStorageDirectory(), "Eventify")
-        if (!ParentDirectory.exists()) {
-            ParentDirectory.mkdirs()
+        val parentDirectory = File(Environment.getExternalStorageDirectory(), "Eventify")
+        if (!parentDirectory.exists()) {
+            parentDirectory.mkdirs()
         }
-        val EventDirectroy=File(ParentDirectory,"$eventName")
-        if(!EventDirectroy.exists()){
-            EventDirectroy.mkdirs()
+        val eventDirectroy=File(parentDirectory,"$eventName")
+        if(!eventDirectroy.exists()){
+            eventDirectroy.mkdirs()
         }
-        GenerateGuestPDF(db, EventDirectroy)
-        GeneratedVendorPDF(db, EventDirectroy)
-        GeneratedTaskPDF(db, EventDirectroy)
-        GenerateBudgetPDF(db, EventDirectroy)
+        generateGuestPDF(db, eventDirectroy)
+        generatedVendorPDF(db, eventDirectroy)
+        generatedTaskPDF(db, eventDirectroy)
+        generateBudgetPDF(db, eventDirectroy)
     }
-    fun GeneratePDF() {
+    private fun generatePDF() {
          val db=DatabaseManager.getDatabase(this)
         val eventDetails = db.getEventData(1)
         val eventName = eventDetails?.name
 
-        val ParentDirectory = File(Environment.getExternalStorageDirectory(), "Eventify")
-        if (!ParentDirectory.exists()) {
-            ParentDirectory.mkdirs()
+        val parentDirectory = File(Environment.getExternalStorageDirectory(), "Eventify")
+        if (!parentDirectory.exists()) {
+            parentDirectory.mkdirs()
         }
-        val EventDirectroy=File(ParentDirectory,"$eventName")
-        if(!EventDirectroy.exists()){
-            EventDirectroy.mkdirs()
+        val eventDirectroy=File(parentDirectory,"$eventName")
+        if(!eventDirectroy.exists()){
+            eventDirectroy.mkdirs()
         }
-        val mergedPdfPath = File(EventDirectroy, "MergedReport.pdf").absolutePath
+        val mergedPdfPath = File(eventDirectroy, "MergedReport.pdf").absolutePath
 
-        GenerateGuestPDF(db, EventDirectroy)
-        GeneratedVendorPDF(db, EventDirectroy)
-        GeneratedTaskPDF(db, EventDirectroy)
-        GenerateBudgetPDF(db, EventDirectroy)
+        generateGuestPDF(db, eventDirectroy)
+        generatedVendorPDF(db, eventDirectroy)
+        generatedTaskPDF(db, eventDirectroy)
+        generateBudgetPDF(db, eventDirectroy)
 
         try {
             mergePDFs(mergedPdfPath,
-                File(EventDirectroy, "GuestReport.pdf").absolutePath,
-                File(EventDirectroy, "VendorReport.pdf").absolutePath,
-                File(EventDirectroy, "TaskReport.pdf").absolutePath,
-                File(EventDirectroy, "BudgetReport.pdf").absolutePath
+                File(eventDirectroy, "GuestReport.pdf").absolutePath,
+                File(eventDirectroy, "VendorReport.pdf").absolutePath,
+                File(eventDirectroy, "TaskReport.pdf").absolutePath,
+                File(eventDirectroy, "BudgetReport.pdf").absolutePath
             )
             Toast.makeText(this, "PDF files merged successfully", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
@@ -743,7 +707,7 @@ class MainActivity : AppCompatActivity(){
         }
     }
 
-    fun mergePDFs(outputFilePath: String, vararg pdfFilePaths: String) {
+    private fun mergePDFs(outputFilePath: String, vararg pdfFilePaths: String) {
         val document = Document()
 
         val pdfCopy = PdfCopy(document, FileOutputStream(outputFilePath))
@@ -759,73 +723,71 @@ class MainActivity : AppCompatActivity(){
 
         document.close()
     }
-    fun checkPermissions() = ContextCompat.checkSelfPermission(applicationContext, WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+    private fun checkPermissions() = ContextCompat.checkSelfPermission(applicationContext, WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
             ContextCompat.checkSelfPermission(applicationContext, READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
 
     private fun requestPermission() {
         ActivityCompat.requestPermissions(this, arrayOf(
             WRITE_EXTERNAL_STORAGE,
             READ_EXTERNAL_STORAGE
-        ),PERMISSION_CODE)
+        ),permissioncode)
     }
-    fun GetThemePreference(context:Context,key:String):Int{
+    private fun getThemePreference(context:Context, key:String):Int{
         val shared=context.getSharedPreferences("Theme",Context.MODE_PRIVATE)
         return shared.getInt(key,AppCompatDelegate.MODE_NIGHT_NO)
     }
     private fun showFirstLaunchDialog() {
-       val uid=AuthenticationUid.getUserUid(this)!!
         val eventAdding=EventAdding(this,supportFragmentManager,null)
         eventAdding.show()
     }
-    fun isFirstLaunch(context: Context): Boolean {
+    private fun isFirstLaunch(context: Context): Boolean {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         return sharedPreferences.getBoolean("isFirstLaunch", true)
     }
-    fun setFirstLaunchFlag(context: Context, isFirstLaunch: Boolean) {
+   private fun setFirstLaunchFlag(context: Context, isFirstLaunch: Boolean) {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         sharedPreferences.edit().putBoolean("isFirstLaunch", isFirstLaunch).apply()
     }
 
     override fun onResume() {
         super.onResume()
-        SetAppTheme()
+        setAppTheme()
         showEventData()
     }
     @SuppressLint("Range")
     fun showEventData() {
         val db=DatabaseManager.getDatabase(this)
-        val uid=AuthenticationUid.getUserUid(this)!!
         eventList = db.getAllEvents()
-        val Eventtimer = db.getEventData(1)
+        val eventtimer = db.getEventData(1)
         val budgettotdal=db.getTotalBudget()
-        val BudgetPaid=db.getTotalPaidBudget()
-        val BudgetNotPaid=db.getTotalNotPaidBudget()
-        val TaskComtext=db.getTaskStatus()
-        val Taskpending=db.getTaskPendingStatus()
+        val budgetPaid=db.getTotalPaidBudget()
+        val budgetNotPaid=db.getTotalNotPaidBudget()
+        val taskComtext=db.getTaskStatus()
+        val taskpending=db.getTaskPendingStatus()
         val totaltask=db.getTotalTask()
-        val TotalGuest=db.getTotalInvitation()
-        val VendorTotalAmt=db.GetTotalVendorBudget()
-        val VendorTotalPaid=db.GetVendorPaidAmount()
-        val VendorTotalNotPaid=db.GetVendorNotPaidAmount()
-        val TotalInvitaionSnt=db.getTotalInvitationsSent()
-        val TotalInvitaionNotSnt=db.getTotalInvitationsNotSent()
-        SetSummary(TotalInvi,TotalGuest.toString())
-        SetSummary(TotalInvitationSent,TotalInvitaionSnt.toString())
-        SetSummary(TotalInvitationNotSent,TotalInvitaionNotSnt.toString())
-        SetSummary(TaskCompleted,TaskComtext.toString())
-        SetSummary(TaskPending,Taskpending.toString())
-        SetSummary(TotalTask,totaltask.toString())
-        SetSummary(VendorTotalAmount,VendorTotalAmt.toString())
-        SetSummary(VendorPaidAmount,VendorTotalPaid.toString())
-        SetSummary(VendorPendingAmount,VendorTotalNotPaid.toString())
-        SetSummary(budgetShowTextView,budgettotdal.toString())
-        SetSummary(paidAmountShowTextView,BudgetPaid.toString())
-        SetSummary(pendingAmountShowTextView,BudgetNotPaid.toString())
+        val totalGuest=db.getTotalInvitation()
+        val vendorTotalAmt=db.GetTotalVendorBudget()
+        val vendorTotalPaid=db.GetVendorPaidAmount()
+        val vendorTotalNotPaid=db.GetVendorNotPaidAmount()
+        val totalInvitaionSnt=db.getTotalInvitationsSent()
+        val totalInvitaionNotSnt=db.getTotalInvitationsNotSent()
+        setSummary(totalInvi,totalGuest.toString())
+        setSummary(totalInvitationSent,totalInvitaionSnt.toString())
+        setSummary(totalInvitationNotSent,totalInvitaionNotSnt.toString())
+        setSummary(taskCompleted,taskComtext.toString())
+        setSummary(taskPending,taskpending.toString())
+        setSummary(totalTask,totaltask.toString())
+        setSummary(vendorTotalAmount,vendorTotalAmt.toString())
+        setSummary(vendorPaidAmount,vendorTotalPaid.toString())
+        setSummary(vendorPendingAmount,vendorTotalNotPaid.toString())
+        setSummary(budgetShowTextView,budgettotdal.toString())
+        setSummary(paidAmountShowTextView,budgetPaid.toString())
+        setSummary(pendingAmountShowTextView,budgetNotPaid.toString())
 
-        if (Eventtimer !=  null) {
-            eventname.text = Eventtimer.name
-            val eventDate = Eventtimer.Date
-            val eventTime = Eventtimer.time
+        if (eventtimer !=  null) {
+            eventname.text = eventtimer.name
+            val eventDate = eventtimer.Date
+            val eventTime = eventtimer.time
             val currentDate = Calendar.getInstance().time
             val eventDateTime = SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.getDefault()).parse("$eventDate $eventTime")
             if (eventDateTime != null) {
@@ -838,10 +800,10 @@ class MainActivity : AppCompatActivity(){
                         val minutes = (millisUntilFinished % (60 * 60 * 1000)) / (60 * 1000)
                         val seconds = (millisUntilFinished % (60 * 1000)) / 1000
                         val remainingTime = String.format("%02dd %02dh %02dm %02ds", days, hours, minutes, seconds)
-                        EventTimerDisplay.text = remainingTime
+                        eventTimerDisplay.text = remainingTime
                     }
                     override fun onFinish() {
-                        EventTimerDisplay.text = "Event Started"
+                        eventTimerDisplay.text = "Event Started"
                     }
                 }.start()
             } else {
@@ -850,23 +812,21 @@ class MainActivity : AppCompatActivity(){
         }
         val adapter = EventLayoutAdapter(eventList){ position ->
         }
-
-        ScheduleEventNotification(eventList)
         adapter.updateData(eventList)
         eventRecyclerView.adapter = adapter
         eventRecyclerView.layoutManager = LinearLayoutManager(this)
         adapter.notifyDataSetChanged()
 
     }
-    fun SetSummary(TextField:TextView,value:String?){
+    private fun setSummary(textField:TextView,value:String?){
         if(value.isNullOrEmpty() || value=="0" || value=="0.0"){
-            TextField.text="No Data Found"
+            textField.text="No Data Found"
         }else{
-            TextField.text=value.toString()
+            textField.text=value.toString()
         }
     }
 
-    private fun DeleteEvent(event: Events):Boolean {
+    private fun deleteEvent(event: Events):Boolean {
         val db = DatabaseManager.getDatabase(this)
         db.deleteEvent(event)
         Toast.makeText(this,"Event Removed",Toast.LENGTH_SHORT).show()
@@ -896,7 +856,6 @@ class MainActivity : AppCompatActivity(){
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
             appWidgetManager.requestPinAppWidget(myWidgetProvider, null, successCallback)
-        } else {
         }
     }
 
@@ -938,15 +897,6 @@ class MainActivity : AppCompatActivity(){
                     }catch (e:Exception){
                         Log.d("Activity","Activity ${e.message} ")
                     }
-                    true
-                }
-                R.id.nav_pdf->{
-                    Intent(this,PDF_Report::class.java).also { startActivity(it) }
-
-                    true
-                }
-                R.id.nav_profile->{
-                    Intent(this, ProfileActivity::class.java).also { startActivity(it) }
                     true
                 }
                 R.id.nav_logout->{
