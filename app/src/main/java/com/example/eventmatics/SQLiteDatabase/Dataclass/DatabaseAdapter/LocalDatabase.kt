@@ -6,6 +6,7 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Budget
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.DatabaseNameDataClass
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Events
@@ -924,7 +925,20 @@ fun getTotalUnPaid():Double{
         return rowsAffected
     }
 
-    fun createPayment(payment: Paymentinfo) {
+//    fun createPayment(payment: Paymentinfo) {
+//        val db = writableDatabase
+//        val values = ContentValues().apply {
+//            put(Payment_Name, payment.name)
+//            put(Payment_Amount, payment.amount)
+//            put(Payment_Date, payment.date)
+//            put(Payment_Status, payment.status)
+//            put(Payment_BudgetID, payment.budgetid)
+//        }
+//
+//        db.insert(TABLE_Payment, null, values)
+//        db.close()
+//    }
+    fun createPayment(payment: Paymentinfo): Long {
         val db = writableDatabase
         val values = ContentValues().apply {
             put(Payment_Name, payment.name)
@@ -934,9 +948,17 @@ fun getTotalUnPaid():Double{
             put(Payment_BudgetID, payment.budgetid)
         }
 
-        db.insert(TABLE_Payment, null, values)
-        db.close()
+        return try {
+            val newRowId = db.insert(TABLE_Payment, null, values)
+            db.close()
+            newRowId
+        } catch (e: Exception) {
+            // Handle the exception (e.g., log an error message)
+            Log.e("createPayment", "Error creating payment: ${e.message}")
+            -1 // Return -1 to indicate an error
+        }
     }
+
     fun updatePayment(paymentId: Long, payment: Paymentinfo): Int {
         val db = writableDatabase
         val values = ContentValues().apply {
@@ -988,28 +1010,17 @@ fun getTotalUnPaid():Double{
                 val status = it.getString(it.getColumnIndex(Payment_Status))
                 val budgetid = it.getLong(it.getColumnIndex(Payment_BudgetID))
                 paymentList.add(Paymentinfo(id, name, amount, date, status, budgetid))
+                Log.d("PaymentData","The payment Data is :$paymentList")
             }
         }
 
         return paymentList
     }
-
-
-
-    fun getTotalPaymentAmount():Int{
-        var total =0
-        val db=readableDatabase
-        val query="SELECT SUM(CAST(${Payment_Amount} AS REAL)) FROM $TABLE_Payment WHERE $Payment_Status='Paid'"
-        val cursor=db.rawQuery(query,null)
-        cursor?.let {
-            if(it.moveToFirst()){
-                total=it.getInt(0)
-            }
-        }
-        cursor.close()
-        db.close()
-        return total
+    fun getPaymentById(paymentId: Int, budgetId: Int): Paymentinfo? {
+        val payments = getPaymentsForBudget(budgetId)
+        return payments.find { it.id == paymentId }
     }
+
 
     @SuppressLint("Range")
     fun getPaymentForVendor(VendorId: Int): MutableList<VendorPaymentinfo> {
@@ -1033,6 +1044,22 @@ fun getTotalUnPaid():Double{
         }
         return paymentlist
     }
+    fun getTotalPaymentAmount():Int{
+        var total =0
+        val db=readableDatabase
+        val query="SELECT SUM(CAST(${Payment_Amount} AS REAL)) FROM $TABLE_Payment WHERE $Payment_Status='Paid'"
+        val cursor=db.rawQuery(query,null)
+        cursor?.let {
+            if(it.moveToFirst()){
+                total=it.getInt(0)
+            }
+        }
+        cursor.close()
+        db.close()
+        return total
+    }
+
+
     @SuppressLint("Range")
     fun getAllPaymentsForVendors(): MutableList<VendorPaymentinfo> {
         val paymentlist = mutableListOf<VendorPaymentinfo>()
@@ -1111,8 +1138,6 @@ fun getTotalUnPaid():Double{
 
     fun updatePayment(paymentId: Int, newPayment: Paymentinfo): Boolean {
         val db = writableDatabase
-
-
         val values = ContentValues().apply {
             put(Payment_Name, newPayment.name)
             put(Payment_Amount, newPayment.amount)
@@ -1121,26 +1146,25 @@ fun getTotalUnPaid():Double{
             put(Payment_BudgetID, newPayment.budgetid)
         }
         val rowsAffected = db.updateWithOnConflict(TABLE_Payment, values, "$Payment_ID = ?", arrayOf(paymentId.toString()),SQLiteDatabase.CONFLICT_REPLACE)
-
         db.close()
-
         return rowsAffected > 0
     }
-
-    fun updateVendorPayment(paymentId:Int,newPayment: VendorPaymentinfo):Boolean{
-        val db=writableDatabase
-
-        val values=ContentValues().apply {
-            put(Vendor_Payment_Name,newPayment.name)
-            put(Vendor_Payment_Amount,newPayment.amount)
-            put(Vendor_Payment_Date,newPayment.date)
-            put(Vendor_Payment_Status,newPayment.status)
-            put(Payment_VendorID,newPayment.VendorId)
+    fun updateVendorPayment(paymentId: Int, newPayment: VendorPaymentinfo): Boolean {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put(Vendor_Payment_Name, newPayment.name)
+            put(Vendor_Payment_Amount, newPayment.amount)
+            put(Vendor_Payment_Date, newPayment.date)
+            put(Vendor_Payment_Status, newPayment.status)
+            put(Payment_VendorID, newPayment.VendorId)
         }
-        val rowafftected=db.update(TABLE_Payment,values,"$Payment_ID = ?", arrayOf(paymentId.toString()))
+
+        val rowAffected = db.updateWithOnConflict(Vendor_TABLE_Payment, values, "$Vendor_Payment_ID = ?", arrayOf(paymentId.toString()),SQLiteDatabase.CONFLICT_REPLACE)
         db.close()
-        return  rowafftected>0
+
+        return rowAffected > 0
     }
+
 
     // Create new guest
     fun createGuest(guest: Guest): Long {

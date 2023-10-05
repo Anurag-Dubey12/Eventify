@@ -200,7 +200,10 @@ private fun updatepaymentsheet(payment: Paymentinfo?){
         val name = etName.text.toString()
         val amount = etAmount.text.toString().toFloat()
         val date = etDate.text.toString()
-        status = if (isPaid) {
+        status =if(!isButtonClicked){
+            "${payment?.status}"
+        }
+        else if (isPaid) {
             "Paid"
         } else {
             "Pending"
@@ -311,11 +314,6 @@ private fun updatepaymentsheet(payment: Paymentinfo?){
             else->super.onOptionsItemSelected(item)
         }
     }
-    fun getSharedPreference(context: Context, key: String): String? {
-        val sharedPref = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
-        return sharedPref.getString(key, null)
-    }
-
     private fun UpdateDatabase(id: Long, paymentList: List<Paymentinfo>) {
         val name = nameEditText.text.toString()
         val totalamt = EstimatedEt.text.toString().toFloat()
@@ -341,26 +339,25 @@ private fun updatepaymentsheet(payment: Paymentinfo?){
         } else {
             status = "Not Paid"
         }
-
         val budget = Budget(id, name, category, note, Totalamount, balance, "", status)
         db.updateBudget(budget)
 
         for (payment in paymentList) {
-            if (payment.budgetid == id) {
-                val existinguser=db.getPaymentsForBudget(payment.id)
-                if(existinguser!=null){
-                    db.updatePayment(payment.id,payment)
-                }else{
-                db.createPayment(payment)
+            val existingPayments = db.getPaymentsForBudget(id.toInt())
+            val existingPayment = existingPayments.find { it.id == payment.id }
 
-                }
+            if (existingPayment != null) {
+                Log.d("PaymentData", "Payment ID ${existingPayment.id} already exists. Updating...")
+                db.updatePayment(payment.id, payment)
+                Toast.makeText(this, "Budget Updated successfully", Toast.LENGTH_SHORT).show()
+            } else {
+                Log.d("PaymentData", "Payment ID ${payment.id} does not exist. Creating...")
+                db.createPayment(payment)
+                Toast.makeText(this, "Budget Data Added successfully", Toast.LENGTH_SHORT).show()
             }
         }
-
-        Toast.makeText(this, "Budget Updated successfully", Toast.LENGTH_SHORT).show()
         finish()
     }
-
     private fun AddValueToDataBase() {
         val name = nameEditText.text.toString()
         val totalamt = EstimatedEt.text.toString().toFloat()
@@ -368,7 +365,6 @@ private fun updatepaymentsheet(payment: Paymentinfo?){
         val note=NoteET.text.toString()
         val category=categoryselection.text.toString()
         val balance=balanceET.text.toString()
-
         if (name.isEmpty()) {
             nameEditText.error = "Please enter a name"
             return }
