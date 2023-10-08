@@ -22,7 +22,6 @@ class signin_account : AppCompatActivity() {
     private lateinit var alreadyEmail: EditText
     private lateinit var alreadyPassfield: EditText
     private lateinit var loginButton: Button
-    private lateinit var googleLogin: Button
     private lateinit var forgetpas: TextView
     private lateinit var createacc: TextView
     private lateinit var firebaseauth: FirebaseAuth
@@ -38,7 +37,6 @@ class signin_account : AppCompatActivity() {
         createacc = findViewById(R.id.createaccount)
         loginButton = findViewById(R.id.login_button)
         rProgLayout = findViewById(R.id.progressBar)
-        googleLogin = findViewById(R.id.google_login)
         forgetpas = findViewById(R.id.forgetpass)
         firebaseauth = FirebaseAuth.getInstance()
         progressDialog = ProgressDialog(this)

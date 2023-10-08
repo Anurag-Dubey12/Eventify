@@ -21,15 +21,6 @@
             android:layout_toRightOf="@id/EditPayment"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
-<!--            <TextView-->
-<!--                android:id="@+id/budgetid"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="50sp"-->
-<!--                android:textStyle="bold"-->
-<!--                android:textSize="20sp"-->
-
-<!--                />-->
             <TextView
                 android:id="@+id/budgetPaymentName"
                 android:layout_width="wrap_content"
@@ -50,6 +41,7 @@
 
         </LinearLayout>
         <LinearLayout
+
             android:layout_toRightOf="@id/payment_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

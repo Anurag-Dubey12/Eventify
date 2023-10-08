@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.ImageView
 import androidx.annotation.NonNull
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -29,6 +31,7 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
     lateinit var guestAdd: FloatingActionButton
     lateinit var bottomnav: BottomNavigationView
     lateinit var adapter: GuestApdater
+    private lateinit var Data_Not_found: ImageView
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private var GuestList:MutableList<Guest> = mutableListOf()
     @SuppressLint("MissingInflatedId")
@@ -36,6 +39,7 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_guest_data_holder)
         recyclerView = findViewById(R.id.guestDatarec)
+        Data_Not_found = findViewById(R.id.data_not_found)
         guestAdd=findViewById(R.id.fab)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         bottomnav=findViewById(R.id.bottomNavigationView)
@@ -44,6 +48,11 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
         //Action Bar
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        if(recyclerView.adapter?.itemCount==0){
+            Data_Not_found.visibility= View.VISIBLE
+        }else{
+            Data_Not_found.visibility= View.GONE
+        }
         guestAdd.setOnClickListener {
             Intent(this,GuestDetails::class.java).also { startActivity(it) }
         }

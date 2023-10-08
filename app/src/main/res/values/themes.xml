@@ -113,6 +113,7 @@
     </style>
     <style name="RecyclerTextColor">
         <item name="android:textColor">@color/black</item>
+        <item name="maxLines">1</item>
     </style>
     <style name="RecyclerImage">
         <item name="android:src">@drawable/budgetdata</item>

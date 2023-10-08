@@ -27,6 +27,9 @@ import android.preference.PreferenceManager
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -39,6 +42,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -49,13 +53,16 @@ import com.example.eventmatics.Events_Data_Holder_Activity.TaskDataHolderActivit
 import com.example.eventmatics.Events_Data_Holder_Activity.VendorDataHolderActivity
 import com.example.eventmatics.Login_Activity.Login_SignUp_Option
 import com.example.eventmatics.Login_Activity.signin_account
+import com.example.eventmatics.NavigationDrawer.About
 import com.example.eventmatics.NavigationDrawer.EventList
 import com.example.eventmatics.NavigationDrawer.SettingActivity
 import com.example.eventmatics.SQLiteDatabase.Dataclass.AuthenticationUid
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.NamesDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.UserProfile
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.UserProfileDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
+import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.DatabaseNameDataClass
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Events
 import com.example.eventmatics.fragments.EventAdding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -63,8 +70,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.DateValidatorPointForward
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
 import com.google.firebase.auth.FirebaseAuth
 import com.itextpdf.text.Document
 import com.itextpdf.text.Element
@@ -99,6 +112,7 @@ class MainActivity : AppCompatActivity(){
     private lateinit var vendorPaidAmount: TextView
     private lateinit var taskPending: TextView
     private lateinit var nameadd: TextView
+    private lateinit var fragmentManager: FragmentManager
     private lateinit var totalTask: TextView
     private lateinit var totalInvi: TextView
     private lateinit var totalInvitationSent: TextView
@@ -179,6 +193,7 @@ class MainActivity : AppCompatActivity(){
             showFirstLaunchDialog()
             setFirstLaunchFlag(this, false)
         }
+        showEventData()
         //Load Profile Pic
         val db=UserProfileDatabase(this)
         val headerView = navView.getHeaderView(0)
@@ -216,7 +231,6 @@ class MainActivity : AppCompatActivity(){
         eventshow.setOnClickListener {
             val isRecyclerViewVisible = eventRecyclerView.visibility == View.VISIBLE
             val isActivityVisible = eventActivity.visibility == View.VISIBLE
-
             eventshow.icon = if (isRecyclerViewVisible) getDrawable(R.drawable.show_event) else getDrawable(R.drawable.up_arrow)
             eventRecyclerView.visibility = if (isRecyclerViewVisible) View.GONE else View.VISIBLE
             eventaddbut.visibility = if (isRecyclerViewVisible) View.GONE else View.VISIBLE
@@ -225,31 +239,20 @@ class MainActivity : AppCompatActivity(){
 
         eventaddbut.setOnClickListener {
             val eventadding=EventAdding(this,supportFragmentManager,null)
-            eventadding.show() }
+            eventadding.show()
+        }
         generatePdf.setOnClickListener {
-            if(eventRecyclerView.adapter?.itemCount==0){
-                Toast.makeText(this, "Create Event First ", Toast.LENGTH_SHORT).show()
-            }else{
+            if (eventRecyclerView.adapter?.itemCount == 0) {
+                Toast.makeText(this, "Create Event First", Toast.LENGTH_SHORT).show()
+            } else {
                 MaterialAlertDialogBuilder(this)
                     .setTitle("PDF")
                     .setMessage("Select in Which format you want pdf")
-                    .setNeutralButton("Seprate PDF"){_,_->
-                        if(checkPermissions()){
-                            sepratePDF()
-                            Toast.makeText(this, "PDF Generated Successfully", Toast.LENGTH_SHORT).show()
-                        }
-                        else{
-                            requestPermission()
-                        }
+                    .setNeutralButton("Seprate PDF") { _, _ ->
+                        handlePdfGeneration(true)
                     }
-                    .setPositiveButton("Combined PDF"){_,_->
-                        if(checkPermissions()){
-                            generatePDF()
-                            Toast.makeText(this, "PDF Generated Successfully", Toast.LENGTH_SHORT).show()
-                        }
-                        else{
-                            requestPermission()
-                        }
+                    .setPositiveButton("Combined PDF") { _, _ ->
+                        handlePdfGeneration(false)
                     }
                     .show()
             }
@@ -308,12 +311,23 @@ class MainActivity : AppCompatActivity(){
 
         navigationDrawershow()
     }
+    fun handlePdfGeneration(isSeparatePdf: Boolean) {
+        if (checkPermissions()) {
+            if (isSeparatePdf) {
+                sepratePDF()
+            } else {
+                generatePDF()
+            }
+            Toast.makeText(this, "PDF Generated Successfully", Toast.LENGTH_SHORT).show()
+        } else {
+            requestPermission()
+        }
+    }
 
     private fun editprofiledialog() {
         profileDialog= BottomSheetDialog(this)
         profileDialog.setContentView(R.layout.editprofiledialog)
         profileDialog.show()
-
         val db=UserProfileDatabase(this)
         imageadd=profileDialog.findViewById(R.id.uploadImage)!!
         nameadd=profileDialog.findViewById(R.id.uploadName)!!
@@ -797,6 +811,7 @@ class MainActivity : AppCompatActivity(){
                     override fun onTick(millisUntilFinished: Long) {
                         val days = millisUntilFinished / (24 * 60 * 60 * 1000)
                         val hours = (millisUntilFinished % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)
+
                         val minutes = (millisUntilFinished % (60 * 60 * 1000)) / (60 * 1000)
                         val seconds = (millisUntilFinished % (60 * 1000)) / 1000
                         val remainingTime = String.format("%02dd %02dh %02dm %02ds", days, hours, minutes, seconds)
@@ -874,19 +889,11 @@ class MainActivity : AppCompatActivity(){
                     sendWhatsAppMessage()
                     true
                 }
-                R.id.nav_telegram -> {
-                    val userid = 1302795295
-                    val message = "Hello, this is your message!"
-                    val telegramUri = Uri.parse("tg://send?user_id=$userid&text=${Uri.encode(message)}")
-                    val telegramIntent = Intent(Intent.ACTION_VIEW, telegramUri)
-                    telegramIntent.setPackage("org.telegram.messenger")
-
-                    val packageManager = packageManager
-                    val activities = packageManager.queryIntentActivities(telegramIntent, 0)
-                    if (activities.isNotEmpty()) {
-                        startActivity(telegramIntent)
-                    } else {
-                        Toast.makeText(this, "Telegram app is not installed", Toast.LENGTH_SHORT).show()
+                R.id.nav_About -> {
+                    try{
+                        Intent(this, About::class.java).also { startActivity(it) }
+                    }catch (e:Exception){
+                        Log.d("Activity","Activity ${e.message} ")
                     }
                     true
                 }
@@ -909,6 +916,16 @@ class MainActivity : AppCompatActivity(){
                 }
                 R.id.widget->{
                     addWidgetToHomeScreen()
+                    true
+                }
+                R.id.nav_share->{
+                    val applink="\"Hey There ! \uD83D\uDC4B I've been this fantastic Event Manager app,and it's Save My Time for Manageing Event Time and Effort. \uD83D\uDCB0 if you're looking for a simple and effective way to manage your event,I Highly recommend giving it a try .You can download it here : https://shorturl.at/fjry4 "
+                    val intent=Intent()
+                    intent.action=Intent.ACTION_SEND
+                    intent.putExtra(Intent.EXTRA_TEXT,applink)
+                    intent.type="text/plain"
+                    startActivity(Intent.createChooser(intent,"Share to:"))
+                    drawerLayout.close()
                     true
                 }
                 else -> false

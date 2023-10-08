@@ -13,20 +13,26 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.5"
         tools:context=".fragments.EventAdding">
-
         <LinearLayout
             style="@style/EventScreen"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp">
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/animation_view"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_159sdp"
+                app:lottie_rawRes="@raw/animation_lnevq38g"
+                app:lottie_loop="true"
+                app:lottie_autoPlay="true" />
 
             <TextView
                 style="@style/TEXTColor"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/_15sdp"
-                android:text="Create a new event"
+                android:text="@string/create_a_new_event"
                 android:textAlignment="center"
                 android:textSize="@dimen/_20sdp" />
 
@@ -36,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/_15sdp"
                 android:layout_marginBottom="@dimen/_15sdp"
-                android:text="Set up an event and start planning it"
+                android:text="@string/set_up_an_event_and_start_planning_it"
                 android:textAlignment="center"
                 android:textSize="@dimen/_20sdp" />
 
@@ -142,6 +148,7 @@
                 android:text="Update"
                 android:textColor="@color/black"
                 android:textSize="20sp"
+                android:windowSoftInputMode="adjustResize"
                 android:textStyle="bold"
                 android:visibility="gone" />
 

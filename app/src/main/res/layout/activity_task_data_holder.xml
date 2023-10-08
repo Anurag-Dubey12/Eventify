@@ -23,7 +23,13 @@
             app:layout_scrollFlags="scroll|enterAlways"
             app:titleCentered="true"/>
     </com.google.android.material.appbar.AppBarLayout>
-
+  <ImageView
+      android:id="@+id/data_not_found"
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/_400sdp"
+      android:src="@drawable/no_data_found"
+      android:layout_gravity="center"
+      />
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"

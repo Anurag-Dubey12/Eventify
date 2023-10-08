@@ -2,7 +2,6 @@ package com.example.eventmatics.Event_Details_Activity
 
 import android.app.Activity
 import android.content.ContentResolver
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.provider.ContactsContract
@@ -16,7 +15,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.Toolbar
@@ -24,20 +22,18 @@ import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.eventmatics.Adapter.CategoryAdapter
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.VendorPaymentActivityAdapter
 import com.example.eventmatics.R
-import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Vendor
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.VendorPaymentinfo
-import com.example.eventmatics.data_class.SpinnerItem
 import com.example.eventmatics.fragments.VendorFragment
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.util.Calendar
 
 class VendorDetails : AppCompatActivity(),
@@ -45,10 +41,11 @@ class VendorDetails : AppCompatActivity(),
 
     val fragmentManager = supportFragmentManager
     private lateinit var vendorNameET: EditText
-    private lateinit var categoryButton: Button
+    private lateinit var categoryButton: ImageView
     private lateinit var vendorNoteET: EditText
     private lateinit var vendorEstimatedAmount: EditText
     private lateinit var vendorBalanceTV: TextView
+    private lateinit var categoryedit: TextView
     private lateinit var vendorViewTV: ImageView
     private lateinit var PaymentAdd: ImageView
     private lateinit var ContactDetails: CardView
@@ -81,19 +78,19 @@ class VendorDetails : AppCompatActivity(),
     var paymentStatus :String=" "
     var updatepaymentStatus :String=" "
 
-    val spinnerItems = listOf(
-        SpinnerItem("Accessories"),
-        SpinnerItem( "Accommodation"),
-        SpinnerItem( "Attire & accessories"),
-        SpinnerItem( "Ceremony"),
-        SpinnerItem( "Flower & Decor"),
-        SpinnerItem( "Health & Beauty"),
-        SpinnerItem( "Jewelry"),
-        SpinnerItem( "Miscellaneous"),
-        SpinnerItem( "Music & Show"),
-        SpinnerItem( "Photo & Video"),
-        SpinnerItem( "Reception"),
-        SpinnerItem( "Transportation")
+    val spinnerItems = arrayOf(
+        "Accessories",
+        "Accommodation",
+        "Attire & accessories",
+        "Ceremony",
+        "Flower & Decor",
+        "Health & Beauty",
+        "Jewelry",
+        "Miscellaneous",
+        "Music & Show",
+        "Photo & Video",
+        "Reception",
+        "Transportation"
     )
 
     fun showVendorFragment(payment: VendorPaymentinfo){
@@ -115,6 +112,7 @@ class VendorDetails : AppCompatActivity(),
         categoryButton = findViewById(R.id.vendorcategory_button)
         vendorNoteET = findViewById(R.id.VendorNoteET)
         paymentDetails = findViewById(R.id.paymentDetails)
+        categoryedit = findViewById(R.id.categoryedit)
         paymentLayout = findViewById(R.id.paymentLayout)
         vendorEstimatedAmount = findViewById(R.id.VendorEstimated_Amount)
         vendorBalanceTV = findViewById(R.id.VendorBalancetv)
@@ -132,7 +130,18 @@ class VendorDetails : AppCompatActivity(),
         vendorAddressTV = findViewById(R.id.VendorAddressstv)
         vendorAddressET = findViewById(R.id.VendorAddresssEt)
 
-        categoryButton.setOnClickListener { showvendorcategory() }
+        categoryButton.setOnClickListener {
+            MaterialAlertDialogBuilder(this)
+                .setTitle("Select Category")
+                .setSingleChoiceItems(spinnerItems, 0) { dialog, which ->
+                    categoryedit.text=spinnerItems[which]
+                    dialog.dismiss()
+                }
+                .setNegativeButton("Cancel") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
+        }
         vendorViewTV.setOnClickListener { infoshow() }
         val Selected_Item: Vendor?=intent.getParcelableExtra("Selected_Item")
         if(Selected_Item!=null){
@@ -140,7 +149,7 @@ class VendorDetails : AppCompatActivity(),
             paymentLayout.visibility=View.VISIBLE
             paymentDetails.visibility=View.VISIBLE
             vendorNameET.setText(Selected_Item.name)
-            categoryButton.setText(Selected_Item.category)
+            categoryedit.setText(Selected_Item.category)
             vendorNoteET.setText(Selected_Item.note)
             vendorEstimatedAmount.setText(Selected_Item.estimatedAmount)
             vendorBalanceTV.setText(Selected_Item.balance)
@@ -319,21 +328,6 @@ private fun showpaymentsheet(){
         viewsToToggle.forEach { it.visibility = visibility }
         vendorViewTV.setImageResource(arrowDrawableRes)
     }
-
-    private fun showvendorcategory() {
-        val spinneritem=CategoryAdapter(this,spinnerItems)
-
-        val alertdialog=AlertDialog.Builder(this)
-            .setTitle("Chose Category")
-            .setAdapter(spinneritem){_,position->
-                val selecteditem=spinnerItems[position]
-                categoryButton.text=selecteditem.text
-            }
-            .setNegativeButton("cancel",null)
-        val dialog=alertdialog.create()
-        dialog.show()
-
-    }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.guest_vendor_menu,menu)
         return super.onCreateOptionsMenu(menu)
@@ -395,7 +389,7 @@ private fun showpaymentsheet(){
     }
     private fun AddvaluetoDatabase() {
         val vendorName = vendorNameET.text.toString()
-        val category = categoryButton.text.toString()
+        val category = categoryedit.text.toString()
         val vendorNote = vendorNoteET.text.toString()
         val estimatedAmount = vendorEstimatedAmount.text.toString()
         val vendorBalance = vendorBalanceTV.text.toString()
@@ -411,7 +405,7 @@ private fun showpaymentsheet(){
     }
     private fun UpdateDatabase(id: Long,paymentList:List<VendorPaymentinfo>) {
         val vendorName = vendorNameET.text.toString()
-        val category = categoryButton.text.toString()
+        val category = categoryedit.text.toString()
         val vendorNote = vendorNoteET.text.toString()
         val estimatedAmount = vendorEstimatedAmount.text.toString()
         val vendorBalance = vendorBalanceTV.text.toString()

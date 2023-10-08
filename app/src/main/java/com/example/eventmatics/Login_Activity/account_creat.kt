@@ -14,7 +14,6 @@ import android.widget.Toast
 import com.example.eventmatics.MainActivity
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.AuthenticationUid
-import com.example.eventmatics.getSharedPreference
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -31,7 +30,6 @@ class account_creat : AppCompatActivity() {
     private lateinit var emailField: EditText
     private lateinit var passField: EditText
     private lateinit var createButton: MaterialButton
-    private lateinit var googleLoginButton: MaterialButton
     private lateinit var alreadyHaveAccountText: TextView
     private lateinit var progressDialog: ProgressDialog
     private lateinit var firestore: FirebaseFirestore
@@ -44,7 +42,6 @@ class account_creat : AppCompatActivity() {
         emailField = findViewById(R.id.emailfield)
         passField = findViewById(R.id.passfield)
         createButton = findViewById(R.id.createbutton)
-        googleLoginButton = findViewById(R.id.google_creation)
         alreadyHaveAccountText = findViewById(R.id.alreadyfield)
         progressDialog = ProgressDialog(this)
         firestore = FirebaseFirestore.getInstance()
@@ -85,9 +82,6 @@ class account_creat : AppCompatActivity() {
             progressDialog.show()
         }
 
-        googleLoginButton.setOnClickListener {
-            googleSignIn()
-        }
 
         alreadyHaveAccountText.setOnClickListener {
             Intent(this, signin_account::class.java).also {
@@ -97,16 +91,6 @@ class account_creat : AppCompatActivity() {
     }
 
 
-    private fun googleSignIn() {
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-
-        val googleSignInClient = GoogleSignIn.getClient(this, gso)
-        val signInIntent = googleSignInClient.signInIntent
-        startActivityForResult(signInIntent, RC_SIGN_IN)
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

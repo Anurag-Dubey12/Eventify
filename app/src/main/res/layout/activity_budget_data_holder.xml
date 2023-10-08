@@ -32,6 +32,14 @@
                 app:titleCentered="true" />
 
         </com.google.android.material.appbar.AppBarLayout>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_400sdp"
+            android:src="@drawable/no_data_found"
+            android:layout_gravity="center"
+            android:id="@+id/data_not_found"
+            android:layout_below="@id/appbar"
+            />
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefreshLayout"
@@ -46,14 +54,6 @@
                 android:layout_height="wrap_content" />
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-        <!--    <fragment-->
-        <!--        android:id="@+id/paymentfrag"-->
-        <!--      android:name="com.example.eventmatics.fragments.PaymentFragment"-->
-        <!--    android:layout_width="match_parent"-->
-        <!--    android:layout_height="wrap_content"-->
-        <!--    android:layout_below="@id/swipeRefreshLayout"-->
-        <!--    android:layout_above="@id/budgetBottomnav"-->
-        <!--    />-->
         <include
             android:id="@+id/budgetBottomnav"
             layout="@layout/eventbottomnav"

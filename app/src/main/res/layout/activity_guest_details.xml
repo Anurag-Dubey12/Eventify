@@ -18,18 +18,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <include
-                layout="@layout/guest_vendor_toolbar"/>
-            <TextView
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/_10sdp"
-                android:text="@string/guest_details"
+                android:logo="@drawable/back_arrow"
+                app:title="Guest Details"
+                app:titleCentered="true"
                 style="@style/TEXTColor"
-                android:textStyle="bold"
-                android:textSize="@dimen/_17sdp"
-                />
-
+                android:titleMarginStart="30sp"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

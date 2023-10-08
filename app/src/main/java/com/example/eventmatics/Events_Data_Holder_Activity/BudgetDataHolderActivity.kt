@@ -18,6 +18,8 @@ import android.os.Handler
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatActivity
@@ -33,6 +35,7 @@ import com.example.eventmatics.Event_Details_Activity.BudgetDetails
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Budget
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
 import com.example.eventmatics.SwipeGesture.BudgetSwipeToDelete
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -49,6 +52,7 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
     lateinit var bottomnav: BottomNavigationView
     lateinit var adapter:BudgetDataHolderAdapter
     lateinit var budgetlist:MutableList<Budget>
+    private lateinit var Data_Not_found: ImageView
     lateinit var bmp:Bitmap
     lateinit var scalebmp:Bitmap
     private var isRecyclerViewEmpty = true
@@ -67,6 +71,7 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_budget_data_holder)
         recyclerView = findViewById(R.id.BudgetDatarec)
+        Data_Not_found = findViewById(R.id.data_not_found)
         budgetAdd=findViewById(R.id.fab)
         swipeRefreshLayout= findViewById(R.id.swipeRefreshLayout)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
@@ -76,6 +81,11 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        if(recyclerView.adapter?.itemCount==0){
+            Data_Not_found.visibility= View.VISIBLE
+        }else{
+            Data_Not_found.visibility= View.GONE
+        }
         budgetlist= mutableListOf()
 
         budgetAdd.setOnClickListener {
@@ -84,8 +94,7 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
 
         swipeRefreshLayout.setOnRefreshListener {
             Handler().postDelayed({
-                val databasename=getSharedPreference(this,"databasename").toString()
-                val db = LocalDatabase(this, databasename)
+                val db = DatabaseManager.getDatabase(this)
                 val BudgetList = db.getAllBudgets()
                 isRecyclerViewEmpty=BudgetList.isNullOrEmpty()
                 if(BudgetList!=null){
@@ -130,16 +139,6 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
         })
         showbudgetlist()
     }
-    fun getSharedPreference(context: Context, key: String): String? {
-        val sharedPref = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
-        return sharedPref.getString(key, null)
-    }
-//    fun removeSharedPreference(context: Context, key: String) {
-//        val sharedPref = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
-//        val editor = sharedPref.edit()
-//        editor.remove(key)
-//        editor.apply()
-//    }
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         val pdfReportItem = menu.findItem(R.id.pdfreport)
         val check = menu.findItem(R.id.Check)
@@ -148,8 +147,7 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
     }
 
     private fun showbudgetlist() {
-        val databasename=getSharedPreference(this,"databasename").toString()
-        val db = LocalDatabase(this, databasename)
+        val db = DatabaseManager.getDatabase(this)
         val BudgetList = db.getAllBudgets()
         isRecyclerViewEmpty=BudgetList.isNullOrEmpty()
         if(BudgetList!=null){
@@ -234,63 +232,6 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
                                 }
                             }
                     }
-                        //Payment Gateway code
-//                        val budget = BudgetList[position]
-//                        val getdata=budget.estimatedAmount
-//                        val amount=getdata.toFloat()
-//                        var parseamount=Math.round(amount!! *100)
-//                        val checkout = Checkout()
-//                        val name=budget.name
-//                        // set your id as below
-//                        checkout.setKeyID("rzp_test_nIeiFSu0nyqFRK")
-//
-//                        // set image
-//                        checkout.setImage(R.drawable.event_management)
-//                        Checkout.preload(applicationContext)
-//                        // initialize json object
-//                        val `object` = JSONObject()
-//                        try {
-//                            // to put name
-//                            `object`.put("name", "$name")
-//
-//                            // put description
-//                            `object`.put("description", "Budget Payment")
-//
-//                            // to set theme color
-//                            `object`.put("theme.color", "#FF81D4FA")
-//
-////                            `object`.put("order_id", "order_DBJOWzybf0sJbb");
-//                            // put the currency
-//                            `object`.put("currency", "INR")
-//
-//                            // put amount
-//                            `object`.put("amount", parseamount)
-//                            val retryObj = JSONObject()
-//                            retryObj.put("enabled", true);
-//                            retryObj.put("max_count", 4);
-//                            `object`.put("retry", retryObj);
-//
-//                            val prefill = JSONObject()
-//                            prefill.put("email","ad210689@gmail.com")
-//                            prefill.put("contact","9004040592")
-//                            `object`.put("prefill",prefill)
-                            // put mobile number
-//                            `object`.put("prefill.contact", "")
-//                            `object`.put("send_sms_hash",true);
-//
-//                            `object`.put("receipt","order_rcptid_11")
-
-                            // open razorpay to checkout activity
-//                            Checkout.clearUserData(this@BudgetDataHolderActivity)
-//                checkout.open(this@BudgetDataHolderActivity, `object`)
-//                        } catch (e: JSONException) {
-//                            e.printStackTrace()
-//                        }
-//                        var budgetid=budget.id
-//                        val BudgetName=budget.name
-//                        onPaymentSuccess("For $BudgetName",budgetid)
-//
-//                         onPaymentError("Something Went Wrong",budgetid)
 
                 }
             }
@@ -299,26 +240,6 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
         val itemTouch=ItemTouchHelper(swipe)
         itemTouch.attachToRecyclerView(recyclerView)
     }
-//    fun onPaymentSuccess(s: String, budgetId: Long) {
-//        val updated = updateBudgetAndUI(budgetId, "Paid")
-//        if (updated) {
-//            Toast.makeText(this@BudgetDataHolderActivity, "Payment is successful : $s", Toast.LENGTH_SHORT).show()
-//        } else {
-//            Toast.makeText(this@BudgetDataHolderActivity, "Payment was successful but failed to update status.", Toast.LENGTH_SHORT).show()
-//        }
-//    }
-
-//    fun onPaymentError(s: String, budgetId: Long) {
-//        val update=updateBudgetAndUI(budgetId,"Not Paid")
-//        if(update){
-//            Toast.makeText(this@BudgetDataHolderActivity, "Payment is not successful : $s", Toast.LENGTH_SHORT).show()
-//
-//        }
-//        else{
-//            Toast.makeText(this@BudgetDataHolderActivity, "Payment Failed due to error : $s", Toast.LENGTH_SHORT).show()
-//        }
-//
-//    }
 
     override fun onResume() {
         super.onResume()
@@ -348,11 +269,9 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
         return true
     }
     fun searchBudget(query:String){
-        val databasename=getSharedPreference(this,"databasename").toString()
-        val db = LocalDatabase(this, databasename)
+        val db = DatabaseManager.getDatabase(this)
         val BudgetFilter=db.SearchBudget(query)
        adapter.setadapter(BudgetFilter)
-
     }
 
 
@@ -376,8 +295,7 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
     }
 
     private fun GeneratePDF() {
-        val databasename = getSharedPreference(this, "databasename").toString()
-        val db = LocalDatabase(this, databasename)
+        val db = DatabaseManager.getDatabase(this)
         val BudgetList = db.getAllBudgets()
         val Event = db.getEventData(1)
         val name=Event?.name
@@ -551,7 +469,6 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
     }
     private fun showSortOptions() {
       val SortValue= arrayOf("Alphabetic(A-Z)","Amount")
-
        val DilogShow= MaterialAlertDialogBuilder(this)
             .setTitle("Sort Data")
             .setSingleChoiceItems(SortValue,-1){dialog,which->

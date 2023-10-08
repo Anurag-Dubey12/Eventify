@@ -68,47 +68,6 @@ class EventAdding(
         )
         eventDate.setText(todayFormattedDate)
         eventTime.setText(todayFormattedTime)
-//        if (eventId != null) {
-//            // Retrieve data from SQLite using the eventId for editing
-//            val eventData = getEventDataFromSQLite(eventId)
-//            eventName.setText(eventData.name)
-////            val newName=eventName.setText(eventData.name)
-//            eventDate.setText(eventData.Date)
-//            eventTime.setText(eventData.time)
-//            eventBudget.setText(eventData.budget)
-//            createButton.visibility= View.GONE
-//            EditButton.visibility=View.VISIBLE
-//
-//            EditButton.setOnClickListener {
-//                val eventNameText = eventName.text.toString()
-//                val eventDateText = eventDate.text.toString()
-//                val eventTimeText = eventTime.text.toString()
-//                val eventBudgetText = eventBudget.text.toString()
-//                val event = Events(0, eventNameText, eventDateText, eventTimeText, eventBudgetText)
-//                val databaseHelper = LocalDatabase(context, eventNameText)
-//                databaseHelper.updateEvent(event)
-//                Toast.makeText(context, "Event updated successfully", Toast.LENGTH_SHORT).show()
-//
-//                // Remove the previous shared preference
-//                val previousEventName = getSharedPreference(context, "databasename").toString()
-//                val sharedPreferences = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
-//                val editor: SharedPreferences.Editor = sharedPreferences.edit()
-//                editor.remove(previousEventName)
-//                editor.apply()
-//
-//                // Save the new shared preference
-//                saveToSharedPreferences(context, "databasename", eventNameText)
-//
-//                // Set the updated values back to the TextInputEditText fields
-//                eventName.setText(eventNameText)
-//                eventDate.setText(eventDateText)
-//                eventTime.setText(eventTimeText)
-//                eventBudget.setText(eventBudgetText)
-//
-//                dismiss()
-//            }
-//
-//        }
         eventDate.setOnClickListener { showDatePicker() }
         eventTime.setOnClickListener { showTimePicker() }
 
@@ -213,9 +172,6 @@ class EventAdding(
             .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
             .setCalendarConstraints(constraintBulder.build())
             .build()
-
-
-
         datePicker.addOnPositiveButtonClickListener { selectedDate ->
             val selectedCalendar = Calendar.getInstance()
             selectedCalendar.timeInMillis = selectedDate

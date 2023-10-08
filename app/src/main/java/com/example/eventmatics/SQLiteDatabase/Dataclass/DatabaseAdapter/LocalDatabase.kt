@@ -366,7 +366,7 @@ class LocalDatabase(contex:Context,databasename:String):
     @SuppressLint("Range")
     fun getAllEvents(): MutableList<Events> {
         val events = ArrayList<Events>()
-        val selectQuery = "SELECT * FROM $TABLE_Event LIMIT 1"
+        val selectQuery = "SELECT * FROM $TABLE_Event LIMIT 5"
         val db = readableDatabase
         val cursor: Cursor? = db.rawQuery(selectQuery, null)
         cursor?.let {

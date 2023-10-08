@@ -29,15 +29,12 @@ class EventLayoutAdapter(
         val current=eventdata[position]
         holder.bind(current)
 //        holder.textViewOptions.setOnClickListener { onItemClickListener(position) }
-        holder.textViewOptions.setOnClickListener {
+        holder.itemView.setOnClickListener {
             // Call the onItemClickListener and pass the position or any other relevant data.
             onItemClickListener(position)
         }
 
         }
-
-
-
     override fun getItemCount(): Int {
       return eventdata.size
     }
@@ -45,7 +42,6 @@ class EventLayoutAdapter(
         private val eventNameTextView: TextView = item.findViewById(R.id.eventnametv)
         private val eventDateTextView: TextView = item.findViewById(R.id.eventdatetv)
         private val eventTimeTextView: TextView = item.findViewById(R.id.eventtimetv)
-        val textViewOptions: TextView = item.findViewById(R.id.textViewOptions)
 //        val itemedit: ImageView = item.findViewById(R.id.itemedit)
         fun bind(eventdata: Events){
             eventNameTextView.text=eventdata.name

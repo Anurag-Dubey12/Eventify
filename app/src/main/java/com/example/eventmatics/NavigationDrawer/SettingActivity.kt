@@ -17,7 +17,7 @@ import androidx.appcompat.widget.Toolbar
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.NamesDatabase
-import com.example.eventmatics.getSharedPreference
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.shadow.ShadowRenderer
 import java.io.File
@@ -28,9 +28,8 @@ class SettingActivity : AppCompatActivity() {
     private val sharedperfkey="Theme"
     private lateinit var Sharedpref:SharedPreferences
     private lateinit var LocalBackupbutton:MaterialButton
-    private lateinit var DriveBackupbutton:MaterialButton
     private lateinit var resetDataButton:MaterialButton
-    private lateinit var Loadbackup:MaterialButton
+//    private lateinit var Loadbackup:MaterialButton
     private val PICK_FILE_REQUEST = 1
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,8 +44,7 @@ class SettingActivity : AppCompatActivity() {
         val themegroup:RadioGroup=findViewById(R.id.themeRadioGroup)
          LocalBackupbutton=findViewById(R.id.LocalBackupbutton)
         resetDataButton=findViewById(R.id.resetDataButton)
-        Loadbackup=findViewById(R.id.LoadBackup)
-//        DriveBackupbutton=findViewById(R.id.DriveBackupbutton)
+//        Loadbackup=findViewById(R.id.LoadBackup)
 
 
         val radiobut=when(current){
@@ -71,11 +69,8 @@ class SettingActivity : AppCompatActivity() {
         resetDataButton.setOnClickListener {
             ResetData()
         }
-        Loadbackup.setOnClickListener {
-            LoadBackupData()
-        }
-//        DriveBackupbutton.setOnClickListener {
-//            driveBackupDatabase()
+//        Loadbackup.setOnClickListener {
+//            LoadBackupData()
 //        }
     }
     fun LoadBackupData() {
@@ -89,37 +84,19 @@ class SettingActivity : AppCompatActivity() {
     }
 
     private fun ResetData() {
-        val databasename = getSharedPreference(this, "databasename").toString()
-        val db = LocalDatabase(this, databasename)
+
+        val db = DatabaseManager.getDatabase(this)
         val Namesdb = NamesDatabase(this)
         db.deteleAllEvent()
         Namesdb.deleteAll()
         finish()
         Toast.makeText(this, "Data Reset Successfully", Toast.LENGTH_SHORT).show()
     }
-
-//    private fun driveBackupDatabase():Drive?{
-//        GoogleSignIn.getLastSignedInAccount(this)?.let { googleAccount->
-//            val credential=GoogleAccountCredential.usingOAuth2(this,
-//                listOf(DriveScopes.DRIVE_FILE)
-//            )
-//            credential.selectedAccount=googleAccount.account!!
-//            return Drive.Builder(
-//                AndroidHttp.newCompatibleTransport(),
-//                JacksonFactory.getDefaultInstance(),
-//                credential
-//            )
-//                .setApplicationName("Drive")
-//                .build()
-//        }
-//        return null
-//    }
-
     private fun backupDatabase() {
         try {
-            val databasename = getSharedPreference(this, "databasename").toString()
-            val db = LocalDatabase(this, databasename)
-            val currentpath = applicationContext.getDatabasePath(databasename).absolutePath
+
+            val db =DatabaseManager.getDatabase(this)
+            val currentpath = applicationContext.getDatabasePath(db.toString()).absolutePath
             Log.d("Path", "Database path is: $currentpath")
             val Event_Details = db.getEventData(1)
             val EventName = Event_Details?.name

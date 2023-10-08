@@ -1,6 +1,5 @@
 package com.example.eventmatics.Event_Details_Activity
 
-import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -13,19 +12,15 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.eventmatics.Adapter.CategoryAdapter
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.PaymentActivityAdapter
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Budget
-import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Paymentinfo
-import com.example.eventmatics.data_class.SpinnerItem
 import com.example.eventmatics.fragments.BudgetFragment
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
@@ -48,13 +43,13 @@ class BudgetDetails : AppCompatActivity(),
     val paymentlist: MutableList<Paymentinfo> = mutableListOf()
     val updatedpaymentlist: MutableList<Paymentinfo> = mutableListOf()
     val paymentSet: MutableSet<Paymentinfo> = mutableSetOf()
-
     lateinit var EstimatedEt: EditText
     val fragmentManager = supportFragmentManager
     lateinit var NoteET: EditText
     lateinit var budgetFragment: BudgetFragment
     lateinit var PaymentBalance: LinearLayout
-    lateinit var categoryselection: TextView
+    lateinit var categoryselection: ImageView
+    lateinit var categoryedit: TextView
 
 
     //Payment ID
@@ -68,19 +63,19 @@ class BudgetDetails : AppCompatActivity(),
     private var isButtonClicked: Boolean = false
     private var status: String = ""
     private var updatedStatus: String = ""
-    val spinnerItems = listOf(
-        SpinnerItem("Accessories"),
-        SpinnerItem( "Accommodation"),
-        SpinnerItem( "Attire & accessories"),
-        SpinnerItem( "Ceremony"),
-        SpinnerItem( "Flower & Decor"),
-        SpinnerItem( "Health & Beauty"),
-        SpinnerItem( "Jewelry"),
-        SpinnerItem( "Miscellaneous"),
-        SpinnerItem( "Music & Show"),
-        SpinnerItem( "Photo & Video"),
-        SpinnerItem( "Reception"),
-        SpinnerItem( "Transportation")
+    val spinnerItems = arrayOf(
+        "Accessories",
+        "Accommodation",
+        "Attire & accessories",
+        "Ceremony",
+        "Flower & Decor",
+        "Health & Beauty",
+        "Jewelry",
+        "Miscellaneous",
+        "Music & Show",
+        "Photo & Video",
+        "Reception",
+        "Transportation"
     )
 
     private fun showBudgetFragment(payment: Paymentinfo?) {
@@ -106,6 +101,7 @@ class BudgetDetails : AppCompatActivity(),
         totalPayment = findViewById(R.id.totalPayment)
         PaymentRecycler = findViewById(R.id.PaymentRecycler)
         Paymentadd = findViewById(R.id.paymentadd)
+        categoryedit = findViewById(R.id.categoryedit)
         balanceET = findViewById(R.id.Balancetv)
         warning_Message = findViewById(R.id.warning_Message)
         PaymentBalance = findViewById(R.id.PaymentBalance)
@@ -113,7 +109,16 @@ class BudgetDetails : AppCompatActivity(),
         categoryselection = findViewById(R.id.categoryselection)
 
         categoryselection.setOnClickListener {
-            showCategoryPopup()
+            MaterialAlertDialogBuilder(this)
+                .setTitle("Select Category")
+                .setSingleChoiceItems(spinnerItems, 0) { dialog, which ->
+                    categoryedit.text=spinnerItems[which]
+                    dialog.dismiss()
+                }
+                .setNegativeButton("Cancel") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
         }
         val selected_item: Budget?=intent.getParcelableExtra("selected_item")
 
@@ -122,7 +127,7 @@ class BudgetDetails : AppCompatActivity(),
             addapyment.visibility=View.VISIBLE
             PaymentRecycler.visibility=View.VISIBLE
             nameEditText.setText(selected_item.name)
-            categoryselection.setText(selected_item.category)
+            categoryedit.setText(selected_item.category)
             NoteET.setText(selected_item.note)
             balanceET.setText(selected_item.balance)
             EstimatedEt.setText(selected_item.estimatedAmount)
@@ -282,19 +287,6 @@ private fun updatepaymentsheet(payment: Paymentinfo?){
         val backgroundColor = if (isSelected) R.color.light_blue else R.color.white
         button.backgroundTintList = ContextCompat.getColorStateList(this, backgroundColor)
     }
-
-    private fun showCategoryPopup() {
-        val spinnerAdapter = CategoryAdapter(this, spinnerItems)
-        val dialogBuilder = AlertDialog.Builder(this)
-            .setTitle("Select Category")
-            .setAdapter(spinnerAdapter) { _, position ->
-                val selectedItem = spinnerItems[position]
-                categoryselection.text=selectedItem.text
-            }
-            .setNegativeButton("Cancel", null)
-        val dialog = dialogBuilder.create()
-        dialog.show()
-    }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return  when(item.itemId){
             android.R.id.home->{
@@ -319,7 +311,7 @@ private fun updatepaymentsheet(payment: Paymentinfo?){
         val totalamt = EstimatedEt.text.toString().toFloat()
         val Totalamount = totalamt.toString()
         val note = NoteET.text.toString()
-        val category = categoryselection.text.toString()
+        val category = categoryedit.text.toString()
         val balance = balanceET.text.toString()
 
         if (name.isEmpty()) {
@@ -363,7 +355,7 @@ private fun updatepaymentsheet(payment: Paymentinfo?){
         val totalamt = EstimatedEt.text.toString().toFloat()
         val Totalamount=totalamt.toString()
         val note=NoteET.text.toString()
-        val category=categoryselection.text.toString()
+        val category=categoryedit.text.toString()
         val balance=balanceET.text.toString()
         if (name.isEmpty()) {
             nameEditText.error = "Please enter a name"

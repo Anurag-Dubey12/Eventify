@@ -29,7 +29,7 @@ class PaymentActivityAdapter(private val context: Context, private val paymentLi
     override fun onBindViewHolder(holder: PaymentInfoViewHolder, position: Int) {
         val payment = paymentList[position]
         holder.bind(payment)
-        holder.itemView.setOnClickListener {
+        holder.EditPayment.setOnClickListener {
             itemClickListener.onItemClick(payment)
         }
     }
@@ -39,10 +39,11 @@ class PaymentActivityAdapter(private val context: Context, private val paymentLi
     }
     inner class PaymentInfoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         // Views in the item layout
-        private val paymentNameTextView: TextView = itemView.findViewById(R.id.budgetPaymentName)
+        val paymentNameTextView: TextView = itemView.findViewById(R.id.budgetPaymentName)
         private val paymentAmountTextView: TextView = itemView.findViewById(R.id.budgetpaymentamount)
         private val paymentDateTextView: TextView = itemView.findViewById(R.id.budgetpaymentdate)
         private val budgetpaymentstatus: TextView = itemView.findViewById(R.id.budgetpaymentstatus)
+        val EditPayment: ImageView = itemView.findViewById(R.id.EditPayment)
 
         fun bind(payment: Paymentinfo) {
             paymentNameTextView.text = payment.name

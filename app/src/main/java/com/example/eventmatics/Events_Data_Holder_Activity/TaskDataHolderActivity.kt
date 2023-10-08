@@ -18,7 +18,9 @@ import android.os.Handler
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.CheckBox
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatActivity
@@ -33,6 +35,7 @@ import com.example.eventmatics.Adapter.TaskDataHolderAdpater
 import com.example.eventmatics.Event_Details_Activity.TaskDetails
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Task
 import com.example.eventmatics.SwipeGesture.SwipeToDelete
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -49,6 +52,7 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
     lateinit var bottomnav: BottomNavigationView
     private lateinit var adapter: TaskDataHolderAdpater
     private lateinit var recyclerView: RecyclerView
+    private lateinit var Data_Not_found: ImageView
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var Data_Item_Selected: CheckBox
     private var isRecyclerViewEmpty = true
@@ -69,6 +73,7 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_data_holder)
         recyclerView = findViewById(R.id.TaskDatarec)
+        Data_Not_found = findViewById(R.id.data_not_found)
         taskAdd=findViewById(R.id.fab)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         bottomnav=findViewById(R.id.bottomNavigationView)
@@ -80,6 +85,11 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
         showTaskData()
         taskAdd.setOnClickListener {
             Intent(this,TaskDetails::class.java).also { startActivity(it) }
+        }
+        if(recyclerView.adapter?.itemCount==0){
+            Data_Not_found.visibility= View.VISIBLE
+        }else{
+            Data_Not_found.visibility= View.GONE
         }
         bottomnav.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
@@ -115,7 +125,6 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
         }
         swipeRefreshLayout.setProgressViewEndTarget(true,150)
         showTaskData()
-//        loadOriginalTaskList()
     }
 
 
@@ -132,9 +141,7 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
         invalidateOptionsMenu()
     }
     private fun showTaskData() {
-
-        val databsename=getSharedPreference(this,"databasename").toString()
-        val db=LocalDatabase(this,databsename)
+        val db = DatabaseManager.getDatabase(this)
         tasklist=db.getAllTasks()
         isRecyclerViewEmpty=tasklist.isNullOrEmpty()
         if(tasklist!=null){
@@ -142,8 +149,6 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
             adapter = TaskDataHolderAdpater(this,tasklist,this)
             recyclerView?.adapter = adapter
             recyclerView.layoutManager = LinearLayoutManager(this)
-
-//            swipeRefreshLayout.isRefreshing=false
         }
         val swipe=object :SwipeToDelete(this){
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
@@ -192,10 +197,6 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
                                         dialog.cancel()
                                         recreate()
                                     }
-//                                    .setNegativeButton("Pending"){dialog,_->
-//                                        db.UpdateTaskStatus(Task.id,NewStatus)
-//                                        recreate()
-//                                    }
                                     .show()
                                 "Completed"->MaterialAlertDialogBuilder(this@TaskDataHolderActivity)
                                     .setTitle("Task Status Update")
@@ -208,51 +209,37 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
                                         dialog.cancel()
                                         recreate()
                                     }
-//                                    .setNegativeButton("Pending"){dialog,_->
-//                                        db.UpdateTaskStatus(Task.id,NewStatus)
-//                                        recreate()
-//                                    }
                                     .show()
-                            }
-
-
-                        }
-                    }
-                }}}
+                            } } } }}}
         val touchHelper= ItemTouchHelper(swipe)
         touchHelper.attachToRecyclerView(recyclerView)
         invalidateOptionsMenu()
     }
-
-    fun getSharedPreference(context:Context,key:String):String?{
-        val sharedvalue=context.getSharedPreferences("Database",Context.MODE_PRIVATE)
-        return sharedvalue.getString(key,null)
-    }
     private fun showSortOptions() {
-
-        val sortvalue= arrayOf("Name","Date")
-        MaterialAlertDialogBuilder(this)
+        val sortvalue = arrayOf("Name", "Date")
+        val dialog = MaterialAlertDialogBuilder(this)
             .setTitle("Sort Data")
-            .setMessage("Select In Which Format you want to sort the data")
-
-            .setSingleChoiceItems(sortvalue,1){dialog,which->
-                when(sortvalue[which]){
-                    "Name"->{
-                        tasklist.sortBy { it.taskName }
-                        adapter.notifyDataSetChanged()
-                        }
-                    "Date"->{tasklist.sortBy { it.taskDate }
-
-                        adapter.notifyDataSetChanged()}
+            .setNeutralButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+                .setSingleChoiceItems(sortvalue, -1) { dialog, which ->
+            when (sortvalue[which]) {
+                "Name" -> {
+                    tasklist.sortBy { it.taskName }
+                    adapter.notifyDataSetChanged()
                 }
-                dialog.dismiss()
-                adapter.notifyDataSetChanged()
+                "Date" -> {
+                    tasklist.sortBy { it.taskDate }
+                    adapter.notifyDataSetChanged()
+                }
             }
-            .setNeutralButton("Cancel"){dialog,_->
-                dialog.dismiss()
-            }
-            .show()
+            dialog.dismiss()
+            adapter.notifyDataSetChanged()
+        }
+
+        dialog.show()
     }
+
     private fun showFilterOption() {
         val FilterOption= arrayOf("Pending","Completed")
         MaterialAlertDialogBuilder(this)
@@ -270,13 +257,6 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
                 dialog.dismiss()
             }
             .show()
-    }
-    fun gettaskstatus(status:String):Int{
-        return when(status){
-            "Pending"->0
-            "Completed"->1
-            else->2
-        }
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.holder,menu)
@@ -299,20 +279,9 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
         })
         return true
     }
-    private fun loadOriginalTaskList() {
-        val databsename = getSharedPreference(this, "databasename").toString()
-        val db = LocalDatabase(this, databsename)
-        tasklist = db.getAllTasks().toMutableList()
-
-        // Update the RecyclerView adapter with the original task list
-        adapter.setData(tasklist)
-    }
     private fun searchTask(query: String) {
-        val databsename = getSharedPreference(this, "databasename").toString()
-        val db = LocalDatabase(this, databsename)
+        val db = DatabaseManager.getDatabase(this)
         val filteredList = db.searchTask(query)
-
-        // Update the RecyclerView adapter with the filtered task list
         adapter.setData(filteredList as MutableList<Task>)
     }
 
@@ -336,8 +305,7 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
     }
 
     private fun GeneratedPDF(){
-        val database=getSharedPreference(this,"databasename").toString()
-        val db=LocalDatabase(this,database)
+        val db = DatabaseManager.getDatabase(this)
         val Task=db.getAllTasks()
         val Event=db.getEventData(1)
         val name=Event?.name
@@ -363,8 +331,6 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
         val starty=200F
         val lineHeight=50F
 
-//        val column= listOf("Family Name","No.of Family Member","NOte","Invitation Status"
-//        ,"Acceptance Status","Phone Number(Head of The Family)","Address")
         val column= listOf("No","Name","Task Category","Note"
             ,"Task Status","Task Date")
 

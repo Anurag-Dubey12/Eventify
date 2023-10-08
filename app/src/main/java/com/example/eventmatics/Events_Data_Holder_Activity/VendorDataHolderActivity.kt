@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.ImageView
 import androidx.annotation.NonNull
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -30,6 +32,7 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
     lateinit var swipeRefreshLayout: SwipeRefreshLayout
     lateinit var bottomnav: BottomNavigationView
     lateinit var adapter:VendorDataHolderClass
+    private lateinit var Data_Not_found: ImageView
     private var vendorlist:MutableList<Vendor> = mutableListOf()
     override fun onItemclick(vendor: Vendor) {
         Intent(this,VendorDetails::class.java).also {
@@ -42,6 +45,7 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_vendor_data_holder)
         recyclerView = findViewById(R.id.vendorDatarec)
+        Data_Not_found = findViewById(R.id.data_not_found)
         vendorAdd=findViewById(R.id.fab)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         bottomnav=findViewById(R.id.bottomNavigationView)
@@ -49,6 +53,11 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
         //Action Bar
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        if(recyclerView.adapter?.itemCount==0){
+            Data_Not_found.visibility= View.VISIBLE
+        }else{
+            Data_Not_found.visibility= View.GONE
+        }
         vendorAdd.setOnClickListener {
             Intent(this, VendorDetails::class.java).also { startActivity(it) }
         }

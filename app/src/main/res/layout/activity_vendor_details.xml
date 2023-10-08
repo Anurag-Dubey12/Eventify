@@ -22,24 +22,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <include
-                layout="@layout/guest_vendor_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+            <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:logo="@drawable/back_arrow"
+            app:title="Vendor Details"
+            app:titleCentered="true"
+            style="@style/TEXTColor"
+            android:titleMarginStart="30sp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="75sp"
                 android:orientation="vertical">
-
-                <TextView
-                    style="@style/TEXTColor"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/_15sdp"
-                    android:text="@string/vendor_details"
-                    android:textSize="@dimen/_17sdp" />
 
                 <TextView
                     style="@style/TEXTColor"
@@ -66,18 +63,31 @@
                     android:text="@string/Category"
                     android:layout_marginStart="@dimen/_7sdp"
                     android:textSize="20sp" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/vendorcategory_button"
-                    style="@style/EditValueStyle"
-                    android:layout_width="@dimen/_300sdp"
-                    android:layout_height="@dimen/_30sdp"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="10sp"
-                    android:drawableEnd="@drawable/drop_arrow"
-                    android:text="@string/select_a_category"
-
-                    />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="@dimen/_7sdp">
+                    <EditText
+                        android:id="@+id/categoryedit"
+                        style="@style/EditValueStyle"
+                        android:layout_width="@dimen/_257sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="@dimen/_10sdp"
+                        android:inputType="text" />
+                    <ImageView
+                        android:id="@+id/vendorcategory_button"
+                        style="@style/EditValueStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:paddingTop="10sp"
+                        android:src="@drawable/drop_arrow"
+                        android:textAlignment="center"
+                        android:textStyle="bold" />
+                </LinearLayout>
 
                 <TextView
                     style="@style/TEXTColor"

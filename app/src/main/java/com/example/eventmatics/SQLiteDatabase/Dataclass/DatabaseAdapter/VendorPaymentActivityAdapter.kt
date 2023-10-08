@@ -41,12 +41,10 @@ class VendorPaymentActivityAdapter(private val context: Context,
         private val Vendorpaymentamount: TextView = itemView.findViewById(R.id.Vendorpaymentamount)
         private val Vendorpaymentdate: TextView = itemView.findViewById(R.id.Vendorpaymentdate)
         private val Vendorpaymentstatus: TextView = itemView.findViewById(R.id.Vendorpaymentstatus)
-        private val Vendortid: TextView = itemView.findViewById(R.id.Vendortid)
 //        private val paidRadioButton: MaterialRadioButton = itemView.findViewById(R.id.Radiopaid)
         fun bind(payment: VendorPaymentinfo) {
             VendorPaymentName.text = payment.name
             Vendorpaymentstatus.text = payment.status
-            Vendortid.text = payment.VendorId.toString()
             Vendorpaymentamount.text = payment.amount.toString()
             Vendorpaymentdate.text = payment.date
         }

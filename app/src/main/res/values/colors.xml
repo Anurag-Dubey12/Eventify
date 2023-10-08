@@ -32,5 +32,6 @@
     <color name="Aqua">#00FFFF</color>
     <color name="Lavender_Blush">#FFF0F5</color>
     <color name="Light_Lemon">#F2FFCA</color>
+    <color name="light">#F5F5F5</color>
 
 </resources>

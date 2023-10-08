@@ -93,4 +93,7 @@
     <string name="more">More</string>
     <string name="budget_title">Budget Title</string>
     <string name="unique_user_name">Unique User Name</string>
+    <string name="create_a_new_event">Create a new event</string>
+    <string name="set_up_an_event_and_start_planning_it">Set up an event and start planning it</string>
+    <string name="About">About</string>
 </resources>

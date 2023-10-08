@@ -52,9 +52,9 @@
                 android:icon="@drawable/whatsapp"
                 android:title="@string/whatsapp" />
             <item
-                android:id="@+id/nav_telegram"
+                android:id="@+id/nav_About"
                 android:icon="@drawable/telegram"
-                android:title="@string/telegram" />
+                android:title="@string/About" />
         </menu>
     </item>
     </group>
