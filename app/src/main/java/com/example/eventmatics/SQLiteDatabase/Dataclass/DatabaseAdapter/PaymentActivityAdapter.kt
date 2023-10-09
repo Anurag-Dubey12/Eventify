@@ -14,8 +14,7 @@ import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Paymentinfo
 
 class PaymentActivityAdapter(private val context: Context, private val paymentList: MutableList<Paymentinfo>
 ,private val itemClickListener: OnItemClickListener
-) :
-    RecyclerView.Adapter<PaymentActivityAdapter.PaymentInfoViewHolder>() {
+) : RecyclerView.Adapter<PaymentActivityAdapter.PaymentInfoViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PaymentInfoViewHolder {
         val view = LayoutInflater.from(parent.context)

@@ -17,6 +17,7 @@ class NamesDatabase(val context: Context):SQLiteOpenHelper(context,DATABASE_NAME
         private const val DATABASE_NAME = "Database_Name"
         private const val DATABASE_DATE = "Database_Date"
         private const val DATABASE_Time = "Database_Time"
+        private const val DATABASE_Budget = "Database_Budget"
         private const val UserID = "User_ID"
 
     }
@@ -27,6 +28,7 @@ class NamesDatabase(val context: Context):SQLiteOpenHelper(context,DATABASE_NAME
                 "$DATABASE_NAME TEXT," +
                 "$DATABASE_DATE TEXT,"+
                 "$DATABASE_Time TEXT,"+
+                "$DATABASE_Budget TEXT,"+
                 "$UserID TEXT"+
                 ")"
         db?.execSQL(query)
@@ -43,6 +45,7 @@ class NamesDatabase(val context: Context):SQLiteOpenHelper(context,DATABASE_NAME
             put(DATABASE_NAME, databaseNameDataClass.DatabaseName)
             put(DATABASE_DATE, databaseNameDataClass.Date)
             put(DATABASE_Time, databaseNameDataClass.Time)
+            put(DATABASE_Budget, databaseNameDataClass.Budget)
             put(UserID, databaseNameDataClass.uid)
         }
         val id = db.insertWithOnConflict(DATABASE_TABLE, null, values,SQLiteDatabase.CONFLICT_REPLACE)
@@ -55,6 +58,7 @@ class NamesDatabase(val context: Context):SQLiteOpenHelper(context,DATABASE_NAME
             put(DATABASE_NAME, databaseNameDataClass.DatabaseName)
             put(DATABASE_DATE, databaseNameDataClass.Date)
             put(DATABASE_Time, databaseNameDataClass.Time)
+            put(DATABASE_Budget, databaseNameDataClass.Budget)
             put(UserID, databaseNameDataClass.uid)
         }
 
@@ -88,7 +92,8 @@ class NamesDatabase(val context: Context):SQLiteOpenHelper(context,DATABASE_NAME
             val date = cursor.getString(cursor.getColumnIndex(DATABASE_DATE))
             val time = cursor.getString(cursor.getColumnIndex(DATABASE_Time))
             val uid = cursor.getString(cursor.getColumnIndex(UserID))
-            event = DatabaseNameDataClass(id, name, date, time,uid)
+            val budget = cursor.getString(cursor.getColumnIndex(DATABASE_Budget))
+            event = DatabaseNameDataClass(id, name, date, time,budget,uid)
         }
         cursor?.close()
         db.close()
@@ -107,65 +112,64 @@ class NamesDatabase(val context: Context):SQLiteOpenHelper(context,DATABASE_NAME
             val date = cursor.getString(cursor.getColumnIndex(DATABASE_DATE))
             val time = cursor.getString(cursor.getColumnIndex(DATABASE_Time))
             val uid = cursor.getString(cursor.getColumnIndex(UserID))
-            names= DatabaseNameDataClass(id,name,date,time,uid)
+            val budget = cursor.getString(cursor.getColumnIndex(DATABASE_Budget))
+            names= DatabaseNameDataClass(id,name,date,time,budget,uid)
         }
         cursor?.close()
         db.close()
         return names
     }
     @SuppressLint("Range")
-    fun getAllEventNames(): MutableList<DatabaseNameDataClass> {
-        val databaseNames = ArrayList<DatabaseNameDataClass>()
-        val db = this.readableDatabase
-        val query = "SELECT * FROM $DATABASE_TABLE"
-        val cursor:Cursor? = db.rawQuery(query, null)
-        cursor?.let {
-            if (it.moveToFirst()) {
-                do {
-                    val id = it.getLong(it.getColumnIndex(COLUMN_ID))
-                    val name = it.getString(it.getColumnIndex(DATABASE_NAME))
-                    val date = it.getString(it.getColumnIndex(DATABASE_DATE))
-                    val time = it.getString(it.getColumnIndex(DATABASE_Time))
-                    val uid = cursor.getString(cursor.getColumnIndex(UserID))
-                    val databaseNameDataClass = DatabaseNameDataClass(id, name, date,time,uid)
-                    databaseNames.add(databaseNameDataClass)
-                } while (it.moveToNext())
-            }
-        }
-        return databaseNames
-    }
-    @SuppressLint("Range")
-    fun getAllEventNamesWithoutDuplicates(): MutableList<DatabaseNameDataClass> {
-        val databaseNames = ArrayList<DatabaseNameDataClass>()
-        val db = this.readableDatabase
-        val query = "SELECT * FROM $DATABASE_TABLE"
-        val cursor: Cursor? = db.rawQuery(query, null)
-        val uniqueEventNames = HashSet<String>()
-
-        cursor?.let {
-            if (it.moveToFirst()) {
-                do {
-                    val id = it.getLong(it.getColumnIndex(COLUMN_ID))
-                    val name = it.getString(it.getColumnIndex(DATABASE_NAME))
-                    val date = it.getString(it.getColumnIndex(DATABASE_DATE))
-                    val time = it.getString(it.getColumnIndex(DATABASE_Time))
-                    val uid = cursor.getString(cursor.getColumnIndex(UserID))
-
-                    // Check if the event name is unique
-                    if (uniqueEventNames.add(name)) {
-                        val databaseNameDataClass = DatabaseNameDataClass(id, name, date, time,uid)
-                        databaseNames.add(databaseNameDataClass)
-                    }
-                } while (it.moveToNext())
-            }
-        }
-
-        cursor?.close()
-        db.close()
-
-        return databaseNames
-    }
-    @SuppressLint("Range")
+//    fun getAllEventNames(): MutableList<DatabaseNameDataClass> {
+//        val databaseNames = ArrayList<DatabaseNameDataClass>()
+//        val db = this.readableDatabase
+//        val query = "SELECT * FROM $DATABASE_TABLE"
+//        val cursor:Cursor? = db.rawQuery(query, null)
+//        cursor?.let {
+//            if (it.moveToFirst()) {
+//                do {
+//                    val id = it.getLong(it.getColumnIndex(COLUMN_ID))
+//                    val name = it.getString(it.getColumnIndex(DATABASE_NAME))
+//                    val date = it.getString(it.getColumnIndex(DATABASE_DATE))
+//                    val time = it.getString(it.getColumnIndex(DATABASE_Time))
+//                    val uid = cursor.getString(cursor.getColumnIndex(UserID))
+//                    val databaseNameDataClass = DatabaseNameDataClass(id, name, date,time,uid)
+//                    databaseNames.add(databaseNameDataClass)
+//                } while (it.moveToNext())
+//            }
+//        }
+//        return databaseNames
+//    }
+//    fun getAllEventNamesWithoutDuplicates(): MutableList<DatabaseNameDataClass> {
+//        val databaseNames = ArrayList<DatabaseNameDataClass>()
+//        val db = this.readableDatabase
+//        val query = "SELECT * FROM $DATABASE_TABLE"
+//        val cursor: Cursor? = db.rawQuery(query, null)
+//        val uniqueEventNames = HashSet<String>()
+//
+//        cursor?.let {
+//            if (it.moveToFirst()) {
+//                do {
+//                    val id = it.getLong(it.getColumnIndex(COLUMN_ID))
+//                    val name = it.getString(it.getColumnIndex(DATABASE_NAME))
+//                    val date = it.getString(it.getColumnIndex(DATABASE_DATE))
+//                    val time = it.getString(it.getColumnIndex(DATABASE_Time))
+//                    val uid = cursor.getString(cursor.getColumnIndex(UserID))
+//
+//                    // Check if the event name is unique
+//                    if (uniqueEventNames.add(name)) {
+//                        val databaseNameDataClass = DatabaseNameDataClass(id, name, date, time,uid)
+//                        databaseNames.add(databaseNameDataClass)
+//                    }
+//                } while (it.moveToNext())
+//            }
+//        }
+//
+//        cursor?.close()
+//        db.close()
+//
+//        return databaseNames
+//    }
     fun getAllEventNamesWithoutDuplicatesForUser(uid: String?): MutableList<DatabaseNameDataClass> {
         val databaseNames = ArrayList<DatabaseNameDataClass>()
         val db = this.readableDatabase
@@ -180,10 +184,11 @@ class NamesDatabase(val context: Context):SQLiteOpenHelper(context,DATABASE_NAME
                     val name = it.getString(it.getColumnIndex(DATABASE_NAME))
                     val date = it.getString(it.getColumnIndex(DATABASE_DATE))
                     val time = it.getString(it.getColumnIndex(DATABASE_Time))
+                    val budget=it.getString(it.getColumnIndex(DATABASE_Budget))
                     val uid = cursor.getString(cursor.getColumnIndex(UserID))
                     // Check if the event name is unique
                     if (uniqueEventNames.add(name)) {
-                        val databaseNameDataClass = DatabaseNameDataClass(id, name, date, time,uid)
+                        val databaseNameDataClass = DatabaseNameDataClass(id, name, date, time,budget,uid)
                         databaseNames.add(databaseNameDataClass)
                     }
                 } while (it.moveToNext())

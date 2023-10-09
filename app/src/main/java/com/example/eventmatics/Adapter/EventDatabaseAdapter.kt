@@ -9,26 +9,31 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.PaymentActivityAdapter
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.DatabaseNameDataClass
 import com.google.android.material.button.MaterialButton
 
-class EventDatabaseAdapter(val context: Context,private var DatabaseList: List<DatabaseNameDataClass>
-, private val onItemClick: (position: Int) -> Unit,
-                           val onDatabaseChangeClick: (newDatabaseName: String) -> Unit) :RecyclerView.Adapter<EventDatabaseAdapter.Viewholder>() {
+class EventDatabaseAdapter(val context: Context, private var DatabaseList: List<DatabaseNameDataClass>
+                           , val onDatabaseChangeClick: (newDatabaseName: String) -> Unit,
+                           private val itemClickListener: OnItemClickListener) :RecyclerView.Adapter<EventDatabaseAdapter.Viewholder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventDatabaseAdapter.Viewholder {
         val view=LayoutInflater.from(parent.context).inflate(R.layout.databaseholder,parent,false)
         return Viewholder(view)
     }
-
+interface OnItemClickListener{
+    fun onItemClick(DatabaseList:DatabaseNameDataClass)
+}
     override fun onBindViewHolder(holder: EventDatabaseAdapter.Viewholder, position: Int) {
         val databaselist=DatabaseList[position]
         holder.bind(databaselist)
+        holder.DatabaseDelete.setOnClickListener {
+            itemClickListener.onItemClick(databaselist)
+        }
     }
     fun updateData(newList: MutableList<DatabaseNameDataClass>) {
         DatabaseList = newList
         notifyDataSetChanged()
     }
-
     override fun getItemCount(): Int {
         return DatabaseList.size
     }

@@ -339,29 +339,29 @@ class LocalDatabase(contex:Context,databasename:String):
         return eventExists
     }
 
-    @SuppressLint("Range")
-    fun getAllEventsforadapter(): MutableList<DatabaseNameDataClass> {
-        val databaseNames = ArrayList<DatabaseNameDataClass>()
-        val selectQuery = "SELECT * FROM $TABLE_Event"
-        val db = readableDatabase
-        val cursor: Cursor? = db.rawQuery(selectQuery, null)
-        cursor?.let {
-            if (it.moveToFirst()) {
-                do {
-                    val id = it.getLong(it.getColumnIndex(COLUMN_ID))
-                    val name = it.getString(it.getColumnIndex(Event_Name))
-                    val date = it.getString(it.getColumnIndex(Event_Date))
-                    val time = it.getString(it.getColumnIndex(Event_Time))
-                    val uid = cursor.getString(cursor.getColumnIndex(UserID))
-                    val databaseNameDataClass = DatabaseNameDataClass(id, name, date,time,uid)
-                    databaseNames.add(databaseNameDataClass)
-                } while (it.moveToNext())
-            }
-        }
-        cursor?.close()
-        db.close()
-        return databaseNames
-    }
+//    @SuppressLint("Range")
+//    fun getAllEventsforadapter(): MutableList<DatabaseNameDataClass> {
+//        val databaseNames = ArrayList<DatabaseNameDataClass>()
+//        val selectQuery = "SELECT * FROM $TABLE_Event"
+//        val db = readableDatabase
+//        val cursor: Cursor? = db.rawQuery(selectQuery, null)
+//        cursor?.let {
+//            if (it.moveToFirst()) {
+//                do {
+//                    val id = it.getLong(it.getColumnIndex(COLUMN_ID))
+//                    val name = it.getString(it.getColumnIndex(Event_Name))
+//                    val date = it.getString(it.getColumnIndex(Event_Date))
+//                    val time = it.getString(it.getColumnIndex(Event_Time))
+//                    val uid = cursor.getString(cursor.getColumnIndex(UserID))
+//                    val databaseNameDataClass = DatabaseNameDataClass(id, name, date,time,uid)
+//                    databaseNames.add(databaseNameDataClass)
+//                } while (it.moveToNext())
+//            }
+//        }
+//        cursor?.close()
+//        db.close()
+//        return databaseNames
+//    }
 
     @SuppressLint("Range")
     fun getAllEvents(): MutableList<Events> {
@@ -466,6 +466,11 @@ class LocalDatabase(contex:Context,databasename:String):
         )
         db.close()
         return rowsAffected
+    }
+    fun deleteeventforuid(id:Int,uid:String){
+        val db=writableDatabase
+
+
     }
     fun deteleAllEvent():Int{
         val db=writableDatabase

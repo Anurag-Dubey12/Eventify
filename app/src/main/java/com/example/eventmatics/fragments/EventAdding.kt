@@ -102,7 +102,7 @@ class EventAdding(
             }
             val uid=AuthenticationUid.getUserUid(context)!!
             val event = Events(0, eventNameText, eventDateText, eventTimeText, eventBudgetText,uid)
-            val names= DatabaseNameDataClass(0,eventNameText,eventDateText,eventTimeText, uid)
+            val names= DatabaseNameDataClass(0,eventNameText,eventDateText,eventTimeText, eventBudgetText,uid)
             Log.d("UerUid","This is EventAdding userid:$names")
             val eventId = databaseHelper.createEvent(event)
             Databasename.createDatabase(names)
@@ -122,12 +122,6 @@ class EventAdding(
         }
 
 
-    }
-    private fun getEventDataFromSQLite(position: Int): Events {
-        val databasename=getSharedPreference(context,"databasename").toString()
-        val databaseHelper = LocalDatabase(context, databasename)
-        val eventDataList = databaseHelper.getAllEvents()
-        return eventDataList[position]
     }
 
     fun saveToSharedPreferences(context: Context, key: String, value: String) {

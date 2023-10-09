@@ -3,6 +3,7 @@ package com.example.eventmatics.NavigationDrawer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.provider.ContactsContract.Data
 import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
@@ -14,9 +15,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.AuthenticationUid
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.NamesDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
+import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.DatabaseNameDataClass
+import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Events
 import com.google.android.material.appbar.MaterialToolbar
 
-class EventList : AppCompatActivity() {
+class EventList : AppCompatActivity(),EventDatabaseAdapter.OnItemClickListener {
     private lateinit var  databaseRecycler:RecyclerView
     private lateinit var adapter: EventDatabaseAdapter
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
@@ -33,11 +36,10 @@ class EventList : AppCompatActivity() {
             refreshData()
         }
 
-        adapter = EventDatabaseAdapter(this, emptyList(),{ position, ->
-        }) {name->
+        adapter = EventDatabaseAdapter(this, emptyList(),{name->
             DatabaseManager.changeDatabaseName(this,name)
             Toast.makeText(this,"Event Change to $name",Toast.LENGTH_SHORT).show()
-        }
+        },this)
 
         databaseRecycler.adapter = adapter
         databaseRecycler.layoutManager = LinearLayoutManager(this)
@@ -46,7 +48,6 @@ class EventList : AppCompatActivity() {
 
     private fun showEventData() {
         try {
-//            val databasenames =DatabaseManager.getDatabase(this)
             val databasenames = NamesDatabase(this)
             val uid=AuthenticationUid.getUserUid(this)
             Log.d("UerUid","This is EVentList userid:$uid")
@@ -77,5 +78,21 @@ class EventList : AppCompatActivity() {
             adapter.updateData(databaseNames)
             swipeRefreshLayout.isRefreshing = false
         }, 1000)
+    }
+
+    override fun onItemClick(DatabaseList: DatabaseNameDataClass) {
+        try{
+       val id=DatabaseList.id
+        val dbname = NamesDatabase(this)
+        val db=DatabaseManager.getDatabase(this)
+        val eventlist= Events(DatabaseList.id,DatabaseList.DatabaseName,DatabaseList.Date,DatabaseList.Time,DatabaseList.Budget,DatabaseList.uid)
+        db.deleteEvent(eventlist)
+        dbname.deleteEventName(DatabaseList)
+            Toast.makeText(this,"Event Deteled Successfully",Toast.LENGTH_SHORT).show()
+        }catch (e:Exception){
+            e.printStackTrace()
+            Log.d("detele_Eventlist","Event Could Not Be deteled Because:${e.message}")
+        }
+
     }
 }

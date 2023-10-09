@@ -122,7 +122,8 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:padding="16dp"
-                    android:background="#474444">
+                    android:background="#474444"
+                    >
 
                     <com.airbnb.lottie.LottieAnimationView
                         android:id="@+id/github_ani"

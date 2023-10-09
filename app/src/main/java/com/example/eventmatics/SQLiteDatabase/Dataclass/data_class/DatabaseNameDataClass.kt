@@ -5,5 +5,6 @@ data class DatabaseNameDataClass(
     val DatabaseName:String,
     val Date:String="",
     val Time:String="",
+    val Budget:String="",
     val uid:String?
 )
