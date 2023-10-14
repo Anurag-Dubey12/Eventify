@@ -67,7 +67,7 @@
             <EditText
                 android:id="@+id/categoryedit"
                 style="@style/EditValueStyle"
-                android:layout_width="@dimen/_257sdp"
+                android:layout_width="@dimen/_247sdp"
                 android:layout_height="@dimen/_30sdp"
                 android:layout_gravity="center"
                 android:textAlignment="center"
@@ -76,10 +76,9 @@
             <ImageView
                 android:id="@+id/categoryselection"
                 style="@style/EditValueStyle"
-                android:layout_width="0dp"
+                android:layout_width="@dimen/_50sdp"
                 android:layout_height="@dimen/_30sdp"
                 android:layout_gravity="center"
-                android:layout_weight="1"
                 android:paddingTop="10sp"
                 android:src="@drawable/drop_arrow"
                 android:textAlignment="center"

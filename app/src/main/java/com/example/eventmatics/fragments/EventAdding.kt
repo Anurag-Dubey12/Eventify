@@ -22,7 +22,9 @@ import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import java.util.Calendar
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.NamesDatabase
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.DatabaseNameDataClass
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointForward
 
@@ -30,7 +32,7 @@ import com.google.android.material.datepicker.DateValidatorPointForward
 class EventAdding(
     context: Context, private val fragmentManager: FragmentManager,
     private val eventId: Int?
-) : AppCompatDialog(context) {
+) : BottomSheetDialog(context){
     private lateinit var eventName: TextInputEditText
     private lateinit var eventDate: TextInputEditText
     private lateinit var eventTime: TextInputEditText
@@ -40,10 +42,9 @@ class EventAdding(
     interface OnDataEnter{
         fun onDataEnter(event: Events)
     }
-    private var ondataenter:OnDataEnter?=null
-
-    fun setUserDataEnter(listener:OnDataEnter){
-        ondataenter=listener
+    private var onDataEnterListener: OnDataEnter? = null
+    fun setOnDataEnterListener(listener: OnDataEnter) {
+        onDataEnterListener = listener
     }
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -103,13 +104,16 @@ class EventAdding(
             val uid=AuthenticationUid.getUserUid(context)!!
             val event = Events(0, eventNameText, eventDateText, eventTimeText, eventBudgetText,uid)
             val names= DatabaseNameDataClass(0,eventNameText,eventDateText,eventTimeText, eventBudgetText,uid)
+            onDataEnterListener?.onDataEnter(event)
+            Log.d("EventDetails","The Event Details are:$event}")
+            Log.d("EventDetails","The Event Details are:${onDataEnterListener?.onDataEnter(event)}")
             Log.d("UerUid","This is EventAdding userid:$names")
             val eventId = databaseHelper.createEvent(event)
             Databasename.createDatabase(names)
             if (eventId != -1L) {
                 val dataAddedIntent = Intent("com.example.eventmatics.fragments")
                 context?.sendBroadcast(dataAddedIntent)
-                ondataenter?.onDataEnter(event)
+                onDataEnterListener?.onDataEnter(event)
                 dismiss()
                 Toast.makeText(context, "Event created successfully", Toast.LENGTH_SHORT).show()
                 saveToSharedPreferences(context, "databasename", eventNameText)

@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Events
 
-class EventLayoutAdapter(
+open class EventLayoutAdapter(
     private var eventdata:MutableList<Events>,
     private val onItemClickListener: (position: Int) -> Unit):RecyclerView.Adapter<EventLayoutAdapter.EventViewHolder>() {
 
@@ -17,7 +17,7 @@ class EventLayoutAdapter(
         val view=LayoutInflater.from(parent.context).inflate(R.layout.eventlayout,parent,false)
         return EventViewHolder(view)
     }
-    fun updateData(newEventList: MutableList<Events>) {
+    open fun updateData(newEventList: MutableList<Events>) {
         eventdata = newEventList
         notifyDataSetChanged()
     }

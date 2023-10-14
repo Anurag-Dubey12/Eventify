@@ -13,11 +13,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.icu.text.SimpleDateFormat
 import android.net.Uri
-import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Environment
@@ -27,8 +26,6 @@ import android.preference.PreferenceManager
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -36,6 +33,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
@@ -62,6 +60,7 @@ import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.NamesDat
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.UserProfile
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.UserProfileDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager.saveToSharedPreferences
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.DatabaseNameDataClass
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Events
 import com.example.eventmatics.fragments.EventAdding
@@ -79,19 +78,29 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.google.firebase.auth.FirebaseAuth
+import com.itextpdf.text.Chunk
 import com.itextpdf.text.Document
 import com.itextpdf.text.Element
+import com.itextpdf.text.Font
+import com.itextpdf.text.Image
 import com.itextpdf.text.PageSize
 import com.itextpdf.text.Paragraph
+import com.itextpdf.text.Phrase
+import com.itextpdf.text.pdf.ColumnText
 import com.itextpdf.text.pdf.PdfCopy
 import com.itextpdf.text.pdf.PdfPCell
 import com.itextpdf.text.pdf.PdfPTable
+import com.itextpdf.text.pdf.PdfPageEventHelper
 import com.itextpdf.text.pdf.PdfReader
 import com.itextpdf.text.pdf.PdfWriter
 import de.hdodenhof.circleimageview.CircleImageView
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 class MainActivity : AppCompatActivity(){
@@ -143,6 +152,13 @@ class MainActivity : AppCompatActivity(){
     private val galley_req_code = 201
     private var selectedImageUri:Uri?=null
 
+    //Event ID
+    private lateinit var eventName: TextInputEditText
+    private lateinit var eventDate: TextInputEditText
+    private lateinit var eventTime: TextInputEditText
+    private lateinit var eventBudget: TextInputEditText
+    private lateinit var createButton: Button
+    private lateinit var EditButton: Button
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -185,14 +201,16 @@ class MainActivity : AppCompatActivity(){
         val actionBarDrawerToggle = ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close)
         drawerLayout.addDrawerListener(actionBarDrawerToggle)
         actionBarDrawerToggle.syncState()
-
+        eventList.clear()
         val userUid = AuthenticationUid.getUserUid(this)!!
         Log.d("useruid","The Uid is :$userUid")
+
         //For First Time Launch Event Create SHow
         if (isFirstLaunch(this)) {
             showFirstLaunchDialog()
             setFirstLaunchFlag(this, false)
         }
+        DatabaseManager.initialize(this)
         showEventData()
         //Load Profile Pic
         val db=UserProfileDatabase(this)
@@ -216,8 +234,10 @@ class MainActivity : AppCompatActivity(){
         if (eventRecyclerView.adapter?.itemCount == 0) {
             eventTimerDisplay.text=" "
             eventname.text=" "
-            val eventAdding = EventAdding(this, supportFragmentManager, null)
-            eventAdding.show() }
+            val eventadding=EventAdding(this,supportFragmentManager,null)
+            eventadding.show()
+//           showeventfragemnt()
+        }
         else {
             guestSummary.setOnClickListener { checkAndStartActivity(GuestDataHolderActivity::class.java) }
             taskSummary.setOnClickListener { checkAndStartActivity(TaskDataHolderActivity::class.java) }
@@ -226,7 +246,8 @@ class MainActivity : AppCompatActivity(){
             taskImageButton.setOnClickListener { checkAndStartActivity(TaskDataHolderActivity::class.java) }
             budgetImageButton.setOnClickListener { checkAndStartActivity(BudgetDataHolderActivity::class.java) }
             guestImageButton.setOnClickListener { checkAndStartActivity(GuestDataHolderActivity::class.java) }
-            vendorImageButton.setOnClickListener { checkAndStartActivity(VendorDataHolderActivity::class.java) } }
+            vendorImageButton.setOnClickListener { checkAndStartActivity(VendorDataHolderActivity::class.java) }
+        }
 
         eventshow.setOnClickListener {
             val isRecyclerViewVisible = eventRecyclerView.visibility == View.VISIBLE
@@ -238,6 +259,7 @@ class MainActivity : AppCompatActivity(){
         }
 
         eventaddbut.setOnClickListener {
+//            showeventfragemnt()
             val eventadding=EventAdding(this,supportFragmentManager,null)
             eventadding.show()
         }
@@ -310,6 +332,127 @@ class MainActivity : AppCompatActivity(){
         swipeRefreshLayout.setProgressViewEndTarget(true,200)
 
         navigationDrawershow()
+    }
+
+    private fun showeventfragemnt() {
+        val dialog=layoutInflater.inflate(R.layout.fragment_event_adding,null)
+        eventName = dialog.findViewById(R.id.eventname)!!
+        eventDate = dialog.findViewById(R.id.eventdate)!!
+        eventTime = dialog.findViewById(R.id.eventtime)!!
+        eventBudget = dialog.findViewById(R.id.eventbudget)!!
+        createButton = dialog.findViewById(R.id.eventcreatebut)!!
+        val view=BottomSheetDialog(this)
+        view.setContentView(dialog)
+        view.create()
+        val today = Calendar.getInstance()
+        val todayFormattedDate = "${today.get(Calendar.DAY_OF_MONTH)}/${today.get(Calendar.MONTH) + 1}/${today.get(Calendar.YEAR)}"
+        val todayFormattedTime = String.format(
+            "%02d:%02d:%02d",
+            today.get(Calendar.HOUR_OF_DAY),
+            today.get(Calendar.MINUTE),
+            today.get(Calendar.SECOND)
+        )
+        eventDate.setText(todayFormattedDate)
+        eventTime.setText(todayFormattedTime)
+        eventDate.setOnClickListener { showDatePicker() }
+        eventTime.setOnClickListener { showTimePicker() }
+        createButton.setOnClickListener {
+            val databasename=getSharedPreference(this,"databasename").toString()
+            val eventNameText = eventName.text.toString()
+            var eventDateText = eventDate.text.toString()
+            val eventTimeText = eventTime.text.toString()
+            val eventBudgetText = eventBudget.text.toString()
+
+            if (eventNameText.isEmpty()) {
+                eventName.error = "Enter Event Name"
+                return@setOnClickListener
+            }
+            if (eventDateText.isEmpty()) {
+                eventDateText = "Date is not Defined"
+            }
+            if (eventBudgetText.isEmpty()) {
+                eventBudget.error = "Enter Budget"
+                return@setOnClickListener
+            }
+            if (eventTimeText.isEmpty()) {
+                eventTime.error = "Select Time"
+                return@setOnClickListener
+            }
+
+            DatabaseManager.initialize(this)
+            val db=DatabaseManager.getDatabase(this)
+            val Databasename=NamesDatabase(this)
+            if (db.isEventNameExists(eventNameText)) {
+                Toast.makeText(this, "Event name must be unique", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            val uid=AuthenticationUid.getUserUid(this)!!
+            val event = Events(0, eventNameText, eventDateText, eventTimeText, eventBudgetText,uid)
+            val names= DatabaseNameDataClass(0,eventNameText,eventDateText,eventTimeText, eventBudgetText,uid)
+            Log.d("EventDetails","The Event Details are:$event}")
+            Log.d("UerUid","This is EventAdding userid:$names")
+            val eventId = db.createEvent(event)
+            saveToSharedPreferences(this,"databasename",databasename)
+            Databasename.createDatabase(names)
+            if (eventId != -1L) {
+                swipeRefreshLayout.isRefreshing=true
+                Handler().postDelayed({
+                   showEventData()
+                    swipeRefreshLayout.isRefreshing = false
+                }, 1000)
+                Toast.makeText(this, "Event created successfully", Toast.LENGTH_SHORT).show()
+                view.dismiss()
+            } else {
+                Toast.makeText(this, "Failed to create event", Toast.LENGTH_SHORT).show()
+            }
+            db.close()
+            Databasename.close()
+        }
+        view.show()
+    }
+    private fun showTimePicker() {
+        val calendar = Calendar.getInstance()
+        val hour = calendar.get(Calendar.HOUR_OF_DAY)
+        val minute = calendar.get(Calendar.MINUTE)
+        val second = calendar.get(Calendar.SECOND)
+
+        val timePicker = MaterialTimePicker.Builder()
+            .setTimeFormat(TimeFormat.CLOCK_12H)
+            .setHour(hour)
+            .setMinute(minute)
+            .setTitleText("Select Event Time")
+            .build()
+
+        timePicker.addOnPositiveButtonClickListener {
+            val selectedHour = timePicker.hour
+            val selectedMinute = timePicker.minute
+            val formattedTime = String.format("%02d:%02d:%02d", selectedHour, selectedMinute, second)
+            eventTime.setText(formattedTime)
+
+        }
+
+        timePicker.show(supportFragmentManager, "TAG_TIME_PICKER")
+    }
+    private fun showDatePicker() {
+        val constraintBulder=CalendarConstraints.Builder()
+            .setValidator(DateValidatorPointForward.now())
+        val calendar = Calendar.getInstance()
+        val datePicker = MaterialDatePicker.Builder.datePicker()
+            .setTitleText("Select Date")
+            .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+            .setCalendarConstraints(constraintBulder.build())
+            .build()
+        datePicker.addOnPositiveButtonClickListener { selectedDate ->
+            val selectedCalendar = Calendar.getInstance()
+            selectedCalendar.timeInMillis = selectedDate
+            val selectedDay = selectedCalendar.get(Calendar.DAY_OF_MONTH)
+            val selectedMonth = selectedCalendar.get(Calendar.MONTH)
+            val selectedYear = selectedCalendar.get(Calendar.YEAR)
+            val formattedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
+            eventDate.setText(formattedDate)
+        }
+        datePicker.show(supportFragmentManager, "datePicker")
+
     }
     fun handlePdfGeneration(isSeparatePdf: Boolean) {
         if (checkPermissions()) {
@@ -424,80 +567,152 @@ class MainActivity : AppCompatActivity(){
     }
     private fun checkAndStartActivity(targetActivity:Class<*>){
         if (eventRecyclerView.adapter?.itemCount==0){
-            val eventAdding=EventAdding(this,supportFragmentManager,null)
-            eventAdding.show()
+            showeventfragemnt()
             Toast.makeText(this, "Create an Event Before Moving Further", Toast.LENGTH_SHORT).show()
         }
         else{
             Intent(this,targetActivity).also { startActivity(it) }
         }
     }
-
-    private fun createDataCell(data: String, font: com.itextpdf.text.Font): PdfPCell {
+    private fun createDataCell(data: String, font: Font): PdfPCell {
     val cell = PdfPCell(Paragraph(data, font))
     cell.borderColor = com.itextpdf.text.BaseColor.BLACK
     cell.borderWidth = 1f
     return cell
 }
-    private fun generatedTaskPDF(db:LocalDatabase, pdfPath: File){
-        val eventdetails=db.getEventData(1)
-        val eventname=eventdetails?.name
-        val taskDetails=db.getAllTasks()
-        val pdffirectory=File(Environment.getExternalStorageDirectory(),"Eventify")
-        if(!pdffirectory.exists()){
+    class HeaderFooterEvent : PdfPageEventHelper() {
+        override fun onEndPage(writer: PdfWriter?, document: Document?) {
+            val eventifyFont = Font(Font.FontFamily.TIMES_ROMAN, 15f,Font.BOLDITALIC)
+            val dateFont = Font(Font.FontFamily.TIMES_ROMAN, 15f)
+
+            val eventifyPhrase = Phrase("Eventify", eventifyFont)
+            val datePhrase = Phrase(SimpleDateFormat("dd/MM/yyyy").format(Date()), dateFont)
+            val pageFont = Font(Font.FontFamily.TIMES_ROMAN, 10f)
+
+            val centerX = (document!!.left() + document.right()) / 2
+            val topY = document.top() + 10f
+
+            ColumnText.showTextAligned(
+                writer!!.directContent,
+                Element.ALIGN_CENTER,
+                eventifyPhrase,
+                centerX,
+                topY,
+                0f
+            )
+
+            ColumnText.showTextAligned(
+                writer.directContent,
+                Element.ALIGN_LEFT,
+                datePhrase,
+                document.left() + 36f,
+                document.bottom() - 10f,
+                0f
+            )
+
+            //Adding page number
+            val pageNumberPhrase = Phrase("Page " + writer.pageNumber, pageFont)
+            ColumnText.showTextAligned(
+                writer.directContent,
+                Element.ALIGN_CENTER,
+                pageNumberPhrase,
+                centerX,
+                document.bottom() - 10f,
+                0f
+            )
+        }
+    }
+
+    private fun generateTaskPDF(db: LocalDatabase, pdfPath: File) {
+        val eventdetails = db.getEventData(1)
+        val eventname = eventdetails?.name
+        val taskDetails = db.getAllTasks()
+        val totaltask=db.getTotalTask()
+        val totaltaskcom=db.getTaskStatus()
+        val totalpending=db.getTaskPendingStatus()
+
+        val pdffirectory = File(Environment.getExternalStorageDirectory(), "Eventify")
+        if (!pdffirectory.exists()) {
             pdffirectory.mkdirs()
         }
-        val childDirectory=File(pdffirectory,"$eventname")
-        if(!childDirectory.exists()){
+        val childDirectory = File(pdffirectory, "$eventname")
+        if (!childDirectory.exists()) {
             childDirectory.mkdirs()
         }
-        val pdfFilePath=File(childDirectory,"TaskReport.pdf")
+        val pdfFilePath = File(childDirectory, "TaskReport.pdf")
+
         try {
             pdfFilePath.createNewFile()
-            val document=Document(PageSize.A4)
-            val pdfWriter= PdfWriter.getInstance(document,FileOutputStream(pdfFilePath))
+            val document = Document(PageSize.A4)
+            val headerFooterEvent = HeaderFooterEvent()
+            val pdfWriter = PdfWriter.getInstance(document, FileOutputStream(pdfFilePath))
+            pdfWriter.pageEvent = headerFooterEvent
             document.open()
-            val taskTitle=com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.TIMES_ROMAN,20f,com.itextpdf.text.Font.BOLD)
-            val dataFont=com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.TIMES_ROMAN,12f)
+            val imgFile = R.drawable.app_logo
+            val bitmap = BitmapFactory.decodeResource(resources, imgFile)
+            val byteArray = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArray)
+            val image = Image.getInstance(byteArray.toByteArray())
+            image.scaleToFit(100f, 100f)
+            image.alignment = Element.ALIGN_LEFT
+            document.add(image)
+            val taskTitle = com.itextpdf.text.Font(Font.FontFamily.TIMES_ROMAN, 20f)
+            val dataFont = Font(Font.FontFamily.TIMES_ROMAN, 12f)
+            val parafont=Font(Font.FontFamily.TIMES_ROMAN,15f,Font.BOLD)
 
-            val title=Paragraph("Task Details",taskTitle)
-            title.alignment=Element.ALIGN_CENTER
+            val para=Paragraph()
+            val paravalue="Total Task:$totaltask \n " +
+                    "Total Task Completed:$totaltaskcom \n" +
+                    "Total Task Pending:$totalpending"
+            val chunk=Chunk(paravalue,parafont)
+            para.add(chunk)
+            para.alignment=Element.ALIGN_RIGHT
+            para.spacingAfter=30f
+            val title = Paragraph("Task Details", taskTitle)
+            title.alignment = Element.ALIGN_CENTER
+            title.spacingAfter=30f
             document.add(title)
+            document.add(para)
+            val taskcolumn = listOf("No", "Name", "Task Category", "Note", "Task Status", "Task Date")
+            val taskcolumnSize = taskcolumn.size
 
-            val taskcolumn= listOf("No","Name","Task Category","Note","Task Status","Task Date")
-            val taskcolumnSize=taskcolumn.size
+            val table = PdfPTable(taskcolumnSize)
+            table.widthPercentage = 100f
 
-            val table=PdfPTable(taskcolumnSize)
-            table.widthPercentage=100f
-
-            for(column in taskcolumn){
-                val cell=PdfPCell(Paragraph(column,dataFont))
-                cell.borderColor=com.itextpdf.text.BaseColor.BLACK
-                cell.borderWidth=1f
+            for (column in taskcolumn) {
+                val cell = PdfPCell(Paragraph(column, dataFont))
+                cell.borderColor = com.itextpdf.text.BaseColor.BLACK
+                cell.backgroundColor=com.itextpdf.text.BaseColor.GRAY
+                cell.borderWidth = 1f
                 table.addCell(cell)
             }
-            for(task in taskDetails){
-                table.addCell(createDataCell(task.id.toString(),dataFont))
-                table.addCell(createDataCell(task.taskName,dataFont))
-                table.addCell(createDataCell(task.category,dataFont))
-                table.addCell(createDataCell(task.taskNote,dataFont))
-                table.addCell(createDataCell(task.taskStatus,dataFont))
-                table.addCell(createDataCell(task.taskDate,dataFont))
+            for (task in taskDetails) {
+                table.addCell(createDataCell(task.id.toString(), dataFont))
+                table.addCell(createDataCell(task.taskName, dataFont))
+                table.addCell(createDataCell(task.category, dataFont))
+                table.addCell(createDataCell(task.taskNote, dataFont))
+                table.addCell(createDataCell(task.taskStatus, dataFont))
+                table.addCell(createDataCell(task.taskDate, dataFont))
             }
             document.add(table)
             document.close()
             Toast.makeText(this, "PDF file generated successfully", Toast.LENGTH_SHORT).show()
 
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
-            Log.e("PDF", "Failed to generate PDF file: ${e.message}")        }
+            Log.e("PDF", "Failed to generate PDF file: ${e.message}")
+        }
     }
+
+
     @SuppressLint("SuspiciousIndentation")
     fun generateBudgetPDF(db:LocalDatabase, pdfPath: File){
         val budgetdetails=db.getAllBudgets()
         val eventdetails=db.getEventData(1)
         val eventname=eventdetails?.name
-
+        val totalbudgetnotpaid=db.getTotalNotPaidBudget()
+        val totalbudget=db.getTotalBudget()
+        val totalbudgetpaid=db.getTotalPaidBudget()
         val parentDirectory=File(Environment.getExternalStorageDirectory(),"Eventify")
         if(!parentDirectory.exists()){
             parentDirectory.mkdirs()
@@ -510,18 +725,35 @@ class MainActivity : AppCompatActivity(){
 
             try {
                 pdfFilePath.createNewFile()
-
+                val headerFooterEvent=HeaderFooterEvent()
                 val document = Document(PageSize.A4)
                 val pdfWriter = PdfWriter.getInstance(document, FileOutputStream(pdfFilePath))
+                pdfWriter.pageEvent=headerFooterEvent
                 document.open()
+                val imgFile = R.drawable.app_logo
+                val bitmap = BitmapFactory.decodeResource(resources, imgFile)
+                val byteArray = ByteArrayOutputStream()
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArray)
+                val image = Image.getInstance(byteArray.toByteArray())
+                image.scaleToFit(100f, 100f)
+                image.alignment = Element.ALIGN_LEFT
+                document.add(image)
+                val titleFont = Font(Font.FontFamily.TIMES_ROMAN, 20f, Font.BOLD)
+                val dataFont = Font(Font.FontFamily.TIMES_ROMAN, 12f)
+                val parafont=Font(Font.FontFamily.TIMES_ROMAN,15f,Font.BOLD)
 
-                val titleFont = com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.TIMES_ROMAN, 20f, com.itextpdf.text.Font.BOLD)
-                val dataFont = com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.TIMES_ROMAN, 12f)
-
+                val para=Paragraph()
+                val paravalue="Total Budget:$totalbudget \n" +
+                        "Total Amount Paid:$totalbudgetpaid \n" +
+                        "Total Amount UnPaid:$totalbudgetnotpaid"
+                val chunk=Chunk(paravalue,parafont)
+                para.add(chunk)
+                para.alignment=Element.ALIGN_RIGHT
+                para.spacingAfter=30f
                 val title = Paragraph("Budget Report", titleFont)
                 title.alignment = Element.ALIGN_CENTER
                 document.add(title)
-
+                document.add(para)
                 val columnNames = listOf("No", "Name", "Category", "Note", "Estimated")
                 val numColumns = columnNames.size
 
@@ -531,6 +763,7 @@ class MainActivity : AppCompatActivity(){
                 for (columnName in columnNames) {
                     val cell = PdfPCell(Paragraph(columnName, dataFont))
                     cell.borderColor = com.itextpdf.text.BaseColor.BLACK
+                    cell.backgroundColor=com.itextpdf.text.BaseColor.GRAY
                     cell.borderWidth = 1f
                     table.addCell(cell)
                 }
@@ -554,8 +787,12 @@ class MainActivity : AppCompatActivity(){
     }
     private fun generateGuestPDF(db:LocalDatabase, pdfPath: File){
         val guestdetails=db.getAllGuests()
+        val totalinvi=db.getTotalInvitation()
+        val totalinvinot=db.getTotalInvitationsNotSent()
+        val totalinvisnt=db.getTotalInvitationsSent()
         val eventdetails=db.getEventData(1)
         val eventname=eventdetails?.name
+
         val parentDirectory=File(Environment.getExternalStorageDirectory(),"Eventify")
         if(!parentDirectory.exists()){
             parentDirectory.mkdirs()
@@ -568,16 +805,34 @@ class MainActivity : AppCompatActivity(){
         try{
             pdfFilePath.createNewFile()
             val document=Document(PageSize.A4)
+            val headerFooterEvent = HeaderFooterEvent()
             val pdfWriter=PdfWriter.getInstance(document,FileOutputStream(pdfFilePath))
+            pdfWriter.pageEvent=headerFooterEvent
             document.open()
-
-            val guestTitle=com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.TIMES_ROMAN,20f,com.itextpdf.text.Font.BOLD)
-            val datafont=com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.TIMES_ROMAN,12f)
-
+            val imgfile=R.drawable.app_logo
+            val bitmap=BitmapFactory.decodeResource(resources,imgfile)
+            val bytearray=ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.JPEG,100,bytearray)
+            val image=Image.getInstance(bytearray.toByteArray())
+            image.scaleToFit(100f,100f)
+            image.alignment=Element.ALIGN_LEFT
+            document.add(image)
+            val guestTitle= Font(Font.FontFamily.TIMES_ROMAN,20f, Font.BOLD)
+            val datafont= Font(Font.FontFamily.TIMES_ROMAN,12f)
+            val parafont=Font(Font.FontFamily.TIMES_ROMAN,15f,Font.BOLD)
+            val para=Paragraph()
+            val paravalue="Total Invitation :$totalinvi \n" +
+                    "Total Invitation Sent:$totalinvisnt \n" +
+                    "Total Invitation Not Sent:$totalinvinot"
+            val chunk=Chunk(paravalue,parafont)
+            para.alignment=Element.ALIGN_RIGHT
+            para.spacingAfter=30f
+            para.add(chunk)
             val title=Paragraph("Guest Details",guestTitle)
             title.alignment=Element.ALIGN_CENTER
+            title.spacingAfter=30f
             document.add(title)
-
+            document.add(para)
             val guestColumnName = listOf(
         "No", "Family Name", "Total Member", "Note",
         "Invitation", "Phone Number", "Address")
@@ -588,6 +843,7 @@ class MainActivity : AppCompatActivity(){
             for(column in guestColumnName){
                 val cell=PdfPCell(Paragraph(column,datafont))
                 cell.borderColor=com.itextpdf.text.BaseColor.BLACK
+                cell.backgroundColor=com.itextpdf.text.BaseColor.GRAY
                 cell.borderWidth=1f
                 table.addCell(cell)
             }
@@ -609,6 +865,9 @@ class MainActivity : AppCompatActivity(){
     }
     private fun generatedVendorPDF(db: LocalDatabase, pdfPath: File){
         val vendorDetails=db.getAllVendors()
+        val totalbudget=db.GetTotalVendorBudget()
+        val totalbudgetpaid=db.GetVendorPaidAmount()
+        val totalbudgetnotpaid=db.GetVendorNotPaidAmount()
         val eventDetails=db.getEventData(1)
         val eventName=eventDetails?.name
         val parentDirectory=File(Environment.getExternalStorageDirectory(),"Eventify")
@@ -623,20 +882,40 @@ class MainActivity : AppCompatActivity(){
         try {
             pdfFilePath.createNewFile()
             val document=Document(PageSize.A4)
+            val headerFooterEvent=HeaderFooterEvent()
             val pdfWriter=PdfWriter.getInstance(document,FileOutputStream(pdfFilePath))
+            pdfWriter.pageEvent=headerFooterEvent
             document.open()
+            val imgFile = R.drawable.app_logo
+            val bitmap = BitmapFactory.decodeResource(resources, imgFile)
+            val byteArray = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArray)
+            val image = Image.getInstance(byteArray.toByteArray())
+            image.scaleToFit(100f, 100f)
+            image.alignment = Element.ALIGN_LEFT
+            document.add(image)
+            val vendorTitle= Font(Font.FontFamily.TIMES_ROMAN,20f, Font.BOLD)
+            val dataFont= Font(Font.FontFamily.TIMES_ROMAN,15f)
+            val parafont=Font(Font.FontFamily.TIMES_ROMAN,15f,Font.BOLD)
 
-            val vendorTitle=com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.TIMES_ROMAN,20f,com.itextpdf.text.Font.BOLD)
-            val dataFont=com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.TIMES_ROMAN,15f)
-
+            val para=Paragraph()
+            val paravalue="Total Budget:$totalbudget \n" +
+                    "Total Amount Paid:$totalbudgetpaid \n" +
+                    "Total Amount UnPaid:$totalbudgetnotpaid "
+            val chunk=Chunk(paravalue,parafont)
+            para.add(chunk)
+            para.alignment=Element.ALIGN_RIGHT
+            para.spacingAfter=30f
             val title=Paragraph("Vendor Details",vendorTitle)
             title.alignment=Element.ALIGN_CENTER
+            title.spacingAfter=30f
             document.add(title)
-
+            document.add(para)
             val vendorcolumnNames = listOf(
-        "No","Name", "Category", "Estimated Amount", "Balance",
-        "Notes", "Phone Number",
-        "Email", "Website", "Address")
+                "No","Name", "Category",
+                "Estimated Amount", "Balance",
+                "Notes", "Phone Number",
+                "Email", "Website", "Address")
             val vendorColumnSize=vendorcolumnNames.size
 
             val table=PdfPTable(vendorColumnSize)
@@ -645,6 +924,7 @@ class MainActivity : AppCompatActivity(){
             for(column in vendorcolumnNames){
                 val cell=PdfPCell(Paragraph(column,dataFont))
                 cell.borderColor=com.itextpdf.text.BaseColor.BLACK
+                cell.backgroundColor=com.itextpdf.text.BaseColor.GRAY
                 cell.borderWidth=1f
                 table.addCell(cell)
             }
@@ -670,7 +950,8 @@ class MainActivity : AppCompatActivity(){
 
     }
     private fun sepratePDF(){
-         val db=DatabaseManager.getDatabase(this)
+        GlobalScope.launch{
+         val db=DatabaseManager.getDatabase(applicationContext)
         val eventDetails = db.getEventData(1)
         val eventName = eventDetails?.name
 
@@ -684,11 +965,13 @@ class MainActivity : AppCompatActivity(){
         }
         generateGuestPDF(db, eventDirectroy)
         generatedVendorPDF(db, eventDirectroy)
-        generatedTaskPDF(db, eventDirectroy)
+        generateTaskPDF(db, eventDirectroy)
         generateBudgetPDF(db, eventDirectroy)
     }
+        }
     private fun generatePDF() {
-         val db=DatabaseManager.getDatabase(this)
+        GlobalScope.launch {
+         val db=DatabaseManager.getDatabase(applicationContext)
         val eventDetails = db.getEventData(1)
         val eventName = eventDetails?.name
 
@@ -704,7 +987,7 @@ class MainActivity : AppCompatActivity(){
 
         generateGuestPDF(db, eventDirectroy)
         generatedVendorPDF(db, eventDirectroy)
-        generatedTaskPDF(db, eventDirectroy)
+        generateTaskPDF(db, eventDirectroy)
         generateBudgetPDF(db, eventDirectroy)
 
         try {
@@ -714,12 +997,13 @@ class MainActivity : AppCompatActivity(){
                 File(eventDirectroy, "TaskReport.pdf").absolutePath,
                 File(eventDirectroy, "BudgetReport.pdf").absolutePath
             )
-            Toast.makeText(this, "PDF files merged successfully", Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, "PDF files merged successfully", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             e.printStackTrace()
             Log.e("PDF", "Failed to merge PDFs: ${e.message}")
         }
     }
+        }
 
     private fun mergePDFs(outputFilePath: String, vararg pdfFilePaths: String) {
         val document = Document()
@@ -730,6 +1014,7 @@ class MainActivity : AppCompatActivity(){
             val pdfReader = PdfReader(pdfFilePath)
             for (pageIndex in 1..pdfReader.numberOfPages) {
                 pdfCopy.addPage(pdfCopy.getImportedPage(pdfReader, pageIndex))
+
             }
             pdfCopy.freeReader(pdfReader)
             pdfReader.close()
@@ -751,8 +1036,9 @@ class MainActivity : AppCompatActivity(){
         return shared.getInt(key,AppCompatDelegate.MODE_NIGHT_NO)
     }
     private fun showFirstLaunchDialog() {
-        val eventAdding=EventAdding(this,supportFragmentManager,null)
-        eventAdding.show()
+        val eventadding=EventAdding(this,supportFragmentManager,null)
+        eventadding.show()
+
     }
     private fun isFirstLaunch(context: Context): Boolean {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -767,6 +1053,11 @@ class MainActivity : AppCompatActivity(){
         super.onResume()
         setAppTheme()
         showEventData()
+        swipeRefreshLayout.isRefreshing=true
+        Handler().postDelayed({
+
+            swipeRefreshLayout.isRefreshing = false
+        }, 10)
     }
     @SuppressLint("Range")
     fun showEventData() {
@@ -825,7 +1116,7 @@ class MainActivity : AppCompatActivity(){
                 Log.e("CountdownError", "Error parsing event date and time.")
             }
         }
-        val adapter = EventLayoutAdapter(eventList){ position ->
+        adapter = EventLayoutAdapter(eventList){ position ->
         }
         adapter.updateData(eventList)
         eventRecyclerView.adapter = adapter
@@ -844,9 +1135,20 @@ class MainActivity : AppCompatActivity(){
     private fun deleteEvent(event: Events):Boolean {
         val db = DatabaseManager.getDatabase(this)
         db.deleteEvent(event)
-        Toast.makeText(this,"Event Removed",Toast.LENGTH_SHORT).show()
-        recreate()
-        return true
+        // Close the database if it's open
+        DatabaseManager.getDatabase(this).close()
+
+        // Delete the database file
+        val databaseDeleted = this.deleteDatabase(event.name)
+
+        if (databaseDeleted) {
+            Toast.makeText(this, "Event Removed", Toast.LENGTH_SHORT).show()
+            recreate() // This will recreate the activity to reflect the changes
+        } else {
+            Toast.makeText(this, "Failed to remove event", Toast.LENGTH_SHORT).show()
+        }
+
+        return databaseDeleted
     }
 
     override fun onBackPressed() {
@@ -983,11 +1285,9 @@ class MainActivity : AppCompatActivity(){
             Toast.makeText(this, "WhatsApp is not installed on your device.", Toast.LENGTH_SHORT).show()
         }
     }
-    override fun onDestroy() {
-        super.onDestroy()
-        unregisterReceiver(dataAddedReceiver)
-
-    }
-
-
+//    override fun onDestroy() {
+//        super.onDestroy()
+//        unregisterReceiver(dataAddedReceiver)
+//
+//    }
 }

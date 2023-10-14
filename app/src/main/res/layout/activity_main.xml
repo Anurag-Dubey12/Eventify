@@ -274,40 +274,154 @@
                 </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
-<!--        <androidx.cardview.widget.CardView-->
-<!--            android:id="@+id/checklist"-->
-<!--            android:layout_below="@id/menuimagebut"-->
-<!--           android:layout_marginTop="5sp"-->
-<!--            android:layout_width="match_parent"-->
-<!--          app:cardCornerRadius="1sp"-->
-<!--            app:cardElevation="5sp"-->
-<!--            android:layout_height="wrap_content">-->
-<!--            <LinearLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:orientation="vertical">-->
-<!--                <TextView-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:textSize="16sp"-->
-<!--                    android:layout_marginStart="15sp"-->
-<!--                    style="@style/TEXTColor"-->
-<!--                    android:text="CheckList"/>-->
-<!--                <View-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="1dp"-->
-<!--                    android:layout_marginBottom="15sp"-->
-<!--                     style="@style/View"/>-->
+    <androidx.cardview.widget.CardView
+        android:layout_below="@id/menuimagebut"
+        android:layout_marginTop="5sp"
+        android:layout_width="match_parent"
+        app:cardCornerRadius="15sp"
+        app:cardElevation="5sp"
+        android:id="@+id/TaskSummary"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            style="@style/RecyclerBack"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-<!--                <androidx.recyclerview.widget.RecyclerView-->
-<!--                    android:id="@+id/TaskRec"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content" />-->
-<!--            </LinearLayout>-->
-<!--        </androidx.cardview.widget.CardView>-->
+                <TextView
+                    android:layout_width="@dimen/_170sdp"
+                    android:layout_height="@dimen/_15sdp"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_marginEnd="@dimen/_100sdp"
+                    android:layout_gravity="center_horizontal"
+                    android:text="Task Summary"
+                    style="@style/Summary"
+                    android:textAllCaps="true"
+                    android:layout_weight="1"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/TaskSummaryText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/_15sdp"
+                    android:textStyle="bold"
+                    style="@style/Summary"
+                    android:textAllCaps="true"
+                    android:text="More Details>>"/>
+            </LinearLayout>
 
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="1sp"
+                style="@style/Divider"
+                android:fitsSystemWindows="true"
+                android:minWidth="5sp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2sp"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/TEXTColor"
+                    android:layout_width="0dp"
+                    android:layout_height="22dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:textSize="@dimen/_13sdp"
+                    android:text="Total Task"
+                    />
+
+                <View
+                    android:layout_width="10sp"
+                    android:layout_height="10sp"
+                    android:layout_weight="0"
+                    android:layout_gravity="center_vertical"
+                    android:background="#FF63A1" />
+
+                <TextView
+                    android:id="@+id/TotalTask"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:textSize="@dimen/_13sdp"
+                    android:layout_weight="1"
+                    style="@style/TEXTColor"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2sp"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/TEXTColor"
+                    android:layout_width="0dp"
+                    android:layout_height="22dp"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:textSize="@dimen/_13sdp"
+                    android:layout_weight="1"
+                    android:text="Completed"
+                    />
+
+                <View
+                    android:layout_width="10sp"
+                    android:layout_height="10sp"
+                    android:layout_weight="0"
+                    android:layout_gravity="center_vertical"
+                    android:background="#FF63A1" />
+
+                <TextView
+                    android:id="@+id/TaskCompleted"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:textSize="@dimen/_13sdp"
+                    android:layout_weight="1"
+                    style="@style/TEXTColor"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:textSize="@dimen/_13sdp"
+                    style="@style/TEXTColor"
+                    android:layout_weight="1"
+                    android:text="Pending" />
+
+                <View
+                    android:layout_width="10sp"
+                    android:layout_height="10sp"
+                    android:layout_weight="0"
+                    android:layout_gravity="center_vertical"
+                    android:background="@color/Light_Pink" />
+
+                <TextView
+                    android:id="@+id/TaskPending"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:textSize="@dimen/_13sdp"
+                    android:layout_weight="1"
+                    style="@style/TEXTColor"
+                    />
+
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
         <androidx.cardview.widget.CardView
-            android:layout_below="@id/menuimagebut"
+            android:layout_below="@id/TaskSummary"
            android:layout_marginTop="@dimen/_5sdp"
             android:id="@+id/budget_info"
             android:layout_width="match_parent"
@@ -349,14 +463,6 @@
                     android:layout_marginBottom="5sp"
                     style="@style/Widget.MaterialComponents.Button.Icon"
                     />
-<!--               <org.eazegraph.lib.charts.PieChart-->
-<!--                    android:id="@+id/piechart"-->
-<!--                    android:layout_width="100sp"-->
-<!--                    android:layout_height="100sp"-->
-<!--                    android:animateLayoutChanges="true"-->
-<!--                    android:animationCache="true"-->
-<!--                    android:layout_gravity="center_horizontal"-->
-<!--                    />-->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_22sdp"
@@ -494,21 +600,6 @@
                     style="@style/Divider"
                     android:fitsSystemWindows="true"
                     android:minWidth="5sp"/>
-<!--                <ProgressBar-->
-<!--                    android:id="@+id/progress_bar"-->
-<!--                    android:layout_width="100sp"-->
-<!--                    android:layout_height="100sp"-->
-<!--                    android:indeterminateOnly="false"-->
-<!--                    android:progress="60"-->
-<!--                    android:layout_gravity="center_horizontal"-->
-<!--                    android:progressDrawable="@drawable/circle"-->
-<!--                    android:rotation="-90"-->
-<!--                    android:indeterminate="false"-->
-<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                    app:layout_constraintLeft_toLeftOf="parent"-->
-<!--                    app:layout_constraintRight_toRightOf="parent"-->
-<!--                    app:layout_constraintTop_toTopOf="parent"-->
-<!--                    tools:progress="60" />-->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -608,272 +699,6 @@
         </androidx.cardview.widget.CardView>
         <androidx.cardview.widget.CardView
             android:layout_below="@id/GuestSummary"
-            android:layout_marginTop="5sp"
-            android:layout_width="match_parent"
-            app:cardCornerRadius="15sp"
-            app:cardElevation="5sp"
-            android:layout_marginStart="5sp"
-            android:layout_height="wrap_content">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                style="@style/RecyclerBack"
-                android:orientation="vertical">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="20sp"
-                    android:layout_gravity="center_horizontal"
-                    android:text="Task"
-                    style="@style/TEXTColor"
-                    android:textAllCaps="true"
-                    android:textStyle="bold" />
-                <com.google.android.material.divider.MaterialDivider
-                    android:layout_width="match_parent"
-                    android:layout_height="1sp"
-                    style="@style/Divider"
-                    android:fitsSystemWindows="true"
-                    android:minWidth="5sp"/>
-<!--                <ProgressBar-->
-<!--                    android:id="@+id/Taskprogress_bar"-->
-<!--                    android:layout_width="100sp"-->
-<!--                    android:layout_height="100sp"-->
-<!--                    android:indeterminateOnly="false"-->
-<!--                    android:progress="60"-->
-<!--                    android:layout_gravity="center_horizontal"-->
-<!--                    android:progressDrawable="@drawable/circle"-->
-<!--                    android:rotation="-90"-->
-<!--                    android:indeterminate="false"-->
-<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                    app:layout_constraintLeft_toLeftOf="parent"-->
-<!--                    app:layout_constraintRight_toRightOf="parent"-->
-<!--                    app:layout_constraintTop_toTopOf="parent"-->
-<!--                    tools:progress="60" />-->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="2sp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        style="@style/TEXTColor"
-                        android:layout_width="0dp"
-                        android:layout_height="22dp"
-
-                        android:layout_weight="1"
-                        android:text="Completed"
-                        android:textSize="15sp" />
-
-                    <View
-                        android:layout_width="10sp"
-                        android:layout_height="10sp"
-                        android:layout_weight="0"
-                        android:layout_gravity="center_vertical"
-                        android:background="#FF63A1" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:layout_marginStart="15sp"
-                        android:layout_weight="1"
-                        style="@style/TEXTColor"
-                        />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        style="@style/TEXTColor"
-                        android:layout_weight="1"
-                        android:text="Pending" />
-
-                    <View
-                        android:layout_width="10sp"
-                        android:layout_height="10sp"
-                        android:layout_weight="0"
-                        android:layout_gravity="center_vertical"
-                        android:background="@color/Lavender" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:layout_marginStart="15sp"
-                        android:layout_weight="1"
-                        style="@style/TEXTColor"
-                        />
-
-                </LinearLayout>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-        <androidx.cardview.widget.CardView
-            android:layout_below="@id/GuestSummary"
-            android:layout_marginTop="5sp"
-            android:layout_width="match_parent"
-            app:cardCornerRadius="15sp"
-            app:cardElevation="5sp"
-            android:id="@+id/TaskSummary"
-            android:layout_height="wrap_content">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                style="@style/RecyclerBack"
-                android:orientation="vertical">
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="@dimen/_170sdp"
-                        android:layout_height="@dimen/_15sdp"
-                        android:layout_marginStart="@dimen/_10sdp"
-                        android:layout_marginEnd="@dimen/_100sdp"
-                        android:layout_gravity="center_horizontal"
-                        android:text="Task Summary"
-                        style="@style/Summary"
-                        android:textAllCaps="true"
-                        android:layout_weight="1"
-                        android:textStyle="bold" />
-                    <TextView
-                        android:id="@+id/TaskSummaryText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="@dimen/_15sdp"
-                        android:textStyle="bold"
-                        style="@style/Summary"
-                        android:textAllCaps="true"
-                        android:text="More Details>>"/>
-                </LinearLayout>
-
-                <com.google.android.material.divider.MaterialDivider
-                    android:layout_width="match_parent"
-                    android:layout_height="1sp"
-                    style="@style/Divider"
-                    android:fitsSystemWindows="true"
-                    android:minWidth="5sp"/>
-
-                <!--                <ProgressBar-->
-                <!--                    android:id="@+id/Taskprogress_bar"-->
-                <!--                    android:layout_width="100sp"-->
-                <!--                    android:layout_height="100sp"-->
-                <!--                    android:indeterminateOnly="false"-->
-                <!--                    android:progress="60"-->
-                <!--                    android:layout_gravity="center_horizontal"-->
-                <!--                    android:progressDrawable="@drawable/circle"-->
-                <!--                    android:rotation="-90"-->
-                <!--                    android:indeterminate="false"-->
-                <!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-                <!--                    app:layout_constraintLeft_toLeftOf="parent"-->
-                <!--                    app:layout_constraintRight_toRightOf="parent"-->
-                <!--                    app:layout_constraintTop_toTopOf="parent"-->
-                <!--                    tools:progress="60" />-->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="2sp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        style="@style/TEXTColor"
-                        android:layout_width="0dp"
-                        android:layout_height="22dp"
-                        android:layout_weight="1"
-                        android:layout_marginStart="@dimen/_12sdp"
-                        android:textSize="@dimen/_13sdp"
-                        android:text="Total Task"
-                        />
-
-                    <View
-                        android:layout_width="10sp"
-                        android:layout_height="10sp"
-                        android:layout_weight="0"
-                        android:layout_gravity="center_vertical"
-                        android:background="#FF63A1" />
-
-                    <TextView
-                        android:id="@+id/TotalTask"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_12sdp"
-                        android:textSize="@dimen/_13sdp"
-                        android:layout_weight="1"
-                        style="@style/TEXTColor"
-                        />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="2sp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        style="@style/TEXTColor"
-                        android:layout_width="0dp"
-                        android:layout_height="22dp"
-                        android:layout_marginStart="@dimen/_12sdp"
-                        android:textSize="@dimen/_13sdp"
-                        android:layout_weight="1"
-                        android:text="Completed"
-                        />
-
-                    <View
-                        android:layout_width="10sp"
-                        android:layout_height="10sp"
-                        android:layout_weight="0"
-                        android:layout_gravity="center_vertical"
-                        android:background="#FF63A1" />
-
-                    <TextView
-                        android:id="@+id/TaskCompleted"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_12sdp"
-                        android:textSize="@dimen/_13sdp"
-                        android:layout_weight="1"
-                        style="@style/TEXTColor"
-                        />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_12sdp"
-                        android:textSize="@dimen/_13sdp"
-                        style="@style/TEXTColor"
-                        android:layout_weight="1"
-                        android:text="Pending" />
-
-                    <View
-                        android:layout_width="10sp"
-                        android:layout_height="10sp"
-                        android:layout_weight="0"
-                        android:layout_gravity="center_vertical"
-                        android:background="@color/Light_Pink" />
-
-                    <TextView
-                        android:id="@+id/TaskPending"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_12sdp"
-                        android:textSize="@dimen/_13sdp"
-                        android:layout_weight="1"
-                        style="@style/TEXTColor"
-                        />
-
-                </LinearLayout>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-        <androidx.cardview.widget.CardView
-            android:layout_below="@id/TaskSummary"
             android:layout_marginTop="5sp"
             android:layout_width="match_parent"
             app:cardCornerRadius="15sp"

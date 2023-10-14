@@ -1,5 +1,6 @@
 package com.example.eventmatics.Event_Details_Activity
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -88,6 +89,7 @@ class BudgetDetails : AppCompatActivity(),
     }
 
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_budget_details)
@@ -145,13 +147,13 @@ class BudgetDetails : AppCompatActivity(),
             PaymentRecycler.adapter = adapter
             PaymentRecycler.layoutManager = LinearLayoutManager(this)
 
-            val totalPaymentAmount =databasehelper.getTotalPaymentAmount()
+            val totalPaymentAmount =databasehelper.getTotalPaymentAmount(selected_item.id.toInt())
             totalPayment.setText(totalPaymentAmount.toString())
             Log.d("payment","The total amount is :$totalPaymentAmount")
             val estimatedAmount = EstimatedEt.text.toString().toFloatOrNull() ?: 0.0f
             val balance = estimatedAmount - totalPaymentAmount
             balanceET.text = balance.toString()
-            if(totalPaymentAmount>balance){
+            if(totalPaymentAmount>=balance){
                 warning_Message.visibility=View.VISIBLE
                 balanceET.setTextColor(ContextCompat.getColor(this,R.color.Red))
             }
@@ -348,6 +350,7 @@ private fun updatepaymentsheet(payment: Paymentinfo?){
                 Toast.makeText(this, "Budget Data Added successfully", Toast.LENGTH_SHORT).show()
             }
         }
+
         finish()
     }
     private fun AddValueToDataBase() {

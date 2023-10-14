@@ -467,11 +467,6 @@ class LocalDatabase(contex:Context,databasename:String):
         db.close()
         return rowsAffected
     }
-    fun deleteeventforuid(id:Int,uid:String){
-        val db=writableDatabase
-
-
-    }
     fun deteleAllEvent():Int{
         val db=writableDatabase
         val rowsaffected=db.delete(TABLE_Event,null,null)
@@ -519,6 +514,7 @@ class LocalDatabase(contex:Context,databasename:String):
         db.close()
         return tasks
     }
+
 
     //Getting Specific data from Task
     @SuppressLint("Range")
@@ -666,32 +662,6 @@ class LocalDatabase(contex:Context,databasename:String):
         return rowsAffected
     }
 
-    //Delete Multiple Item
-    fun DeleteMultipleTask(tasks:MutableList<Task>):Int{
-        val db=writableDatabase
-        var rowsaffected=0
-        db.beginTransaction()
-        try{
-            for(task in tasks){
-                val result=db.delete(
-                    TABLE_TASK,
-                    "$COLUMN_ID = ?",
-                    arrayOf(task.id.toString())
-                )
-                if(result>0){
-                    rowsaffected+=result
-                }
-                else{
-
-                }
-            }
-            db.setTransactionSuccessful()
-        }finally {
-            db.endTransaction()
-            db.close()
-        }
-        return rowsaffected
-    }
 
     // Delete a task
     fun deleteTask(task: Task): Int {
@@ -851,20 +821,6 @@ class LocalDatabase(contex:Context,databasename:String):
         return totalBudget
     }
 
-fun getTotalUnPaid():Double{
-    var total=0.0
-    val query="SELECT SUM(CAST(${Budget_Estimated} AS REAL)) FROM $TABLE_BUDGET WHERE $Budget_Paid= 'Not Paid'"
-    val db=readableDatabase
-    val cursor:Cursor?=db.rawQuery(query,null)
-    cursor?.let {
-        if(it.moveToFirst()){
-            total=it.getDouble(0)
-        }
-    }
-    cursor?.close()
-    db.close()
-    return total
-}
 
 
     // Get all budgets
@@ -958,9 +914,8 @@ fun getTotalUnPaid():Double{
             db.close()
             newRowId
         } catch (e: Exception) {
-            // Handle the exception (e.g., log an error message)
             Log.e("createPayment", "Error creating payment: ${e.message}")
-            -1 // Return -1 to indicate an error
+            -1
         }
     }
 
@@ -1049,20 +1004,21 @@ fun getTotalUnPaid():Double{
         }
         return paymentlist
     }
-    fun getTotalPaymentAmount():Int{
-        var total =0
-        val db=readableDatabase
-        val query="SELECT SUM(CAST(${Payment_Amount} AS REAL)) FROM $TABLE_Payment WHERE $Payment_Status='Paid'"
-        val cursor=db.rawQuery(query,null)
+    fun getTotalPaymentAmount(budgetId: Int): Int {
+        var total = 0
+        val db = readableDatabase
+        val query = "SELECT SUM(CAST(${Payment_Amount} AS REAL)) FROM $TABLE_Payment WHERE $Payment_Status='Paid' AND $Payment_BudgetID = ?"
+        val cursor = db.rawQuery(query, arrayOf(budgetId.toString()))
         cursor?.let {
-            if(it.moveToFirst()){
-                total=it.getInt(0)
+            if (it.moveToFirst()) {
+                total = it.getInt(0)
             }
         }
         cursor.close()
         db.close()
         return total
     }
+
 
 
     @SuppressLint("Range")
