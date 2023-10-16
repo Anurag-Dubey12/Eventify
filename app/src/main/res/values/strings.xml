@@ -96,4 +96,9 @@
     <string name="create_a_new_event">Create a new event</string>
     <string name="set_up_an_event_and_start_planning_it">Create a new event and start planning it</string>
     <string name="About">About</string>
+    <string name="splash_welcome">Your gateway to seamless event planning. Manage, organize, and create unforgettable experiences with ease</string>
+    <string name="splash_budget">Create a budget management feature to help users efficiently track their event expenses. Users can set budgets, add expenses, and monitor spending to ensure their event remains within financial limits</string>
+    <string name="splash_vendor"> Implement a vendor management system, allowing users to store and organize information about event vendors. Users can input vendor details, such as contact information, services offered, and contracts, to simplify vendor selection and management for their events</string>
+    <string name="splash_guest"> Develop a guest management feature to help users keep track of event attendees. Users can create and manage guest lists This feature simplifies guest coordination and communication, ensuring a smooth and organized event planning process.</string>
+    <string name="splash_task">Implement a robust task management system that enables users to create, organize, and track their tasks seamlessly. Users can set due dates, priorities, and descriptions for each tas</string>
 </resources>

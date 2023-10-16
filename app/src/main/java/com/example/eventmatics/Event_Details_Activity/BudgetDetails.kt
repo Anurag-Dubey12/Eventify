@@ -122,8 +122,8 @@ class BudgetDetails : AppCompatActivity(),
                 }
                 .show()
         }
-        val selected_item: Budget?=intent.getParcelableExtra("selected_item")
 
+        val selected_item: Budget?=intent.getParcelableExtra("selected_item")
         if (selected_item!=null){
             PaymentBalance.visibility=View.VISIBLE
             addapyment.visibility=View.VISIBLE
@@ -140,13 +140,13 @@ class BudgetDetails : AppCompatActivity(),
             for (payment in paymentData) {
                 Log.d("PaymentData", "ID: ${payment.id}, Name: ${payment.name}, Amount: ${payment.amount}")
             }
+
             paymentSet.clear()
             paymentSet.addAll(paymentData)
             val paymentList = paymentSet.toList()
             adapter = PaymentActivityAdapter(this, paymentList.toMutableList(),this)
             PaymentRecycler.adapter = adapter
             PaymentRecycler.layoutManager = LinearLayoutManager(this)
-
             val totalPaymentAmount =databasehelper.getTotalPaymentAmount(selected_item.id.toInt())
             totalPayment.setText(totalPaymentAmount.toString())
             Log.d("payment","The total amount is :$totalPaymentAmount")
@@ -158,7 +158,6 @@ class BudgetDetails : AppCompatActivity(),
                 balanceET.setTextColor(ContextCompat.getColor(this,R.color.Red))
             }
         }
-
         Paymentadd.setOnClickListener {
             showpaymentsheet()
         }
@@ -217,9 +216,13 @@ private fun updatepaymentsheet(payment: Paymentinfo?){
         }
         val payment = Paymentinfo(payment!!.id, name, amount, date, status,selected_item!!.id)
         paymentlist.add(payment)
+        adapter = PaymentActivityAdapter(this, paymentlist,this)
+        PaymentRecycler.adapter = adapter
+        PaymentRecycler.layoutManager = LinearLayoutManager(this)
         adapter.notifyDataSetChanged()
         dialogview.dismiss()
     }
+
     etDate.setOnClickListener { showDatePicker() }
 }
     private fun showpaymentsheet() {
@@ -258,6 +261,9 @@ private fun updatepaymentsheet(payment: Paymentinfo?){
             }
             val payment = Paymentinfo(0, name, amount, date, status,selected_item!!.id)
             paymentlist.add(payment)
+            adapter = PaymentActivityAdapter(this, paymentlist,this)
+            PaymentRecycler.adapter = adapter
+            PaymentRecycler.layoutManager = LinearLayoutManager(this)
             adapter.notifyDataSetChanged()
             dialogview.dismiss()
 
@@ -349,6 +355,14 @@ private fun updatepaymentsheet(payment: Paymentinfo?){
                 db.createPayment(payment)
                 Toast.makeText(this, "Budget Data Added successfully", Toast.LENGTH_SHORT).show()
             }
+
+        }
+        val paidamt=db.getTotalPaymentAmount(id.toInt())
+        Log.d("BudgetItem","The Budget Item Paid amt  is :$paidamt")
+        if(paidamt.toFloat()>=Totalamount.toFloat()){
+            db.updateBudgetPaid(budget.id, "Paid")
+        }else{
+            db.updateBudgetPaid(budget.id, "Not Paid")
         }
 
         finish()

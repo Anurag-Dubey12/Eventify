@@ -53,8 +53,8 @@ class GuestDetails : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_guest_details)
-        val vendortoolbar: Toolbar =findViewById(R.id.vendortoolbar)
-        setSupportActionBar(vendortoolbar)
+        val toolbar: Toolbar =findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
 

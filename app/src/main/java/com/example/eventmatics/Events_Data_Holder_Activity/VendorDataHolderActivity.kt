@@ -159,7 +159,7 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
                                     .setTitle("Vendor Payment Status")
                                     .setMessage("Is Vendor Payment Done")
                                     .setPositiveButton("Yes"){dialog,_->
-                                        db.updateVendorPaid(vendor.id,newStatus,"$NewBalance")
+                                        db.updateVendorPaid(vendor.id,newStatus)
                                         recreate()
 
                                     }
@@ -172,7 +172,7 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
                                     .setTitle("Vendor Payment Status")
                                     .setMessage("Is Vendor Payment Not Done")
                                     .setPositiveButton("Yes"){dialog,_->
-                                        db.updateVendorPaid(vendor.id,newStatus,"$NewBalance")
+                                        db.updateVendorPaid(vendor.id,newStatus)
                                         recreate()
 
                                     }

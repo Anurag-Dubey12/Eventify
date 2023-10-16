@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Budget
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
 
 class BudgetDataHolderAdapter(private val context: Context, private var budgetList: List<Budget>
 , private val itemClickListener: OnItemClickListener
@@ -64,8 +65,7 @@ class BudgetDataHolderAdapter(private val context: Context, private var budgetLi
             Budget_Category.text = item.category
             total_amount.text = item.estimatedAmount
             BudgetNote.text = item.note
-            val databasename = getSharedPreference(context, "databasename").toString()
-            val databasehelper = LocalDatabase(context, databasename)
+            val databasehelper =DatabaseManager.getDatabase(context)
             val ispaid = databasehelper.isBudgetPaid(item.id)
             if (ispaid) {
                 BudgetPaid.text = "Paid"
@@ -76,6 +76,7 @@ class BudgetDataHolderAdapter(private val context: Context, private var budgetLi
                 BudgetPaid.setTextColor(Color.parseColor("#808080"))
                 BudgetCardView.setBackgroundColor(Color.WHITE)
             }
+
         }
 
     }

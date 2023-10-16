@@ -81,6 +81,7 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+
         if(recyclerView.adapter?.itemCount==0){
             Data_Not_found.visibility= View.VISIBLE
         }else{
@@ -104,7 +105,6 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
             }
                 swipeRefreshLayout.isRefreshing=false
 //                removeSharedPreference(this, "databasename")
-
 
             },1)
         }
@@ -185,55 +185,55 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
                         .show()
                 }
                     }
-                    ItemTouchHelper.RIGHT->{
-                        if(position!=RecyclerView.NO_POSITION){
-                            val budget = BudgetList[position]
-                            adapter.notifyItemRemoved(position)
-                            // Get the current 'Paid' status of the budget
-                            val currentPaidStatus = budget.paid
-                            val budgetCost=budget.estimatedAmount
-
-                            // Determine the new 'Paid' status based on the current status
-                             if (currentPaidStatus == "Paid"){
-                                 newPaidStatus="Not Paid"
-                                 NewBalance= budget.estimatedAmount.toFloat()
-                             } else {
-                                 newPaidStatus="Paid"
-                                 NewBalance=bal.toFloat()
-                             }
-                            when(currentPaidStatus){
-                                "Paid"->{
-                                    MaterialAlertDialogBuilder(this@BudgetDataHolderActivity)
-                                        .setTitle("Budget Payment")
-                                        .setMessage("Is the Status of the Budget Payment is Not Paid?")
-                                        .setPositiveButton("Not Paid"){dialog,_->
-                                            db.updateBudgetPaid(budget.id, newPaidStatus,"$NewBalance")
-                                            recreate()
-                                        }
-                                        .setNeutralButton("Cancel"){dialog,_->
-                                            dialog.dismiss()
-                                            recreate()
-                                        }
-                                        .show()
-                                }
-                                "Not Paid"->{
-                                    MaterialAlertDialogBuilder(this@BudgetDataHolderActivity)
-                                        .setTitle("Budget Payment")
-                                        .setMessage("Is the Status of the Budget Payment is Paid?")
-                                        .setPositiveButton("PAID"){dialog,_->
-                                            db.updateBudgetPaid(budget.id, newPaidStatus,"$NewBalance")
-                                            recreate()
-                                        }
-                                        .setNeutralButton("Cancel"){dialog,_->
-                                            dialog.dismiss()
-                                            recreate()
-                                        }
-                                        .show()
-                                }
-                            }
-                    }
-
-                }
+//                    ItemTouchHelper.RIGHT->{
+//                        if(position!=RecyclerView.NO_POSITION){
+//                            val budget = BudgetList[position]
+//                            adapter.notifyItemRemoved(position)
+//                            // Get the current 'Paid' status of the budget
+//                            val currentPaidStatus = budget.paid
+//                            val budgetCost=budget.estimatedAmount
+//
+//                            // Determine the new 'Paid' status based on the current status
+//                             if (currentPaidStatus == "Paid"){
+//                                 newPaidStatus="Not Paid"
+//                                 NewBalance= budget.estimatedAmount.toFloat()
+//                             } else {
+//                                 newPaidStatus="Paid"
+//                                 NewBalance=bal.toFloat()
+//                             }
+//                            when(currentPaidStatus){
+//                                "Paid"->{
+//                                    MaterialAlertDialogBuilder(this@BudgetDataHolderActivity)
+//                                        .setTitle("Budget Payment")
+//                                        .setMessage("Is the Status of the Budget Payment is Not Paid?")
+//                                        .setPositiveButton("Not Paid"){dialog,_->
+//                                            db.updateBudgetPaid(budget.id, newPaidStatus)
+//                                            recreate()
+//                                        }
+//                                        .setNeutralButton("Cancel"){dialog,_->
+//                                            dialog.dismiss()
+//                                            recreate()
+//                                        }
+//                                        .show()
+//                                }
+//                                "Not Paid"->{
+//                                    MaterialAlertDialogBuilder(this@BudgetDataHolderActivity)
+//                                        .setTitle("Budget Payment")
+//                                        .setMessage("Is the Status of the Budget Payment is Paid?")
+//                                        .setPositiveButton("PAID"){dialog,_->
+//                                            db.updateBudgetPaid(budget.id, newPaidStatus)
+//                                            recreate()
+//                                        }
+//                                        .setNeutralButton("Cancel"){dialog,_->
+//                                            dialog.dismiss()
+//                                            recreate()
+//                                        }
+//                                        .show()
+//                                }
+//                            }
+//                    }
+//
+//                }
             }
             }
         }

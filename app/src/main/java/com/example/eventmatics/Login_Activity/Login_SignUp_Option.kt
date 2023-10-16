@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.eventmatics.MainActivity
 import com.example.eventmatics.R
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -16,6 +17,8 @@ class Login_SignUp_Option : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Thread.sleep(1000)
+        installSplashScreen()
         setContentView(R.layout.activity_login_sign_up_option)
         SignUp=findViewById(R.id.SignUp)
         LogIn=findViewById(R.id.LogIn)

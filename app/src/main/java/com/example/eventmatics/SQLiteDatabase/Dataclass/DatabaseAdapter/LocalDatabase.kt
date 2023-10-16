@@ -768,11 +768,11 @@ class LocalDatabase(contex:Context,databasename:String):
         return isPaid
     }
     //Function to update Budget Value
-    fun updateBudgetPaid(id:Long,newvalue:String,newBalanceValue:String):Int{
+    fun updateBudgetPaid(id:Long,newvalue:String):Int{
         val db=writableDatabase
         val value=ContentValues().apply {
             put(Budget_Paid,newvalue)
-            put(Budget_Balance,newBalanceValue)
+//            put(Budget_Balance,newBalanceValue)
         }
         val rowaffected=db.update(TABLE_BUDGET,value,"$COLUMN_ID=?", arrayOf(id.toString()))
         db.close()
@@ -1482,11 +1482,11 @@ class LocalDatabase(contex:Context,databasename:String):
         db.close()
         return isPaid
     }
-    fun updateVendorPaid(id:Long,newvalue:String,NewBalance:String):Int{
+    fun updateVendorPaid(id:Long,newvalue:String):Int{
         val db=writableDatabase
         val value=ContentValues().apply {
             put(Vendor_Paid,newvalue)
-            put(Vendor_Balance,NewBalance)
+//            put(Vendor_Balance,NewBalance)
         }
         val rowaffected=db.update(TABLE_VENDOR,value,"$COLUMN_ID=?", arrayOf(id.toString()))
         db.close()

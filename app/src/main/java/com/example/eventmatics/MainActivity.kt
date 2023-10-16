@@ -38,6 +38,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentManager
@@ -162,6 +163,8 @@ class MainActivity : AppCompatActivity(){
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Thread.sleep(2000)
+        installSplashScreen()
         setContentView(R.layout.activity_main)
         val toolbar: MaterialToolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -1221,7 +1224,7 @@ class MainActivity : AppCompatActivity(){
                     true
                 }
                 R.id.nav_share->{
-                    val applink="\"Hey There ! \uD83D\uDC4B I've been this fantastic Event Manager app,and it's Save My Time for Manageing Event Time and Effort. \uD83D\uDCB0 if you're looking for a simple and effective way to manage your event,I Highly recommend giving it a try .You can download it here : https://shorturl.at/fjry4 "
+                    val applink="\"Hey There ! \uD83D\uDC4B I've been this fantastic Event Manager app,and it's Save My Time for Manageing Event Time and Effort. \uD83D\uDCB0 if you're looking for a simple and effective way to manage your event,I Highly recommend giving it a try .You can download it here : https://bit.ly/3Q06RID "
                     val intent=Intent()
                     intent.action=Intent.ACTION_SEND
                     intent.putExtra(Intent.EXTRA_TEXT,applink)

@@ -104,7 +104,7 @@ class VendorDetails : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_vendor_details)
 
-        val vendortoolbar: Toolbar = findViewById(R.id.vendortoolbar)
+        val vendortoolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(vendortoolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -435,8 +435,8 @@ private fun showpaymentsheet(){
                     Log.d("PaymentData", "Payment ID ${payment.id} does not exist. Creating...")
                 db.createVendorPayment(payment)
                 }
-
         }
+
         Toast.makeText(this, "Vendor Updated successfully", Toast.LENGTH_SHORT).show()
         finish()
     }
