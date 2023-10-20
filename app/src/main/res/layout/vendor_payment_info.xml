@@ -12,6 +12,7 @@
         app:layout_constraintTop_toTopOf="parent"
         style="@style/RecyclerBack">
         <LinearLayout
+            android:layout_toEndOf="@id/EditPayment"
             android:id="@+id/Vendor_payment_info"
             android:layout_width="200sp"
             android:layout_height="wrap_content"
@@ -56,6 +57,13 @@
                 />
 
         </LinearLayout>
+        <ImageView
+            android:id="@+id/EditPayment"
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:gravity="center_vertical"
+            android:src="@drawable/edit"
+            />
     </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

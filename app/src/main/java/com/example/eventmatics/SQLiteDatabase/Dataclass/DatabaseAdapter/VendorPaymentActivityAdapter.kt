@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
@@ -27,7 +28,7 @@ class VendorPaymentActivityAdapter(private val context: Context,
     override fun onBindViewHolder(holder: PaymentInfoViewHolder, position: Int) {
         val payment = paymentList[position]
         holder.bind(payment)
-        holder.itemView.setOnClickListener {
+        holder.EditPayment.setOnClickListener {
             onitemclicklistener.onitemclick(payment)
         }
     }
@@ -41,6 +42,7 @@ class VendorPaymentActivityAdapter(private val context: Context,
         private val Vendorpaymentamount: TextView = itemView.findViewById(R.id.Vendorpaymentamount)
         private val Vendorpaymentdate: TextView = itemView.findViewById(R.id.Vendorpaymentdate)
         private val Vendorpaymentstatus: TextView = itemView.findViewById(R.id.Vendorpaymentstatus)
+        val EditPayment: ImageView = itemView.findViewById(R.id.EditPayment)
 //        private val paidRadioButton: MaterialRadioButton = itemView.findViewById(R.id.Radiopaid)
         fun bind(payment: VendorPaymentinfo) {
             VendorPaymentName.text = payment.name

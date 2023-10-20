@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 
-abstract class BudgetSwipeToDelete(context: Context):ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
+abstract class BudgetSwipeToDelete(context: Context):ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT)
 {
     private val deleteicon= R.drawable.baseline_delete_24
     private val Paidicon=R.drawable.paid

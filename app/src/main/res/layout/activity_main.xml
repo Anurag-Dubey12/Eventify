@@ -132,21 +132,6 @@
                         app:strokeColor="@color/Crimson"
                         android:padding="8dp"
                         />
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/Delete_Event"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Delete Event"
-                        android:textSize="15sp"
-                        android:textStyle="bold"
-                        app:backgroundTint="#d11a2a"
-                        android:textColor="@color/white"
-                        app:cornerRadius="15sp"
-                        app:strokeWidth="1sp"
-                        android:layout_gravity="right"
-                        app:strokeColor="@color/black"
-                        android:padding="8dp"
-                        />
                 </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>

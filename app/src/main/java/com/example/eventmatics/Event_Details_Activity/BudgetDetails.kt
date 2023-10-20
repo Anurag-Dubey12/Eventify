@@ -153,7 +153,7 @@ class BudgetDetails : AppCompatActivity(),
             val estimatedAmount = EstimatedEt.text.toString().toFloatOrNull() ?: 0.0f
             val balance = estimatedAmount - totalPaymentAmount
             balanceET.text = balance.toString()
-            if(totalPaymentAmount>=balance){
+            if(totalPaymentAmount>estimatedAmount){
                 warning_Message.visibility=View.VISIBLE
                 balanceET.setTextColor(ContextCompat.getColor(this,R.color.Red))
             }

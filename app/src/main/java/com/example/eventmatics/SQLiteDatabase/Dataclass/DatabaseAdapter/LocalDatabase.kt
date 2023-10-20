@@ -300,35 +300,6 @@ class LocalDatabase(contex:Context,databasename:String):
         db.close()
         return id
     }
-    @SuppressLint("Range")
-    fun GetEvent(name:String): Events?{
-        val db=readableDatabase
-        val selection="$Event_Name = ?"
-        val selectionargs= arrayOf(selection)
-        val cursor=db.query(
-            TABLE_Event,
-            null,
-            selection,
-            selectionargs,
-            null,
-            null,
-            null
-        )
-        var event: Events?=null
-        if(cursor!=null && cursor.moveToFirst()){
-            val id = cursor.getLong(cursor.getColumnIndex(COLUMN_ID))
-            val name = cursor.getString(cursor.getColumnIndex(Event_Name))
-            val date = cursor.getString(cursor.getColumnIndex(Event_Date))
-            val time = cursor.getString(cursor.getColumnIndex(Event_Time))
-            val budget = cursor.getString(cursor.getColumnIndex(Event_Budget))
-            val userid = cursor.getString(cursor.getColumnIndex(UserID))
-
-            event = Events(id, name, date, time, budget,userid)
-        }
-        cursor?.close()
-        db.close()
-        return event
-    }
     fun isEventNameExists(eventName: String): Boolean {
         val db = readableDatabase
         val query = "SELECT $Event_Name FROM $TABLE_Event WHERE $Event_Name = ?"
@@ -338,31 +309,6 @@ class LocalDatabase(contex:Context,databasename:String):
         db.close()
         return eventExists
     }
-
-//    @SuppressLint("Range")
-//    fun getAllEventsforadapter(): MutableList<DatabaseNameDataClass> {
-//        val databaseNames = ArrayList<DatabaseNameDataClass>()
-//        val selectQuery = "SELECT * FROM $TABLE_Event"
-//        val db = readableDatabase
-//        val cursor: Cursor? = db.rawQuery(selectQuery, null)
-//        cursor?.let {
-//            if (it.moveToFirst()) {
-//                do {
-//                    val id = it.getLong(it.getColumnIndex(COLUMN_ID))
-//                    val name = it.getString(it.getColumnIndex(Event_Name))
-//                    val date = it.getString(it.getColumnIndex(Event_Date))
-//                    val time = it.getString(it.getColumnIndex(Event_Time))
-//                    val uid = cursor.getString(cursor.getColumnIndex(UserID))
-//                    val databaseNameDataClass = DatabaseNameDataClass(id, name, date,time,uid)
-//                    databaseNames.add(databaseNameDataClass)
-//                } while (it.moveToNext())
-//            }
-//        }
-//        cursor?.close()
-//        db.close()
-//        return databaseNames
-//    }
-
     @SuppressLint("Range")
     fun getAllEvents(): MutableList<Events> {
         val events = ArrayList<Events>()
@@ -387,33 +333,6 @@ class LocalDatabase(contex:Context,databasename:String):
         db.close()
         return events
     }
-    @SuppressLint("Range")
-    fun getAllEventsForUser(uid: String): MutableList<Events> {
-        val events = ArrayList<Events>()
-        val selectQuery = "SELECT * FROM $TABLE_Event WHERE $UserID = ?"
-        val db = readableDatabase
-        val cursor: Cursor? = db.rawQuery(selectQuery, arrayOf(uid))
-
-        cursor?.let {
-            if (it.moveToFirst()) {
-                do {
-                    val id = it.getLong(it.getColumnIndex(COLUMN_ID))
-                    val name = it.getString(it.getColumnIndex(Event_Name))
-                    val date = it.getString(it.getColumnIndex(Event_Date))
-                    val time = it.getString(it.getColumnIndex(Event_Time))
-                    val budget = it.getString(it.getColumnIndex(Event_Budget))
-                    val uid=it.getString(it.getColumnIndex(UserID))
-                    val event = Events(id, name, date, time, budget, uid)
-                    events.add(event)
-                } while (it.moveToNext())
-            }
-        }
-
-        cursor?.close()
-        db.close()
-        return events
-    }
-
 
     //Getting Specific data
     @SuppressLint("Range")
@@ -435,25 +354,6 @@ class LocalDatabase(contex:Context,databasename:String):
 
         cursor.close()
         return event
-    }
-
-//     Update an event
-    fun updateEvent(event: Events): Int {
-        val db = writableDatabase
-        val values = ContentValues().apply {
-            put(Event_Name, event.name)
-            put(Event_Date, event.Date)
-            put(Event_Time, event.time)
-            put(Event_Budget, event.budget)
-        }
-        val rowsAffected = db.update(
-            TABLE_Event,
-            values,
-            "$COLUMN_ID = ?",
-            arrayOf(event.id.toString())
-        )
-        db.close()
-        return rowsAffected
     }
 
 //     Delete an event
@@ -885,20 +785,6 @@ class LocalDatabase(contex:Context,databasename:String):
         db.close()
         return rowsAffected
     }
-
-//    fun createPayment(payment: Paymentinfo) {
-//        val db = writableDatabase
-//        val values = ContentValues().apply {
-//            put(Payment_Name, payment.name)
-//            put(Payment_Amount, payment.amount)
-//            put(Payment_Date, payment.date)
-//            put(Payment_Status, payment.status)
-//            put(Payment_BudgetID, payment.budgetid)
-//        }
-//
-//        db.insert(TABLE_Payment, null, values)
-//        db.close()
-//    }
     fun createPayment(payment: Paymentinfo): Long {
         val db = writableDatabase
         val values = ContentValues().apply {
@@ -918,25 +804,6 @@ class LocalDatabase(contex:Context,databasename:String):
             -1
         }
     }
-
-    fun updatePayment(paymentId: Long, payment: Paymentinfo): Int {
-        val db = writableDatabase
-        val values = ContentValues().apply {
-            put(Payment_Name, payment.name)
-            put(Payment_Amount, payment.amount)
-            put(Payment_Date, payment.date)
-            put(Payment_Status, payment.status)
-            put(Payment_BudgetID, payment.budgetid)
-        }
-
-        val selection = "$Payment_ID = ?"
-        val selectionArgs = arrayOf(paymentId.toString())
-
-        val rowsAffected = db.update(TABLE_Payment, values, selection, selectionArgs)
-        db.close()
-        return rowsAffected
-    }
-
 
     fun createVendorPayment(payment: VendorPaymentinfo) {
         val db = writableDatabase
@@ -1018,6 +885,20 @@ class LocalDatabase(contex:Context,databasename:String):
         db.close()
         return total
     }
+    fun getTotalPaymentAmountVendor(VendorID: Int): Int {
+        var total = 0
+        val db = readableDatabase
+        val query = "SELECT SUM(CAST(${Vendor_Payment_Amount} AS REAL)) FROM $Vendor_TABLE_Payment WHERE $Vendor_Payment_Status='Paid' AND $Payment_VendorID = ?"
+        val cursor = db.rawQuery(query, arrayOf(VendorID.toString()))
+        cursor?.let {
+            if (it.moveToFirst()) {
+                total = it.getInt(0)
+            }
+        }
+        cursor.close()
+        db.close()
+        return total
+    }
 
 
 
@@ -1042,27 +923,6 @@ class LocalDatabase(contex:Context,databasename:String):
         }
         return paymentlist
     }
-
-        fun updatePaymentsForBudget(budgetId: Long, updatedPayments: List<Paymentinfo>) {
-            val db = writableDatabase
-
-            // First, delete all existing payments for the given budget
-            val deleteQuery = "DELETE FROM $TABLE_Payment WHERE $Payment_BudgetID = ?"
-            db.execSQL(deleteQuery, arrayOf(budgetId))
-
-            // Then, insert the updated payments
-            for (payment in updatedPayments) {
-                val values = ContentValues().apply {
-                    put(Payment_Name, payment.name)
-                    put(Payment_Amount, payment.amount)
-                    put(Payment_Date, payment.date)
-                    put(Payment_Status, payment.status)
-                    put(Payment_BudgetID, budgetId)
-                }
-
-                db.insert(TABLE_Payment, null, values)
-            }
-        }
 
     fun deletePaymentsForBudget(budgetId: Int) {
         val db = writableDatabase
@@ -1265,34 +1125,6 @@ class LocalDatabase(contex:Context,databasename:String):
         return isinvitationsent
     }
 
-    //Getting Specific data from Guest
-    @SuppressLint("Range")
-    fun getGuestData(guestId: Int): Guest? {
-        val db = readableDatabase
-        val query = "SELECT * FROM $TABLE_GUEST WHERE $COLUMN_ID = $guestId"
-        val cursor = db.rawQuery(query, null)
-        var guest: Guest? = null
-
-        if (cursor.moveToFirst()) {
-            val guestName = cursor.getString(cursor.getColumnIndex(Guest_Name))
-            val totalFamilyMembers = cursor.getString(cursor.getColumnIndex(TOTAL_FAMILY_MEMBERS))
-            val guestNote = cursor.getString(cursor.getColumnIndex(NOTE))
-            val guestStatus = cursor.getString(cursor.getColumnIndex(GUEST_STATUS))
-            val guestContact = cursor.getString(cursor.getColumnIndex(GUEST_CONTACT))
-//            val guestEmail = cursor.getString(cursor.getColumnIndex(GUEST_Acceptence_Status))
-            val Acceptence = cursor.getString(cursor.getColumnIndex(GUEST_Acceptence_Status))
-            val guestAddress = cursor.getString(cursor.getColumnIndex(GUEST_ADDRESS))
-
-            guest = Guest(guestId.toLong(), guestName, totalFamilyMembers, guestNote, guestStatus, guestContact, Acceptence,guestAddress)
-        }
-
-        cursor.close()
-        db.close()
-        return guest
-    }
-
-
-
     // Update a guest
     fun updateGuest(guest: Guest): Int {
         val db = writableDatabase
@@ -1492,34 +1324,6 @@ class LocalDatabase(contex:Context,databasename:String):
         db.close()
         return rowaffected
     }
-    //Getting Specific Data from Vendor
-    @SuppressLint("Range")
-    fun getVendorData(vendorId: Int): Vendor? {
-        val db = readableDatabase
-        val query = "SELECT * FROM $TABLE_VENDOR WHERE $COLUMN_ID = $vendorId"
-        val cursor = db.rawQuery(query, null)
-        var vendor: Vendor? = null
-
-        if (cursor.moveToFirst()) {
-            val id = cursor.getLong(cursor.getColumnIndex(COLUMN_ID))
-            val name = cursor.getString(cursor.getColumnIndex(Vendor_Name))
-            val category = cursor.getString(cursor.getColumnIndex(Vendor_Category))
-            val note = cursor.getString(cursor.getColumnIndex(Vendor_Note))
-            val estimated = cursor.getString(cursor.getColumnIndex(Vendor_Estimated))
-            val balance = cursor.getString(cursor.getColumnIndex(Vendor_Balance))
-            val pending = cursor.getString(cursor.getColumnIndex(Vendor_Pending))
-            val paid = cursor.getString(cursor.getColumnIndex(Vendor_Paid))
-            val phoneNumber = cursor.getString(cursor.getColumnIndex(Vendor_PhoneNumber))
-            val emailId = cursor.getString(cursor.getColumnIndex(Vendor_EmailId))
-            val website = cursor.getString(cursor.getColumnIndex(Vendor_Website))
-            val Address = cursor.getString(cursor.getColumnIndex(Vendor_Address))
-            val vendor = Vendor(id, name, category, note, estimated, balance, pending, paid, phoneNumber, emailId, website,Address)
-        }
-
-        cursor.close()
-        return vendor
-    }
-
 
     // Update a vendor
     fun updateVendor(vendor: Vendor): Int {

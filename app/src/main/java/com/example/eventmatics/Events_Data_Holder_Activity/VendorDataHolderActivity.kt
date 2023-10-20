@@ -20,6 +20,7 @@ import com.example.eventmatics.Adapter.VendorDataHolderClass
 import com.example.eventmatics.Event_Details_Activity.VendorDetails
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Vendor
 import com.example.eventmatics.SwipeGesture.BudgetSwipeToDelete
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -78,8 +79,7 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
         swipeRefreshLayout=findViewById(R.id.swipeRefreshLayout)
         swipeRefreshLayout.setOnRefreshListener {
             Handler().postDelayed({
-                val databasename=getSharedPreference(this,"databasename").toString()
-                val db=LocalDatabase(this,databasename)
+                val db=DatabaseManager.getDatabase(this)
                 vendorlist=db.getAllVendors()
                 if(vendorlist!=null){
                     adapter=VendorDataHolderClass(this,vendorlist,this)
@@ -106,8 +106,7 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
         showData()
     }
     private fun showData() {
-        val databasename=getSharedPreference(this,"databasename").toString()
-        val db=LocalDatabase(this,databasename)
+        val db=DatabaseManager.getDatabase(this)
         vendorlist=db.getAllVendors()
         if(vendorlist!=null){
             adapter=VendorDataHolderClass(this,vendorlist,this)
@@ -137,54 +136,7 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
                         }
                         .show()
                 }
-            }
-                    ItemTouchHelper.RIGHT->{
-                        val newStatus:String
-                        var NewBalance:Float
-                        var previousstatus:String
-                        val Balance:Int=0
-                        if(position!=RecyclerView.NO_POSITION){
-                            val vendor=vendorlist[position]
-                            val CurrentStatus=vendor.paid
-                            if(CurrentStatus=="Paid"){
-                                newStatus="Not Paid"
-                                NewBalance=vendor.estimatedAmount.toFloat()
-                            }
-                            else{
-                                newStatus="Paid"
-                                NewBalance=Balance.toFloat()
-                            }
-                            when(newStatus){
-                                "Paid"->MaterialAlertDialogBuilder(this@VendorDataHolderActivity)
-                                    .setTitle("Vendor Payment Status")
-                                    .setMessage("Is Vendor Payment Done")
-                                    .setPositiveButton("Yes"){dialog,_->
-                                        db.updateVendorPaid(vendor.id,newStatus)
-                                        recreate()
-
-                                    }
-                                    .setNeutralButton("No"){dialog,_->
-                                        dialog.dismiss()
-                                        recreate()
-                                    }
-                                    .show()
-                                "Not Paid"->MaterialAlertDialogBuilder(this@VendorDataHolderActivity)
-                                    .setTitle("Vendor Payment Status")
-                                    .setMessage("Is Vendor Payment Not Done")
-                                    .setPositiveButton("Yes"){dialog,_->
-                                        db.updateVendorPaid(vendor.id,newStatus)
-                                        recreate()
-
-                                    }
-                                    .setNeutralButton("No"){dialog,_->
-                                        dialog.dismiss()
-                                        recreate()
-                                    }
-                                    .show()
-                            }
-
-                        }
-                    } }}
+            }}}
         }
         val itemtouch=ItemTouchHelper(swipe)
 
@@ -193,8 +145,7 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
 
     override fun onResume() {
         super.onResume()
-        val databasename=getSharedPreference(this,"databasename").toString()
-        val db=LocalDatabase(this,databasename)
+        val db=DatabaseManager.getDatabase(this)
         vendorlist=db.getAllVendors()
         if(vendorlist!=null){
             adapter=VendorDataHolderClass(this,vendorlist,this)
@@ -228,8 +179,7 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
         return true
     }
     fun SearchVendor(query:String){
-        val databasename=getSharedPreference(this,"databasename").toString()
-        val db=LocalDatabase(this,databasename)
+        val db=DatabaseManager.getDatabase(this)
         val VendorList=db.SearchVendor(query)
         adapter.setdata(VendorList)
 

@@ -144,7 +144,6 @@ class MainActivity : AppCompatActivity(){
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var dataAddedReceiver: BroadcastReceiver
     private lateinit var editprofile: MaterialButton
-    private lateinit var deleteEvent: MaterialButton
     private lateinit var generatePdf: MaterialButton
     private lateinit var saveButton: MaterialButton
     private lateinit var profileDialog: BottomSheetDialog
@@ -163,7 +162,7 @@ class MainActivity : AppCompatActivity(){
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Thread.sleep(2000)
+        Thread.sleep(1000)
         installSplashScreen()
         setContentView(R.layout.activity_main)
         val toolbar: MaterialToolbar = findViewById(R.id.toolbar)
@@ -184,7 +183,6 @@ class MainActivity : AppCompatActivity(){
         totalInvitationSent = findViewById(R.id.TotalInviSent)
         totalInvitationNotSent = findViewById(R.id.TotalInvinotSent)
         eventActivity = findViewById(R.id.eventActivity)
-        deleteEvent = findViewById(R.id.Delete_Event)
         vendorTotalAmount = findViewById(R.id.VendorTotalAmount)
         taskCompleted = findViewById(R.id.TaskCompleted)
         generatePdf = findViewById(R.id.GeneratePdf)
@@ -282,26 +280,6 @@ class MainActivity : AppCompatActivity(){
                     .show()
             }
         }
-        deleteEvent.setOnClickListener {
-            if(eventRecyclerView.adapter?.itemCount==0){
-                Toast.makeText(this, "Create Event First ", Toast.LENGTH_SHORT).show()
-            }
-            else{
-            val position=0
-            val eventtodelete=eventList[position]
-            val rowaffected=deleteEvent(eventtodelete)
-            try {
-                if(rowaffected){
-                    eventList.removeAt(position)
-                    adapter.notifyItemRemoved(position)
-                    Toast.makeText(this, "${eventtodelete.name} has been Deleted", Toast.LENGTH_SHORT).show()
-                    Log.d("Delete","Item Deleted")
-                }
-            }
-            catch (e:Exception){
-                Log.d("Delete","${e.message}")
-            }
-        }}
         swipeRefreshLayout.setOnRefreshListener {
             Handler().postDelayed({
                showEventData()
@@ -1224,7 +1202,7 @@ class MainActivity : AppCompatActivity(){
                     true
                 }
                 R.id.nav_share->{
-                    val applink="\"Hey There ! \uD83D\uDC4B I've been this fantastic Event Manager app,and it's Save My Time for Manageing Event Time and Effort. \uD83D\uDCB0 if you're looking for a simple and effective way to manage your event,I Highly recommend giving it a try .You can download it here : https://bit.ly/3Q06RID "
+                    val applink="\"Hey There ! \uD83D\uDC4B I've been this fantastic Event Manager app,and it's Save My Time for Manageing Event Time and Effort. \uD83D\uDCB0 if you're looking for a simple and effective way to manage your event,I Highly recommend giving it a try .You can download it here : https://bit.ly/3s4z8py "
                     val intent=Intent()
                     intent.action=Intent.ACTION_SEND
                     intent.putExtra(Intent.EXTRA_TEXT,applink)

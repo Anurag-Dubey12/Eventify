@@ -1,5 +1,6 @@
 package com.example.eventmatics.Event_Details_Activity
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ContentResolver
 import android.content.Intent
@@ -52,11 +53,13 @@ class VendorDetails : AppCompatActivity(),
     private lateinit var vendorPhoneTV: TextView
     private lateinit var vendorPhoneET: EditText
     private lateinit var vendorEmailTV: TextView
+    private lateinit var totalPayment: TextView
     private lateinit var vendorEmailET: EditText
     private lateinit var vendorWebsiteTV: TextView
     private lateinit var Balancefeild: LinearLayout
     private lateinit var paymentLayout: LinearLayout
     private lateinit var paymentDetails: LinearLayout
+    private lateinit var warning_Message: LinearLayout
     private lateinit var vendorWebsiteET: EditText
     private lateinit var vendorAddressTV: TextView
     private lateinit var vendorpaymenttrans: RecyclerView
@@ -119,7 +122,9 @@ class VendorDetails : AppCompatActivity(),
         vendorViewTV = findViewById(R.id.Vendorviewtv)
         ContactDetails = findViewById(R.id.ContactDetails)
         vendorPhoneTV = findViewById(R.id.VendorPhonetv)
+        totalPayment = findViewById(R.id.totalPayment)
         vendorpaymenttrans = findViewById(R.id.vendorpaymenttrans)
+        warning_Message = findViewById(R.id.warning_Message)
         vendorPhoneET = findViewById(R.id.VendortPhoneEt)
         vendorEmailTV = findViewById(R.id.VendorEmailtv)
         PaymentAdd = findViewById(R.id.PaymentAdd)
@@ -165,10 +170,19 @@ class VendorDetails : AppCompatActivity(),
             paymentset.addAll(Payment)
             val PaymentList=paymentset.toList()
            adapter= VendorPaymentActivityAdapter(this,PaymentList.toMutableList(),this)
-            vendorpaymenttrans.adapter=adapter
             vendorpaymenttrans.layoutManager=LinearLayoutManager(this)
+            vendorpaymenttrans.adapter=adapter
             paymentlist.clear()
             paymentlist.addAll(Payment)
+            val totalamt=db.getTotalPaymentAmountVendor(id.toInt())
+            totalPayment.text=totalamt.toString()
+            val estimatedamt=vendorEstimatedAmount.text.toString().toFloatOrNull()?:0.0f
+            val balance=estimatedamt-totalamt
+            vendorBalanceTV.setText(balance.toString())
+            if(totalamt>estimatedamt){
+                warning_Message.visibility=View.VISIBLE
+                vendorBalanceTV.setTextColor(ContextCompat.getColor(this,R.color.Red))
+            }
             adapter.notifyDataSetChanged()
         }
         adapter= VendorPaymentActivityAdapter(this,paymentlist,this)
@@ -178,6 +192,7 @@ class VendorDetails : AppCompatActivity(),
         }
 
     }
+@SuppressLint("SuspiciousIndentation")
 private fun showpaymentsheet(){
     val dialogview= BottomSheetDialog(this)
     dialogview.setContentView(R.layout.fragment_vendor)
@@ -217,6 +232,9 @@ private fun showpaymentsheet(){
             }
             val payment= VendorPaymentinfo(0,name,amount,date,paymentStatus, Selected_Item?.id!!)
             paymentlist.add(payment)
+        adapter= VendorPaymentActivityAdapter(this,paymentlist,this)
+        vendorpaymenttrans.layoutManager=LinearLayoutManager(this)
+        vendorpaymenttrans.adapter=adapter
             Toast.makeText(this,"Data Added",Toast.LENGTH_SHORT).show()
             dialogview.dismiss()
         }
@@ -278,6 +296,9 @@ private fun showpaymentsheet(){
             }
             val payment= VendorPaymentinfo(payment.id,name,amount,date,paymentStatus, Selected_Item?.id!!)
             paymentlist.add(payment)
+            adapter= VendorPaymentActivityAdapter(this,paymentlist,this)
+            vendorpaymenttrans.layoutManager=LinearLayoutManager(this)
+            vendorpaymenttrans.adapter=adapter
             adapter.notifyDataSetChanged()
             Toast.makeText(this,"Data Added",Toast.LENGTH_SHORT).show()
             dialogview.dismiss()
@@ -436,7 +457,12 @@ private fun showpaymentsheet(){
                 db.createVendorPayment(payment)
                 }
         }
-
+        val totalamt=db.getTotalPaymentAmountVendor(id.toInt())
+        if(totalamt.toFloat()>=estimatedAmount.toFloat()){
+            db.updateVendorPaid(vendor.id,"Paid")
+        }else{
+            db.updateVendorPaid(vendor.id,"Not Paid")
+        }
         Toast.makeText(this, "Vendor Updated successfully", Toast.LENGTH_SHORT).show()
         finish()
     }

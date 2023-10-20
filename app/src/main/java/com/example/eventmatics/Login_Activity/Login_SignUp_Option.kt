@@ -17,7 +17,7 @@ class Login_SignUp_Option : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Thread.sleep(1000)
+        Thread.sleep(100)
         installSplashScreen()
         setContentView(R.layout.activity_login_sign_up_option)
         SignUp=findViewById(R.id.SignUp)
