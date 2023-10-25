@@ -32,10 +32,9 @@
         <EditText
             android:id="@+id/editTextName"
             style="@style/EditValueStyle"
-            android:layout_width="@dimen/_300sdp"
+            android:layout_width="match_parent"
             android:layout_height="@dimen/_30sdp"
-            android:layout_marginBottom="@dimen/_7sdp"
-            android:hint="Enter Name" />
+            android:layout_marginBottom="@dimen/_7sdp" />
 
         <TextView
             style="@style/RecyclerTextColor"
@@ -54,7 +53,6 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_30sdp"
             android:layout_marginBottom="@dimen/_10sdp"
-            android:hint="@string/amount"
             android:inputType="numberDecimal" />
 
         <TextView
@@ -121,7 +119,6 @@
             android:layout_height="@dimen/_30sdp"
             android:layout_marginBottom="@dimen/_10sdp"
             android:drawableEnd="@drawable/calender"
-            android:hint="Select The Date"
             android:padding="@dimen/_5sdp"
             android:textSize="@dimen/_15sdp"
             android:textColor="@color/black" />

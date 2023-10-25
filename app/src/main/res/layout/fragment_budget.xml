@@ -10,6 +10,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="16dp"
+        android:background="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -32,7 +33,6 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_30sdp"
             android:layout_marginBottom="@dimen/_7sdp"
-            android:hint="Enter Name"
             android:inputType="text" />
 
         <TextView
@@ -50,7 +50,6 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_30sdp"
             android:layout_marginBottom="@dimen/_7sdp"
-            android:hint="@string/amount"
             android:inputType="numberDecimal" />
 
         <TextView
@@ -114,7 +113,7 @@
             android:layout_width="match_parent"
             android:layout_height="30sp"
             android:layout_marginBottom="10sp"
-            android:drawableEnd="@drawable/calender"
+            android:drawableStart="@drawable/calender"
             android:hint="Select Your Date"
             android:textColor="@color/black"
             android:textColorHint="@color/white" />

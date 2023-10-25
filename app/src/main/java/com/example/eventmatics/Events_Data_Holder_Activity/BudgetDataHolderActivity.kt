@@ -88,7 +88,6 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
             Data_Not_found.visibility= View.GONE
         }
         budgetlist= mutableListOf()
-
         budgetAdd.setOnClickListener {
             Intent(this,BudgetDetails::class.java).also { startActivity(it) }
         }
@@ -104,8 +103,6 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
                     recyclerView.layoutManager = LinearLayoutManager(this)
             }
                 swipeRefreshLayout.isRefreshing=false
-//                removeSharedPreference(this, "databasename")
-
             },1)
         }
         swipeRefreshLayout.setColorSchemeResources(
@@ -132,17 +129,15 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
             override fun onScrolled(@NonNull recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled( recyclerView, dx, dy)
                 val isAtTop=recyclerView.canScrollVertically(-1)
-
                 swipeRefreshLayout.isEnabled=!isAtTop
-
             }
         })
         showbudgetlist()
     }
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        val pdfReportItem = menu.findItem(R.id.pdfreport)
-        val check = menu.findItem(R.id.Check)
-        pdfReportItem.isVisible = !isRecyclerViewEmpty
+//        val pdfReportItem = menu.findItem(R.id.pdfreport)
+//        val check = menu.findItem(R.id.Check)
+//        pdfReportItem.isVisible = !isRecyclerViewEmpty
         return true
     }
 
@@ -155,22 +150,15 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
             recyclerView.adapter = adapter
             recyclerView.layoutManager = LinearLayoutManager(this)
         }
-
         val swipe=object:BudgetSwipeToDelete(this){
             var deleteditem: Budget? = null
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 var position=viewHolder.adapterPosition
-                val newPaidStatus:String
-                var previousPaidStatus:String
-                var NewBalance:Float
-                val bal=0;
                 when(direction){
                     ItemTouchHelper.LEFT->{
                 if(position!=RecyclerView.NO_POSITION){
                     deleteditem=BudgetList[position]
-
                     adapter.notifyItemRemoved(position)
-
                     MaterialAlertDialogBuilder(this@BudgetDataHolderActivity)
                         .setTitle("Delete Budget Item")
                         .setMessage("Do you want to delete this item?")
@@ -181,62 +169,8 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
                         .setNegativeButton("Cancel"){dialog,_->
                             dialog.dismiss()
                             recreate()
-                        }
-                        .show()
-                }
-                    }
-//                    ItemTouchHelper.RIGHT->{
-//                        if(position!=RecyclerView.NO_POSITION){
-//                            val budget = BudgetList[position]
-//                            adapter.notifyItemRemoved(position)
-//                            // Get the current 'Paid' status of the budget
-//                            val currentPaidStatus = budget.paid
-//                            val budgetCost=budget.estimatedAmount
-//
-//                            // Determine the new 'Paid' status based on the current status
-//                             if (currentPaidStatus == "Paid"){
-//                                 newPaidStatus="Not Paid"
-//                                 NewBalance= budget.estimatedAmount.toFloat()
-//                             } else {
-//                                 newPaidStatus="Paid"
-//                                 NewBalance=bal.toFloat()
-//                             }
-//                            when(currentPaidStatus){
-//                                "Paid"->{
-//                                    MaterialAlertDialogBuilder(this@BudgetDataHolderActivity)
-//                                        .setTitle("Budget Payment")
-//                                        .setMessage("Is the Status of the Budget Payment is Not Paid?")
-//                                        .setPositiveButton("Not Paid"){dialog,_->
-//                                            db.updateBudgetPaid(budget.id, newPaidStatus)
-//                                            recreate()
-//                                        }
-//                                        .setNeutralButton("Cancel"){dialog,_->
-//                                            dialog.dismiss()
-//                                            recreate()
-//                                        }
-//                                        .show()
-//                                }
-//                                "Not Paid"->{
-//                                    MaterialAlertDialogBuilder(this@BudgetDataHolderActivity)
-//                                        .setTitle("Budget Payment")
-//                                        .setMessage("Is the Status of the Budget Payment is Paid?")
-//                                        .setPositiveButton("PAID"){dialog,_->
-//                                            db.updateBudgetPaid(budget.id, newPaidStatus)
-//                                            recreate()
-//                                        }
-//                                        .setNeutralButton("Cancel"){dialog,_->
-//                                            dialog.dismiss()
-//                                            recreate()
-//                                        }
-//                                        .show()
-//                                }
-//                            }
-//                    }
-//
-//                }
-            }
-            }
-        }
+                        }.show()
+                } } } } }
         val itemTouch=ItemTouchHelper(swipe)
         itemTouch.attachToRecyclerView(recyclerView)
     }

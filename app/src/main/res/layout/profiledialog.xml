@@ -4,13 +4,7 @@
     android:layout_height="match_parent"
     style="@style/RecyclerBack"
     android:orientation="horizontal">
-<ImageView
-    android:id="@+id/ImageCapture"
-    android:layout_width="90sp"
-    android:layout_height="90sp"
-    android:layout_weight="1"
-    style="@style/Camera"
-    />
+
     <ImageView
         android:id="@+id/ImageGallery"
         android:layout_width="90sp"

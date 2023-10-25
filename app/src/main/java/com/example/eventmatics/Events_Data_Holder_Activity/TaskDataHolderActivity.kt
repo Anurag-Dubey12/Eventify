@@ -110,7 +110,6 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
                 val isAtTop = recyclerView.canScrollVertically(-1)
                 swipeRefreshLayout.isEnabled =
                     !isAtTop
-            // Enable/disable the SwipeRefreshLayout based on scroll position
             }
         })
 
@@ -129,9 +128,9 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
 
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        val pdfReportItem = menu.findItem(R.id.pdfreport)
-        val check = menu.findItem(R.id.Check)
-        pdfReportItem.isVisible = !isRecyclerViewEmpty
+//        val pdfReportItem = menu.findItem(R.id.pdfreport)
+//        val check = menu.findItem(R.id.Check)
+//        pdfReportItem.isVisible = !isRecyclerViewEmpty
         return true
     }
 

@@ -1266,9 +1266,4 @@ class MainActivity : AppCompatActivity(){
             Toast.makeText(this, "WhatsApp is not installed on your device.", Toast.LENGTH_SHORT).show()
         }
     }
-//    override fun onDestroy() {
-//        super.onDestroy()
-//        unregisterReceiver(dataAddedReceiver)
-//
-//    }
 }
