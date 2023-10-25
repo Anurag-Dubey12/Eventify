@@ -1,115 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#31B3B3"
     tools:context=".MainActivity">
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="wrap_content"
+
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:background="#D3D3D3"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="10dp"
-        app:cardMaxElevation="6dp"
-        app:cardUseCompatPadding="true"
-        app:contentPadding="16dp">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progressBar"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:indeterminate="true" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:contentDescription="@string/app_logo"
-
+            android:orientation="vertical"
             >
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="199dp"
-                android:src="@drawable/event_management"
-                android:contentDescription="@string/app_logo"
-                />
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/animation_view"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_199sdp"
+                app:lottie_rawRes="@raw/welcome"
+                app:lottie_loop="true"
+                app:lottie_autoPlay="true" />
+
             <TextView
 
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/_10sdp"
                 android:text="@string/welcome_back_sir"
-                android:textColor="@color/black"
                 android:textAlignment="center"
+                android:textColor="#F19800"
                 android:textSize="25sp"
-                android:layout_marginBottom="20dp"
-                android:textStyle="bold"
-                />
+                android:textStyle="bold" />
+
 
             <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
+                android:layout_width="@dimen/_300sdp"
                 android:layout_height="wrap_content"
-                app:boxStrokeColor="#FF6600"
+                android:layout_gravity="center"
+                android:autofillHints="emailAddress"
+                android:textColorHint="@color/black"
+                app:boxStrokeColor="@color/Aqua"
+                app:boxStrokeErrorColor="#F40000"
+                app:boxStrokeWidth="1dp"
+                app:expandedHintEnabled="true"
+                app:hintAnimationEnabled="true"
                 app:hintTextColor="#070707"
-                app:boxStrokeWidth="0dp"
+
                 >
+
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/alreadyemail"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:paddingStart="10dp"
-                    android:textIsSelectable="true"
-                    android:inputType="textEmailAddress"
-                    android:hint="@string/email_address"
-                    android:textColorHint="@color/black"
+                    android:layout_width="@dimen/_300sdp"
+                    android:layout_height="@dimen/_50sdp"
                     android:layout_marginBottom="10dp"
+                    android:hint="@string/email_address"
+                    android:inputType="textEmailAddress"
+                    android:paddingStart="10dp"
+                    android:drawableStart="@drawable/email"
+                    android:textColorHint="@color/black"
+                    android:textIsSelectable="true"
                     tools:ignore="RtlSymmetry" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
+                android:layout_width="@dimen/_300sdp"
                 android:layout_height="wrap_content"
-                app:boxStrokeColor="#FF6600"
+                android:layout_gravity="center"
+                android:textColorHint="@color/black"
+                app:boxStrokeColor="@color/Aqua"
+                app:boxStrokeErrorColor="#F40000"
+                app:boxStrokeWidth="1dp"
+                app:expandedHintEnabled="true"
                 app:hintTextColor="#070707"
-                app:passwordToggleEnabled="true"
-                app:boxStrokeWidth="0dp">
+                app:passwordToggleEnabled="true">
+
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/alreadypassfield"
-                    android:layout_width="match_parent"
+                    android:layout_width="@dimen/_300sdp"
                     android:layout_height="60dp"
-                    android:inputType="textPassword"
-                    android:textColorHint="@color/black"
+                    android:layout_marginBottom="10dp"
                     android:hint="@string/password"
-
-                    android:layout_marginBottom="10dp"/>
+                    android:inputType="textPassword"
+                    android:drawableStart="@drawable/password"
+                    android:textColorHint="@color/black" />
             </com.google.android.material.textfield.TextInputLayout>
+
             <TextView
                 android:id="@+id/forgetpass"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 android:text="@string/forget_password"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                android:layout_marginBottom="10dp"
                 android:textAlignment="textEnd"
-                android:textStyle="bold"
-                />
-            <androidx.appcompat.widget.AppCompatButton
+                android:textColor="#00bbff"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/login_button"
-                android:layout_width="match_parent"
-                android:layout_height="65dp"
+                android:layout_width="@dimen/_300sdp"
+                android:layout_height="@dimen/_50sdp"
                 android:text="@string/log_in"
-                android:textAllCaps="false"
-                android:textStyle="bold"
-                android:textSize="18sp"
-                android:background="@drawable/button_shape"
-                android:layout_marginBottom="10dp"
-                />
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/google_login"
-                android:layout_width="match_parent"
-                android:layout_height="65dp"
-                android:text="@string/continue_with_google"
-                android:textColor="@color/white"
-                android:background="@drawable/google_login_button"
-                android:layout_marginBottom="10dp"
+                style="@style/MaterialButton"
                 />
             <TextView
                 android:id="@+id/createaccount"
@@ -118,9 +122,9 @@
                 android:layout_marginBottom="20dp"
                 android:text="@string/create_a_new_account"
                 android:textAlignment="center"
-                android:textColor="#706E6E"
+                android:textColor="#000000"
                 android:textSize="18dp"
                 android:textStyle="bold" />
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
-</RelativeLayout>
+    </RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

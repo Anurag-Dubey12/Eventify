@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="CustomDateTimePickerDialog" parent="ThemeOverlay.MaterialComponents.Dialog">
+        <item name="android:background">@color/Aqua</item>
+        <item name="android:windowBackground">@color/Sky_Blue</item>
+        <item name="android:windowMinWidthMajor">@dimen/custom_picker_width</item>
+        <item name="android:windowMinWidthMinor">@dimen/custom_picker_width</item>
+        <item name="android:windowAnimationStyle">@style/CustomPickerAnimation</item>
+    </style>
+
+    <style name="CustomPickerAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_in_bottom</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_bottom</item>
+    </style>
+
+</resources>

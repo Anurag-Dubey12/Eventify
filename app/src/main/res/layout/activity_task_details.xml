@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/HolderScreen"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Event_Details_Activity.TaskDetails">
+
+    <ScrollView
+        style="@style/HolderScreen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:logo="@drawable/back_arrow"
+                app:title="Task Details"
+                app:titleCentered="true"
+                android:titleMarginStart="30sp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/_65sdp"
+                android:orientation="vertical">
+                <TextView
+                    style="@style/TEXTColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/task_name"
+                    android:textStyle="bold"
+                    android:layout_marginStart="@dimen/_7sdp"
+                    android:textSize="@dimen/_17sdp" />
+
+                <EditText
+                    android:id="@+id/TaskNameET"
+                    style="@style/EditValueStyle"
+                    android:layout_width="@dimen/_300sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_marginBottom="@dimen/_7sdp"
+                    android:layout_gravity="center"
+                    android:inputType="text" />
+
+                <TextView
+                    style="@style/TEXTColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_7sdp"
+                    android:text="@string/Category"
+                    android:textStyle="bold"
+                    android:layout_marginStart="@dimen/_7sdp"
+                    android:textSize="@dimen/_17sdp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="@dimen/_7sdp">
+                    <EditText
+                        android:id="@+id/categoryedit"
+                        style="@style/EditValueStyle"
+                        android:layout_width="@dimen/_257sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="@dimen/_10sdp"
+                        android:inputType="text" />
+                    <ImageView
+                        android:id="@+id/Taskcategory_button"
+                        style="@style/EditValueStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:paddingTop="10sp"
+                        android:src="@drawable/drop_arrow"
+                        android:textAlignment="center"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <TextView
+                    style="@style/TEXTColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_7sdp"
+                    android:text="@string/note"
+                    android:layout_marginStart="@dimen/_7sdp"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/_17sdp" />
+
+                <EditText
+                    android:id="@+id/TaskNoteET"
+                    style="@style/EditValueStyle"
+                    android:layout_width="@dimen/_300sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="@dimen/_7sdp" />
+
+                <TextView
+                    style="@style/TEXTColor"
+                    android:layout_width="@dimen/_300sdp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10sp"
+                    android:layout_marginStart="@dimen/_7sdp"
+                    android:text="Task Status"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/_17sdp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10sp"
+                    android:layout_marginBottom="10sp"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/TaskPendingbut"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10sp"
+                        android:layout_weight="1"
+                        android:backgroundTint="#45FFCA"
+                        android:text="@string/taskpending"
+                        android:textColor="@color/black" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/Taskcombut"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:backgroundTint="#45FFCA"
+                        android:text="@string/completed"
+                        android:textColor="@color/black" />
+                </LinearLayout>
+
+                <TextView
+                    style="@style/TEXTColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/date"
+                    android:textStyle="bold"
+                    android:layout_marginStart="@dimen/_7sdp"
+                    android:textSize="@dimen/_17sdp" />
+
+                <TextView
+                    android:id="@+id/taskdate"
+                    style="@style/EditValueStyle"
+                    android:layout_width="@dimen/_300sdp"
+                    android:layout_height="wrap_content"
+                    android:hint="Select Your Task Date"
+                    android:textSize="@dimen/_17sdp"
+                    android:layout_marginStart="@dimen/_7sdp"
+                    android:drawableStart="@drawable/calender"/>
+            </LinearLayout>
+        </RelativeLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

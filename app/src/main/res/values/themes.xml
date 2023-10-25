@@ -3,7 +3,186 @@
     <style name="Base.Theme.Eventmatics" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:statusBarColor">@color/black</item>
     </style>
 
     <style name="Theme.Eventmatics" parent="Base.Theme.Eventmatics" />
+
+    <style name="Theme.Eventmatics.AppWidgetContainerParent" parent="@android:style/Theme.DeviceDefault">
+        <!-- Radius of the outer bound of widgets to make the rounded corners -->
+        <item name="appWidgetRadius">16dp</item>
+        <!--
+        Radius of the inner view's bound of widgets to make the rounded corners.
+        It needs to be 8dp or less than the value of appWidgetRadius
+        -->
+        <item name="appWidgetInnerRadius">8dp</item>
+    </style>
+    <style name="Theme.App.SplashScreen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/black</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/app_logo</item>
+        <item name="postSplashScreenTheme">@style/Base.Theme.Eventmatics</item>
+    </style>
+
+    <style name="Theme.Eventmatics.AppWidgetContainer" parent="Theme.Eventmatics.AppWidgetContainerParent">
+        <!-- Apply padding to avoid the content of the widget colliding with the rounded corners -->
+        <item name="appWidgetPadding">16dp</item>
+    </style>
+
+             <!--Light Theme-->
+    <style name="TEXTColor">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:hint">@color/black</item>
+    </style>
+    <style name="EventTextcolor">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textSize">20sp</item>
+        <item name="drawableSize">80sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="Eventinfocolor">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textSize">16sp</item>
+        <item name="drawableSize">80sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="View">
+        <item name="background">@color/black</item>
+    </style>
+    <style name="CardView">
+        <item name="android:background">@color/white</item>
+    </style>
+    <style name="EventTEXTColor">
+        <item name="android:textColor">@color/black</item>
+    </style>
+    <style name="EventScreen">
+        <item name="android:background">@color/white </item>
+    </style>
+    <style name="HolderScreen">
+        <item name="android:background">@color/white </item>
+    </style>
+    <style name="Task">
+        <item name="android:src">@drawable/task_icon</item>
+    </style>
+    <style name="Budget">
+        <item name="android:src">@drawable/budget_icon</item>
+    </style>
+    <style name="Vendor">
+        <item name="android:src">@drawable/vendor_icon</item>
+    </style>
+    <style name="Guest">
+        <item name="android:src">@drawable/guest_icon</item>
+    </style>
+    <style name="Task_data">
+        <item name="android:src">@drawable/taskdata</item>
+    </style>
+    <style name="Guest_data">
+        <item name="android:src">@drawable/guestdata</item>
+    </style>
+    <style name="Budget_data">
+        <item name="android:src">@drawable/budgetdata</item>
+    </style>
+    <style name="Vendor_data">
+        <item name="android:src">@drawable/vendordata</item>
+        <item name="android:height">1sp</item>
+    </style>
+    <style name="Divider">
+        <item name="android:background">@drawable/divider</item>
+    </style>
+    <style name="Screen">
+        <item name="android:background">@color/white</item>
+    </style>
+    <style name="TaskBar">
+        <item name="android:background">@color/Lemon_Chiffon</item>
+    </style>
+    <style name="TEXTInput">
+        <item name="android:background">@color/black</item>
+    </style>
+    <style name="FabStyle">
+        <item name="android:backgroundTint">@color/white</item>
+    </style>
+    <style name="EditValueStyle">
+        <item name="android:background">@drawable/valueediteffect</item>
+        <item name="android:textColorHint">@color/black</item>
+    </style>
+    <style name="NavigationDrawer">
+        <item name="android:background">@color/white</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+    <style name="RecyclerBack">
+        <item name="android:background">@color/white</item>
+        <!--        <item name="android:textColor">@color/white</item>-->
+    </style>
+    <style name="RecyclerTextColor">
+        <item name="android:textColor">@color/black</item>
+        <item name="maxLines">1</item>
+    </style>
+    <style name="RecyclerImage">
+        <item name="android:src">@drawable/budgetdata</item>
+    </style>
+    <style name="Camera">
+        <item name="android:src">@drawable/camera</item>
+    </style>
+    <style name="Gallery">
+        <item name="android:src">@drawable/gallery</item>
+    </style>
+    <style name="RecyclerDelete">
+        <item name="android:src">@drawable/delete</item>
+    </style>
+    <style name="RecyclerPDF">
+        <item name="android:src">@drawable/pdf</item>
+    </style>
+    <style name="RecyclerTask">
+        <item name="android:src">@drawable/task</item>
+    </style>
+    <style name="RecyclerVendor">
+        <item name="android:src">@drawable/vendor</item>
+    </style>
+    <style name="Summary">
+        <item name="android:textColor">@color/black</item>
+<!--        <item name="drawableEndCompat">@drawable/more</item>-->
+<!--        <item name="android:drawableEnd">@drawable/more</item>-->
+<!--        <item name="android:drawablePadding">200sp</item>-->
+<!--        <item name="android:layout_gravity">center_horizontal</item>-->
+    </style>
+<style name="showevent">
+    <item name="android:backgroundTint">#BC7AF9</item>
+    <item name="icon">@drawable/show_event</item>
+    <item name="iconSize">30sp</item>
+    <item name="cornerRadius">15sp</item>
+    <item name="iconGravity">textEnd</item>
+    <item name="strokeColor">@color/black</item>
+    <item name="strokeWidth">1sp</item>
+</style>
+    <style name="show_warning">
+        <item name="android:src">@drawable/information</item>
+    </style>
+    <style name="GoogleMaterialButton" >
+        <item name="android:layout_gravity">center</item> <!-- Positioning within its container -->
+        <item name="android:layout_marginBottom">15dp</item> <!-- Bottom margin -->
+        <item name="android:text">@string/continue_with_google</item> <!-- Button text -->
+        <item name="android:textColor">@color/black</item> <!-- Text color -->
+        <item name="android:textSize">18sp</item> <!-- Text size -->
+        <item name="android:textStyle">bold</item> <!-- Text style -->
+        <item name="backgroundTint">@color/Sky_Blue</item> <!-- Background color -->
+        <item name="cornerRadius">15sp</item> <!-- Corner radius -->
+        <item name="android:drawableEnd">@drawable/google</item> <!-- Drawable at the end of the text -->
+        <item name="strokeColor">@color/black</item> <!-- Stroke (border) color -->
+        <item name="strokeWidth">1sp</item> <!-- Stroke (border) width -->
+    </style>
+    <style name="MaterialButton" >
+        <item name="android:layout_gravity">center</item> <!-- Positioning within its container -->
+        <item name="android:layout_marginBottom">15dp</item> <!-- Bottom margin -->
+        <item name="android:text">@string/continue_with_google</item> <!-- Button text -->
+        <item name="android:textColor">@color/black</item> <!-- Text color -->
+        <item name="android:textSize">18sp</item> <!-- Text size -->
+        <item name="android:textStyle">bold</item> <!-- Text style -->
+        <item name="backgroundTint">@color/white</item> <!-- Background color -->
+        <item name="cornerRadius">15sp</item> <!-- Corner radius -->
+        <item name="strokeColor">@color/black</item> <!-- Stroke (border) color -->
+        <item name="strokeWidth">1sp</item> <!-- Stroke (border) width -->
+    </style>
 </resources>

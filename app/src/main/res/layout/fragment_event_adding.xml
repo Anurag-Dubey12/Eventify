@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="@dimen/_10sdp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+        <LinearLayout
+            style="@style/EventScreen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+
+<!--            <com.airbnb.lottie.LottieAnimationView-->
+<!--                android:id="@+id/animation_view"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="@dimen/_159sdp"-->
+<!--                app:lottie_rawRes="@raw/animation_lnevq38g"-->
+<!--                app:lottie_loop="true"-->
+<!--                app:lottie_autoPlay="true" />-->
+            <TextView
+                style="@style/TEXTColor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/_15sdp"
+                android:layout_marginBottom="@dimen/_15sdp"
+                android:text="@string/set_up_an_event_and_start_planning_it"
+                android:textAlignment="center"
+                android:textSize="@dimen/_20sdp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="@dimen/_300sdp"
+                android:layout_height="wrap_content"
+                app:boxStrokeColor="#FF6600"
+                app:boxStrokeWidth="0dp"
+                app:hintTextColor="#070707">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/eventname"
+                    style="@style/TEXTColor"
+                    android:layout_width="@dimen/_250sdp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    android:hint="Name"
+                    android:paddingStart="@dimen/_10sdp"
+                    android:textIsSelectable="true"
+                    tools:ignore="RtlSymmetry" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="@dimen/_300sdp"
+                android:layout_height="wrap_content"
+                app:boxStrokeColor="#FF6600"
+                app:boxStrokeWidth="0dp"
+                app:hintTextColor="#070707">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/eventdate"
+                    style="@style/TEXTColor"
+                    android:layout_width="@dimen/_280sdp"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/calender"
+                    android:hint="Date"
+                    android:inputType="none"
+                    android:paddingStart="@dimen/_10sdp"
+                    android:textIsSelectable="true"
+                    tools:ignore="RtlSymmetry" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="@dimen/_300sdp"
+                android:layout_height="wrap_content"
+                app:boxStrokeColor="#FF6600"
+                app:boxStrokeWidth="0dp"
+                app:hintTextColor="#070707">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/eventtime"
+                    style="@style/TEXTColor"
+                    android:layout_width="@dimen/_280sdp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    android:drawableEnd="@drawable/clock"
+                    android:hint="Time"
+                    android:paddingStart="@dimen/_10sdp"
+                    android:textIsSelectable="true"
+                    tools:ignore="RtlSymmetry" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="@dimen/_300sdp"
+                android:layout_height="wrap_content"
+                app:boxStrokeColor="#FF6600"
+                app:boxStrokeWidth="0dp"
+                app:hintTextColor="#070707">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/eventbudget"
+                    style="@style/TEXTColor"
+                    android:layout_width="@dimen/_250sdp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    android:hint="Budget"
+                    android:inputType="numberDecimal"
+                    android:maxLength="8"
+                    android:paddingStart="@dimen/_8sdp"
+                    android:textIsSelectable="true"
+                    tools:ignore="RtlSymmetry" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/eventcreatebut"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_50sdp"
+                android:padding="@dimen/_8sdp"
+                android:text="Create"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_20sdp"
+                app:backgroundTint="@color/Sky_Blue"
+                app:cornerRadius="@dimen/_15sdp"
+                app:strokeColor="@color/black"
+                app:strokeWidth="@dimen/_1sdp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/eventeditbut"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="@drawable/category_button"
+                android:text="Update"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:windowSoftInputMode="adjustResize"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>
