@@ -23,8 +23,8 @@ class Login_SignUp_Option : AppCompatActivity() {
         SignUp=findViewById(R.id.SignUp)
         LogIn=findViewById(R.id.LogIn)
         checksignin()
-        SignUp.setOnClickListener { Intent(this,signin_account::class.java).also { startActivity(it) } }
-        LogIn.setOnClickListener { Intent(this,account_creat::class.java).also { startActivity(it) } }
+        SignUp.setOnClickListener { Intent(this,account_creat::class.java).also { startActivity(it) } }
+        LogIn.setOnClickListener { Intent(this,signin_account::class.java).also { startActivity(it) } }
 
     }
     private fun checksignin() {

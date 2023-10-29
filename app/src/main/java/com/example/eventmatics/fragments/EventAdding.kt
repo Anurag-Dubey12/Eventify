@@ -13,6 +13,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatDialog
 import androidx.fragment.app.FragmentManager
 import com.example.eventmatics.R
+import com.example.eventmatics.RoomDatabase.Entity.Dao.EventDao
+import com.example.eventmatics.RoomDatabase.Entity.Database.Event_Database
 import com.example.eventmatics.SQLiteDatabase.Dataclass.AuthenticationUid
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Events
@@ -39,6 +41,9 @@ class EventAdding(
     private lateinit var eventBudget: TextInputEditText
     private lateinit var createButton: Button
     private lateinit var EditButton: Button
+
+    private var db: Event_Database? = null
+    private var eventDao: EventDao? = null
     interface OnDataEnter{
         fun onDataEnter(event: Events)
     }

@@ -10,6 +10,7 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Vendor
 
 class VendorDataHolderClass(private val context: Context,private var vendorList:MutableList<Vendor>
@@ -61,14 +62,13 @@ interface onItemClickListener{
             vendorNameTextView.text=vendor.name
             budgetCategoryTextView.text=vendor.category
             vendorPhoneTextView.text=vendor.phonenumber
-            totalAmountTextView.text=vendor.balance
+            totalAmountTextView.text=vendor.estimatedAmount
             vendorWebsiteTextView.text=vendor.website
             budgetCategoryTextView.text=vendor.category
             vendorNoteTextView.text=vendor.note
             vendorEmailTextView.text=vendor.emailid
             vendorAddressTextView.text=vendor.address
-            val databasename = getSharedPreference(context, "databasename").toString()
-            val db = LocalDatabase(context, databasename)
+            val db = DatabaseManager.getDatabase(context)
             val isVendorPaid=db.isVendorPaid(vendor.id)
             if(isVendorPaid){
                 VendorPaid.text="Paid"

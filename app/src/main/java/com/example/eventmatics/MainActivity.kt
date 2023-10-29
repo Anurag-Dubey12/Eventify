@@ -5,6 +5,9 @@ package com.example.eventmatics
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.annotation.SuppressLint
+import android.app.AlarmManager
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.BroadcastReceiver
@@ -33,6 +36,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
@@ -151,6 +155,7 @@ class MainActivity : AppCompatActivity(){
     private val permissioncode=101
     private val galley_req_code = 201
     private var selectedImageUri:Uri?=null
+
 
     //Event ID
     private lateinit var eventName: TextInputEditText
@@ -1069,6 +1074,7 @@ class MainActivity : AppCompatActivity(){
         setSummary(budgetShowTextView,budgettotdal.toString())
         setSummary(paidAmountShowTextView,budgetPaid.toString())
         setSummary(pendingAmountShowTextView,budgetNotPaid.toString())
+        var notificationSent = false
 
         if (eventtimer !=  null) {
             eventname.text = eventtimer.name
@@ -1091,7 +1097,22 @@ class MainActivity : AppCompatActivity(){
                     }
                     override fun onFinish() {
                         eventTimerDisplay.text = "Event Started"
-                    }
+                        if (!notificationSent){
+
+                        val title = "Event Started"
+                        val message = "Hurry ! Your Event $eventname has began "
+                        val notificationIntent = Intent(applicationContext, Notification::class.java)
+                        notificationIntent.putExtra(titleExtra, title)
+                        notificationIntent.putExtra(messageExtra, message)
+
+                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, notificationID, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+                        val alarmManager = applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                        alarmManager[AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000] = pendingIntent
+                        Log.d("alaram","the ped:$pendingIntent")
+                            notificationSent = true
+                        }
+                        }
                 }.start()
             } else {
                 Log.e("CountdownError", "Error parsing event date and time.")
@@ -1103,8 +1124,8 @@ class MainActivity : AppCompatActivity(){
         eventRecyclerView.adapter = adapter
         eventRecyclerView.layoutManager = LinearLayoutManager(this)
         adapter.notifyDataSetChanged()
-
     }
+
     private fun setSummary(textField:TextView,value:String?){
         if(value.isNullOrEmpty() || value=="0" || value=="0.0"){
             textField.text="No Data Found"
@@ -1113,24 +1134,6 @@ class MainActivity : AppCompatActivity(){
         }
     }
 
-    private fun deleteEvent(event: Events):Boolean {
-        val db = DatabaseManager.getDatabase(this)
-        db.deleteEvent(event)
-        // Close the database if it's open
-        DatabaseManager.getDatabase(this).close()
-
-        // Delete the database file
-        val databaseDeleted = this.deleteDatabase(event.name)
-
-        if (databaseDeleted) {
-            Toast.makeText(this, "Event Removed", Toast.LENGTH_SHORT).show()
-            recreate() // This will recreate the activity to reflect the changes
-        } else {
-            Toast.makeText(this, "Failed to remove event", Toast.LENGTH_SHORT).show()
-        }
-
-        return databaseDeleted
-    }
 
     override fun onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {

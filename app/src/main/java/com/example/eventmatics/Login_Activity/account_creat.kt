@@ -59,6 +59,9 @@ class account_creat : AppCompatActivity() {
                 passField.error = "Please Enter the Password"
                 return@setOnClickListener
             }
+            if(password.length<=6){
+                passField.error="Could not register please try again"
+            }
             firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener { authResult ->
                     val firebaseUser = authResult.user
@@ -73,7 +76,7 @@ class account_creat : AppCompatActivity() {
                     }
                 }
                 .addOnFailureListener { e ->
-                    Toast.makeText(this, "${e.message}", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(this, "${e.message}", Toast.LENGTH_SHORT).show()
                     progressDialog.cancel()
                 }
 
