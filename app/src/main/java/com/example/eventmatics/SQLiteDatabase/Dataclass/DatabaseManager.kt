@@ -15,6 +15,7 @@ object DatabaseManager {
         val databaseName = getSharedPreference(context, "databasename").toString()
         db = Event_Database.getDatabase(context, databaseName)
         eventDao = db?.eventdao()
+
     }
 
     fun changeRoomDatabaseName(context: Context, newDatabaseName: String) {
