@@ -50,14 +50,6 @@ class BudgetFragment(
     private var userDataEnter: OnDataEnter? = null
     private var userDataUpdate: OnDataUpdated? = null
 
-    fun setUserDataListener(listener: OnDataEnter) {
-        userDataEnter = listener
-    }
-
-    fun setUserDataUpdateListener(listener: OnDataUpdated) {
-        userDataUpdate = listener
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -92,21 +84,10 @@ class BudgetFragment(
                 val name = etName.text.toString()
                 val amount = etAmount.text.toString().toFloat()
                 val date = etDate.text.toString()
-                updatedStatus = if (!isButtonClicked) {
-                    paymentData.status
-                } else if (isPaid) {
-                    "Paid"
-                } else {
-                    "Pending"
-                }
-                val payment = Paymentinfo(
-                    paymentData.id,
-                    name,
-                    amount,
-                    date,
-                    updatedStatus,
-                    paymentData.budgetid
-                )
+                updatedStatus = if (!isButtonClicked) { paymentData.status }
+                else if (isPaid) { "Paid" }
+                else { "Pending" }
+                val payment = Paymentinfo(paymentData.id, name, amount, date, updatedStatus, paymentData.budgetid)
                 userDataUpdate?.onDataUpdate(payment)
                 Toast.makeText(context, "Data Modified", Toast.LENGTH_SHORT).show()
                 dismiss()
@@ -114,39 +95,25 @@ class BudgetFragment(
                 val name = etName.text.toString()
                 val amount = etAmount.text.toString().toFloat()
                 val date = etDate.text.toString()
-                status = if (isPaid) {
-                    "Paid"
-                } else {
-                    "Pending"
-                }
+                status = if (isPaid) { "Paid" }
+                else { "Pending" }
                 val payment = Paymentinfo(0, name, amount, date, status, budgetId!!)
                 userDataUpdate?.onDataUpdate(payment)
                 Toast.makeText(context, "Data Added", Toast.LENGTH_SHORT).show()
                 dismiss()
-            }
-        }
-
+            } }
         return view
     }
-
     override fun onResume() {
         super.onResume()
         val Payment_data: Paymentinfo? = arguments?.getParcelable("Payment")
         if (Payment_data != null) {
-//        Log.d("Payment_Info","Details are:${Payment_data?.id},${Payment_data?.name}")
             etName.setText(Payment_data.name.toString())
             etAmount.setText(Payment_data.amount.toString())
             etDate.text = Payment_data.date
-            Log.d("BudgetFragment", "onViewCreated: payment = ${Payment_data.name}")
-            Log.d("BudgetFragment", "onViewCreated: etName = $etName")
-
-            if (payment?.status == "Paid") {
-                buttonPaid.performClick()
-            } else {
-                buttonPending.performClick()
-            }
+            if (payment?.status == "Paid") { buttonPaid.performClick() }
+            else { buttonPending.performClick() }
         }
-//        clearFieldsAndButtons()
     }
 
     private fun showDatePicker() {
@@ -166,7 +133,6 @@ class BudgetFragment(
             val formattedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
             etDate.setText(formattedDate)
         }
-
         datePicker.show(fragmentManager, "datePicker")
     }
 

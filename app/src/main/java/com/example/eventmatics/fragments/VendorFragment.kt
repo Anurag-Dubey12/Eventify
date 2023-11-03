@@ -37,15 +37,6 @@ class VendorFragment(private val context: Context,private var fragmentManager:Fr
     var paymentStatus :String=" "
     var updatepaymentStatus :String=" "
 
-    interface PendingAmountlistener{
-        fun onPendingAmountSelected(amount:Float)
-    }
-    var pendingAmountlistener:PendingAmountlistener?=null
-
-    interface PaidAmountListener{
-        fun onPaidAmountSelected(amount:Float)
-    }
-    var paidAmountListener:PaidAmountListener?=null
     interface UserDataListener {
         fun onUserDataEntered(userData: VendorPaymentinfo)
     }
@@ -55,13 +46,6 @@ class VendorFragment(private val context: Context,private var fragmentManager:Fr
     private var userupdatelistener:UserDataUpdateListener?=null
 
     private var userDataListener: UserDataListener? = null
-    // Setter method for the UserDataListener
-    fun setUserDataListener(listener:UserDataListener) {
-        userDataListener = listener
-    }
-    fun setUserUpdateLsustenr(listener:UserDataUpdateListener){
-        userupdatelistener=listener
-    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -69,7 +53,6 @@ class VendorFragment(private val context: Context,private var fragmentManager:Fr
         val view= inflater.inflate(R.layout.fragment_vendor, container, false)
         return view
     }
-
     @SuppressLint("SuspiciousIndentation")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -80,7 +63,6 @@ class VendorFragment(private val context: Context,private var fragmentManager:Fr
         vendorexpireDate = view.findViewById(R.id.editTextDate)
         buttonSubmit = view.findViewById(R.id.buttonSubmit)
 
-//        clearfield()
         vendorButtonPending.setOnClickListener {
             isPaid=false
             isButtonClicked=true
@@ -94,9 +76,7 @@ class VendorFragment(private val context: Context,private var fragmentManager:Fr
             setButtonBackground(vendorButtonPaid,true)
             setButtonBackground(vendorButtonPending,false)
         }
-        vendorexpireDate.setOnClickListener {
-            showDatePicker()
-        }
+        vendorexpireDate.setOnClickListener { showDatePicker() }
         buttonSubmit.setOnClickListener {
             val Payment: VendorPaymentinfo?=arguments?.getParcelable("VendorPayment")
             if(Payment!=null){
@@ -105,16 +85,11 @@ class VendorFragment(private val context: Context,private var fragmentManager:Fr
                 val date=vendorexpireDate.text.toString()
                 if(!isButtonClicked){
                     val PreviousStatus=Payment.status
-                    Log.d("Previous","Previous Status Of Vendor is:$PreviousStatus")
                     updatepaymentStatus=PreviousStatus
                 }
-                else if (isPaid){
-                    updatepaymentStatus="Paid"
-                }else{
-                    updatepaymentStatus="Pending"
-                }
-                val payment=
-                    VendorPaymentinfo(Payment.id,name,amount,date,updatepaymentStatus,Payment.VendorId)
+                else if (isPaid){ updatepaymentStatus="Paid" }
+                else{ updatepaymentStatus="Pending" }
+                val payment= VendorPaymentinfo(Payment.id,name,amount,date,updatepaymentStatus,Payment.VendorId)
                 userupdatelistener?.onuserupdate(payment)
                 Toast.makeText(context,"Data Added",Toast.LENGTH_SHORT).show()
                 dismiss()
@@ -123,26 +98,13 @@ class VendorFragment(private val context: Context,private var fragmentManager:Fr
             val name=editTextName.text.toString()
             val amount=editTextAmount.text.toString().toFloat()
             val date=vendorexpireDate.text.toString()
-                if(isPaid){
-                    paymentStatus="Paid"
-                }
-                else{
-                    paymentStatus="Pending"
-                }
+                if(isPaid){ paymentStatus="Paid" }
+                else{ paymentStatus="Pending" }
             val payment= VendorPaymentinfo(0,name,amount,date,paymentStatus, VendorId!!)
             userDataListener?.onUserDataEntered(payment)
             Toast.makeText(context,"Data Added",Toast.LENGTH_SHORT).show()
             dismiss()
-            }
-        }
-    }
-fun clearfield(){
-    editTextName.text.clear()
-    editTextAmount.text.clear()
-    vendorexpireDate.text = null
-    setButtonBackground(vendorButtonPaid,false)
-    setButtonBackground(vendorButtonPending,false)
-}
+            } } }
     override fun onResume() {
         super.onResume()
         val Payment: VendorPaymentinfo?=arguments?.getParcelable("VendorPayment")
@@ -150,25 +112,14 @@ fun clearfield(){
             editTextName.setText(Payment.name.toString())
             editTextAmount.setText(Payment.amount.toString())
             vendorexpireDate.text = Payment.date
-            Log.d("BudgetFragment", "onViewCreated: payment = ${vendorexpireDate}")
-            Log.d("BudgetFragment", "onViewCreated: etName = $editTextName")
 
-            if (Payment?.status == "Paid") {
-                vendorButtonPaid.performClick()
-            } else {
-                vendorButtonPending.performClick()
-            }
+            if (Payment?.status == "Paid") { vendorButtonPaid.performClick() }
+            else { vendorButtonPending.performClick() }
         }
-//        clearFieldsAndButtons()
     }
     private fun showDatePicker() {
         val constraint=CalendarConstraints.Builder()
             .setValidator(DateValidatorPointForward.now())
-        val calendar = Calendar.getInstance()
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
-        val month = calendar.get(Calendar.MONTH)
-        val year = calendar.get(Calendar.YEAR)
-
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setTitleText("Select Date")
             .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
@@ -184,7 +135,6 @@ fun clearfield(){
             val formattedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
             vendorexpireDate.setText(formattedDate)
         }
-
         datePicker.show(fragmentManager, "datePicker")
     }
 

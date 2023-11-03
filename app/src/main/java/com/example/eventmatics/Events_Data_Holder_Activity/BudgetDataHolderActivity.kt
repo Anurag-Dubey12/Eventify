@@ -53,19 +53,14 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
     lateinit var adapter:BudgetDataHolderAdapter
     lateinit var budgetlist:MutableList<Budget>
     private lateinit var Data_Not_found: ImageView
-    lateinit var bmp:Bitmap
-    lateinit var scalebmp:Bitmap
     private var isRecyclerViewEmpty = true
-    var PERMISSION_CODE=101
     private var filteredList: MutableList<Budget> = mutableListOf()
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     override fun onItemClick(budget: Budget) {
         Intent(this, BudgetDetails::class.java).apply {
             putExtra("selected_item", budget)
             startActivity(this)
-        }
-    }
-
+        } }
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,22 +75,14 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
         //Action Bar
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-
-        if(recyclerView.adapter?.itemCount==0){
-            Data_Not_found.visibility= View.VISIBLE
-        }else{
-            Data_Not_found.visibility= View.GONE
-        }
+        Data_Not_found.visibility = if (recyclerView.adapter?.itemCount == 0) View.VISIBLE else View.GONE
         budgetlist= mutableListOf()
-        budgetAdd.setOnClickListener {
-            Intent(this,BudgetDetails::class.java).also { startActivity(it) }
-        }
-
+        budgetAdd.setOnClickListener { Intent(this,BudgetDetails::class.java).also { startActivity(it) } }
         swipeRefreshLayout.setOnRefreshListener {
             Handler().postDelayed({
                 val db = DatabaseManager.getDatabase(this)
                 val BudgetList = db.getAllBudgets()
+
                 isRecyclerViewEmpty=BudgetList.isNullOrEmpty()
                 if(BudgetList!=null){
                     adapter = BudgetDataHolderAdapter(this,BudgetList,this)
@@ -105,21 +92,15 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
                 swipeRefreshLayout.isRefreshing=false
             },1)
         }
-        swipeRefreshLayout.setColorSchemeResources(
-            R.color.Coral,
-            R.color.Fuchsia,
-            R.color.Indigo
-        )
+        swipeRefreshLayout.setColorSchemeResources(R.color.Coral, R.color.Fuchsia, R.color.Indigo)
         swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.Lemon_Chiffon)
         swipeRefreshLayout.setProgressViewOffset(false, 0, 150)
         bottomnav.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.sort -> {
-                    showSortOptions()
+                R.id.sort -> { showSortOptions()
                     true
                 }
-                R.id.Filter -> {
-                    showFilterOptions()
+                R.id.Filter -> { showFilterOptions()
                     true
                 }
                 else -> false
@@ -133,12 +114,6 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
             }
         })
         showbudgetlist()
-    }
-    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-//        val pdfReportItem = menu.findItem(R.id.pdfreport)
-//        val check = menu.findItem(R.id.Check)
-//        pdfReportItem.isVisible = !isRecyclerViewEmpty
-        return true
     }
 
     private fun showbudgetlist() {
@@ -174,7 +149,6 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
         val itemTouch=ItemTouchHelper(swipe)
         itemTouch.attachToRecyclerView(recyclerView)
     }
-
     override fun onResume() {
         super.onResume()
         showbudgetlist()
@@ -182,21 +156,14 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.holder,menu)
-
         val searchitem=menu?.findItem(R.id.action_search)
-
         val searchView=searchitem?.actionView as androidx.appcompat.widget.SearchView
         searchView.queryHint="Search"
-
         searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                searchBudget(query)
+            override fun onQueryTextSubmit(query: String): Boolean { searchBudget(query)
                 return true
             }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-
-                searchBudget(newText)
+            override fun onQueryTextChange(newText: String): Boolean { searchBudget(newText)
                 return true
             }
         })
@@ -207,8 +174,6 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
         val BudgetFilter=db.SearchBudget(query)
        adapter.setadapter(BudgetFilter)
     }
-
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId){
             android.R.id.home->{
@@ -232,12 +197,8 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
                     "Amount"->{
                         budgetlist.sortBy { it.estimatedAmount }
                         adapter.notifyDataSetChanged()
-                    }
-                    }
-                }
-            .setNeutralButton("Cancel"){dialog,_->
-                dialog.dismiss()
-            }
+                    } } }
+            .setNeutralButton("Cancel"){dialog,_-> dialog.dismiss() }
         DilogShow.show()
 }
     @SuppressLint("MissingInflatedId", "SuspiciousIndentation")

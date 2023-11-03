@@ -33,31 +33,15 @@ class WalkthroughScreen : AppCompatActivity() {
         viewPager = findViewById(R.id.slideViewPager)
         mdotlayout = findViewById(R.id.indicator_layout)
 
-        if (isFirstLaunch(this)) {
-            setFirstLaunchFlag(this, false)
-        }
-        backbtn.setOnClickListener {
-            if(getItem(0)>0){
-                viewPager.setCurrentItem(getItem(-1),true)
-            }
-        }
-        nextbtn.setOnClickListener {
-            if(getItem(0)<4){
-                viewPager.setCurrentItem(getItem(1),true)
-            }
-            else{
-                Intent(this,MainActivity::class.java).also {
-                    startActivity(it)
+        if (isFirstLaunch(this)) { setFirstLaunchFlag(this, false) }
+        backbtn.setOnClickListener { if(getItem(0)>0){ viewPager.setCurrentItem(getItem(-1),true) } }
+        nextbtn.setOnClickListener { if(getItem(0)<4){ viewPager.setCurrentItem(getItem(1),true) }
+            else{ Intent(this,MainActivity::class.java).also { startActivity(it)
                     finish()
-                }
+                } } }
+        skipbut.setOnClickListener { Intent(this,MainActivity::class.java).also { startActivity(it)
             }
         }
-        skipbut.setOnClickListener {
-            Intent(this,MainActivity::class.java).also {
-                startActivity(it)
-            }
-        }
-
         viewpageradapter = ViewPagerAdapter(this)
         viewPager.adapter = viewpageradapter
         setUpIndicator(0)
@@ -89,14 +73,8 @@ class WalkthroughScreen : AppCompatActivity() {
 
         override fun onPageSelected(position: Int) {
             setUpIndicator(position)
-
-            if (position > 0) {
-                backbtn.visibility = View.VISIBLE
-            } else {
-                backbtn.visibility = View.INVISIBLE
-            }
-        }
-
+            if (position > 0) { backbtn.visibility = View.VISIBLE }
+            else { backbtn.visibility = View.INVISIBLE } }
         override fun onPageScrollStateChanged(state: Int) {}
     }
     fun getItem(item:Int):Int{

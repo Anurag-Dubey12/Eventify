@@ -29,7 +29,6 @@ class SettingActivity : AppCompatActivity() {
     private lateinit var Sharedpref:SharedPreferences
     private lateinit var LocalBackupbutton:MaterialButton
     private lateinit var resetDataButton:MaterialButton
-//    private lateinit var Loadbackup:MaterialButton
     private val PICK_FILE_REQUEST = 1
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +43,6 @@ class SettingActivity : AppCompatActivity() {
         val themegroup:RadioGroup=findViewById(R.id.themeRadioGroup)
          LocalBackupbutton=findViewById(R.id.LocalBackupbutton)
         resetDataButton=findViewById(R.id.resetDataButton)
-//        Loadbackup=findViewById(R.id.LoadBackup)
 
 
         val radiobut=when(current){
@@ -69,9 +67,6 @@ class SettingActivity : AppCompatActivity() {
         resetDataButton.setOnClickListener {
             ResetData()
         }
-//        Loadbackup.setOnClickListener {
-//            LoadBackupData()
-//        }
     }
     fun LoadBackupData() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)

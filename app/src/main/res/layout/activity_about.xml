@@ -13,7 +13,7 @@
         android:logo="@drawable/back_arrow"
         app:titleCentered="true"
         app:title="About Us"
-        style="@style/TEXTColor"
+       app:titleTextColor="@color/black"
         android:titleMarginStart="30sp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -48,7 +48,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:text="Anurag Dubey"
-                style="@style/TEXTColor"
+                android:textColor="@color/black"
                 android:textSize="30sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp"/>
@@ -58,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:text="Mobile Developer"
-                style="@style/TEXTColor"
+                android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="italic"
                 android:layout_marginBottom="16dp"/>
@@ -68,7 +68,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:text="About Me"
-                style="@style/TEXTColor"
+                android:textColor="@color/black"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp"/>
@@ -77,7 +77,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="I'm passionate about cutting-edge mobile technologies. I thrive on generating innovative ideas, fueled by an insatiable curiosity. I'm also an avid nature enthusiast, finding inspiration in the natural world."
-                style="@style/TEXTColor"
+                android:textColor="@color/black"
                 android:textSize="18sp"
                 android:layout_marginBottom="16dp"/>
 
@@ -86,7 +86,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:text="Contact Information"
-                style="@style/TEXTColor"
+                android:textColor="@color/black"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp"/>
@@ -95,7 +95,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Email: ad210689@gmail.com"
-                style="@style/TEXTColor"
+                android:textColor="@color/black"
                 android:textSize="18sp"
                 android:layout_marginBottom="4dp"/>
 
@@ -104,7 +104,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Phone No: 9004040592"
-                style="@style/TEXTColor"
+                android:textColor="@color/black"
                 android:textSize="18sp"
                 android:layout_marginBottom="16dp"/>
 
@@ -173,7 +173,7 @@
                         android:layout_marginStart="8dp"
                         android:text="LinkedIn"
                         android:layout_gravity="center_vertical"
-                        style="@style/TEXTColor"
+                        android:textColor="@color/black"
                         android:textSize="@dimen/_20sdp"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -206,7 +206,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:text="Instagram"
-                        style="@style/TEXTColor"
+                        android:textColor="@color/black"
                         android:layout_gravity="center_vertical"
                         android:textSize="@dimen/_20sdp"/>
                 </LinearLayout>

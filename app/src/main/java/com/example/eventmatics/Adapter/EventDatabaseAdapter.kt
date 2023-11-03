@@ -18,25 +18,17 @@ class EventDatabaseAdapter(val context: Context, private var DatabaseList: List<
                            private val itemClickListener: OnItemClickListener) :RecyclerView.Adapter<EventDatabaseAdapter.Viewholder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventDatabaseAdapter.Viewholder {
         val view=LayoutInflater.from(parent.context).inflate(R.layout.databaseholder,parent,false)
-        return Viewholder(view)
-    }
-interface OnItemClickListener{
-    fun onItemClick(DatabaseList:DatabaseNameDataClass)
-}
+        return Viewholder(view) }
+interface OnItemClickListener{ fun onItemClick(DatabaseList:DatabaseNameDataClass) }
     override fun onBindViewHolder(holder: EventDatabaseAdapter.Viewholder, position: Int) {
         val databaselist=DatabaseList[position]
         holder.bind(databaselist)
-        holder.DatabaseDelete.setOnClickListener {
-            itemClickListener.onItemClick(databaselist)
-        }
-    }
+        holder.DatabaseDelete.setOnClickListener { itemClickListener.onItemClick(databaselist) } }
     fun updateData(newList: MutableList<DatabaseNameDataClass>) {
         DatabaseList = newList
         notifyDataSetChanged()
     }
-    override fun getItemCount(): Int {
-        return DatabaseList.size
-    }
+    override fun getItemCount(): Int { return DatabaseList.size }
     inner class Viewholder(itemview: View):RecyclerView.ViewHolder(itemview){
         val DatabaseName=itemview.findViewById<TextView>(R.id.DatabaseName)
         val DatabaseTime=itemview.findViewById<TextView>(R.id.DatabaseTime)
@@ -46,22 +38,13 @@ interface OnItemClickListener{
         init {
             DatabaseChange.setOnClickListener {
                 val newDatabaseName = DatabaseList[adapterPosition].DatabaseName
-                // Notify the parent activity about the database change
-                onDatabaseChangeClick(newDatabaseName)
-                Log.d("NewDatabase","The New Database is $newDatabaseName")
-            }
-        }
+                onDatabaseChangeClick(newDatabaseName) } }
         fun bind(DatabaseList: DatabaseNameDataClass){
             DatabaseName.text=DatabaseList.DatabaseName
             DatabaseTime.text= DatabaseList.Time
             DatabaseDate.text=DatabaseList.Date
-
         }
         fun getsharedpreference(context: Context, key:String):String?{
             val sharedvalue=context.getSharedPreferences("Database", Context.MODE_PRIVATE)
             return sharedvalue.getString(key,null)
-        }
-    }
-
-
-}
+        } } }

@@ -20,6 +20,7 @@ import com.example.eventmatics.Adapter.GuestApdater
 import com.example.eventmatics.Event_Details_Activity.GuestDetails
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Guest
 import com.example.eventmatics.SwipeGesture.GuestSwipeToDelete
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -48,36 +49,23 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
         //Action Bar
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        if(recyclerView.adapter?.itemCount==0){
-            Data_Not_found.visibility= View.VISIBLE
-        }else{
-            Data_Not_found.visibility= View.GONE
-        }
-        guestAdd.setOnClickListener {
-            Intent(this,GuestDetails::class.java).also { startActivity(it) }
-        }
+        Data_Not_found.visibility=if(recyclerView.adapter?.itemCount==0) View.VISIBLE else View.GONE
+        guestAdd.setOnClickListener { Intent(this,GuestDetails::class.java).also { startActivity(it) } }
         bottomnav.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.sort -> {
-                    showSortOptions()
+                R.id.sort -> { showSortOptions()
                     true
                 }
-                R.id.Filter ->{
-                    showFilterOption()
+                R.id.Filter ->{ showFilterOption()
                     true
                 }
-
                 else -> false
-            }
-        }
+            } }
         showData()
         swipeRefreshLayout.setOnRefreshListener {
             Handler().postDelayed({
-                val databasename=getSharedPreference(this,"databasename").toString()
-                val db=LocalDatabase(this,databasename)
+                val db=DatabaseManager.getDatabase(this)
                  GuestList=db.getAllGuests()
-                val tot=db.getTotalInvitationsSent()
-                val nottot=db.getTotalInvitationsNotSent()
                 if(GuestList!=null){
                     val adapter=GuestApdater(this,GuestList,this)
                     recyclerView.adapter=adapter
@@ -88,10 +76,7 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
             },1)
         }
         swipeRefreshLayout.setColorSchemeResources(
-            R.color.Coral,
-            R.color.Fuchsia,
-            R.color.Indigo
-        )
+            R.color.Coral, R.color.Fuchsia, R.color.Indigo)
         swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.Lemon_Chiffon)
         swipeRefreshLayout.setProgressViewOffset(false, 0, 150)
 
@@ -101,19 +86,10 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
                 val isAtTop = recyclerView.canScrollVertically(-1)
                 swipeRefreshLayout.isEnabled =
                     !isAtTop // Enable/disable the SwipeRefreshLayout based on scroll position
-            }
-        })
-    }
+            } }) }
 
-
-
-    fun getSharedPreference(context: Context, key: String): String? {
-        val sharedPref = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
-        return sharedPref.getString(key, null)
-    }
     fun showData(){
-        val databasename=getSharedPreference(this,"databasename").toString()
-        val db=LocalDatabase(this,databasename)
+        val db=DatabaseManager.getDatabase(this)
         GuestList=db.getAllGuests()
         if(GuestList!=null){
             adapter=GuestApdater(this,GuestList,this)
@@ -129,19 +105,14 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
                         if(position!=RecyclerView.NO_POSITION){
                             val deleteitem=GuestList[position]
                             adapter.notifyItemRemoved(position)
-
                             MaterialAlertDialogBuilder(this@GuestDataHolderActivity)
                                 .setTitle("Delete Item")
                                 .setMessage("Do you want to delete this item?")
-                                .setPositiveButton("Delete"){dialog,_->
-                                    db.deleteGuest(deleteitem)
+                                .setPositiveButton("Delete"){dialog,_-> db.deleteGuest(deleteitem)
                                     recreate()
                                 }
-                                .setNegativeButton("Cancel"){dialog,_->
-                                    dialog.dismiss()
-                                    recreate()
-                                }
-                                .show()
+                                .setNegativeButton("Cancel"){dialog,_-> dialog.dismiss()
+                                    recreate() }.show()
                         }
                     ItemTouchHelper.RIGHT -> {
                         val guest = GuestList[position]
@@ -152,35 +123,25 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
                             "Not Sent" -> MaterialAlertDialogBuilder(this@GuestDataHolderActivity)
                                 .setTitle("Guest Invitation Status")
                                 .setMessage("Is Guest Invitation Sent?")
-                                .setPositiveButton("Yes") { dialog, _ ->
-                                    db.updateGuestInvitation(guest.id, newStatus)
+                                .setPositiveButton("Yes") { dialog, _ -> db.updateGuestInvitation(guest.id, newStatus)
                                     recreate()
                                 }
-                                .setNeutralButton("No") { dialog, _ ->
-                                    dialog.dismiss()
+                                .setNeutralButton("No") { dialog, _ -> dialog.dismiss()
                                     recreate()
-                                }
-                                .show()
+                                }.show()
                             "Invitation Sent" -> MaterialAlertDialogBuilder(this@GuestDataHolderActivity)
                                 .setTitle("Guest Invitation Status")
                                 .setMessage("Is Guest Invitation Sent?")
-                                .setPositiveButton("Yes") { dialog, _ ->
-                                    db.updateGuestInvitation(guest.id, newStatus)
+                                .setPositiveButton("Yes") { dialog, _ -> db.updateGuestInvitation(guest.id, newStatus)
                                     recreate()
                                 }
-                                .setNeutralButton("No") { dialog, _ ->
-                                    dialog.dismiss()
+                                .setNeutralButton("No") { dialog, _ -> dialog.dismiss()
                                     recreate()
-                                }
-                                .show()
-                        }
-                    }
-
-                } } }
+                                }.show()
+                        } } } } }
         val itemtouch= ItemTouchHelper(swipe)
         itemtouch.attachToRecyclerView(recyclerView)
     }
-
     override fun onResume() {
         super.onResume()
         showData()
@@ -198,15 +159,9 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
                     "No Of Family Member" ->{
                         GuestList.sortBy { it.totalFamilyMembers }
                         adapter.notifyDataSetChanged()
-                    }
-
-                }
-                dialog.dismiss()
-            }
-        .setNeutralButton("Cancel"){dialog,_->
-            dialog.dismiss()
-        }
-        .show()
+                    } }
+                dialog.dismiss() }
+        .setNeutralButton("Cancel"){dialog,_-> dialog.dismiss() }.show()
     }
     private fun showFilterOption() {
         val Filter= arrayOf("Invitation Sent","Not Sent")
@@ -220,57 +175,37 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
                adapter.setdata(InvitationFilterList.toMutableList())
                 dialog.dismiss()
                 }
-
-            .setNeutralButton("Cancel"){dialog,_->
-                dialog.dismiss()
-            }
-            .show()
+            .setNeutralButton("Cancel"){dialog,_-> dialog.dismiss() }.show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.holder,menu)
-
         val searchitem=menu?.findItem(R.id.action_search)
         val searchview=searchitem?.actionView as androidx.appcompat.widget.SearchView
         searchview.queryHint="Search"
-
         searchview.setOnQueryTextListener(object:androidx.appcompat.widget.SearchView.OnQueryTextListener{
-            override fun onQueryTextSubmit(query: String): Boolean {
-                SearchGuest(query)
+            override fun onQueryTextSubmit(query: String): Boolean { SearchGuest(query)
                 return true
             }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-                SearchGuest(newText)
+            override fun onQueryTextChange(newText: String): Boolean { SearchGuest(newText)
                 return true
-
-            }
-        })
+            } })
         return true
     }
     fun SearchGuest(query:String){
-        val databasename=getSharedPreference(this,"databasename").toString()
-        val db=LocalDatabase(this,databasename)
+        val db=DatabaseManager.getDatabase(this)
         val GuestList=db.SearchGuest(query)
-
         adapter.setdata(GuestList)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return  when(item.itemId){
-            android.R.id.home->{
-                onBackPressed()
+            android.R.id.home->{ onBackPressed()
                 true
             }
-
-            else->super.onOptionsItemSelected(item)
-        }
-    }
-
+            else->super.onOptionsItemSelected(item) } }
     override fun onItemClik(guestlist: Guest) {
         Intent(this,GuestDetails::class.java).also {
             it.putExtra("selected_list",guestlist)
             startActivity(it)
-        }
-    }
-}
+        } } }

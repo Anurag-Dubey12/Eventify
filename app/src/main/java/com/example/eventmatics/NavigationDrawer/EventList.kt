@@ -37,15 +37,11 @@ class EventList : AppCompatActivity(),EventDatabaseAdapter.OnItemClickListener {
         databaseRecycler = findViewById(R.id.DatabaseRecycler)!!
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)!!
 
-        swipeRefreshLayout.setOnRefreshListener {
-            refreshData()
-        }
-
+        swipeRefreshLayout.setOnRefreshListener { refreshData() }
         adapter = EventDatabaseAdapter(this, emptyList(),{name->
             DatabaseManager.changeDatabaseName(this,name)
             Toast.makeText(this,"Event Change to $name",Toast.LENGTH_SHORT).show()
         },this)
-
         databaseRecycler.adapter = adapter
         databaseRecycler.layoutManager = LinearLayoutManager(this)
         showEventData()
@@ -61,9 +57,7 @@ class EventList : AppCompatActivity(),EventDatabaseAdapter.OnItemClickListener {
         }
         catch (e:Exception){
             Toast.makeText(this, "${e.message}", Toast.LENGTH_SHORT).show()
-            Log.d("Error: ","${e.message}")
-        }
-    }
+        } }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId){
@@ -71,7 +65,6 @@ class EventList : AppCompatActivity(),EventDatabaseAdapter.OnItemClickListener {
                 onBackPressed()
                 true
             }
-
             else->super.onOptionsItemSelected(item)
         }}
 
@@ -90,7 +83,6 @@ class EventList : AppCompatActivity(),EventDatabaseAdapter.OnItemClickListener {
             val id=DatabaseList.id
             val dbname = NamesDatabase(this)
             val db=DatabaseManager.getDatabase(this)
-            Log.d("currentevent","Current event Id is:$id")
             val view=layoutInflater.inflate(R.layout.event_delete,null)
             val dialog=MaterialAlertDialogBuilder(this)
                 .setView(view)
@@ -99,9 +91,7 @@ class EventList : AppCompatActivity(),EventDatabaseAdapter.OnItemClickListener {
             val btn_cancel:Button=view.findViewById(R.id.btn_cancel)
             val msgtext:TextView=view.findViewById(R.id.msgtext)
             msgtext.text = "Do you want to delete ${DatabaseList.DatabaseName} scheduled for ${DatabaseList.Date} at ${DatabaseList.Time}?"
-            btn_cancel.setOnClickListener {
-                dialog.dismiss()
-            }
+            btn_cancel.setOnClickListener { dialog.dismiss() }
             btn_okay.setOnClickListener {
                 val eventlist= Events(DatabaseList.id,DatabaseList.DatabaseName,DatabaseList.Date,DatabaseList.Time,DatabaseList.Budget,DatabaseList.uid)
                 db.deleteEvent(eventlist)
@@ -124,6 +114,4 @@ class EventList : AppCompatActivity(),EventDatabaseAdapter.OnItemClickListener {
             e.printStackTrace()
             Log.d("detele_Eventlist","Event Could Not Be deteled Because:${e.message}")
         }
-
-    }
-}
+    } }

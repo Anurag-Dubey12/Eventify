@@ -30,16 +30,9 @@ class Login_SignUp_Option : AppCompatActivity() {
     private fun checksignin() {
         val loggoogleaccount = GoogleSignIn.getLastSignedInAccount(this)
         if (loggoogleaccount != null) {
-            Intent(this, MainActivity::class.java).also {
-                startActivity(it)
-            }
-        }
+            Intent(this, MainActivity::class.java).also { startActivity(it) } }
         val currentuser = FirebaseAuth.getInstance().currentUser
         if (currentuser != null) {
-            Intent(this, MainActivity::class.java).also {
-                startActivity(it)
+            Intent(this, MainActivity::class.java).also { startActivity(it)
                 finish()
-            }
-        }
-    }
-}
+            } } } }

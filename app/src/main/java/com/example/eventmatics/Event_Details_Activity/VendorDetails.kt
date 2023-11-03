@@ -39,7 +39,6 @@ import java.util.Calendar
 
 class VendorDetails : AppCompatActivity(),
     VendorPaymentActivityAdapter.OnItemClickListener{
-
     val fragmentManager = supportFragmentManager
     private lateinit var vendorNameET: EditText
     private lateinit var categoryButton: ImageView
@@ -79,34 +78,17 @@ class VendorDetails : AppCompatActivity(),
     private var isPaid:Boolean=false
     private var isButtonClicked:Boolean=false
     var paymentStatus :String=" "
-    var updatepaymentStatus :String=" "
 
     val spinnerItems = arrayOf(
-        "Accessories",
-        "Accommodation",
-        "Attire & accessories",
-        "Ceremony",
-        "Flower & Decor",
-        "Health & Beauty",
-        "Jewelry",
-        "Miscellaneous",
-        "Music & Show",
-        "Photo & Video",
-        "Reception",
-        "Transportation"
-    )
+        "Accessories", "Accommodation", "Attire & accessories", "Ceremony",
+        "Flower & Decor", "Health & Beauty", "Jewelry", "Miscellaneous",
+        "Music & Show", "Photo & Video", "Reception", "Transportation")
 
-    fun showVendorFragment(payment: VendorPaymentinfo){
-       updatepaymentsheet(payment)
-    }
-    override fun onitemclick(paymentList: VendorPaymentinfo) {
-       showVendorFragment(paymentList)
-
-    }
+    fun showVendorFragment(payment: VendorPaymentinfo){ updatepaymentsheet(payment) }
+    override fun onitemclick(paymentList: VendorPaymentinfo) { showVendorFragment(paymentList) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_vendor_details)
-
         val vendortoolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(vendortoolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -142,10 +124,7 @@ class VendorDetails : AppCompatActivity(),
                     categoryedit.text=spinnerItems[which]
                     dialog.dismiss()
                 }
-                .setNegativeButton("Cancel") { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .show()
+                .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }.show()
         }
         vendorViewTV.setOnClickListener { infoshow() }
         val Selected_Item: Vendor?=intent.getParcelableExtra("Selected_Item")
@@ -168,29 +147,28 @@ class VendorDetails : AppCompatActivity(),
             val Payment=db.getPaymentForVendor(id)
             paymentset.clear()
             paymentset.addAll(Payment)
+
             val PaymentList=paymentset.toList()
-           adapter= VendorPaymentActivityAdapter(this,PaymentList.toMutableList(),this)
+            adapter= VendorPaymentActivityAdapter(this,PaymentList.toMutableList(),this)
             vendorpaymenttrans.layoutManager=LinearLayoutManager(this)
             vendorpaymenttrans.adapter=adapter
+
             paymentlist.clear()
             paymentlist.addAll(Payment)
+
             val totalamt=db.getTotalPaymentAmountVendor(id.toInt())
             totalPayment.text=totalamt.toString()
             val estimatedamt=vendorEstimatedAmount.text.toString().toFloatOrNull()?:0.0f
             val balance=estimatedamt-totalamt
             vendorBalanceTV.setText(balance.toString())
+
             if(totalamt>estimatedamt){
                 warning_Message.visibility=View.VISIBLE
                 vendorBalanceTV.setTextColor(ContextCompat.getColor(this,R.color.Red))
             }
-            adapter.notifyDataSetChanged()
-        }
+            adapter.notifyDataSetChanged() }
         adapter= VendorPaymentActivityAdapter(this,paymentlist,this)
-
-        PaymentAdd.setOnClickListener {
-            showpaymentsheet()
-        }
-
+        PaymentAdd.setOnClickListener { showpaymentsheet() }
     }
 @SuppressLint("SuspiciousIndentation")
 private fun showpaymentsheet(){
@@ -209,27 +187,20 @@ private fun showpaymentsheet(){
         setButtonBackground(vendorButtonPending,true)
         setButtonBackground(vendorButtonPaid,false)
     }
-
     vendorButtonPaid.setOnClickListener {
         isButtonClicked=true
         isPaid=true
         setButtonBackground(vendorButtonPaid,true)
         setButtonBackground(vendorButtonPending,false)
     }
-    vendorexpireDate.setOnClickListener {
-        showDatePicker()
-    }
+    vendorexpireDate.setOnClickListener { showDatePicker() }
     buttonSubmit.setOnClickListener {
         val Selected_Item: Vendor?=intent.getParcelableExtra("Selected_Item")
             val name=editTextName.text.toString()
             val amount=editTextAmount.text.toString().toFloat()
             val date=vendorexpireDate.text.toString()
-            if(isPaid){
-                paymentStatus="Paid"
-            }
-            else{
-                paymentStatus="Pending"
-            }
+            if(isPaid){ paymentStatus="Paid" }
+            else{ paymentStatus="Pending" }
             val payment= VendorPaymentinfo(0,name,amount,date,paymentStatus, Selected_Item?.id!!)
             paymentlist.add(payment)
         adapter= VendorPaymentActivityAdapter(this,paymentlist,this)
@@ -238,8 +209,6 @@ private fun showpaymentsheet(){
             Toast.makeText(this,"Data Added",Toast.LENGTH_SHORT).show()
             dialogview.dismiss()
         }
-
-
 }
     private fun updatepaymentsheet(payment: VendorPaymentinfo) {
         val dialogview= BottomSheetDialog(this)
@@ -278,46 +247,33 @@ private fun showpaymentsheet(){
             setButtonBackground(vendorButtonPaid,true)
             setButtonBackground(vendorButtonPending,false)
         }
-        vendorexpireDate.setOnClickListener {
-            showDatePicker()
-        }
+        vendorexpireDate.setOnClickListener { showDatePicker() }
         buttonSubmit.setOnClickListener {
             val Selected_Item: Vendor?=intent.getParcelableExtra("Selected_Item")
             val name=editTextName.text.toString()
             val amount=editTextAmount.text.toString().toFloat()
             val date=vendorexpireDate.text.toString()
-            paymentStatus=if(!isButtonClicked){
-                "${payment.status}"
-            }else if(isPaid){
-                "Paid"
-            }
-            else{
-                "Pending"
-            }
+            paymentStatus=if(!isButtonClicked){ "${payment.status}" }
+            else if(isPaid){ "Paid" }
+            else{ "Pending" }
             val payment= VendorPaymentinfo(payment.id,name,amount,date,paymentStatus, Selected_Item?.id!!)
             paymentlist.add(payment)
+
             adapter= VendorPaymentActivityAdapter(this,paymentlist,this)
             vendorpaymenttrans.layoutManager=LinearLayoutManager(this)
             vendorpaymenttrans.adapter=adapter
             adapter.notifyDataSetChanged()
             Toast.makeText(this,"Data Added",Toast.LENGTH_SHORT).show()
             dialogview.dismiss()
-        }
-    }
+        } }
     private fun showDatePicker() {
         val constraint= CalendarConstraints.Builder()
             .setValidator(DateValidatorPointForward.now())
-        val calendar = Calendar.getInstance()
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
-        val month = calendar.get(Calendar.MONTH)
-        val year = calendar.get(Calendar.YEAR)
-
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setTitleText("Select Date")
             .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
             .setCalendarConstraints(constraint.build())
             .build()
-
         datePicker.addOnPositiveButtonClickListener { selectedDate ->
             val selectedCalendar = Calendar.getInstance()
             selectedCalendar.timeInMillis = selectedDate
@@ -327,10 +283,8 @@ private fun showpaymentsheet(){
             val formattedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
             vendorexpireDate.setText(formattedDate)
         }
-
         datePicker.show(fragmentManager, "datePicker")
     }
-
     fun setButtonBackground(button:Button,isSelected:Boolean){
         var backgroundcolor=if(isSelected) R.color.light_blue else R.color.white
         button.backgroundTintList= ContextCompat.getColorStateList(this,backgroundcolor)
@@ -340,12 +294,8 @@ private fun showpaymentsheet(){
         val visibility = if (isVisible) View.GONE else View.VISIBLE
         val arrowDrawableRes = if (isVisible) R.drawable.drop_arrow else R.drawable.uparrow
         val viewsToToggle = listOf(
-            vendorPhoneTV, vendorPhoneET,
-            vendorEmailTV, vendorEmailET,
-            vendorWebsiteTV, vendorWebsiteET,
-            vendorAddressTV, vendorAddressET
-        )
-
+            vendorPhoneTV, vendorPhoneET, vendorEmailTV, vendorEmailET,
+            vendorWebsiteTV, vendorWebsiteET, vendorAddressTV, vendorAddressET)
         viewsToToggle.forEach { it.visibility = visibility }
         vendorViewTV.setImageResource(arrowDrawableRes)
     }
@@ -369,32 +319,21 @@ private fun showpaymentsheet(){
             }
                 R.id.Check->{
                     val Selected_Item: Vendor?=intent.getParcelableExtra("Selected_Item")
-                    if(Selected_Item!=null){
-                        UpdateDatabase(Selected_Item.id,paymentlist)
-                    }else{
-                    AddvaluetoDatabase()
-
-                    }
+                    if(Selected_Item!=null){ UpdateDatabase(Selected_Item.id,paymentlist) }
+                    else{ AddvaluetoDatabase() }
                     true
                 }
             else->super.onOptionsItemSelected(item)
             }
         }
-
-
-
     //retrive the contact from the device
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode==Activity.RESULT_OK &&requestCode== 400){
             var contacturi=data?.data ?:return
-            var contactinfo= arrayOf(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-                                                 ContactsContract.CommonDataKinds.Phone.NUMBER)
-
+            var contactinfo= arrayOf(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.NUMBER)
             var contentResolver:ContentResolver=applicationContext.contentResolver
-
             var cursor=contentResolver.query(contacturi,contactinfo,null,null,null)
-
             cursor?.let {
                 if(it.moveToFirst()){
                     var nameindex=cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
@@ -404,10 +343,7 @@ private fun showpaymentsheet(){
                     var contactnumber=it.getString(numberindex)
                     vendorNameET.setText(contactname)
                     vendorPhoneET.setText(contactnumber)
-                }
-            }
-        }
-    }
+                } } } }
     private fun AddvaluetoDatabase() {
         val vendorName = vendorNameET.text.toString()
         val category = categoryedit.text.toString()
@@ -437,32 +373,20 @@ private fun showpaymentsheet(){
         var status:String
         val db=DatabaseManager.getDatabase(this)
         val ispaid=db.isVendorPaid(id)
-        if(ispaid){
-            status="Paid"
-        }
-        else{
-            status="Not Paid"
-        }
+        if(ispaid){ status="Paid" }
+        else{ status="Not Paid" }
         val vendor= Vendor(id,vendorName,category,vendorNote,estimatedAmount,vendorBalance,"",
             status,vendorPhone,vendorEmail,vendorWebsite,vendorAddress)
         db.updateVendor(vendor)
         for(payment in paymentList){
                 val existinguser=db.getPaymentForVendor(id.toInt())
                 val existingpayment=existinguser.find { it.id==payment.id }
-                if(existingpayment!=null){
-                    Log.d("PaymentData", "Payment ID ${existingpayment.id} already exists. Updating...")
-                    db.updateVendorPayment(payment.id,payment)
-                }else{
-                    Log.d("PaymentData", "Payment ID ${payment.id} does not exist. Creating...")
-                db.createVendorPayment(payment)
-                }
-        }
+                if(existingpayment!=null){ db.updateVendorPayment(payment.id,payment) }
+                else{ db.createVendorPayment(payment) } }
+
         val totalamt=db.getTotalPaymentAmountVendor(id.toInt())
-        if(totalamt.toFloat()>=estimatedAmount.toFloat()){
-            db.updateVendorPaid(vendor.id,"Paid")
-        }else{
-            db.updateVendorPaid(vendor.id,"Not Paid")
-        }
+        if(totalamt.toFloat()>=estimatedAmount.toFloat()){ db.updateVendorPaid(vendor.id,"Paid") }
+        else{ db.updateVendorPaid(vendor.id,"Not Paid") }
         Toast.makeText(this, "Vendor Updated successfully", Toast.LENGTH_SHORT).show()
         finish()
     }

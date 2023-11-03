@@ -20,6 +20,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Guest
 
 class GuestDetails : AppCompatActivity() {
@@ -57,7 +58,6 @@ class GuestDetails : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-
         guestNameEt = findViewById(R.id.GuestNameEt)
         contactviewtv=findViewById(R.id.contactviewtv)
         guestNoteEt =findViewById(R.id.GuestNoteET)
@@ -69,9 +69,7 @@ class GuestDetails : AppCompatActivity() {
         Acccepted = findViewById(R.id.Accepted)
         notSentButton = findViewById(R.id.NotSentBut)
         guestPhoneEt = findViewById(R.id.GuestPhoneEt)
-//        guestEmailEt = findViewById(R.id.GuestEmailEt)
         guestPhonetv=findViewById(R.id.GuestPhonetv)
-//        guestEmailtv=findViewById(R.id.GuestEmailtv)
         guestAddresssEt=findViewById(R.id.GuestAddresssEt)
 
         Acccepted.setOnClickListener {
@@ -112,16 +110,13 @@ class GuestDetails : AppCompatActivity() {
             setButtonBackground(invitationSentButton,false)
             setButtonBackground(notSentButton,true)
         }
-        contactviewtv.setOnClickListener {
-            guestinfoview()
-        }
+        contactviewtv.setOnClickListener { guestinfoview() }
         val selectedlist: Guest?=intent.getParcelableExtra("selected_list")
         if(selectedlist!=null){
             guestNameEt.setText(selectedlist.name)
             TotalFamilyMember.setText(selectedlist.totalFamilyMembers)
             guestNoteEt.setText(selectedlist.note)
             guestPhoneEt.setText(selectedlist.phoneNumber)
-//            guestEmailEt.setText(selectedlist.email)
             guestAddresssEt.setText(selectedlist.address)
 
             when (selectedlist.Acceptence) {
@@ -148,24 +143,16 @@ class GuestDetails : AppCompatActivity() {
                 setButtonBackground(notSentButton,false)
             }
             if(selectedlist.isInvitationSent=="Not Sent"){
-//                InvitationStatus="Not Sent"
                 setButtonBackground(invitationSentButton,false)
                 setButtonBackground(notSentButton,true)
-            }
-        }
-    }
-
+            } } }
 
     private fun guestinfoview() {
         val isVisible= guestPhonetv.visibility==View.VISIBLE
         val visibility=if(isVisible) View.GONE else View.VISIBLE
         val drawableimage=if(isVisible) R.drawable.drop_arrow else R.drawable.uparrow
 
-        val componetview= listOf(
-            guestPhonetv,guestAddresssEt,
-            guestPhoneEt,guestAddresssEt,
-            GuestAddressstv
-        )
+        val componetview= listOf(guestPhonetv,guestAddresssEt, guestPhoneEt,guestAddresssEt, GuestAddressstv)
         componetview.forEach { it.visibility = visibility }
         contactviewtv.setImageResource(drawableimage)
     }
@@ -192,54 +179,30 @@ class GuestDetails : AppCompatActivity() {
                     updateDatabase(selectedlist.id)
                 }else{
                 AddValueToDatabase()
-
                 }
                 true
             }
         else->super.onOptionsItemSelected(item)
-    }
-}
-
-
-
-    fun getSharedPreference(context: Context, key:String):String?{
-        val sharedValues=context.getSharedPreferences("Database",Context.MODE_PRIVATE)
-        return sharedValues.getString(key,null)
-    }
+    } }
     private fun AddValueToDatabase() {
-        val databasename = getSharedPreference(this, "databasename").toString()
-        val db = LocalDatabase(this, databasename)
+        val db = DatabaseManager.getDatabase(this)
         val guestName = guestNameEt.text.toString()
         val guestNote = guestNoteEt.text.toString()
         val totalFamilyMembers = TotalFamilyMember.text.toString()
         val guestPhone = guestPhoneEt.text.toString()
         val guestAddress = guestAddresssEt.text.toString()
-        if(isAccepted){
-            AccceptanceStatus="Accepted"
-        }else if (isPending){
-            AccceptanceStatus="Pending"
-        }
-        else if (isDenied){
-            AccceptanceStatus="Denied"
-        }else{
-            AccceptanceStatus=" "
-        }
-        Log.d("AccceptanceStatus","The Acceptance Status is:$AccceptanceStatus")
+        if(isAccepted){ AccceptanceStatus="Accepted" }
+        else if (isPending){ AccceptanceStatus="Pending" }
+        else if (isDenied){ AccceptanceStatus="Denied" }
+        else{ AccceptanceStatus=" " }
         val GuestList = Guest(1, guestName, totalFamilyMembers, guestNote, InvitationStatus,
             guestPhone, AccceptanceStatus,guestAddress)
         db.createGuest(GuestList)
-
         Toast.makeText(this, "Guest Added successfully", Toast.LENGTH_SHORT).show()
         finish()
     }
-
-    fun isEmailValid(email: String): Boolean {
-        val emailRegex = Regex("^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$")
-        return email.matches(emailRegex)
-    }
     private fun updateDatabase(id: Long) {
-        val databasename=getSharedPreference(this,"databasename").toString()
-        val db=LocalDatabase(this,databasename)
+        val db = DatabaseManager.getDatabase(this)
         val guestName = guestNameEt.text.toString()
         val guestNote = guestNoteEt.text.toString()
         val totalFamilyMembers = TotalFamilyMember.text.toString()
@@ -252,30 +215,18 @@ class GuestDetails : AppCompatActivity() {
             Log.d("Guest_Invitation","The Previous Status is :$InvitationStatus")
             updateInvitationStatus=InvitationStatus.toString()
         }
-        else if (isInvitationSent) {
-            updateInvitationStatus = "Invitation Sent"
-        } else {
-            updateInvitationStatus = "Not Sent"
-        }
+        else if (isInvitationSent) { updateInvitationStatus = "Invitation Sent" }
+        else { updateInvitationStatus = "Not Sent" }
 
         if(!isAccceptanceButtonClick){
             val selectedlist: Guest?=intent.getParcelableExtra("selected_list")
             val AcceptenceStatus=selectedlist?.Acceptence
             UpdatedAccceptanceStatus=AcceptenceStatus.toString()
-        }else if(isAccceptanceButtonClicked){
-            UpdatedAccceptanceStatus="Accepted"
-        }
-        else if(isPendinfButtonClicked){
-            UpdatedAccceptanceStatus="Pending"
-        }
-        else if(isDeniedButtonClicked){
-            UpdatedAccceptanceStatus="Denied"
-        }
+        }else if(isAccceptanceButtonClicked){ UpdatedAccceptanceStatus="Accepted" }
+        else if(isPendinfButtonClicked){ UpdatedAccceptanceStatus="Pending" }
+        else if(isDeniedButtonClicked){ UpdatedAccceptanceStatus="Denied" }
 
-        val GuestList= Guest(id,guestName,totalFamilyMembers,guestNote, updateInvitationStatus,
-            guestPhone,UpdatedAccceptanceStatus,guestAddress)
-        Log.d("GuestDetails", "updateDatabase - updateInvitationStatus: $UpdatedAccceptanceStatus")
-        Log.d("GuestDetails", "updateDatabase - id: $id")
+        val GuestList= Guest(id,guestName,totalFamilyMembers,guestNote, updateInvitationStatus, guestPhone,UpdatedAccceptanceStatus,guestAddress)
         db.updateGuest(GuestList)
         Toast.makeText(this, "Guest Updated successfully", Toast.LENGTH_SHORT).show()
         finish()
@@ -286,11 +237,7 @@ class GuestDetails : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == 900) {
             val contactUri = data?.data ?: return
-            val contactInfo = arrayOf(
-                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-                ContactsContract.CommonDataKinds.Phone.NUMBER
-            )
-
+            val contactInfo = arrayOf(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.NUMBER)
             val contentResolver: ContentResolver = applicationContext.contentResolver
             val cursor = contentResolver.query(contactUri, contactInfo, null, null, null)
 
@@ -306,9 +253,7 @@ class GuestDetails : AppCompatActivity() {
                     guestPhoneEt.setText(contactNumber)
                 }
                 it.close()
-            }
-        }
-    }
+            } } }
     fun setButtonBackground(button: Button, isSelected: Boolean) {
         val backgroundColor = if (isSelected) R.color.light_blue else R.color.Light_Lemon
         button.backgroundTintList = ContextCompat.getColorStateList(this, backgroundColor)

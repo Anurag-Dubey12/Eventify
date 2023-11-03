@@ -195,7 +195,6 @@ class LocalDatabase(contex:Context,databasename:String):
                     ")"
             db?.execSQL(createEventTableQuery)
         }
-                db?.execSQL("DROP TABLE IF EXISTS $TABLE_Event")
 
         if(oldVersion<3){
             db?.execSQL("DROP TABLE IF EXISTS $TABLE_TASK")
@@ -415,30 +414,6 @@ class LocalDatabase(contex:Context,databasename:String):
         return tasks
     }
 
-
-    //Getting Specific data from Task
-    @SuppressLint("Range")
-    fun getTaskData(taskId: String): MutableList<Task> {
-        val db = readableDatabase
-        val query = "SELECT * FROM $TABLE_TASK WHERE $COLUMN_ID LIKE '%$taskId%' OR $Task_Name LIKE '%$taskId%' OR $Task_Category LIKE '%$taskId%'"
-        val cursor = db.rawQuery(query, null)
-        val taskList = mutableListOf<Task>()
-
-        while (cursor.moveToNext()) {
-            val id = cursor.getLong(cursor.getColumnIndex(COLUMN_ID))
-            val taskName = cursor.getString(cursor.getColumnIndex(Task_Name))
-            val taskCategory = cursor.getString(cursor.getColumnIndex(Task_Category))
-            val taskNote = cursor.getString(cursor.getColumnIndex(Task_Note))
-            val taskStatus = cursor.getString(cursor.getColumnIndex(Task_Status))
-            val taskDate = cursor.getString(cursor.getColumnIndex(Task_Date))
-
-            val task = Task(id, taskName, taskCategory, taskNote, taskStatus, taskDate)
-            taskList.add(task)
-        }
-
-        cursor.close()
-        return taskList
-    }
     fun UpdateTaskStatus(id:Long,newvalue:String):Int{
         val db=writableDatabase
         val value=ContentValues().apply {
@@ -720,9 +695,6 @@ class LocalDatabase(contex:Context,databasename:String):
         db.close()
         return totalBudget
     }
-
-
-
     // Get all budgets
     @SuppressLint("Range")
     fun getAllBudgets(): MutableList<Budget> {
@@ -771,9 +743,6 @@ class LocalDatabase(contex:Context,databasename:String):
         db.close()
         return rowsAffected
     }
-
-
-
     // Delete a budget
     fun deleteBudget(budget: Budget): Int {
         val db = writableDatabase
@@ -804,7 +773,6 @@ class LocalDatabase(contex:Context,databasename:String):
             -1
         }
     }
-
     fun createVendorPayment(payment: VendorPaymentinfo) {
         val db = writableDatabase
         val values = ContentValues().apply {
@@ -817,7 +785,6 @@ class LocalDatabase(contex:Context,databasename:String):
         db.insert(Vendor_TABLE_Payment, null, values)
         db.close()
     }
-
     @SuppressLint("Range")
     fun getPaymentsForBudget(budgetId: Int): MutableList<Paymentinfo> {
         val paymentList = mutableListOf<Paymentinfo>()
@@ -843,12 +810,6 @@ class LocalDatabase(contex:Context,databasename:String):
 
         return paymentList
     }
-    fun getPaymentById(paymentId: Int, budgetId: Int): Paymentinfo? {
-        val payments = getPaymentsForBudget(budgetId)
-        return payments.find { it.id == paymentId }
-    }
-
-
     @SuppressLint("Range")
     fun getPaymentForVendor(VendorId: Int): MutableList<VendorPaymentinfo> {
         val paymentlist = mutableListOf<VendorPaymentinfo>()
@@ -899,64 +860,6 @@ class LocalDatabase(contex:Context,databasename:String):
         db.close()
         return total
     }
-
-
-
-    @SuppressLint("Range")
-    fun getAllPaymentsForVendors(): MutableList<VendorPaymentinfo> {
-        val paymentlist = mutableListOf<VendorPaymentinfo>()
-        val query = "SELECT $Vendor_TABLE_Payment.$Vendor_Payment_ID,$Vendor_TABLE_Payment.$Vendor_Payment_Name,$Vendor_TABLE_Payment.$Vendor_Payment_Amount,$Vendor_TABLE_Payment.$Vendor_Payment_Date," +
-                "$Vendor_TABLE_Payment.$Vendor_Payment_Status,$Vendor_TABLE_Payment.$Payment_VendorID FROM $Vendor_TABLE_Payment" +
-                " INNER JOIN $TABLE_VENDOR ON $Vendor_TABLE_Payment.$Payment_VendorID=$TABLE_VENDOR.$COLUMN_ID"
-        val db = readableDatabase
-        val cursor = db.rawQuery(query, null)
-        cursor.use {
-            while (it.moveToNext()) {
-                val id = it.getInt(it.getColumnIndex(Vendor_Payment_ID))
-                val name = it.getString(it.getColumnIndex(Vendor_Payment_Name))
-                val amount = it.getFloat(it.getColumnIndex(Vendor_Payment_Amount))
-                val date = it.getString(it.getColumnIndex(Vendor_Payment_Date))
-                val status = it.getString(it.getColumnIndex(Vendor_Payment_Status))
-                val VendorId = it.getLong(it.getColumnIndex(Payment_VendorID))
-                paymentlist.add(VendorPaymentinfo(id, name, amount, date, status, VendorId))
-            }
-        }
-        return paymentlist
-    }
-
-    fun deletePaymentsForBudget(budgetId: Int) {
-        val db = writableDatabase
-        db.delete(TABLE_Payment, "$Payment_BudgetID = ?", arrayOf(budgetId.toString()))
-        db.close()
-    }
-
-    fun deletePayment(paymentId: Long): Int {
-        val db = writableDatabase
-        return db.delete(TABLE_Payment, "$Payment_ID = ?", arrayOf(paymentId.toString()))
-    }
-
-    @SuppressLint("Range")
-    fun getAllPayments(): MutableList<Paymentinfo> {
-        val paymentList = mutableListOf<Paymentinfo>()
-        val query = "SELECT * FROM $TABLE_Payment"
-        val db = readableDatabase
-        val cursor = db.rawQuery(query, null)
-        if (cursor.moveToFirst()) {
-            do {
-                val id = cursor.getInt(cursor.getColumnIndex(Payment_ID))
-                val name = cursor.getString(cursor.getColumnIndex(Payment_Name))
-                val amount = cursor.getFloat(cursor.getColumnIndex(Payment_Amount))
-                val status = cursor.getString(cursor.getColumnIndex(Payment_Status))
-                val date = cursor.getString(cursor.getColumnIndex(Payment_Date))
-                val budgetId = cursor.getLong(cursor.getColumnIndex(Payment_BudgetID))
-                val payment = Paymentinfo(id,name, amount, status, date, budgetId)
-                paymentList.add(payment)
-            } while (cursor.moveToNext())
-        }
-        cursor.close()
-        return paymentList
-    }
-
     fun updatePayment(paymentId: Int, newPayment: Paymentinfo): Boolean {
         val db = writableDatabase
         val values = ContentValues().apply {
@@ -1092,7 +995,6 @@ class LocalDatabase(contex:Context,databasename:String):
         return total
     }
 
-
     fun getTotalInvitationsNotSent(): Int {
         var total = 0
         val query = "SELECT COUNT(*) FROM $TABLE_GUEST WHERE $GUEST_STATUS = 'Not Sent'"
@@ -1205,7 +1107,6 @@ class LocalDatabase(contex:Context,databasename:String):
                     val category = it.getString(it.getColumnIndex(Vendor_Category))
                     val note = it.getString(it.getColumnIndex(Vendor_Note))
                     val estimated = it.getString(it.getColumnIndex(Vendor_Estimated))
-//                    val balance = it.getString(it.getColumnIndex(Vendor_Balance))
                     val pending = it.getString(it.getColumnIndex(Vendor_Pending))
                     val paid = it.getString(it.getColumnIndex(Vendor_Paid))
                     val phoneNumber = it.getString(it.getColumnIndex(Vendor_PhoneNumber))
@@ -1318,7 +1219,6 @@ class LocalDatabase(contex:Context,databasename:String):
         val db=writableDatabase
         val value=ContentValues().apply {
             put(Vendor_Paid,newvalue)
-//            put(Vendor_Balance,NewBalance)
         }
         val rowaffected=db.update(TABLE_VENDOR,value,"$COLUMN_ID=?", arrayOf(id.toString()))
         db.close()

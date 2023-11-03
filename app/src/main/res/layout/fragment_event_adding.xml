@@ -20,14 +20,6 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-
-<!--            <com.airbnb.lottie.LottieAnimationView-->
-<!--                android:id="@+id/animation_view"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="@dimen/_159sdp"-->
-<!--                app:lottie_rawRes="@raw/animation_lnevq38g"-->
-<!--                app:lottie_loop="true"-->
-<!--                app:lottie_autoPlay="true" />-->
             <TextView
                 style="@style/TEXTColor"
                 android:layout_width="match_parent"

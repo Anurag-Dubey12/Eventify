@@ -1,6 +1,8 @@
 package com.example.eventmatics.fragments
 
 import android.annotation.SuppressLint
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -10,11 +12,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatDialog
 import androidx.fragment.app.FragmentManager
+import com.example.eventmatics.Notification
 import com.example.eventmatics.R
-import com.example.eventmatics.RoomDatabase.Entity.Dao.EventDao
-import com.example.eventmatics.RoomDatabase.Entity.Database.Event_Database
 import com.example.eventmatics.SQLiteDatabase.Dataclass.AuthenticationUid
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Events
@@ -24,8 +24,10 @@ import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import java.util.Calendar
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.NamesDatabase
-import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.DatabaseNameDataClass
+import com.example.eventmatics.messageExtra
+import com.example.eventmatics.notificationID
+import com.example.eventmatics.titleExtra
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointForward
@@ -42,15 +44,10 @@ class EventAdding(
     private lateinit var createButton: Button
     private lateinit var EditButton: Button
 
-    private var db: Event_Database? = null
-    private var eventDao: EventDao? = null
     interface OnDataEnter{
         fun onDataEnter(event: Events)
     }
     private var onDataEnterListener: OnDataEnter? = null
-    fun setOnDataEnterListener(listener: OnDataEnter) {
-        onDataEnterListener = listener
-    }
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,24 +99,25 @@ class EventAdding(
 
             val databaseHelper = LocalDatabase(context, databasename)
             val Databasename=NamesDatabase(context)
+
             if (databaseHelper.isEventNameExists(eventNameText)) {
                 Toast.makeText(context, "Event name must be unique", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
             val uid=AuthenticationUid.getUserUid(context)!!
             val event = Events(0, eventNameText, eventDateText, eventTimeText, eventBudgetText,uid)
             val names= DatabaseNameDataClass(0,eventNameText,eventDateText,eventTimeText, eventBudgetText,uid)
             onDataEnterListener?.onDataEnter(event)
-            Log.d("EventDetails","The Event Details are:$event}")
-            Log.d("EventDetails","The Event Details are:${onDataEnterListener?.onDataEnter(event)}")
-            Log.d("UerUid","This is EventAdding userid:$names")
+
             val eventId = databaseHelper.createEvent(event)
             Databasename.createDatabase(names)
+
             if (eventId != -1L) {
                 val dataAddedIntent = Intent("com.example.eventmatics.fragments")
                 context?.sendBroadcast(dataAddedIntent)
                 onDataEnterListener?.onDataEnter(event)
-                dismiss()
+                shownotification(eventNameText,eventDateText,eventTimeText)
                 Toast.makeText(context, "Event created successfully", Toast.LENGTH_SHORT).show()
                 saveToSharedPreferences(context, "databasename", eventNameText)
                 dismiss()
@@ -129,8 +127,19 @@ class EventAdding(
             Databasename.close()
             databaseHelper.close()
         }
+    }
 
+    private fun shownotification(name:String,Date:String,Time:String) {
+            val title = "Event Started"
+            val message = "Congrats !Your Event $name has been schedule on $Date at $Time "
+            val notificationIntent = Intent(context, Notification::class.java)
+            notificationIntent.putExtra(titleExtra, title)
+            notificationIntent.putExtra(messageExtra, message)
 
+            val pendingIntent = PendingIntent.getBroadcast(context, notificationID, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            alarmManager[AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000] = pendingIntent
     }
 
     fun saveToSharedPreferences(context: Context, key: String, value: String) {
@@ -161,9 +170,7 @@ class EventAdding(
             val selectedMinute = timePicker.minute
             val formattedTime = String.format("%02d:%02d:%02d", selectedHour, selectedMinute, second)
             eventTime.setText(formattedTime)
-
         }
-
         timePicker.show(fragmentManager, "TAG_TIME_PICKER")
     }
     private fun showDatePicker() {
@@ -184,8 +191,4 @@ class EventAdding(
             val formattedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
             eventDate.setText(formattedDate)
         }
-        datePicker.show(fragmentManager, "datePicker")
-
-    }
-
-}
+        datePicker.show(fragmentManager, "datePicker") } }

@@ -11,25 +11,17 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
+import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Task
 
-class TaskDataHolderAdpater(private val context:Context,
-                            private var taskList: MutableList<Task>,
-                            private val itemClickListener: OnItemClickListener) :
-                            RecyclerView.Adapter<TaskDataHolderAdpater.ViewHolder>() {
+class TaskDataHolderAdpater(private val context:Context, private var taskList: MutableList<Task>,
+                            private val itemClickListener: OnItemClickListener) : RecyclerView.Adapter<TaskDataHolderAdpater.ViewHolder>() {
     private var filteredList: MutableList<Task> = mutableListOf()
     fun removeItem(position: Int) {
         taskList.removeAt(position)
         notifyItemRemoved(position)
     }
-    init {
-        filteredList.addAll(taskList)
-    }
-    fun UpdateList(task:MutableList<Task>){
-        this.filteredList.clear()
-        this.filteredList.addAll(task)
-        notifyDataSetChanged()
-    }
+    init { filteredList.addAll(taskList) }
     fun setData(newList: MutableList<Task>) {
         taskList = newList
         notifyDataSetChanged()
@@ -39,24 +31,15 @@ class TaskDataHolderAdpater(private val context:Context,
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.taskdataholder, parent, false)
         return ViewHolder(view)
-
     }
-    interface OnItemClickListener {
-        fun onItemClick(task: Task)
-    }
+    interface OnItemClickListener { fun onItemClick(task: Task) }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val data = taskList[position]
         holder.bind(data,position)
         holder.itemView.setOnClickListener {
-            itemClickListener.onItemClick(data)
-        }
-    }
-
-
-    override fun getItemCount(): Int {
-        return taskList.size
-    }
+            itemClickListener.onItemClick(data) } }
+    override fun getItemCount(): Int { return taskList.size }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val taskNameTextView: TextView = itemView.findViewById(R.id.Taskname)
@@ -72,8 +55,7 @@ class TaskDataHolderAdpater(private val context:Context,
             taskDateTextView.text = data.taskDate
             task_category.text = data.category
             task_note.text = data.taskNote
-            val databasename = getSharedPreference(context, "databasename").toString()
-            val db = LocalDatabase(context, databasename)
+            val db = DatabaseManager.getDatabase(context)
             val iscompleted=db.isTaskCompleted(data.id)
             if(iscompleted){
                 taskInfoTextView.setTextColor(Color.parseColor("#00FF00"))
@@ -82,12 +64,8 @@ class TaskDataHolderAdpater(private val context:Context,
             else{
                 taskInfoTextView.setTextColor(Color.parseColor("#808080"))
                 cardView.setBackgroundColor(Color.WHITE)
-            }
-        }
-
-    }
+            } } }
     fun getSharedPreference(context: Context, key: String): String? {
         val sharedPref = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
         return sharedPref.getString(key, null)
-    }
-}
+    } }

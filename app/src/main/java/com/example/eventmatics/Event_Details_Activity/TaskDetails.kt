@@ -37,20 +37,9 @@ class TaskDetails : AppCompatActivity(){
     var TaskStatus:Boolean=false
     var taskButtonClicked: Boolean = false
 val spinnerItems = arrayOf(
-    "Accessories",
-    "Accommodation",
-    "Attire & accessories",
-    "Ceremony",
-    "Flower & Decor",
-    "Health & Beauty",
-    "Jewelry",
-    "Miscellaneous",
-    "Music & Show",
-    "Photo & Video",
-    "Reception",
-    "Transportation"
-)
-
+    "Accessories", "Accommodation", "Attire & accessories", "Ceremony",
+    "Flower & Decor", "Health & Beauty", "Jewelry", "Miscellaneous",
+    "Music & Show", "Photo & Video", "Reception", "Transportation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_details)
@@ -80,9 +69,7 @@ val spinnerItems = arrayOf(
             if(selectedTask.taskStatus=="Completed"){
                 setButtonBackground(taskPendingbut,false)
                 setButtonBackground(TaskCombut,true)
-            }
-
-        }
+            } }
         else{
             val today= Calendar.getInstance()
             val formateddate="${today.get(Calendar.DAY_OF_MONTH)}/${today.get(Calendar.MONTH)+1}/${today.get(Calendar.YEAR)}"
@@ -101,9 +88,7 @@ val spinnerItems = arrayOf(
             setButtonBackground(taskPendingbut,false)
             setButtonBackground(TaskCombut,true)
         }
-        taskdate.setOnClickListener {
-            showdatepicker()
-        }
+        taskdate.setOnClickListener { showdatepicker() }
         category_button.setOnClickListener {
             MaterialAlertDialogBuilder(this)
                 .setTitle("Select Category")
@@ -111,12 +96,8 @@ val spinnerItems = arrayOf(
                     categoryedit.text=spinnerItems[which]
                     dialog.dismiss()
                 }
-                .setNegativeButton("Cancel") { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .show()
-        }
-    }
+                .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }.show()
+        } }
 
     fun setButtonBackground(button: Button, isSelected:Boolean){
         val BackgroundColor=if(isSelected) R.color.light_blue else R.color.light
@@ -158,11 +139,8 @@ val spinnerItems = arrayOf(
             }
             R.id.Check->{
                 val selectedTask: Task? = intent.getParcelableExtra("selected_task")
-                if(selectedTask!=null){
-                    UpdateData(selectedTask.id)
-                }else{
-                addvaluetodatabase()
-                }
+                if(selectedTask!=null){ UpdateData(selectedTask.id) }
+                else{ addvaluetodatabase() }
                 true
             }
          else->super.onOptionsItemSelected(item)
@@ -175,29 +153,17 @@ val spinnerItems = arrayOf(
         val TaskNoteET=taskNote.text.toString()
         val taskdate=taskdate.text.toString()
 
-        if(TaskStatus){
-            taskStatus="Completed"
-        }
+        if(TaskStatus){ taskStatus="Completed" }
+        else{ taskStatus="Pending" }
+        if(taskname.isEmpty()){ TaskNameET.error="Enter Task Name" }
+        if(category.isEmpty()){ categoryedit.error="Enter Or Select a category" }
+        if(taskname.isEmpty()&&category.isEmpty()){ Toast.makeText(this, "Enter Full Details", Toast.LENGTH_SHORT).show() }
         else{
-            taskStatus="Pending"
-        }
-        if(taskname.isEmpty()){
-            TaskNameET.error="Enter Task Name"
-        }
-        if(category.isEmpty()){
-            categoryedit.error="Enter Or Select a category"
-        }
-        if(taskname.isEmpty()&&category.isEmpty()){
-            Toast.makeText(this, "Enter Full Details", Toast.LENGTH_SHORT).show()
-        }else{
-
-        Log.d("TaskStaus:",taskStatus)
         val Task= Task(0,taskname,category,TaskNoteET,taskStatus,taskdate)
         Db.createTask(Task)
         Toast.makeText(this, "Task Added successfully", Toast.LENGTH_SHORT).show()
         finish()
-        }
-}
+        } }
     private fun UpdateData(id: Long) {
         val db=DatabaseManager.getDatabase(this)
         val taskname = TaskNameET.text.toString()
@@ -205,18 +171,14 @@ val spinnerItems = arrayOf(
         val TaskNoteET = taskNote.text.toString()
         val taskdate = taskdate.text.toString()
 
-//        val isCompleted=db.isTaskCompleted(id)
         if(!taskButtonClicked){
             val selectedTask: Task? = intent.getParcelableExtra("selected_task")
             val previousdata=selectedTask?.taskStatus
             Log.d("Button_Status","The Status Of  A Button is :$previousdata")
             updatedtaskStatus=previousdata.toString()
         }
-        else if(TaskStatus){
-            updatedtaskStatus="Completed"
-        }else{
-            updatedtaskStatus="Pending"
-        }
+        else if(TaskStatus){ updatedtaskStatus="Completed" }
+        else{ updatedtaskStatus="Pending" }
         val task= Task(id,taskname,category,TaskNoteET,updatedtaskStatus,taskdate)
         db.updateTask(task)
         Toast.makeText(this, "Task Data Updated successfully", Toast.LENGTH_SHORT).show()

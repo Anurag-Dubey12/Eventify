@@ -8,9 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper
 
 class UserProfileDatabase(context: Context):SQLiteOpenHelper(context,"USER_PROFILE",null,1) {
     companion object {
-        private const val DATABASE_VERSION = 1
         private const val COLUMN_ID = "id"
-        //Table and column
         private const val DATABASE_TABLE = "USER_Info"
         private const val Name="User_Name"
         private const val Profile="User_Profile"
@@ -62,9 +60,5 @@ class UserProfileDatabase(context: Context):SQLiteOpenHelper(context,"USER_PROFI
             put(Profile, userProfile.Image)
         }
         return db.update(DATABASE_TABLE, values, "$COLUMN_ID = ?", arrayOf(userProfile.id.toString()))
-    }
-    fun deleteUserProfileById(id: Long): Int {
-        val db = writableDatabase
-        return db.delete(DATABASE_TABLE, "$COLUMN_ID = ?", arrayOf(id.toString()))
     }
 }

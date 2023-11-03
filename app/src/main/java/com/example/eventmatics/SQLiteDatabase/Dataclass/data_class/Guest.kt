@@ -11,7 +11,6 @@ data class Guest(
     val note: String,
     val isInvitationSent: String,
     val phoneNumber: String,
-//    val email: String,
     val Acceptence:String,
     val address: String
 ) : Parcelable

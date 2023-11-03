@@ -13,44 +13,24 @@ import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Budget
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
 
-class BudgetDataHolderAdapter(private val context: Context, private var budgetList: List<Budget>
-, private val itemClickListener: OnItemClickListener
-) : RecyclerView.Adapter<BudgetDataHolderAdapter.ViewHolder>() {
+class BudgetDataHolderAdapter(private val context: Context, private var budgetList: List<Budget>,
+                              private val itemClickListener: OnItemClickListener) : RecyclerView.Adapter<BudgetDataHolderAdapter.ViewHolder>() {
     private var filteredList: MutableList<Budget> = mutableListOf()
-
-    init {
-        filteredList.addAll(budgetList)
-    }
-
+    init { filteredList.addAll(budgetList) }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.budgetdataholder, parent, false)
         return ViewHolder(view)
     }
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = budgetList[position]
         holder.bind(item,position)
-        holder.itemView.setOnClickListener {
-            itemClickListener.onItemClick(item)
-        }
-    }
+        holder.itemView.setOnClickListener { itemClickListener.onItemClick(item) } }
     fun setadapter(newlist:MutableList<Budget>){
         budgetList=newlist
         notifyDataSetChanged()
     }
-    interface OnItemClickListener {
-        fun onItemClick(budget: Budget)
-    }
-
-    override fun getItemCount(): Int {
-        return budgetList.size
-    }
-
-    fun updateList(filteredList: MutableList<Budget>) {
-        this.filteredList.clear()
-        this.filteredList.addAll(filteredList)
-        notifyDataSetChanged()
-    }
+    interface OnItemClickListener { fun onItemClick(budget: Budget) }
+    override fun getItemCount(): Int { return budgetList.size }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val Budget_title: TextView = itemView.findViewById(R.id.Budget_title)
@@ -59,7 +39,6 @@ class BudgetDataHolderAdapter(private val context: Context, private var budgetLi
         private val BudgetNote: TextView = itemView.findViewById(R.id.BudgetNote)
         private val BudgetPaid: TextView = itemView.findViewById(R.id.BudgetPaid)
         private val BudgetCardView: CardView = itemView.findViewById(R.id.BudgetCardView)
-
         fun bind(item: Budget, position: Int) {
             Budget_title.text = item.name
             Budget_Category.text = item.category
@@ -75,12 +54,7 @@ class BudgetDataHolderAdapter(private val context: Context, private var budgetLi
                 BudgetPaid.text = "Not Paid"
                 BudgetPaid.setTextColor(Color.parseColor("#808080"))
                 BudgetCardView.setBackgroundColor(Color.WHITE)
-            }
-
-        }
-
-    }
-
+            } } }
     fun getSharedPreference(context: Context, key: String): String? {
         val sharedPref = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
         return sharedPref.getString(key, null)

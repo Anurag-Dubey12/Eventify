@@ -73,28 +73,18 @@ class account_creat : AppCompatActivity() {
                         startActivity(intent)
                         Toast.makeText(this, "Logging Successfully!", Toast.LENGTH_SHORT).show()
                         progressDialog.cancel()
-                    }
-                }
+                    } }
                 .addOnFailureListener { e ->
-//                    Toast.makeText(this, "${e.message}", Toast.LENGTH_SHORT).show()
                     progressDialog.cancel()
                 }
-
             progressDialog.setMessage("Logging ...")
             progressDialog.setCanceledOnTouchOutside(false)
             progressDialog.show()
         }
-
-
         alreadyHaveAccountText.setOnClickListener {
             Intent(this, signin_account::class.java).also {
                 startActivity(it)
-            }
-        }
-    }
-
-
-
+            } } }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RC_SIGN_IN) {
@@ -105,13 +95,10 @@ class account_creat : AppCompatActivity() {
             } catch (e: ApiException) {
                 Log.e(TAG, "Google Sign-In Failed: ${e.message}")
                 Toast.makeText(this, "Google Sign-In Failed", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
+            } } }
 
     private fun handleSignInResult(account: GoogleSignInAccount?) {
         Log.d(TAG, "FirebaseAuthWithGoogle ${account?.id}")
-
         val credential = GoogleAuthProvider.getCredential(account?.idToken, null)
         firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
@@ -121,21 +108,13 @@ class account_creat : AppCompatActivity() {
                 } else {
                     Log.w(TAG, "SignInWithCredential: Failure", task.exception)
                     Toast.makeText(this, "Google Sign-In Failed", Toast.LENGTH_SHORT).show()
-                }
-            }
-    }
-
+                } } }
     private fun addUserToFirestore(user: FirebaseUser?) {
-        if (user == null) {
-            Toast.makeText(this, "User is null", Toast.LENGTH_SHORT).show()
+        if (user == null) { Toast.makeText(this, "User is null", Toast.LENGTH_SHORT).show()
             return
         }
-
         val userMap = hashMapOf(
-            "name" to user.displayName,
-            "email" to user.email,
-            "photoUrl" to user.photoUrl.toString()
-        )
+            "name" to user.displayName, "email" to user.email, "photoUrl" to user.photoUrl.toString())
 
         firestore.collection("UserProfile")
             .document(user.uid)
@@ -147,7 +126,6 @@ class account_creat : AppCompatActivity() {
                 progressDialog.cancel()
             }
             .addOnFailureListener { e ->
-                Log.e(TAG, "Error adding user to Firestore: ${e.message}")
                 Toast.makeText(this, "Error adding user to Firestore", Toast.LENGTH_SHORT).show()
                 progressDialog.cancel()
             }

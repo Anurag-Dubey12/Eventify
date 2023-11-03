@@ -45,18 +45,13 @@ class signin_account : AppCompatActivity() {
             val email = alreadyEmail.text.toString()
             val password = alreadyPassfield.text.toString()
 
-            if (email.isEmpty()) {
-                alreadyEmail.error = "Please Enter the Email"
-            }
-            if (password.isEmpty()) {
-                alreadyPassfield.error = "Please Enter the Password"
-            }
+            if (email.isEmpty()) { alreadyEmail.error = "Please Enter the Email" }
+            if (password.isEmpty()) { alreadyPassfield.error = "Please Enter the Password" }
 
             if (email.isNotEmpty() && password.isNotEmpty()) {
                 progressDialog.setMessage("Logging in...")
                 progressDialog.setCanceledOnTouchOutside(false)
                 progressDialog.show()
-
                 firebaseauth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener {task->
                     if (task.isSuccessful) {
@@ -64,63 +59,41 @@ class signin_account : AppCompatActivity() {
                         val uid=firebaseuser?.uid
                         AuthenticationUid.saveUserUid(this, uid.toString())
                         rProgLayout.visibility = View.VISIBLE
-                        Intent(this, MainActivity::class.java).also { intent ->
-                            startActivity(intent)
-                        }
+                        Intent(this, MainActivity::class.java).also { intent -> startActivity(intent) }
                         Toast.makeText(this, "Welcome User!", Toast.LENGTH_SHORT).show()
-                    } else {
+                    }
+                    else {
                         rProgLayout.visibility = View.GONE
                         Toast.makeText(this, "Failed To Create", Toast.LENGTH_SHORT).show()
                     }
-                    progressDialog.dismiss()
-                }
-            }
-
+                    progressDialog.dismiss() } }
             forgetpas.setOnClickListener {
                 resetpassword()
             }
         }
 
-        createacc.setOnClickListener {
-            Intent(this, account_creat::class.java).also {
-                startActivity(it)
-            }
-        }
-
+        createacc.setOnClickListener { Intent(this, account_creat::class.java).also { startActivity(it) } }
         checksignin()
     }
     private fun checksignin() {
         val loggoogleaccount = GoogleSignIn.getLastSignedInAccount(this)
-        if (loggoogleaccount != null) {
-            Intent(this, MainActivity::class.java).also {
-                startActivity(it)
-            }
-        }
+        if (loggoogleaccount != null) { Intent(this, MainActivity::class.java).also { startActivity(it) } }
         val currentuser = FirebaseAuth.getInstance().currentUser
-        if (currentuser != null) {
-            Intent(this, MainActivity::class.java).also {
-                startActivity(it)
-                finish()
-            }
-        }
-    }
+        if (currentuser != null) { Intent(this, MainActivity::class.java).also { startActivity(it)
+            finish()
+            } } }
 
     private fun resetpassword() {
         val email = alreadyEmail.text.toString()
-        if (email.isEmpty()) {
-            alreadyEmail.error = "Please enter your mail to reset"
-        } else {
+        if (email.isEmpty()) { alreadyEmail.error = "Please enter your mail to reset" }
+        else {
             progressDialog.setMessage("Sending Mail")
             progressDialog.setCanceledOnTouchOutside(false)
             progressDialog.show()
-
             firebaseauth.sendPasswordResetEmail(email).addOnSuccessListener {
                 Toast.makeText(this, "Email has been sent to your mail", Toast.LENGTH_SHORT).show()
                 progressDialog.dismiss()
             }.addOnFailureListener { e ->
                 Toast.makeText(this, "Enter A Valid Email ${e.message}", Toast.LENGTH_SHORT).show()
                 progressDialog.dismiss()
-            }
-        }
-    }
-}
+            } } } }

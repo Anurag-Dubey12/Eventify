@@ -25,29 +25,17 @@ class About : AppCompatActivity() {
         instagram_layout=findViewById(R.id.instagram_layout)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        instagram_layout.setOnClickListener {
-            OpenUrl("https://www.instagram.com/_itz_anurag_12/")
-        }
-        github_layout.setOnClickListener {
-            OpenUrl("https://github.com/Anurag-Dubey12")
-        }
-        linkedin_layout.setOnClickListener {
-            OpenUrl("https://www.linkedin.com/in/anurag-dubey-68720b247")
-        }
+        instagram_layout.setOnClickListener { OpenUrl("https://www.instagram.com/_itz_anurag_12/") }
+        github_layout.setOnClickListener { OpenUrl("https://github.com/Anurag-Dubey12") }
+        linkedin_layout.setOnClickListener { OpenUrl("https://www.linkedin.com/in/anurag-dubey-68720b247") }
     }
     private fun OpenUrl(Url:String){
         val uri:Uri=Uri.parse(Url)
         val browserIntent=Intent(Intent.ACTION_VIEW,uri)
-
         val packageManager = packageManager
         val activity=packageManager.queryIntentActivities(browserIntent,PackageManager.MATCH_DEFAULT_ONLY)
-        if(activity.isNullOrEmpty()){
-            startActivity(browserIntent)
-        }else{
-        startActivity(Intent(Intent.ACTION_VIEW,uri))
-        }
-
+        if(activity.isNullOrEmpty()){ startActivity(browserIntent) }
+        else{ startActivity(Intent(Intent.ACTION_VIEW,uri)) }
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return  when(item.itemId){
@@ -56,6 +44,4 @@ class About : AppCompatActivity() {
                 true
             }
             else->super.onOptionsItemSelected(item)
-        }
-    }
-}
+        } } }

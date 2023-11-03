@@ -18,7 +18,7 @@
         <item name="appWidgetInnerRadius">8dp</item>
     </style>
     <style name="Theme.App.SplashScreen" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/black</item>
+        <item name="windowSplashScreenBackground">@color/white</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/app_logo</item>
         <item name="postSplashScreenTheme">@style/Base.Theme.Eventmatics</item>
     </style>
@@ -151,11 +151,11 @@
 <style name="showevent">
     <item name="android:backgroundTint">#BC7AF9</item>
     <item name="icon">@drawable/show_event</item>
-    <item name="iconSize">30sp</item>
-    <item name="cornerRadius">15sp</item>
+    <item name="iconSize">@dimen/_30sdp</item>
+    <item name="cornerRadius">@dimen/_15sdp</item>
     <item name="iconGravity">textEnd</item>
     <item name="strokeColor">@color/black</item>
-    <item name="strokeWidth">1sp</item>
+    <item name="strokeWidth">@dimen/_1sdp</item>
 </style>
     <style name="show_warning">
         <item name="android:src">@drawable/information</item>

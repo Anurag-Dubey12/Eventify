@@ -20,6 +20,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.icu.text.SimpleDateFormat
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Environment
@@ -125,8 +126,6 @@ class MainActivity : AppCompatActivity(){
     private lateinit var vendorPendingAmount: TextView
     private lateinit var vendorPaidAmount: TextView
     private lateinit var taskPending: TextView
-    private lateinit var nameadd: TextView
-    private lateinit var fragmentManager: FragmentManager
     private lateinit var totalTask: TextView
     private lateinit var totalInvi: TextView
     private lateinit var totalInvitationSent: TextView
@@ -155,15 +154,6 @@ class MainActivity : AppCompatActivity(){
     private val permissioncode=101
     private val galley_req_code = 201
     private var selectedImageUri:Uri?=null
-
-
-    //Event ID
-    private lateinit var eventName: TextInputEditText
-    private lateinit var eventDate: TextInputEditText
-    private lateinit var eventTime: TextInputEditText
-    private lateinit var eventBudget: TextInputEditText
-    private lateinit var createButton: Button
-    private lateinit var EditButton: Button
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -209,8 +199,6 @@ class MainActivity : AppCompatActivity(){
         actionBarDrawerToggle.syncState()
         eventList.clear()
         val userUid = AuthenticationUid.getUserUid(this)!!
-        Log.d("useruid","The Uid is :$userUid")
-
         //For First Time Launch Event Create SHow
         if (isFirstLaunch(this)) {
             showFirstLaunchDialog()
@@ -218,31 +206,25 @@ class MainActivity : AppCompatActivity(){
         }
         DatabaseManager.initialize(this)
         showEventData()
+
         //Load Profile Pic
         val db=UserProfileDatabase(this)
         val headerView = navView.getHeaderView(0)
         val userprofile=headerView.findViewById<CircleImageView>(R.id.profilepic)
         val username=headerView.findViewById<TextView>(R.id.UserNameView)
         editprofile=headerView.findViewById(R.id.editProfileButton)
-        editprofile.setOnClickListener {
-            editprofiledialog()
-        }
+        editprofile.setOnClickListener { editprofiledialog() }
         val userImagedb=db.getUserProfilebyID(1)
         val userimage=userImagedb?.Image
-        if(userimage!=null){
-            val image=BitmapFactory.decodeByteArray(userimage,0, userimage!!.size)
-            userprofile.setImageBitmap(image)
-        }
+        if(userimage!=null){ val image=BitmapFactory.decodeByteArray(userimage,0, userimage!!.size)
+            userprofile.setImageBitmap(image) }
         val userName=userImagedb?.name
-        if(userName!=null){
-            username.text= userName.toString()
-        }
+        if(userName!=null){ username.text= userName.toString() }
         if (eventRecyclerView.adapter?.itemCount == 0) {
             eventTimerDisplay.text=" "
             eventname.text=" "
             val eventadding=EventAdding(this,supportFragmentManager,null)
             eventadding.show()
-//           showeventfragemnt()
         }
         else {
             guestSummary.setOnClickListener { checkAndStartActivity(GuestDataHolderActivity::class.java) }
@@ -264,11 +246,8 @@ class MainActivity : AppCompatActivity(){
             eventActivity.visibility = if (isActivityVisible) View.GONE else View.VISIBLE
         }
 
-        eventaddbut.setOnClickListener {
-//            showeventfragemnt()
-            val eventadding=EventAdding(this,supportFragmentManager,null)
-            eventadding.show()
-        }
+        eventaddbut.setOnClickListener { val eventadding=EventAdding(this,supportFragmentManager,null)
+            eventadding.show() }
         generatePdf.setOnClickListener {
             if (eventRecyclerView.adapter?.itemCount == 0) {
                 Toast.makeText(this, "Create Event First", Toast.LENGTH_SHORT).show()
@@ -282,15 +261,12 @@ class MainActivity : AppCompatActivity(){
                     .setPositiveButton("Combined PDF") { _, _ ->
                         handlePdfGeneration(false)
                     }
-                    .show()
-            }
-        }
+                    .show() } }
         swipeRefreshLayout.setOnRefreshListener {
             Handler().postDelayed({
                showEventData()
                 swipeRefreshLayout.isRefreshing=false
-            },1)
-        }
+            },1) }
 
         swipeRefreshLayout.setColorSchemeResources(R.color.Coral, R.color.Fuchsia, R.color.Indigo)
         swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.Lavender_Blush)
@@ -316,129 +292,7 @@ class MainActivity : AppCompatActivity(){
             },1)
         }
         swipeRefreshLayout.setProgressViewEndTarget(true,200)
-
         navigationDrawershow()
-    }
-
-    private fun showeventfragemnt() {
-        val dialog=layoutInflater.inflate(R.layout.fragment_event_adding,null)
-        eventName = dialog.findViewById(R.id.eventname)!!
-        eventDate = dialog.findViewById(R.id.eventdate)!!
-        eventTime = dialog.findViewById(R.id.eventtime)!!
-        eventBudget = dialog.findViewById(R.id.eventbudget)!!
-        createButton = dialog.findViewById(R.id.eventcreatebut)!!
-        val view=BottomSheetDialog(this)
-        view.setContentView(dialog)
-        view.create()
-        val today = Calendar.getInstance()
-        val todayFormattedDate = "${today.get(Calendar.DAY_OF_MONTH)}/${today.get(Calendar.MONTH) + 1}/${today.get(Calendar.YEAR)}"
-        val todayFormattedTime = String.format(
-            "%02d:%02d:%02d",
-            today.get(Calendar.HOUR_OF_DAY),
-            today.get(Calendar.MINUTE),
-            today.get(Calendar.SECOND)
-        )
-        eventDate.setText(todayFormattedDate)
-        eventTime.setText(todayFormattedTime)
-        eventDate.setOnClickListener { showDatePicker() }
-        eventTime.setOnClickListener { showTimePicker() }
-        createButton.setOnClickListener {
-            val databasename=getSharedPreference(this,"databasename").toString()
-            val eventNameText = eventName.text.toString()
-            var eventDateText = eventDate.text.toString()
-            val eventTimeText = eventTime.text.toString()
-            val eventBudgetText = eventBudget.text.toString()
-
-            if (eventNameText.isEmpty()) {
-                eventName.error = "Enter Event Name"
-                return@setOnClickListener
-            }
-            if (eventDateText.isEmpty()) {
-                eventDateText = "Date is not Defined"
-            }
-            if (eventBudgetText.isEmpty()) {
-                eventBudget.error = "Enter Budget"
-                return@setOnClickListener
-            }
-            if (eventTimeText.isEmpty()) {
-                eventTime.error = "Select Time"
-                return@setOnClickListener
-            }
-
-            DatabaseManager.initialize(this)
-            val db=DatabaseManager.getDatabase(this)
-            val Databasename=NamesDatabase(this)
-            if (db.isEventNameExists(eventNameText)) {
-                Toast.makeText(this, "Event name must be unique", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            val uid=AuthenticationUid.getUserUid(this)!!
-            val event = Events(0, eventNameText, eventDateText, eventTimeText, eventBudgetText,uid)
-            val names= DatabaseNameDataClass(0,eventNameText,eventDateText,eventTimeText, eventBudgetText,uid)
-            Log.d("EventDetails","The Event Details are:$event}")
-            Log.d("UerUid","This is EventAdding userid:$names")
-            val eventId = db.createEvent(event)
-            saveToSharedPreferences(this,"databasename",databasename)
-            Databasename.createDatabase(names)
-            if (eventId != -1L) {
-                swipeRefreshLayout.isRefreshing=true
-                Handler().postDelayed({
-                   showEventData()
-                    swipeRefreshLayout.isRefreshing = false
-                }, 1000)
-                Toast.makeText(this, "Event created successfully", Toast.LENGTH_SHORT).show()
-                view.dismiss()
-            } else {
-                Toast.makeText(this, "Failed to create event", Toast.LENGTH_SHORT).show()
-            }
-            db.close()
-            Databasename.close()
-        }
-        view.show()
-    }
-    private fun showTimePicker() {
-        val calendar = Calendar.getInstance()
-        val hour = calendar.get(Calendar.HOUR_OF_DAY)
-        val minute = calendar.get(Calendar.MINUTE)
-        val second = calendar.get(Calendar.SECOND)
-
-        val timePicker = MaterialTimePicker.Builder()
-            .setTimeFormat(TimeFormat.CLOCK_12H)
-            .setHour(hour)
-            .setMinute(minute)
-            .setTitleText("Select Event Time")
-            .build()
-
-        timePicker.addOnPositiveButtonClickListener {
-            val selectedHour = timePicker.hour
-            val selectedMinute = timePicker.minute
-            val formattedTime = String.format("%02d:%02d:%02d", selectedHour, selectedMinute, second)
-            eventTime.setText(formattedTime)
-
-        }
-
-        timePicker.show(supportFragmentManager, "TAG_TIME_PICKER")
-    }
-    private fun showDatePicker() {
-        val constraintBulder=CalendarConstraints.Builder()
-            .setValidator(DateValidatorPointForward.now())
-        val calendar = Calendar.getInstance()
-        val datePicker = MaterialDatePicker.Builder.datePicker()
-            .setTitleText("Select Date")
-            .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
-            .setCalendarConstraints(constraintBulder.build())
-            .build()
-        datePicker.addOnPositiveButtonClickListener { selectedDate ->
-            val selectedCalendar = Calendar.getInstance()
-            selectedCalendar.timeInMillis = selectedDate
-            val selectedDay = selectedCalendar.get(Calendar.DAY_OF_MONTH)
-            val selectedMonth = selectedCalendar.get(Calendar.MONTH)
-            val selectedYear = selectedCalendar.get(Calendar.YEAR)
-            val formattedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
-            eventDate.setText(formattedDate)
-        }
-        datePicker.show(supportFragmentManager, "datePicker")
-
     }
     fun handlePdfGeneration(isSeparatePdf: Boolean) {
         if (checkPermissions()) {
@@ -454,60 +308,62 @@ class MainActivity : AppCompatActivity(){
     }
 
     private fun editprofiledialog() {
-        profileDialog= BottomSheetDialog(this)
-        profileDialog.setContentView(R.layout.editprofiledialog)
-        profileDialog.show()
-        val db=UserProfileDatabase(this)
-        imageadd=profileDialog.findViewById(R.id.uploadImage)!!
-        nameadd=profileDialog.findViewById(R.id.uploadName)!!
-        saveButton=profileDialog.findViewById(R.id.saveButton)!!
-        val userData=db.getUserProfilebyID(1)
-        val currentname=userData?.name ?:" "
-        val userimage=userData?.Image
-        try{
-        if(userData!=null){
-            val image=BitmapFactory.decodeByteArray(userimage,0, userimage!!.size)
-            imageadd.setImageBitmap(image)
+        profileDialog = BottomSheetDialog(this).apply {
+            setContentView(R.layout.editprofiledialog)
+            show()
         }
-        imageadd.setOnClickListener {
-            imageUploaddialog()
-        }
-        nameadd.text=currentname
-        }catch (e:Exception){
-            Log.d("Image","Crash due to:${e.message}")
-        }
-        saveButton.setOnClickListener {
-            if(selectedImageUri!=null){
-                val getImageByte=getImageByte(selectedImageUri!!)
-                val userid=FirebaseAuth.getInstance().currentUser?.uid
-                if(userid!=null){
 
-                  val  username = nameadd.text.toString()
-                    val existinguser=db.getUserProfilebyID(1)
-                    if(existinguser!=null){
-                        val userprofile=UserProfile(1,username,getImageByte)
-                        db.updateUserProfile(userprofile)
-                        Toast.makeText(this, "Data Updated", Toast.LENGTH_SHORT).show()
-                        val image=BitmapFactory.decodeByteArray(getImageByte,0,getImageByte.size)
-                        imageadd.setImageBitmap(image)
-                        recreate()
-                    }
-                    else{
-                        val userprofile=UserProfile(1,username,getImageByte)
-                        db.insertUserProfile(userprofile)
-                        Toast.makeText(this, "Image Uploaded", Toast.LENGTH_SHORT).show()
-                        val image=BitmapFactory.decodeByteArray(getImageByte,0,getImageByte.size)
-                        imageadd.setImageBitmap(image)
-                        recreate()
-                    }
-                }
-            }else{
-                Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show()
+        val db = UserProfileDatabase(this)
+        val imageadd = profileDialog.findViewById<ImageView>(R.id.uploadImage)!!
+        val nameadd = profileDialog.findViewById<TextView>(R.id.uploadName)!!
+        val saveButton = profileDialog.findViewById<Button>(R.id.saveButton)!!
+
+        val userData = db.getUserProfilebyID(1)
+        val currentname = userData?.name ?: " "
+
+        try {
+            userData?.let {
+                val userimage = it.Image
+                val image = BitmapFactory.decodeByteArray(userimage, 0, userimage.size)
+                imageadd.setImageBitmap(image)
             }
-            profileDialog.dismiss()
-            drawerLayout.close()
+        } catch (e: Exception) {
+            Log.d("Image", "Crash due to: ${e.message}")
+        }
+
+        imageadd.setOnClickListener { imageUploaddialog() }
+        nameadd.text = currentname
+
+        saveButton.setOnClickListener {
+            if (selectedImageUri != null) {
+                val getImageByte = getImageByte(selectedImageUri!!)
+                val userid = FirebaseAuth.getInstance().currentUser?.uid
+
+                userid?.let {
+                    val username = nameadd.text.toString()
+                    val existinguser = db.getUserProfilebyID(1)
+                    val actionMessage: String
+
+                    if (existinguser != null) {
+                        db.updateUserProfile(UserProfile(1, username, getImageByte))
+                        actionMessage = "Data Updated"
+                    } else {
+                        db.insertUserProfile(UserProfile(1, username, getImageByte))
+                        actionMessage = "Image Uploaded"
+                    }
+
+                    Toast.makeText(this, actionMessage, Toast.LENGTH_SHORT).show()
+                    val image = BitmapFactory.decodeByteArray(getImageByte, 0, getImageByte.size)
+                    imageadd.setImageBitmap(image)
+                    recreate()
+                } ?: Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show()
+
+                profileDialog.dismiss()
+                drawerLayout.close()
+            }
         }
     }
+
     private fun imageUploaddialog(){
         imageAddOption=BottomSheetDialog(this)
         imageAddOption.setContentView(R.layout.profiledialog)
@@ -547,13 +403,10 @@ class MainActivity : AppCompatActivity(){
         val userimage=contentResolver.openInputStream(image)
         return userimage?.readBytes() ?: ByteArray(0)
     }
-    private fun setAppTheme() {
-        val theme=getThemePreference(this,"Theme")
-        AppCompatDelegate.setDefaultNightMode(theme)
-    }
     private fun checkAndStartActivity(targetActivity:Class<*>){
         if (eventRecyclerView.adapter?.itemCount==0){
-            showeventfragemnt()
+            val eventadding=EventAdding(this,supportFragmentManager,null)
+            eventadding.show()
             Toast.makeText(this, "Create an Event Before Moving Further", Toast.LENGTH_SHORT).show()
         }
         else{
@@ -1005,7 +858,6 @@ class MainActivity : AppCompatActivity(){
             pdfCopy.freeReader(pdfReader)
             pdfReader.close()
         }
-
         document.close()
     }
     private fun checkPermissions() = ContextCompat.checkSelfPermission(applicationContext, WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
@@ -1017,14 +869,10 @@ class MainActivity : AppCompatActivity(){
             READ_EXTERNAL_STORAGE
         ),permissioncode)
     }
-    private fun getThemePreference(context:Context, key:String):Int{
-        val shared=context.getSharedPreferences("Theme",Context.MODE_PRIVATE)
-        return shared.getInt(key,AppCompatDelegate.MODE_NIGHT_NO)
-    }
+
     private fun showFirstLaunchDialog() {
         val eventadding=EventAdding(this,supportFragmentManager,null)
         eventadding.show()
-
     }
     private fun isFirstLaunch(context: Context): Boolean {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -1037,13 +885,11 @@ class MainActivity : AppCompatActivity(){
 
     override fun onResume() {
         super.onResume()
-        setAppTheme()
         showEventData()
         swipeRefreshLayout.isRefreshing=true
         Handler().postDelayed({
-
             swipeRefreshLayout.isRefreshing = false
-        }, 10)
+        }, 100)
     }
     @SuppressLint("Range")
     fun showEventData() {
@@ -1098,7 +944,6 @@ class MainActivity : AppCompatActivity(){
                     override fun onFinish() {
                         eventTimerDisplay.text = "Event Started"
                         if (!notificationSent){
-
                         val title = "Event Started"
                         val message = "Hurry ! Your Event $eventname has began "
                         val notificationIntent = Intent(applicationContext, Notification::class.java)
@@ -1114,12 +959,9 @@ class MainActivity : AppCompatActivity(){
                         }
                         }
                 }.start()
-            } else {
-                Log.e("CountdownError", "Error parsing event date and time.")
-            }
-        }
-        adapter = EventLayoutAdapter(eventList){ position ->
-        }
+            } else { Log.e("CountdownError", "Error parsing event date and time.")
+            } }
+        adapter = EventLayoutAdapter(eventList){ position -> }
         adapter.updateData(eventList)
         eventRecyclerView.adapter = adapter
         eventRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -1133,8 +975,6 @@ class MainActivity : AppCompatActivity(){
             textField.text=value.toString()
         }
     }
-
-
     override fun onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
@@ -1147,27 +987,29 @@ class MainActivity : AppCompatActivity(){
         val context = applicationContext
         val appWidgetManager = AppWidgetManager.getInstance(context)
         val myWidgetProvider = ComponentName(context, EventWidget::class.java)
-
-        // Checking if the widget is already added
-        if (appWidgetManager.isRequestPinAppWidgetSupported) {
+        if (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                appWidgetManager.isRequestPinAppWidgetSupported
+            } else {
+                TODO("VERSION.SDK_INT < O")
+            }
+        ) {
             val successCallback = PendingIntent.getBroadcast(
                 context,
                 0,
                 Intent(context, EventWidget::class.java),
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
-            appWidgetManager.requestPinAppWidget(myWidgetProvider, null, successCallback)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                appWidgetManager.requestPinAppWidget(myWidgetProvider, null, successCallback)
+            }
         }
     }
-
-
     //Navigation Drawer function
     private fun navigationDrawershow() {
 
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.home -> {
-                    // Open the drawer when the navigation button is clicked
                     drawerLayout.openDrawer(GravityCompat.START)
                     true
                 }
@@ -1176,22 +1018,13 @@ class MainActivity : AppCompatActivity(){
                     true
                 }
                 R.id.nav_About -> {
-                    try{
-                        Intent(this, About::class.java).also { startActivity(it) }
-                    }catch (e:Exception){
-                        Log.d("Activity","Activity ${e.message} ")
-                    }
+                    Intent(this, About::class.java).also { startActivity(it) }
                     true
                 }
-
-                R.id.nav_settings->{
-                    try{
-                        Intent(this, SettingActivity::class.java).also { startActivity(it) }
-                    }catch (e:Exception){
-                        Log.d("Activity","Activity ${e.message} ")
-                    }
-                    true
-                }
+//                R.id.nav_settings->{
+//                    Intent(this, SettingActivity::class.java).also { startActivity(it) }
+//                    true
+//                }
                 R.id.nav_logout->{
                     userLogout()
                     true
@@ -1221,7 +1054,6 @@ class MainActivity : AppCompatActivity(){
            override fun onDrawerOpened(drawerView: View) {
                swipeRefreshLayout.isEnabled=false
            }
-
            override fun onDrawerClosed(drawerView: View) {
                super.onDrawerClosed(drawerView)
                swipeRefreshLayout.isEnabled=true
@@ -1229,7 +1061,6 @@ class MainActivity : AppCompatActivity(){
            }
        })
 }
-
     private fun userLogout() {
         val googleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN)
         googleSignInClient.signOut().addOnCompleteListener(this) { task ->
@@ -1241,28 +1072,13 @@ class MainActivity : AppCompatActivity(){
         }
         FirebaseAuth.getInstance().signOut()
     }
-
-
     private fun sendWhatsAppMessage() {
-        // Phone number of the recipient
         val phoneNumber = "9004040592"
-
-        // Message to be sent
         val message = "Hello, I Need your Help"
-
-        // Get the package manager
         val packageManager = packageManager
-
-        // Create an intent with the ACTION_VIEW action
         val whatsappIntent = Intent(Intent.ACTION_VIEW)
-
-        // Construct the WhatsApp URL with the phone number and message
         val whatsappUrl = "https://api.whatsapp.com/send?phone=+91$phoneNumber&text=$message"
-
-        // Set the data URI of the intent to the WhatsApp URL
         whatsappIntent.data = Uri.parse(whatsappUrl)
-
-        // Check if there is an app installed that can handle the intent
         if (whatsappIntent.resolveActivity(packageManager) != null) {
             startActivity(whatsappIntent)
         } else {

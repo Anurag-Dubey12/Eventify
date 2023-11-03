@@ -54,11 +54,8 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
     private lateinit var recyclerView: RecyclerView
     private lateinit var Data_Not_found: ImageView
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    private lateinit var Data_Item_Selected: CheckBox
     private var isRecyclerViewEmpty = true
-    private  val NUMBER_OF_COLUMNS = 6
     lateinit var bmp:Bitmap
-    private lateinit var swipeController: SwipeToDelete
     lateinit var scalebmp:Bitmap
     private var tasklist: MutableList<Task> = mutableListOf()
     val PERMISSION_CODE=101
@@ -83,14 +80,8 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         showTaskData()
-        taskAdd.setOnClickListener {
-            Intent(this,TaskDetails::class.java).also { startActivity(it) }
-        }
-        if(recyclerView.adapter?.itemCount==0){
-            Data_Not_found.visibility= View.VISIBLE
-        }else{
-            Data_Not_found.visibility= View.GONE
-        }
+        taskAdd.setOnClickListener { Intent(this,TaskDetails::class.java).also { startActivity(it) } }
+        Data_Not_found.visibility=if(recyclerView.adapter?.itemCount==0) View.VISIBLE else View.GONE
         bottomnav.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.sort -> {
@@ -110,30 +101,18 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
                 val isAtTop = recyclerView.canScrollVertically(-1)
                 swipeRefreshLayout.isEnabled =
                     !isAtTop
-            }
-        })
-
+            } })
         swipeRefreshLayout.setOnRefreshListener {
             Handler().postDelayed({
                 showTaskData()
                 swipeRefreshLayout.isRefreshing=false
-            },1000
-            )
+            },1000)
             showTaskData()
             invalidateOptionsMenu()
         }
         swipeRefreshLayout.setProgressViewEndTarget(true,150)
         showTaskData()
     }
-
-
-    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-//        val pdfReportItem = menu.findItem(R.id.pdfreport)
-//        val check = menu.findItem(R.id.Check)
-//        pdfReportItem.isVisible = !isRecyclerViewEmpty
-        return true
-    }
-
     override fun onResume() {
         super.onResume()
        showTaskData()
@@ -166,16 +145,11 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
                                     adapter.removeItem(position)
                                     db.deleteTask(deleteitem)
                                     actionBtn = true
-//                                    recreate()
                                 }
                                 .setNegativeButton("Cancel") { dialog, which ->
                                     tasklist.add(position, deleteitem)
-                                    adapter.notifyItemInserted(position)
-                                }
-
-                                .show()
-                        }
-                    }
+                                    adapter.notifyItemInserted(position) }.show()
+                        } }
                     ItemTouchHelper.RIGHT->{
                         if(position!=RecyclerView.NO_POSITION){
                             val Task=tasklist[position]
@@ -188,28 +162,21 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
                                 "Pending"-> MaterialAlertDialogBuilder(this@TaskDataHolderActivity)
                                     .setTitle("Task Status Update")
                                     .setMessage("Is Your Task has Completed?")
-                                    .setPositiveButton("Yes"){dialog,_->
-                                        db.UpdateTaskStatus(Task.id,NewStatus)
+                                    .setPositiveButton("Yes"){dialog,_-> db.UpdateTaskStatus(Task.id,NewStatus)
                                         recreate()
                                     }
-                                    .setNeutralButton("No"){dialog,_->
-                                        dialog.cancel()
+                                    .setNeutralButton("No"){dialog,_-> dialog.cancel()
                                         recreate()
-                                    }
-                                    .show()
+                                    }.show()
                                 "Completed"->MaterialAlertDialogBuilder(this@TaskDataHolderActivity)
                                     .setTitle("Task Status Update")
                                     .setMessage("Is Your Task has Pending?")
-                                    .setPositiveButton("Yes"){dialog,_->
-                                        db.UpdateTaskStatus(Task.id,NewStatus)
+                                    .setPositiveButton("Yes"){dialog,_-> db.UpdateTaskStatus(Task.id,NewStatus)
                                         recreate()
                                     }
-                                    .setNeutralButton("No"){dialog,_->
-                                        dialog.cancel()
-                                        recreate()
-                                    }
-                                    .show()
-                            } } } }}}
+                                    .setNeutralButton("No"){dialog,_-> dialog.cancel()
+                                        recreate() }.show() }
+                        } } }}}
         val touchHelper= ItemTouchHelper(swipe)
         touchHelper.attachToRecyclerView(recyclerView)
         invalidateOptionsMenu()
@@ -218,9 +185,7 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
         val sortvalue = arrayOf("Name", "Date")
         val dialog = MaterialAlertDialogBuilder(this)
             .setTitle("Sort Data")
-            .setNeutralButton("Cancel") { dialog, _ ->
-                dialog.dismiss()
-            }
+            .setNeutralButton("Cancel") { dialog, _ -> dialog.dismiss() }
                 .setSingleChoiceItems(sortvalue, -1) { dialog, which ->
             when (sortvalue[which]) {
                 "Name" -> {
@@ -235,9 +200,7 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
             dialog.dismiss()
             adapter.notifyDataSetChanged()
         }
-
-        dialog.show()
-    }
+        dialog.show() }
 
     private fun showFilterOption() {
         val FilterOption= arrayOf("Pending","Completed")
@@ -245,37 +208,26 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
             .setTitle("Filter Data")
             .setSingleChoiceItems(FilterOption,-1){dialog,which->
                 val selectedFilter = FilterOption[which]
-
-                val filteredList = tasklist.filter { task ->
-                    task.taskStatus == selectedFilter
-                }
+                val filteredList = tasklist.filter { task -> task.taskStatus == selectedFilter }
                 adapter.setData(filteredList.toMutableList())
                 dialog.dismiss()
             }
-            .setNeutralButton("Cancel"){dialog,_->
-                dialog.dismiss()
-            }
+            .setNeutralButton("Cancel"){dialog,_-> dialog.dismiss() }
             .show()
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.holder,menu)
         val searchItem = menu?.findItem(R.id.action_search)
-        // Set up the SearchView
         val searchView = searchItem?.actionView as androidx.appcompat.widget.SearchView
         searchView.queryHint = "Search"
-
-        // Handle query submission and text changes
         searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                searchTask(query)
+            override fun onQueryTextSubmit(query: String): Boolean { searchTask(query)
                 return true
             }
 
-            override fun onQueryTextChange(newText: String): Boolean {
-                searchTask(newText)
+            override fun onQueryTextChange(newText: String): Boolean { searchTask(newText)
                 return true
-            }
-        })
+            } })
         return true
     }
     private fun searchTask(query: String) {
@@ -290,168 +242,7 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
                 onBackPressed()
                 true
             }
-            R.id.pdfreport->{
-                if(checkPermission()){
-                    GeneratedPDF()
-                }
-                else{
-                    requestPermission()
-                }
-                true
-            }
             else->super.onOptionsItemSelected(item)
         }
     }
-
-    private fun GeneratedPDF(){
-        val db = DatabaseManager.getDatabase(this)
-        val Task=db.getAllTasks()
-        val Event=db.getEventData(1)
-        val name=Event?.name
-        val pagewidth=792
-        val pageheight=1120
-
-        bmp=BitmapFactory.decodeResource(resources,R.drawable.logo)
-        scalebmp=Bitmap.createScaledBitmap(bmp,190,190,false)
-
-        val pdfDocument=PdfDocument()
-        val paint=Paint()
-        val title=Paint()
-
-        val pageInfo:PdfDocument.PageInfo=PdfDocument.PageInfo.Builder(pagewidth,pageheight,1).create()
-        val page:PdfDocument.Page=pdfDocument.startPage(pageInfo)
-
-        val canvas:Canvas=page.canvas
-        canvas.drawBitmap(scalebmp,20F,0F,paint)
-        title.textSize=20F
-        title.color=ContextCompat.getColor(this,R.color.black)
-        canvas.drawText("Task Report",209F,50F,title)
-
-        val starty=200F
-        val lineHeight=50F
-
-        val column= listOf("No","Name","Task Category","Note"
-            ,"Task Status","Task Date")
-
-        val borderPaint=Paint()
-        borderPaint.style = Paint.Style.STROKE
-        borderPaint.color=Color.BLACK
-        borderPaint.strokeWidth=2f
-
-        val headerPaint = Paint()
-        headerPaint.textSize = 20F
-        headerPaint.color = Color.BLACK
-        headerPaint.textAlign = Paint.Align.CENTER
-        val HeaderX=pagewidth.toFloat()/2
-        val headerY=starty
-
-        for((columnIndex,columns) in column.withIndex()){
-            val cellwidth=pagewidth/column.size
-            val cellheight=lineHeight
-
-            val cellX=columnIndex*cellwidth
-            val cellY=headerY-cellheight/2
-
-            canvas.drawRect(
-                cellX.toFloat(),cellY,(cellX+cellwidth).toFloat(),(cellY+cellheight),borderPaint
-            )
-            canvas.drawText(columns,(cellX+cellwidth/2).toFloat(),cellY+cellheight/2,headerPaint)
-        }
-
-        val dataPaint=Paint()
-        dataPaint.textSize=12F
-        dataPaint.color=Color.BLACK
-        dataPaint.textAlign=Paint.Align.CENTER
-
-        val cellwidth=pagewidth/column.size
-        val cellheight=lineHeight
-
-        for((index,Task) in Task.withIndex()){
-            val xpos=0
-            val ypos=starty+(index+1)*lineHeight
-
-            val dataitems= listOf(
-                Task.id.toString(),
-                Task.taskName,
-                Task.category,
-                Task.taskNote,
-                Task.taskStatus,
-                Task.taskDate
-            )
-            for((index,data) in dataitems.withIndex()){
-                val cellX=index*cellwidth
-                val cellY=ypos-cellheight/2
-
-                canvas.drawRect(
-                    cellX.toFloat(),cellY,(cellX+cellwidth).toFloat(),(cellY+cellheight),borderPaint
-                )
-                canvas.drawText(data,(cellX+cellwidth/2).toFloat(),cellY+cellheight/2,dataPaint)
-            }
-        }
-        pdfDocument.finishPage(page)
-
-        val ParentDirectory= File(Environment.getExternalStorageDirectory(),"Eventify")
-        if(!ParentDirectory.exists()){
-            ParentDirectory.mkdirs()
-        }
-        val EventDirectory=File(ParentDirectory,name)
-        if(!EventDirectory.exists()){
-            EventDirectory.mkdirs()
-        }
-        val TaskDirectory=File(EventDirectory,"Task")
-        if(!TaskDirectory.exists()){
-            TaskDirectory.mkdirs()
-        }
-        val timestamp=SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        val filename="Task_$timestamp.pdf"
-        val pdffilepath=File(TaskDirectory,filename)
-        try{
-            pdffilepath.createNewFile()
-            pdfDocument.writeTo(FileOutputStream(pdffilepath))
-            Toast.makeText(this, "PDF file generated successfully", Toast.LENGTH_SHORT).show()
-            Log.d("PDF", "PDF file generated successfully.")
-        }
-        catch (e:Exception){
-            e.printStackTrace()
-            Log.d("PDF","Failed to generate PDF File:${e.message}")
-        }
-        pdfDocument.close()
-    }
-    fun checkPermission():Boolean{
-        var WriteStrogePermission=ContextCompat.checkSelfPermission(
-            applicationContext,
-            WRITE_EXTERNAL_STORAGE
-        )
-        var readExternalStorage=ContextCompat.checkSelfPermission(
-            applicationContext,
-            READ_EXTERNAL_STORAGE
-        )
-        return WriteStrogePermission==PackageManager.PERMISSION_GRANTED && readExternalStorage==PackageManager.PERMISSION_GRANTED
-    }
-    fun requestPermission(){
-        ActivityCompat.requestPermissions(this,
-            arrayOf(READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE),
-            PERMISSION_CODE
-        )
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if(requestCode==PERMISSION_CODE){
-            if(grantResults.size>0){
-                if(grantResults[0]==PackageManager.PERMISSION_GRANTED && grantResults[1]==PackageManager.PERMISSION_GRANTED){
-                    GeneratedPDF()
-                }
-                else{
-                    Log.d("PDF", "Permission Denied.")
-
-                }
-            }
-        }
-    }
-
 }

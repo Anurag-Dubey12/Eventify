@@ -54,14 +54,8 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
         //Action Bar
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        if(recyclerView.adapter?.itemCount==0){
-            Data_Not_found.visibility= View.VISIBLE
-        }else{
-            Data_Not_found.visibility= View.GONE
-        }
-        vendorAdd.setOnClickListener {
-            Intent(this, VendorDetails::class.java).also { startActivity(it) }
-        }
+        Data_Not_found.visibility=if(recyclerView.adapter?.itemCount==0) View.VISIBLE else View.GONE
+        vendorAdd.setOnClickListener { Intent(this, VendorDetails::class.java).also { startActivity(it) } }
 
         bottomnav.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
@@ -89,11 +83,7 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
                     swipeRefreshLayout.isRefreshing=false
             },1)
         }
-        swipeRefreshLayout.setColorSchemeResources(
-            R.color.Coral,
-            R.color.Fuchsia,
-            R.color.Indigo
-        )
+        swipeRefreshLayout.setColorSchemeResources(R.color.Coral, R.color.Fuchsia, R.color.Indigo)
         swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.Lemon_Chiffon)
         swipeRefreshLayout.setProgressViewOffset(false, 0, 150)
         recyclerView.addOnScrollListener(object:RecyclerView.OnScrollListener(){
@@ -101,8 +91,7 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
                 super.onScrolled(recyclerView, dx, dy)
             val isAtTop=recyclerView.canScrollVertically(-1)
                 swipeRefreshLayout.isEnabled=!isAtTop
-            }
-        })
+            } })
         showData()
     }
     private fun showData() {
@@ -126,23 +115,17 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
                     MaterialAlertDialogBuilder(this@VendorDataHolderActivity)
                         .setTitle("Delete Item")
                         .setMessage("Do you want to delete this item?")
-                        .setPositiveButton("Delete"){dialog,_->
-                            db.deleteVendor(deleteditem)
+                        .setPositiveButton("Delete"){dialog,_-> db.deleteVendor(deleteditem)
                             recreate()
                         }
-                        .setNegativeButton("Cancel"){dialog,_->
-                            dialog.dismiss()
+                        .setNegativeButton("Cancel"){dialog,_-> dialog.dismiss()
                             recreate()
-                        }
-                        .show()
-                }
-            }}}
+                        }.show()
+                } }}}
         }
         val itemtouch=ItemTouchHelper(swipe)
-
         itemtouch.attachToRecyclerView(recyclerView)
     }
-
     override fun onResume() {
         super.onResume()
         val db=DatabaseManager.getDatabase(this)
@@ -152,10 +135,6 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
             recyclerView.adapter=adapter
             recyclerView.layoutManager=LinearLayoutManager(this)
         }
-    }
-    fun getSharedPreference(context: Context, key:String):String?{
-        val sharedvalue=context.getSharedPreferences("Database", Context.MODE_PRIVATE)
-        return sharedvalue.getString(key,null)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -169,20 +148,16 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
                 SearchVendor(query)
                 return true
             }
-
             override fun onQueryTextChange(newText: String): Boolean {
                 SearchVendor(newText)
                 return true
-            }
-
-        })
+            } })
         return true
     }
     fun SearchVendor(query:String){
         val db=DatabaseManager.getDatabase(this)
         val VendorList=db.SearchVendor(query)
         adapter.setdata(VendorList)
-
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return  when(item.itemId){
@@ -190,7 +165,6 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
                 onBackPressed()
                 true
             }
-
             else->super.onOptionsItemSelected(item)
         }
     }
@@ -207,10 +181,7 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
                 adapter.setdata(FilterList.toMutableList())
                 dialog.dismiss()
             }
-            .setNeutralButton("Cancel"){dialog,_->
-                dialog.dismiss()
-            }
-            .show()
+            .setNeutralButton("Cancel"){dialog,_-> dialog.dismiss() }.show()
     }
 
     private fun showSortOptions() {
@@ -227,15 +198,9 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
                     "Amount"->{
                         vendorlist.sortBy { it.estimatedAmount }
                         adapter.notifyDataSetChanged()
-                    }
-                }
-                dialog.dismiss()
-            }
-            .setNeutralButton("Cancel"){dialog,_->
-                dialog.dismiss()
-            }
+                    } }
+                dialog.dismiss() }
+            .setNeutralButton("Cancel"){dialog,_-> dialog.dismiss() }
         DilogShow.show()
     }
-
-
 }
