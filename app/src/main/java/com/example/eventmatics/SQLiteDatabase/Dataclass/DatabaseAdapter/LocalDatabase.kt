@@ -788,7 +788,6 @@ class LocalDatabase(contex:Context,databasename:String):
     @SuppressLint("Range")
     fun getPaymentsForBudget(budgetId: Int): MutableList<Paymentinfo> {
         val paymentList = mutableListOf<Paymentinfo>()
-
         val query = "SELECT $TABLE_Payment.$Payment_ID, $TABLE_Payment.$Payment_Name,$TABLE_Payment.$Payment_Amount, $TABLE_Payment.$Payment_Date," +
                 "$TABLE_Payment.$Payment_Status, $TABLE_Payment.$Payment_BudgetID FROM $TABLE_Payment" +
                 " INNER JOIN $TABLE_BUDGET ON $TABLE_Payment.$Payment_BudgetID = $TABLE_BUDGET.$COLUMN_ID " +

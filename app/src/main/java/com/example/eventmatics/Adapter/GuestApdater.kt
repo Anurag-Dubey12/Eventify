@@ -9,10 +9,15 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
+import com.example.eventmatics.RoomDatabase.DataClas.GuestEntity
+import com.example.eventmatics.RoomDatabase.RoomDatabaseManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Guest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
-class GuestApdater(val context: Context, private var GuestList:MutableList<Guest>,
+class GuestApdater(val context: Context, private var GuestList:MutableList<GuestEntity>,
                    private val onitemclick:OnItemClickListener):RecyclerView.Adapter<GuestApdater.GuestViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -25,22 +30,21 @@ class GuestApdater(val context: Context, private var GuestList:MutableList<Guest
        val Guestlist=GuestList[position]
         holder.bind(Guestlist,position)
         holder.itemView.setOnClickListener {onitemclick.onItemClik(Guestlist) } }
-    fun setdata(newlist:MutableList<Guest>){
+    fun setdata(newlist:MutableList<GuestEntity>){
         GuestList=newlist
         notifyDataSetChanged()
     }
-interface OnItemClickListener{ fun onItemClik(guestlist: Guest) }
+interface OnItemClickListener{ fun onItemClik(guestlist: GuestEntity) }
     override fun getItemCount(): Int { return GuestList.size }
     inner class GuestViewHolder(itemview:View):RecyclerView.ViewHolder(itemview){
         val GuestName:TextView=itemview.findViewById(R.id.guestname)
         val cardView:CardView=itemview.findViewById(R.id.cardView)
-        fun bind(Guest: Guest, position:Int){
+        fun bind(Guest: GuestEntity, position:Int){
             GuestName.text=Guest.name
-            val databasename = getSharedPreference(context, "databasename").toString()
-            val db = LocalDatabase(context, databasename)
-            val isInvitationsent=db.isInvitationsent(Guest.id)
+            val dao = RoomDatabaseManager.getEventsDao(context)
+            GlobalScope.launch(Dispatchers.IO){
+            val isInvitationsent=dao.isInvitationSent(Guest.id)
             if(isInvitationsent){ cardView.setBackgroundColor(Color.parseColor("#F5F5F5")) } }
-        fun getSharedPreference(context: Context, key: String): String? {
-            val sharedPref = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
-            return sharedPref.getString(key, null)
-        } } }
+        }
+    }
+   }

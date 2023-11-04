@@ -3,6 +3,7 @@ package com.example.eventmatics.Events_Data_Holder_Activity
 
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -34,6 +35,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.eventmatics.Adapter.TaskDataHolderAdpater
 import com.example.eventmatics.Event_Details_Activity.TaskDetails
 import com.example.eventmatics.R
+import com.example.eventmatics.RoomDatabase.DataClas.TaskEntity
+import com.example.eventmatics.RoomDatabase.RoomDatabaseManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Task
@@ -41,6 +44,9 @@ import com.example.eventmatics.SwipeGesture.SwipeToDelete
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -57,15 +63,15 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
     private var isRecyclerViewEmpty = true
     lateinit var bmp:Bitmap
     lateinit var scalebmp:Bitmap
-    private var tasklist: MutableList<Task> = mutableListOf()
+    private var tasklist: MutableList<TaskEntity> = mutableListOf()
     val PERMISSION_CODE=101
-    override fun onItemClick(task: Task) {
-        // Open TaskDetails activity and pass the selected task's data
+    override fun onItemClick(task: TaskEntity) {
         Intent(this, TaskDetails::class.java).apply {
             putExtra("selected_task", task)
             startActivity(this)
         }
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_data_holder)
@@ -79,6 +85,9 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
 
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        GlobalScope.launch(Dispatchers.Main){
+            RoomDatabaseManager.initialize(applicationContext)
+        }
         showTaskData()
         taskAdd.setOnClickListener { Intent(this,TaskDetails::class.java).also { startActivity(it) } }
         Data_Not_found.visibility=if(recyclerView.adapter?.itemCount==0) View.VISIBLE else View.GONE
@@ -118,17 +127,20 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
        showTaskData()
         invalidateOptionsMenu()
     }
+    @SuppressLint("SuspiciousIndentation")
     private fun showTaskData() {
-        val db = DatabaseManager.getDatabase(this)
-        tasklist=db.getAllTasks()
+        val dao = RoomDatabaseManager.getEventsDao(applicationContext)
+        GlobalScope.launch(Dispatchers.IO){
+        tasklist=dao.getAllTasks()
         isRecyclerViewEmpty=tasklist.isNullOrEmpty()
-        if(tasklist!=null){
-            //Recycler view
-            adapter = TaskDataHolderAdpater(this,tasklist,this)
+            runOnUiThread{
+            if(tasklist!=null){
+            adapter = TaskDataHolderAdpater(applicationContext,tasklist,this@TaskDataHolderActivity)
             recyclerView?.adapter = adapter
-            recyclerView.layoutManager = LinearLayoutManager(this)
+            recyclerView.layoutManager = LinearLayoutManager(this@TaskDataHolderActivity)
         }
-        val swipe=object :SwipeToDelete(this){
+
+        val swipe=object :SwipeToDelete(this@TaskDataHolderActivity){
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position=viewHolder.adapterPosition
                 var actionBtn=false
@@ -143,7 +155,9 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
                                 .setMessage("Do you want to delete this item?")
                                 .setPositiveButton("Delete") { dialog, which ->
                                     adapter.removeItem(position)
-                                    db.deleteTask(deleteitem)
+                                    GlobalScope.launch(Dispatchers.IO){
+                                    dao.deleteTask(deleteitem)
+                                    }
                                     actionBtn = true
                                 }
                                 .setNegativeButton("Cancel") { dialog, which ->
@@ -162,7 +176,7 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
                                 "Pending"-> MaterialAlertDialogBuilder(this@TaskDataHolderActivity)
                                     .setTitle("Task Status Update")
                                     .setMessage("Is Your Task has Completed?")
-                                    .setPositiveButton("Yes"){dialog,_-> db.UpdateTaskStatus(Task.id,NewStatus)
+                                    .setPositiveButton("Yes"){dialog,_-> dao.updateTaskStatus(Task.id,NewStatus)
                                         recreate()
                                     }
                                     .setNeutralButton("No"){dialog,_-> dialog.cancel()
@@ -171,7 +185,7 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
                                 "Completed"->MaterialAlertDialogBuilder(this@TaskDataHolderActivity)
                                     .setTitle("Task Status Update")
                                     .setMessage("Is Your Task has Pending?")
-                                    .setPositiveButton("Yes"){dialog,_-> db.UpdateTaskStatus(Task.id,NewStatus)
+                                    .setPositiveButton("Yes"){dialog,_-> dao.updateTaskStatus(Task.id,NewStatus)
                                         recreate()
                                     }
                                     .setNeutralButton("No"){dialog,_-> dialog.cancel()
@@ -181,6 +195,7 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
         touchHelper.attachToRecyclerView(recyclerView)
         invalidateOptionsMenu()
     }
+        }}
     private fun showSortOptions() {
         val sortvalue = arrayOf("Name", "Date")
         val dialog = MaterialAlertDialogBuilder(this)
@@ -231,9 +246,11 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
         return true
     }
     private fun searchTask(query: String) {
-        val db = DatabaseManager.getDatabase(this)
-        val filteredList = db.searchTask(query)
-        adapter.setData(filteredList as MutableList<Task>)
+        val dao = RoomDatabaseManager.getEventsDao(applicationContext)
+        GlobalScope.launch(Dispatchers.IO){
+        val filteredList = dao.searchTasks(query)
+        adapter.setData(filteredList as MutableList<TaskEntity>)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -245,4 +262,6 @@ class TaskDataHolderActivity : AppCompatActivity(), TaskDataHolderAdpater.OnItem
             else->super.onOptionsItemSelected(item)
         }
     }
+
+
 }

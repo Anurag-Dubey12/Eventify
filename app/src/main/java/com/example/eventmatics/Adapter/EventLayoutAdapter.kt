@@ -6,16 +6,17 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
+import com.example.eventmatics.RoomDatabase.DataClas.EventEntity
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Events
 
 open class EventLayoutAdapter(
-    private var eventdata:MutableList<Events>,
+    private var eventdata:MutableList<EventEntity>,
     private val onItemClickListener: (position: Int) -> Unit):RecyclerView.Adapter<EventLayoutAdapter.EventViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
         val view=LayoutInflater.from(parent.context).inflate(R.layout.eventlayout,parent,false)
         return EventViewHolder(view)
     }
-    open fun updateData(newEventList: MutableList<Events>) {
+    open fun updateData(newEventList: MutableList<EventEntity>) {
         eventdata = newEventList
         notifyDataSetChanged()
     }
@@ -29,8 +30,8 @@ open class EventLayoutAdapter(
         private val eventNameTextView: TextView = item.findViewById(R.id.eventnametv)
         private val eventDateTextView: TextView = item.findViewById(R.id.eventdatetv)
         private val eventTimeTextView: TextView = item.findViewById(R.id.eventtimetv)
-        fun bind(eventdata: Events){
+        fun bind(eventdata: EventEntity){
             eventNameTextView.text=eventdata.name
-            eventDateTextView.text=eventdata.Date
+            eventDateTextView.text=eventdata.date
             eventTimeTextView.text=eventdata.time
         } } }

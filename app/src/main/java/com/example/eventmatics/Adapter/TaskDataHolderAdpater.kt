@@ -10,21 +10,29 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
+import com.example.eventmatics.RoomDatabase.DataClas.TaskEntity
+import com.example.eventmatics.RoomDatabase.RoomDatabaseManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Task
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
-class TaskDataHolderAdpater(private val context:Context, private var taskList: MutableList<Task>,
+class TaskDataHolderAdpater(private val context:Context, private var taskList: MutableList<TaskEntity>,
                             private val itemClickListener: OnItemClickListener) : RecyclerView.Adapter<TaskDataHolderAdpater.ViewHolder>() {
-    private var filteredList: MutableList<Task> = mutableListOf()
+    private var filteredList: MutableList<TaskEntity> = mutableListOf()
     fun removeItem(position: Int) {
         taskList.removeAt(position)
         notifyItemRemoved(position)
     }
     init { filteredList.addAll(taskList) }
-    fun setData(newList: MutableList<Task>) {
+    fun setData(newList: MutableList<TaskEntity>) {
+
         taskList = newList
-        notifyDataSetChanged()
+        GlobalScope.launch(Dispatchers.Main) {
+            notifyDataSetChanged()
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -32,7 +40,7 @@ class TaskDataHolderAdpater(private val context:Context, private var taskList: M
             .inflate(R.layout.taskdataholder, parent, false)
         return ViewHolder(view)
     }
-    interface OnItemClickListener { fun onItemClick(task: Task) }
+    interface OnItemClickListener { fun onItemClick(task: TaskEntity) }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val data = taskList[position]
@@ -49,14 +57,16 @@ class TaskDataHolderAdpater(private val context:Context, private var taskList: M
         private val task_note: TextView = itemView.findViewById(R.id.task_note)
         private val cardView: CardView = itemView.findViewById(R.id.cardView)
         private val Data_Item_Selected: CheckBox = itemView.findViewById(R.id.Item_selected)
-        fun bind(data: Task, position: Int) {
+        fun bind(data: TaskEntity, position: Int) {
             taskNameTextView.text = data.taskName
             taskInfoTextView.text = data.taskStatus
             taskDateTextView.text = data.taskDate
             task_category.text = data.category
             task_note.text = data.taskNote
-            val db = DatabaseManager.getDatabase(context)
-            val iscompleted=db.isTaskCompleted(data.id)
+            val dao = RoomDatabaseManager.getEventsDao(context)
+            GlobalScope.launch(Dispatchers.IO){
+
+            val iscompleted=dao.isTaskCompleted(data.id)
             if(iscompleted){
                 taskInfoTextView.setTextColor(Color.parseColor("#00FF00"))
                 cardView.setBackgroundColor(Color.parseColor("#F5F5F5"))
@@ -65,7 +75,5 @@ class TaskDataHolderAdpater(private val context:Context, private var taskList: M
                 taskInfoTextView.setTextColor(Color.parseColor("#808080"))
                 cardView.setBackgroundColor(Color.WHITE)
             } } }
-    fun getSharedPreference(context: Context, key: String): String? {
-        val sharedPref = context.getSharedPreferences("Database", Context.MODE_PRIVATE)
-        return sharedPref.getString(key, null)
-    } }
+    }
+            }

@@ -33,6 +33,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.eventmatics.Adapter.BudgetDataHolderAdapter
 import com.example.eventmatics.Event_Details_Activity.BudgetDetails
 import com.example.eventmatics.R
+import com.example.eventmatics.RoomDatabase.DataClas.BudgetEntity
+import com.example.eventmatics.RoomDatabase.RoomDatabaseManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Budget
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
@@ -40,6 +42,9 @@ import com.example.eventmatics.SwipeGesture.BudgetSwipeToDelete
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -54,9 +59,9 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
     lateinit var budgetlist:MutableList<Budget>
     private lateinit var Data_Not_found: ImageView
     private var isRecyclerViewEmpty = true
-    private var filteredList: MutableList<Budget> = mutableListOf()
+    private var filteredList: MutableList<BudgetEntity> = mutableListOf()
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    override fun onItemClick(budget: Budget) {
+    override fun onItemClick(budget: BudgetEntity) {
         Intent(this, BudgetDetails::class.java).apply {
             putExtra("selected_item", budget)
             startActivity(this)
@@ -75,20 +80,16 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
         //Action Bar
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        GlobalScope.launch(Dispatchers.Main){
+            RoomDatabaseManager.initialize(applicationContext)
+
+        }
         Data_Not_found.visibility = if (recyclerView.adapter?.itemCount == 0) View.VISIBLE else View.GONE
         budgetlist= mutableListOf()
         budgetAdd.setOnClickListener { Intent(this,BudgetDetails::class.java).also { startActivity(it) } }
         swipeRefreshLayout.setOnRefreshListener {
             Handler().postDelayed({
-                val db = DatabaseManager.getDatabase(this)
-                val BudgetList = db.getAllBudgets()
-
-                isRecyclerViewEmpty=BudgetList.isNullOrEmpty()
-                if(BudgetList!=null){
-                    adapter = BudgetDataHolderAdapter(this,BudgetList,this)
-                    recyclerView.adapter = adapter
-                    recyclerView.layoutManager = LinearLayoutManager(this)
-            }
+                showbudgetlist()
                 swipeRefreshLayout.isRefreshing=false
             },1)
         }
@@ -117,16 +118,18 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
     }
 
     private fun showbudgetlist() {
-        val db = DatabaseManager.getDatabase(this)
-        val BudgetList = db.getAllBudgets()
+        val dao = RoomDatabaseManager.getEventsDao(applicationContext)
+        GlobalScope.launch(Dispatchers.IO){
+        val BudgetList = dao.getAllBudgets()
         isRecyclerViewEmpty=BudgetList.isNullOrEmpty()
-        if(BudgetList!=null){
-            adapter = BudgetDataHolderAdapter(this,BudgetList,this)
-            recyclerView.adapter = adapter
-            recyclerView.layoutManager = LinearLayoutManager(this)
-        }
-        val swipe=object:BudgetSwipeToDelete(this){
-            var deleteditem: Budget? = null
+            runOnUiThread{
+                if(BudgetList!=null){
+                    adapter = BudgetDataHolderAdapter(applicationContext,BudgetList,this@BudgetDataHolderActivity)
+                    recyclerView.adapter = adapter
+                    recyclerView.layoutManager = LinearLayoutManager(this@BudgetDataHolderActivity)
+                }
+        val swipe=object:BudgetSwipeToDelete(this@BudgetDataHolderActivity){
+            var deleteditem: BudgetEntity? = null
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 var position=viewHolder.adapterPosition
                 when(direction){
@@ -138,7 +141,9 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
                         .setTitle("Delete Budget Item")
                         .setMessage("Do you want to delete this item?")
                         .setPositiveButton("Delete"){dialog,_->
-                            db.deleteBudget(deleteditem!!)
+                            GlobalScope.launch(Dispatchers.IO){
+                            dao.deleteBudget(deleteditem!!)
+                            }
                             recreate()
                         }
                         .setNegativeButton("Cancel"){dialog,_->
@@ -149,6 +154,8 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
         val itemTouch=ItemTouchHelper(swipe)
         itemTouch.attachToRecyclerView(recyclerView)
     }
+            }
+        }
     override fun onResume() {
         super.onResume()
         showbudgetlist()
@@ -170,9 +177,11 @@ class BudgetDataHolderActivity : AppCompatActivity(),BudgetDataHolderAdapter.OnI
         return true
     }
     fun searchBudget(query:String){
-        val db = DatabaseManager.getDatabase(this)
-        val BudgetFilter=db.SearchBudget(query)
+        val dao = RoomDatabaseManager.getEventsDao(applicationContext)
+        GlobalScope.launch(Dispatchers.IO){
+        val BudgetFilter=dao.searchBudget(query)
        adapter.setadapter(BudgetFilter)
+        }
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId){

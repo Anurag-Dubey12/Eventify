@@ -8,13 +8,18 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import com.example.eventmatics.Notification
 import com.example.eventmatics.R
+import com.example.eventmatics.RoomDatabase.Dao.EventsDao
+import com.example.eventmatics.RoomDatabase.DataClas.EventEntity
+import com.example.eventmatics.RoomDatabase.EventsDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.AuthenticationUid
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Events
@@ -31,6 +36,11 @@ import com.example.eventmatics.titleExtra
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointForward
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class EventAdding(
@@ -44,11 +54,14 @@ class EventAdding(
     private lateinit var createButton: Button
     private lateinit var EditButton: Button
 
+    private var db:EventsDatabase?=null
+    private var eventdao:EventsDao?=null
+
     interface OnDataEnter{
-        fun onDataEnter(event: Events)
+        fun onDataEnter(event: EventEntity)
     }
     private var onDataEnterListener: OnDataEnter? = null
-    @SuppressLint("MissingInflatedId")
+    @SuppressLint("MissingInflatedId", "SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.fragment_event_adding)
@@ -75,7 +88,6 @@ class EventAdding(
         eventTime.setOnClickListener { showTimePicker() }
 
         createButton.setOnClickListener {
-            val databasename=getSharedPreference(context,"databasename").toString()
             val eventNameText = eventName.text.toString()
             var eventDateText = eventDate.text.toString()
             val eventTimeText = eventTime.text.toString()
@@ -96,36 +108,43 @@ class EventAdding(
                 eventTime.error = "Select Time"
                 return@setOnClickListener
             }
-
-            val databaseHelper = LocalDatabase(context, databasename)
             val Databasename=NamesDatabase(context)
+            try{
+            db= EventsDatabase.createDatabase(context,eventNameText)
+            eventdao=db?.eventdao()
 
-            if (databaseHelper.isEventNameExists(eventNameText)) {
-                Toast.makeText(context, "Event name must be unique", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+                GlobalScope.launch(Dispatchers.IO) {
+                    if (eventdao!!.isEventNameExists(eventNameText)) {
+                        withContext(Dispatchers.Main) {
+                            val rootView = findViewById<View>(android.R.id.content)
+                            val snackbar = Snackbar.make(rootView!!, "Event name must be unique", Snackbar.LENGTH_SHORT)
+                            val params = snackbar.view.layoutParams as FrameLayout.LayoutParams
+                            params.gravity = Gravity.TOP
+                            snackbar.view.layoutParams = params
+                            snackbar.show()
+                        }
+                        return@launch
+                    }
 
             val uid=AuthenticationUid.getUserUid(context)!!
-            val event = Events(0, eventNameText, eventDateText, eventTimeText, eventBudgetText,uid)
+            val eventEntity=EventEntity(0,eventNameText,eventDateText,eventTimeText,eventBudgetText,uid)
             val names= DatabaseNameDataClass(0,eventNameText,eventDateText,eventTimeText, eventBudgetText,uid)
-            onDataEnterListener?.onDataEnter(event)
-
-            val eventId = databaseHelper.createEvent(event)
+            val eventId = eventdao!!.InserEvent(eventEntity)
             Databasename.createDatabase(names)
-
-            if (eventId != -1L) {
+            if (eventId!= -1L ) {
                 val dataAddedIntent = Intent("com.example.eventmatics.fragments")
                 context?.sendBroadcast(dataAddedIntent)
-                onDataEnterListener?.onDataEnter(event)
+                onDataEnterListener?.onDataEnter(eventEntity)
                 shownotification(eventNameText,eventDateText,eventTimeText)
-                Toast.makeText(context, "Event created successfully", Toast.LENGTH_SHORT).show()
+
                 saveToSharedPreferences(context, "databasename", eventNameText)
                 dismiss()
-            } else {
-                Toast.makeText(context, "Failed to create event", Toast.LENGTH_SHORT).show()
             }
             Databasename.close()
-            databaseHelper.close()
+            }
+            }catch (e:Exception){
+                Log.d("eventCreation","Failed to create event:${e.message}")
+            }
         }
     }
 

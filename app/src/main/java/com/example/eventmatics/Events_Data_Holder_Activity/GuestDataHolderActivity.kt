@@ -19,6 +19,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.eventmatics.Adapter.GuestApdater
 import com.example.eventmatics.Event_Details_Activity.GuestDetails
 import com.example.eventmatics.R
+import com.example.eventmatics.RoomDatabase.DataClas.GuestEntity
+import com.example.eventmatics.RoomDatabase.RoomDatabaseManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Guest
@@ -26,6 +28,9 @@ import com.example.eventmatics.SwipeGesture.GuestSwipeToDelete
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickListener {
     private lateinit var recyclerView: RecyclerView
@@ -34,7 +39,7 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
     lateinit var adapter: GuestApdater
     private lateinit var Data_Not_found: ImageView
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    private var GuestList:MutableList<Guest> = mutableListOf()
+    private var GuestList:MutableList<GuestEntity> = mutableListOf()
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +54,9 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
         //Action Bar
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        GlobalScope.launch(Dispatchers.Main){
+            RoomDatabaseManager.initialize(applicationContext)
+        }
         Data_Not_found.visibility=if(recyclerView.adapter?.itemCount==0) View.VISIBLE else View.GONE
         guestAdd.setOnClickListener { Intent(this,GuestDetails::class.java).also { startActivity(it) } }
         bottomnav.setOnNavigationItemSelectedListener { menuItem ->
@@ -61,17 +69,10 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
                 }
                 else -> false
             } }
-        showData()
+        showGuestData()
         swipeRefreshLayout.setOnRefreshListener {
             Handler().postDelayed({
-                val db=DatabaseManager.getDatabase(this)
-                 GuestList=db.getAllGuests()
-                if(GuestList!=null){
-                    val adapter=GuestApdater(this,GuestList,this)
-                    recyclerView.adapter=adapter
-                    recyclerView.layoutManager=LinearLayoutManager(this)
-                    adapter.notifyDataSetChanged()
-                }
+                showGuestData()
                 swipeRefreshLayout.isRefreshing=false
             },1)
         }
@@ -88,66 +89,95 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
                     !isAtTop // Enable/disable the SwipeRefreshLayout based on scroll position
             } }) }
 
-    fun showData(){
-        val db=DatabaseManager.getDatabase(this)
-        GuestList=db.getAllGuests()
-        if(GuestList!=null){
-            adapter=GuestApdater(this,GuestList,this)
-            recyclerView.adapter=adapter
-            recyclerView.layoutManager=LinearLayoutManager(this)
-            adapter.notifyDataSetChanged()
-        }
-        val swipe=object : GuestSwipeToDelete(this){
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val position=viewHolder.adapterPosition
-                when(direction){
-                    ItemTouchHelper.LEFT->
-                        if(position!=RecyclerView.NO_POSITION){
-                            val deleteitem=GuestList[position]
-                            adapter.notifyItemRemoved(position)
-                            MaterialAlertDialogBuilder(this@GuestDataHolderActivity)
-                                .setTitle("Delete Item")
-                                .setMessage("Do you want to delete this item?")
-                                .setPositiveButton("Delete"){dialog,_-> db.deleteGuest(deleteitem)
-                                    recreate()
-                                }
-                                .setNegativeButton("Cancel"){dialog,_-> dialog.dismiss()
-                                    recreate() }.show()
-                        }
-                    ItemTouchHelper.RIGHT -> {
-                        val guest = GuestList[position]
-                        val currentStatus = guest.isInvitationSent
-                        val newStatus = if (currentStatus == "Invitation Sent") "Not Sent" else "Invitation Sent"
+    fun showGuestData(){
+        GlobalScope.launch(Dispatchers.IO) {
+            val dao = RoomDatabaseManager.getEventsDao(applicationContext)
+            val guestList = dao.getAllGuests()
 
-                        when (newStatus) {
-                            "Not Sent" -> MaterialAlertDialogBuilder(this@GuestDataHolderActivity)
-                                .setTitle("Guest Invitation Status")
-                                .setMessage("Is Guest Invitation Sent?")
-                                .setPositiveButton("Yes") { dialog, _ -> db.updateGuestInvitation(guest.id, newStatus)
-                                    recreate()
-                                }
-                                .setNeutralButton("No") { dialog, _ -> dialog.dismiss()
-                                    recreate()
-                                }.show()
-                            "Invitation Sent" -> MaterialAlertDialogBuilder(this@GuestDataHolderActivity)
-                                .setTitle("Guest Invitation Status")
-                                .setMessage("Is Guest Invitation Sent?")
-                                .setPositiveButton("Yes") { dialog, _ -> db.updateGuestInvitation(guest.id, newStatus)
-                                    recreate()
-                                }
-                                .setNeutralButton("No") { dialog, _ -> dialog.dismiss()
-                                    recreate()
-                                }.show()
-                        } } } } }
-        val itemtouch= ItemTouchHelper(swipe)
-        itemtouch.attachToRecyclerView(recyclerView)
+            runOnUiThread {
+                if (guestList != null) {
+                    adapter = GuestApdater(this@GuestDataHolderActivity, guestList, this@GuestDataHolderActivity)
+                    recyclerView.adapter = adapter
+                    recyclerView.layoutManager = LinearLayoutManager(this@GuestDataHolderActivity)
+                    adapter.notifyDataSetChanged()
+                }
+            }
+
+            val swipe = object : GuestSwipeToDelete(this@GuestDataHolderActivity) {
+                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                    val position = viewHolder.adapterPosition
+                    when (direction) {
+                        ItemTouchHelper.LEFT -> {
+                            if (position != RecyclerView.NO_POSITION) {
+                                val deleteItem = guestList[position]
+                                adapter.notifyItemRemoved(position)
+
+                                MaterialAlertDialogBuilder(this@GuestDataHolderActivity)
+                                    .setTitle("Delete Item")
+                                    .setMessage("Do you want to delete this item?")
+                                    .setPositiveButton("Delete") { dialog, _ ->
+                                        GlobalScope.launch(Dispatchers.IO){
+                                        dao.deleteGuest(deleteItem)
+                                        }
+                                        recreate()
+                                    }
+                                    .setNegativeButton("Cancel") { dialog, _ ->
+                                        dialog.dismiss()
+                                        recreate()
+                                    }
+                                    .show()
+                            }
+                        }
+                        ItemTouchHelper.RIGHT -> {
+                            val guest = guestList[position]
+                            val currentStatus = guest.isInvitationSent
+                            val newStatus = if (currentStatus == "Invitation Sent") "Not Sent" else "Invitation Sent"
+
+                            when (newStatus) {
+                                "Not Sent" -> MaterialAlertDialogBuilder(this@GuestDataHolderActivity)
+                                    .setTitle("Guest Invitation Status")
+                                    .setMessage("Is Guest Invitation Sent?")
+                                    .setPositiveButton("Yes") { dialog, _ ->
+                                        GlobalScope.launch(Dispatchers.IO) {
+                                            dao.updateGuestInvitation(guest.id, newStatus)
+                                        }
+                                        recreate()
+                                    }
+                                    .setNeutralButton("No") { dialog, _ ->
+                                        dialog.dismiss()
+                                        recreate()
+                                    }
+                                    .show()
+                                "Invitation Sent" -> MaterialAlertDialogBuilder(this@GuestDataHolderActivity)
+                                    .setTitle("Guest Invitation Status")
+                                    .setMessage("Is Guest Invitation Sent?")
+                                    .setPositiveButton("Yes") { dialog, _ ->
+                                        GlobalScope.launch(Dispatchers.IO) {
+                                            dao.updateGuestInvitation(guest.id, newStatus)
+                                        }
+                                        recreate()
+                                    }
+                                    .setNeutralButton("No") { dialog, _ ->
+                                        dialog.dismiss()
+                                        recreate()
+                                    }
+                                    .show()
+                            }
+                        }
+                    }
+                }
+            }
+
+            val itemTouchHelper = ItemTouchHelper(swipe)
+            runOnUiThread { itemTouchHelper.attachToRecyclerView(recyclerView) }
+        }
     }
     override fun onResume() {
         super.onResume()
-        showData()
+        showGuestData()
     }
     private fun showSortOptions() {
-    val SortValue= arrayOf("Alphabetic(A-Z)","No Of Family Member")
+        val SortValue= arrayOf("Alphabetic(A-Z)","No Of Family Member")
         MaterialAlertDialogBuilder(this)
             .setTitle("Sort Data")
             .setSingleChoiceItems(SortValue,-1){dialog,which->
@@ -193,9 +223,11 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
         return true
     }
     fun SearchGuest(query:String){
-        val db=DatabaseManager.getDatabase(this)
-        val GuestList=db.SearchGuest(query)
+        val dao = RoomDatabaseManager.getEventsDao(applicationContext)
+        GlobalScope.launch(Dispatchers.IO){
+        val GuestList=dao.searchGuests(query)
         adapter.setdata(GuestList)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -204,7 +236,7 @@ class GuestDataHolderActivity : AppCompatActivity(),GuestApdater.OnItemClickList
                 true
             }
             else->super.onOptionsItemSelected(item) } }
-    override fun onItemClik(guestlist: Guest) {
+    override fun onItemClik(guestlist: GuestEntity) {
         Intent(this,GuestDetails::class.java).also {
             it.putExtra("selected_list",guestlist)
             startActivity(it)

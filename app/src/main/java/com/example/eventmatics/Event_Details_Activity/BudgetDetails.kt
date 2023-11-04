@@ -19,6 +19,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.PaymentActivityAdapter
 import com.example.eventmatics.R
+import com.example.eventmatics.RoomDatabase.DataClas.BudgetEntity
+import com.example.eventmatics.RoomDatabase.DataClas.PaymentEntity
+import com.example.eventmatics.RoomDatabase.RoomDatabaseManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Budget
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Paymentinfo
@@ -29,6 +32,9 @@ import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.Calendar
 
 class BudgetDetails : AppCompatActivity(),
@@ -41,9 +47,9 @@ class BudgetDetails : AppCompatActivity(),
     lateinit var  addapyment: LinearLayout
     lateinit var  warning_Message: LinearLayout
     lateinit var  adapter: PaymentActivityAdapter
-    val paymentlist: MutableList<Paymentinfo> = mutableListOf()
+    val paymentlist: MutableList<PaymentEntity> = mutableListOf()
     val updatedpaymentlist: MutableList<Paymentinfo> = mutableListOf()
-    val paymentSet: MutableSet<Paymentinfo> = mutableSetOf()
+    val paymentSet: MutableSet<PaymentEntity> = mutableSetOf()
     lateinit var EstimatedEt: EditText
     val fragmentManager = supportFragmentManager
     lateinit var NoteET: EditText
@@ -51,6 +57,7 @@ class BudgetDetails : AppCompatActivity(),
     lateinit var PaymentBalance: LinearLayout
     lateinit var categoryselection: ImageView
     lateinit var categoryedit: TextView
+    private var currentBudget: BudgetEntity? = null
     
     //Payment ID
     private lateinit var etName: EditText
@@ -67,10 +74,10 @@ class BudgetDetails : AppCompatActivity(),
         "Ceremony", "Flower & Decor", "Health & Beauty", "Jewelry",
         "Miscellaneous", "Music & Show", "Photo & Video", "Reception", "Transportation")
 
-    private fun showBudgetFragment(payment: Paymentinfo?) {
+    private fun showBudgetFragment(payment: PaymentEntity?) {
         updatepaymentsheet(payment)
     }
-    override fun onItemClick(payment: Paymentinfo) {
+    override fun onItemClick(payment: PaymentEntity) {
         showBudgetFragment(payment)
         Log.d("PaymentDetails","The Detials Are:$payment")
     }
@@ -106,11 +113,12 @@ class BudgetDetails : AppCompatActivity(),
                     dialog.dismiss() }
                 .show() }
 
-        val selected_item: Budget?=intent.getParcelableExtra("selected_item")
-        if (selected_item!=null){
-            PaymentBalance.visibility=View.VISIBLE
-            addapyment.visibility=View.VISIBLE
-            PaymentRecycler.visibility=View.VISIBLE
+        val selected_item: BudgetEntity? = intent.getParcelableExtra("selected_item")
+        if (selected_item != null) {
+            currentBudget=selected_item
+            PaymentBalance.visibility = View.VISIBLE
+            addapyment.visibility = View.VISIBLE
+            PaymentRecycler.visibility = View.VISIBLE
             nameEditText.setText(selected_item.name)
             categoryedit.setText(selected_item.category)
             NoteET.setText(selected_item.note)
@@ -118,29 +126,38 @@ class BudgetDetails : AppCompatActivity(),
             EstimatedEt.setText(selected_item.estimatedAmount)
 
             val id = selected_item.id.toInt()
-            val db = DatabaseManager.getDatabase(this)
-            val paymentData = db.getPaymentsForBudget(id)
-            paymentSet.clear()
-            paymentSet.addAll(paymentData)
-            
-            val paymentList = paymentSet.toList()
-            adapter = PaymentActivityAdapter(this, paymentList.toMutableList(),this)
-            PaymentRecycler.adapter = adapter
-            PaymentRecycler.layoutManager = LinearLayoutManager(this)
-            val totalPaymentAmount =db.getTotalPaymentAmount(selected_item.id.toInt())
-            
-            totalPayment.setText(totalPaymentAmount.toString())
+            val dao = RoomDatabaseManager.getEventsDao(applicationContext)
 
-            val estimatedAmount = EstimatedEt.text.toString().toFloatOrNull() ?: 0.0f
-            val balance = estimatedAmount - totalPaymentAmount
-            balanceET.text = balance.toString()
-            if(totalPaymentAmount>estimatedAmount){
-                warning_Message.visibility=View.VISIBLE
-                balanceET.setTextColor(ContextCompat.getColor(this,R.color.Red))
-            } }
+            GlobalScope.launch(Dispatchers.IO) {
+                val paymentData = dao.getPaymentsForBudget(id.toInt())
+                paymentSet.clear()
+                paymentSet.addAll(paymentData)
+
+                val totalPaymentAmount = dao.getTotalPaymentAmount(selected_item.id.toInt().toLong())
+
+                val estimatedAmount = EstimatedEt.text.toString().toFloatOrNull() ?: 0.0f
+                val balance = estimatedAmount - totalPaymentAmount
+
+                runOnUiThread {
+                    val paymentList = paymentSet.toList()
+                    adapter = PaymentActivityAdapter(applicationContext, paymentList.toMutableList(), this@BudgetDetails)
+                    PaymentRecycler.adapter = adapter
+                    PaymentRecycler.layoutManager = LinearLayoutManager(this@BudgetDetails)
+
+                    totalPayment.setText(totalPaymentAmount.toString())
+                    balanceET.text = balance.toString()
+
+                    if (totalPaymentAmount > estimatedAmount) {
+                        warning_Message.visibility = View.VISIBLE
+                        balanceET.setTextColor(ContextCompat.getColor(applicationContext, R.color.Red))
+                    }
+                }
+            }
+        }
+
         Paymentadd.setOnClickListener { showpaymentsheet() }
     }
-private fun updatepaymentsheet(payment: Paymentinfo?){
+private fun updatepaymentsheet(payment: PaymentEntity?){
     val dialogview=BottomSheetDialog(this)
     dialogview.setContentView(R.layout.fragment_budget)
     dialogview.show()
@@ -179,22 +196,25 @@ private fun updatepaymentsheet(payment: Paymentinfo?){
     }
 
     buttonSubmit.setOnClickListener {
-        val selected_item: Budget?=intent.getParcelableExtra("selected_item")
+        GlobalScope.launch(Dispatchers.IO){
+        val selected_item: BudgetEntity?=intent.getParcelableExtra("selected_item")
         val name = etName.text.toString()
         val amount = etAmount.text.toString().toFloat()
-        val date = etDate.text.toString()
+            val date = etDate.text.toString()
+            runOnUiThread {
         status =if(!isButtonClicked){ "${payment?.status}" }
         else if (isPaid) { "Paid" }
         else { "Pending" }
-        val payment = Paymentinfo(payment!!.id, name, amount, date, status,selected_item!!.id)
+        val payment = PaymentEntity(payment!!.id, name, amount, date, status,selected_item!!.id)
         paymentlist.add(payment)
-
-        adapter = PaymentActivityAdapter(this, paymentlist,this)
+        adapter = PaymentActivityAdapter(applicationContext, paymentlist,this@BudgetDetails)
         PaymentRecycler.adapter = adapter
-        PaymentRecycler.layoutManager = LinearLayoutManager(this)
+        PaymentRecycler.layoutManager = LinearLayoutManager(this@BudgetDetails)
         adapter.notifyDataSetChanged()
         dialogview.dismiss()
+            }
     }
+        }
     etDate.setOnClickListener { showDatePicker() }
 }
     private fun showpaymentsheet() {
@@ -220,24 +240,35 @@ private fun updatepaymentsheet(payment: Paymentinfo?){
             setButtonBackground(buttonPaid, true)
             setButtonBackground(buttonPending, false)
         }
+        GlobalScope.launch(Dispatchers.IO){
+        val dao = RoomDatabaseManager.getEventsDao(applicationContext)
+        val event=dao.getEventData(1)
+        val date=event!!.date
+        etDate.text=date
+        }
 
         buttonSubmit.setOnClickListener {
-            val selected_item: Budget?=intent.getParcelableExtra("selected_item")
+            GlobalScope.launch(Dispatchers.IO){
+            val selected_item: BudgetEntity?=intent.getParcelableExtra("selected_item")
             val name = etName.text.toString()
             val amount = etAmount.text.toString().toFloat()
             val date = etDate.text.toString()
+                runOnUiThread {
             status = if (isPaid) { "Paid" }
             else { "Pending" }
-            val payment = Paymentinfo(0, name, amount, date, status,selected_item!!.id)
+            val payment = PaymentEntity(0, name, amount, date, status,selected_item!!.id)
             paymentlist.add(payment)
-            adapter = PaymentActivityAdapter(this, paymentlist,this)
+            adapter = PaymentActivityAdapter(applicationContext, paymentlist,this@BudgetDetails)
             PaymentRecycler.adapter = adapter
-            PaymentRecycler.layoutManager = LinearLayoutManager(this)
+            PaymentRecycler.layoutManager = LinearLayoutManager(this@BudgetDetails)
             adapter.notifyDataSetChanged()
+                    updateBalance()
             dialogview.dismiss()
         }
-        etDate.setOnClickListener { showDatePicker() }
     }
+        }
+        etDate.setOnClickListener { showDatePicker() }
+            }
 
     private fun showDatePicker() {
         val constraint = CalendarConstraints.Builder()
@@ -270,19 +301,15 @@ private fun updatepaymentsheet(payment: Paymentinfo?){
                 true
             }
           R.id.Check->{
-              val selected_item: Budget?=intent.getParcelableExtra("selected_item")
-              if (selected_item!=null){
-                  UpdateDatabase(selected_item.id,paymentlist)
-              }
-              else{
-              AddValueToDataBase()
-              }
+              val selected_item: BudgetEntity?=intent.getParcelableExtra("selected_item")
+              if (selected_item!=null){ UpdateDatabase(selected_item.id,paymentlist) }
+              else{ AddValueToDataBase() }
               true
           }
             else->super.onOptionsItemSelected(item)
         }
     }
-    private fun UpdateDatabase(id: Long, paymentList: List<Paymentinfo>) {
+    private fun UpdateDatabase(id: Long, paymentList: MutableList<PaymentEntity>) {
         val name = nameEditText.text.toString()
         val totalamt = EstimatedEt.text.toString().toFloat()
         val Totalamount = totalamt.toString()
@@ -290,33 +317,70 @@ private fun updatepaymentsheet(payment: Paymentinfo?){
         val category = categoryedit.text.toString()
         val balance = balanceET.text.toString()
 
-        if (name.isEmpty()) { nameEditText.error = "Please enter a name" }
-        if (totalamt == 0f) { EstimatedEt.error = "Please enter an amount" }
+        if (name.isEmpty()) {
+            nameEditText.error = "Please enter a name"
+            return
+        }
 
-        val status: String
-        val db= DatabaseManager.getDatabase(this)
-        val isBudgetPaid = db.isBudgetPaid(id)
-        if (isBudgetPaid) { status = "Paid" }
-        else { status = "Not Paid" }
-        val budget = Budget(id, name, category, note, Totalamount, balance, "", status)
-        db.updateBudget(budget)
+        if (totalamt == 0f) {
+            EstimatedEt.error = "Please enter an amount"
+            return
+        }
 
-        for (payment in paymentList) {
-            val existingPayments = db.getPaymentsForBudget(id.toInt())
-            val existingPayment = existingPayments.find { it.id == payment.id }
-            if (existingPayment != null) {
-                db.updatePayment(payment.id, payment)
-                Toast.makeText(this, "Budget Updated successfully", Toast.LENGTH_SHORT).show()
+        var status: String
+        val dao = RoomDatabaseManager.getEventsDao(applicationContext)
+
+        GlobalScope.launch(Dispatchers.IO) {
+            val isBudgetPaid = dao.isBudgetPaid(id)
+            if (isBudgetPaid) {
+                status = "Paid"
             } else {
-                db.createPayment(payment)
-                Toast.makeText(this, "Budget Data Added successfully", Toast.LENGTH_SHORT).show()
-            } }
-        val paidamt=db.getTotalPaymentAmount(id.toInt())
-        if(paidamt.toFloat()>=Totalamount.toFloat()){ db.updateBudgetPaid(budget.id, "Paid") }
-        else{ db.updateBudgetPaid(budget.id, "Not Paid") }
-        finish()
+                status = "Not Paid"
+            }
+            val budget = BudgetEntity(id, name, category, note, Totalamount, balance, "", status)
+            dao.updateBudget(budget)
+
+            for (payment in paymentList) {
+                val existingPayments = dao.getPaymentsForBudget(id.toInt())
+                val existingPayment = existingPayments.find { it.id == payment.id }
+                if (existingPayment != null) {
+                    dao.updatePayment(payment.id, payment.name, payment.amount.toDouble(), payment.date, payment.status, id.toInt())
+
+                } else {
+                    dao.InsertPayment(payment)
+                }
+            }
+            val paidamt = dao.getTotalPaymentAmount(id)
+
+            if (paidamt.toFloat() >= Totalamount.toFloat()) {
+                dao.updateBudgetPaid(budget.id, "Paid")
+            } else {
+                dao.updateBudgetPaid(budget.id, "Not Paid")
+            }
+            finish()
+        }
+    }
+    private fun updateBalance() {
+        GlobalScope.launch(Dispatchers.IO){
+
+        val dao = RoomDatabaseManager.getEventsDao(applicationContext)
+        val estimatedAmount = EstimatedEt.text.toString().toFloatOrNull() ?: 0.0f
+        val totalPaymentAmount = dao.getTotalPaymentAmount(currentBudget!!.id)
+
+        val balance = estimatedAmount - totalPaymentAmount
+        balanceET.text = balance.toString()
+
+        if (totalPaymentAmount > estimatedAmount) {
+            warning_Message.visibility = View.VISIBLE
+            balanceET.setTextColor(ContextCompat.getColor(applicationContext, R.color.Red))
+        } else {
+            warning_Message.visibility = View.GONE
+            balanceET.setTextColor(ContextCompat.getColor(applicationContext, R.color.black))
+        }
+        }
     }
     private fun AddValueToDataBase() {
+        val dao = RoomDatabaseManager.getEventsDao(applicationContext)
         val name = nameEditText.text.toString()
         val totalamt = EstimatedEt.text.toString().toFloat()
         val Totalamount=totalamt.toString()
@@ -325,13 +389,12 @@ private fun updatepaymentsheet(payment: Paymentinfo?){
         val balance=balanceET.text.toString()
         if (name.isEmpty()) { nameEditText.error = "Please enter a name" }
         if (totalamt==0f) { EstimatedEt.error = "Please enter an amount" }
-
+        GlobalScope.launch(Dispatchers.IO){
         val id=0
-        val db= DatabaseManager.getDatabase(this)
-        val budget= Budget(id.toLong(),name,category,note,Totalamount,balance,"","Not Paid")
-        db.createBudget(budget)
-        Toast.makeText(this, "Budget Added successfully", Toast.LENGTH_SHORT).show()
+        val budget= BudgetEntity(id.toLong(),name,category,note,Totalamount,balance,"","Not Paid")
+        dao.InsertBudget(budget)
         finish()
+        }
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.budget_menu,menu)

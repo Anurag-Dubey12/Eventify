@@ -1,12 +1,16 @@
 package com.example.eventmatics.Event_Details_Activity
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -15,12 +19,18 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import com.example.eventmatics.R
+import com.example.eventmatics.RoomDatabase.DataClas.TaskEntity
+import com.example.eventmatics.RoomDatabase.RoomDatabaseManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Task
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.Calendar
 
 class TaskDetails : AppCompatActivity(){
@@ -56,7 +66,7 @@ val spinnerItems = arrayOf(
         taskPendingbut=findViewById(R.id.TaskPendingbut)
         TaskCombut=findViewById(R.id.Taskcombut)
 
-        val selectedTask: Task? = intent.getParcelableExtra("selected_task")
+        val selectedTask: TaskEntity? = intent.getParcelableExtra("selected_task")
         if (selectedTask != null) {
             TaskNameET.setText(selectedTask.taskName)
             categoryedit.text = selectedTask.category
@@ -71,9 +81,12 @@ val spinnerItems = arrayOf(
                 setButtonBackground(TaskCombut,true)
             } }
         else{
-            val today= Calendar.getInstance()
-            val formateddate="${today.get(Calendar.DAY_OF_MONTH)}/${today.get(Calendar.MONTH)+1}/${today.get(Calendar.YEAR)}"
-            taskdate.setText(formateddate)
+            GlobalScope.launch(Dispatchers.IO){
+            val dao = RoomDatabaseManager.getEventsDao(applicationContext)
+            val event=dao.getEventData(1)
+            val date=event!!.date
+            taskdate.setText(date)
+            }
         }
 
         taskPendingbut.setOnClickListener {
@@ -138,7 +151,7 @@ val spinnerItems = arrayOf(
                 true
             }
             R.id.Check->{
-                val selectedTask: Task? = intent.getParcelableExtra("selected_task")
+                val selectedTask: TaskEntity? = intent.getParcelableExtra("selected_task")
                 if(selectedTask!=null){ UpdateData(selectedTask.id) }
                 else{ addvaluetodatabase() }
                 true
@@ -146,42 +159,50 @@ val spinnerItems = arrayOf(
          else->super.onOptionsItemSelected(item)
         }
     }
+    @SuppressLint("SuspiciousIndentation")
     private fun addvaluetodatabase(){
-        val Db=DatabaseManager.getDatabase(this)
         val taskname=TaskNameET.text.toString()
         val category=categoryedit.text.toString()
         val TaskNoteET=taskNote.text.toString()
         val taskdate=taskdate.text.toString()
-
+        val dao = RoomDatabaseManager.getEventsDao(applicationContext)
+        GlobalScope.launch(Dispatchers.IO){
         if(TaskStatus){ taskStatus="Completed" }
         else{ taskStatus="Pending" }
         if(taskname.isEmpty()){ TaskNameET.error="Enter Task Name" }
         if(category.isEmpty()){ categoryedit.error="Enter Or Select a category" }
-        if(taskname.isEmpty()&&category.isEmpty()){ Toast.makeText(this, "Enter Full Details", Toast.LENGTH_SHORT).show() }
+        if(taskname.isEmpty()&&category.isEmpty()){
+            val rootView = findViewById<View>(android.R.id.content)
+            val snackbar = Snackbar.make(rootView!!, "Enter Full Details", Snackbar.LENGTH_SHORT)
+            val params = snackbar.view.layoutParams as FrameLayout.LayoutParams
+            params.gravity = Gravity.TOP
+            snackbar.view.layoutParams = params
+            snackbar.show()
+        }
         else{
-        val Task= Task(0,taskname,category,TaskNoteET,taskStatus,taskdate)
-        Db.createTask(Task)
-        Toast.makeText(this, "Task Added successfully", Toast.LENGTH_SHORT).show()
+        val Task= TaskEntity(0,taskname,category,TaskNoteET,taskStatus,taskdate)
+            dao.InsertTask(Task)
         finish()
-        } }
+        } } }
     private fun UpdateData(id: Long) {
-        val db=DatabaseManager.getDatabase(this)
+        val dao = RoomDatabaseManager.getEventsDao(applicationContext)
         val taskname = TaskNameET.text.toString()
         val category = categoryedit.text.toString()
         val TaskNoteET = taskNote.text.toString()
         val taskdate = taskdate.text.toString()
+        GlobalScope.launch(Dispatchers.IO){
 
         if(!taskButtonClicked){
-            val selectedTask: Task? = intent.getParcelableExtra("selected_task")
+            val selectedTask: TaskEntity? = intent.getParcelableExtra("selected_task")
             val previousdata=selectedTask?.taskStatus
             Log.d("Button_Status","The Status Of  A Button is :$previousdata")
             updatedtaskStatus=previousdata.toString()
         }
         else if(TaskStatus){ updatedtaskStatus="Completed" }
         else{ updatedtaskStatus="Pending" }
-        val task= Task(id,taskname,category,TaskNoteET,updatedtaskStatus,taskdate)
-        db.updateTask(task)
-        Toast.makeText(this, "Task Data Updated successfully", Toast.LENGTH_SHORT).show()
+        val task= TaskEntity(id,taskname,category,TaskNoteET,updatedtaskStatus,taskdate)
+            dao.updateTask(task)
         finish()
     }
+        }
 }

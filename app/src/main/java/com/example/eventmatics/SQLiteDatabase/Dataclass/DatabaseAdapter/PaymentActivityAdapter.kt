@@ -10,9 +10,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
+import com.example.eventmatics.RoomDatabase.DataClas.PaymentEntity
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Paymentinfo
 
-class PaymentActivityAdapter(private val context: Context, private val paymentList: MutableList<Paymentinfo>
+class PaymentActivityAdapter(private val context: Context, private val paymentList: MutableList<PaymentEntity>
 ,private val itemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<PaymentActivityAdapter.PaymentInfoViewHolder>() {
 
@@ -21,7 +22,7 @@ class PaymentActivityAdapter(private val context: Context, private val paymentLi
             .inflate(R.layout.payment_info, parent, false)
         return PaymentInfoViewHolder(view)
     }
-    interface OnItemClickListener{ fun onItemClick(payment: Paymentinfo) }
+    interface OnItemClickListener{ fun onItemClick(payment: PaymentEntity) }
     override fun onBindViewHolder(holder: PaymentInfoViewHolder, position: Int) {
         val payment = paymentList[position]
         holder.bind(payment)
@@ -36,7 +37,7 @@ class PaymentActivityAdapter(private val context: Context, private val paymentLi
         private val budgetpaymentstatus: TextView = itemView.findViewById(R.id.budgetpaymentstatus)
         val EditPayment: ImageView = itemView.findViewById(R.id.EditPayment)
 
-        fun bind(payment: Paymentinfo) {
+        fun bind(payment: PaymentEntity) {
             paymentNameTextView.text = payment.name
             budgetpaymentstatus.text = payment.status
             paymentAmountTextView.text = payment.amount.toString()

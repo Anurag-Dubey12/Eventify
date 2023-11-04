@@ -19,6 +19,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.eventmatics.Adapter.VendorDataHolderClass
 import com.example.eventmatics.Event_Details_Activity.VendorDetails
 import com.example.eventmatics.R
+import com.example.eventmatics.RoomDatabase.DataClas.VendorEntity
+import com.example.eventmatics.RoomDatabase.RoomDatabaseManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Vendor
@@ -26,6 +28,9 @@ import com.example.eventmatics.SwipeGesture.BudgetSwipeToDelete
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onItemClickListener {
     private lateinit var recyclerView: RecyclerView
@@ -34,8 +39,8 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
     lateinit var bottomnav: BottomNavigationView
     lateinit var adapter:VendorDataHolderClass
     private lateinit var Data_Not_found: ImageView
-    private var vendorlist:MutableList<Vendor> = mutableListOf()
-    override fun onItemclick(vendor: Vendor) {
+    private var vendorlist:MutableList<VendorEntity> = mutableListOf()
+    override fun onItemclick(vendor: VendorEntity) {
         Intent(this,VendorDetails::class.java).also {
             it.putExtra("Selected_Item",vendor)
             startActivity(it)
@@ -56,7 +61,9 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         Data_Not_found.visibility=if(recyclerView.adapter?.itemCount==0) View.VISIBLE else View.GONE
         vendorAdd.setOnClickListener { Intent(this, VendorDetails::class.java).also { startActivity(it) } }
-
+        GlobalScope.launch(Dispatchers.Main){
+            RoomDatabaseManager.initialize(applicationContext)
+        }
         bottomnav.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.sort -> {
@@ -73,13 +80,7 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
         swipeRefreshLayout=findViewById(R.id.swipeRefreshLayout)
         swipeRefreshLayout.setOnRefreshListener {
             Handler().postDelayed({
-                val db=DatabaseManager.getDatabase(this)
-                vendorlist=db.getAllVendors()
-                if(vendorlist!=null){
-                    adapter=VendorDataHolderClass(this,vendorlist,this)
-                    recyclerView.adapter=adapter
-                    recyclerView.layoutManager=LinearLayoutManager(this)
-                }
+               showVendorData()
                     swipeRefreshLayout.isRefreshing=false
             },1)
         }
@@ -92,17 +93,21 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
             val isAtTop=recyclerView.canScrollVertically(-1)
                 swipeRefreshLayout.isEnabled=!isAtTop
             } })
-        showData()
+        showVendorData()
     }
-    private fun showData() {
-        val db=DatabaseManager.getDatabase(this)
-        vendorlist=db.getAllVendors()
+    private fun showVendorData() {
+        GlobalScope.launch(Dispatchers.IO){
+
+        val dao = RoomDatabaseManager.getEventsDao(applicationContext)
+        vendorlist=dao.getAllVendors()
+            runOnUiThread{
         if(vendorlist!=null){
-            adapter=VendorDataHolderClass(this,vendorlist,this)
+            adapter=VendorDataHolderClass(applicationContext,vendorlist,this@VendorDataHolderActivity)
             recyclerView.adapter=adapter
-            recyclerView.layoutManager=LinearLayoutManager(this)
+            recyclerView.layoutManager=LinearLayoutManager(this@VendorDataHolderActivity)
         }
-        val swipe=object:BudgetSwipeToDelete(this){
+            }
+        val swipe=object:BudgetSwipeToDelete(this@VendorDataHolderActivity){
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position=viewHolder.adapterPosition
                 when(direction){
@@ -115,7 +120,10 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
                     MaterialAlertDialogBuilder(this@VendorDataHolderActivity)
                         .setTitle("Delete Item")
                         .setMessage("Do you want to delete this item?")
-                        .setPositiveButton("Delete"){dialog,_-> db.deleteVendor(deleteditem)
+                        .setPositiveButton("Delete"){dialog,_->
+                            GlobalScope.launch(Dispatchers.IO){
+                            dao.deleteVendor(deleteditem)
+                            }
                             recreate()
                         }
                         .setNegativeButton("Cancel"){dialog,_-> dialog.dismiss()
@@ -124,17 +132,12 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
                 } }}}
         }
         val itemtouch=ItemTouchHelper(swipe)
-        itemtouch.attachToRecyclerView(recyclerView)
+            runOnUiThread { itemtouch.attachToRecyclerView(recyclerView) }
+        }
     }
     override fun onResume() {
         super.onResume()
-        val db=DatabaseManager.getDatabase(this)
-        vendorlist=db.getAllVendors()
-        if(vendorlist!=null){
-            adapter=VendorDataHolderClass(this,vendorlist,this)
-            recyclerView.adapter=adapter
-            recyclerView.layoutManager=LinearLayoutManager(this)
-        }
+        showVendorData()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -155,9 +158,11 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
         return true
     }
     fun SearchVendor(query:String){
-        val db=DatabaseManager.getDatabase(this)
-        val VendorList=db.SearchVendor(query)
+        val dao = RoomDatabaseManager.getEventsDao(applicationContext)
+        GlobalScope.launch(Dispatchers.IO) {
+        val VendorList=dao.searchVendors(query)
         adapter.setdata(VendorList)
+        }
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return  when(item.itemId){

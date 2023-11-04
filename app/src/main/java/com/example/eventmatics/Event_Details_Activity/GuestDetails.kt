@@ -19,9 +19,14 @@ import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import com.example.eventmatics.R
+import com.example.eventmatics.RoomDatabase.DataClas.GuestEntity
+import com.example.eventmatics.RoomDatabase.RoomDatabaseManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Guest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class GuestDetails : AppCompatActivity() {
     private lateinit var guestNameEt: EditText
@@ -111,7 +116,7 @@ class GuestDetails : AppCompatActivity() {
             setButtonBackground(notSentButton,true)
         }
         contactviewtv.setOnClickListener { guestinfoview() }
-        val selectedlist: Guest?=intent.getParcelableExtra("selected_list")
+        val selectedlist: GuestEntity?=intent.getParcelableExtra("selected_list")
         if(selectedlist!=null){
             guestNameEt.setText(selectedlist.name)
             TotalFamilyMember.setText(selectedlist.totalFamilyMembers)
@@ -119,7 +124,7 @@ class GuestDetails : AppCompatActivity() {
             guestPhoneEt.setText(selectedlist.phoneNumber)
             guestAddresssEt.setText(selectedlist.address)
 
-            when (selectedlist.Acceptence) {
+            when (selectedlist.Acceptance) {
                 "Pending" -> {
                     setButtonBackground(Acccepted, false)
                     setButtonBackground(Pending, true)
@@ -174,18 +179,16 @@ class GuestDetails : AppCompatActivity() {
                 true
             }
             R.id.Check->{
-                val selectedlist: Guest?=intent.getParcelableExtra("selected_list")
-                if(selectedlist!=null){
-                    updateDatabase(selectedlist.id)
-                }else{
-                AddValueToDatabase()
-                }
+                val selectedlist: GuestEntity?=intent.getParcelableExtra("selected_list")
+                if(selectedlist!=null){ updateDatabase(selectedlist.id) }
+                else{ AddValueToDatabase() }
                 true
             }
         else->super.onOptionsItemSelected(item)
     } }
     private fun AddValueToDatabase() {
-        val db = DatabaseManager.getDatabase(this)
+        GlobalScope.launch(Dispatchers.IO){
+        val dao = RoomDatabaseManager.getEventsDao(applicationContext)
         val guestName = guestNameEt.text.toString()
         val guestNote = guestNoteEt.text.toString()
         val totalFamilyMembers = TotalFamilyMember.text.toString()
@@ -195,41 +198,42 @@ class GuestDetails : AppCompatActivity() {
         else if (isPending){ AccceptanceStatus="Pending" }
         else if (isDenied){ AccceptanceStatus="Denied" }
         else{ AccceptanceStatus=" " }
-        val GuestList = Guest(1, guestName, totalFamilyMembers, guestNote, InvitationStatus,
+        val GuestList = GuestEntity(1, guestName, totalFamilyMembers, guestNote, InvitationStatus,
             guestPhone, AccceptanceStatus,guestAddress)
-        db.createGuest(GuestList)
-        Toast.makeText(this, "Guest Added successfully", Toast.LENGTH_SHORT).show()
+        dao.InsertGuest(GuestList)
         finish()
+        }
     }
     private fun updateDatabase(id: Long) {
-        val db = DatabaseManager.getDatabase(this)
-        val guestName = guestNameEt.text.toString()
-        val guestNote = guestNoteEt.text.toString()
-        val totalFamilyMembers = TotalFamilyMember.text.toString()
-        val guestPhone = guestPhoneEt.text.toString()
-        val guestAddress = guestAddresssEt.text.toString()
+        GlobalScope.launch(Dispatchers.IO) {
+            val dao = RoomDatabaseManager.getEventsDao(applicationContext)
+            val guestName = guestNameEt.text.toString()
+            val guestNote = guestNoteEt.text.toString()
+            val totalFamilyMembers = TotalFamilyMember.text.toString()
+            val guestPhone = guestPhoneEt.text.toString()
+            val guestAddress = guestAddresssEt.text.toString()
 
-        if(!isButtonClicked){
-            val selectedlist: Guest?=intent.getParcelableExtra("selected_list")
-            val InvitationStatus=selectedlist?.isInvitationSent
-            Log.d("Guest_Invitation","The Previous Status is :$InvitationStatus")
-            updateInvitationStatus=InvitationStatus.toString()
+            // Retrieve the previous Invitation Status and Acceptance Status
+            val selectedList: GuestEntity? = intent.getParcelableExtra("selected_list")
+            val previousInvitationStatus = selectedList?.isInvitationSent
+            val previousAcceptanceStatus = selectedList?.Acceptance
+
+            val updatedInvitationStatus = if (isInvitationSent) "Invitation Sent" else "Not Sent"
+            val updatedAcceptanceStatus = when {
+                isAccceptanceButtonClicked -> "Accepted"
+                isPendinfButtonClicked -> "Pending"
+                isDeniedButtonClicked -> "Denied"
+                else -> previousAcceptanceStatus.toString() // Use previous status if none of the buttons were clicked
+            }
+
+            val guestEntity = GuestEntity(id, guestName, totalFamilyMembers, guestNote, updatedInvitationStatus, guestPhone, updatedAcceptanceStatus, guestAddress)
+
+            dao.updateGuest(guestEntity)
+
+            runOnUiThread {
+                finish()
+            }
         }
-        else if (isInvitationSent) { updateInvitationStatus = "Invitation Sent" }
-        else { updateInvitationStatus = "Not Sent" }
-
-        if(!isAccceptanceButtonClick){
-            val selectedlist: Guest?=intent.getParcelableExtra("selected_list")
-            val AcceptenceStatus=selectedlist?.Acceptence
-            UpdatedAccceptanceStatus=AcceptenceStatus.toString()
-        }else if(isAccceptanceButtonClicked){ UpdatedAccceptanceStatus="Accepted" }
-        else if(isPendinfButtonClicked){ UpdatedAccceptanceStatus="Pending" }
-        else if(isDeniedButtonClicked){ UpdatedAccceptanceStatus="Denied" }
-
-        val GuestList= Guest(id,guestName,totalFamilyMembers,guestNote, updateInvitationStatus, guestPhone,UpdatedAccceptanceStatus,guestAddress)
-        db.updateGuest(GuestList)
-        Toast.makeText(this, "Guest Updated successfully", Toast.LENGTH_SHORT).show()
-        finish()
     }
 
     //retriveing the contact name and number form the device

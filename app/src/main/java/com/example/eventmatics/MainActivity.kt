@@ -49,6 +49,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.eventmatics.Adapter.EventLayoutAdapter
 import com.example.eventmatics.Events_Data_Holder_Activity.BudgetDataHolderActivity
@@ -60,6 +61,8 @@ import com.example.eventmatics.Login_Activity.signin_account
 import com.example.eventmatics.NavigationDrawer.About
 import com.example.eventmatics.NavigationDrawer.EventList
 import com.example.eventmatics.NavigationDrawer.SettingActivity
+import com.example.eventmatics.RoomDatabase.DataClas.EventEntity
+import com.example.eventmatics.RoomDatabase.RoomDatabaseManager
 import com.example.eventmatics.SQLiteDatabase.Dataclass.AuthenticationUid
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.NamesDatabase
@@ -100,6 +103,7 @@ import com.itextpdf.text.pdf.PdfPageEventHelper
 import com.itextpdf.text.pdf.PdfReader
 import com.itextpdf.text.pdf.PdfWriter
 import de.hdodenhof.circleimageview.CircleImageView
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
@@ -143,7 +147,7 @@ class MainActivity : AppCompatActivity(){
     private lateinit var paidAmountShowTextView: TextView
     private lateinit var eventaddbut: MaterialButton
     private lateinit var adapter: EventLayoutAdapter
-    private  var eventList:MutableList<Events> = mutableListOf()
+    private  var eventList:MutableList<EventEntity> = mutableListOf()
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var dataAddedReceiver: BroadcastReceiver
     private lateinit var editprofile: MaterialButton
@@ -204,7 +208,9 @@ class MainActivity : AppCompatActivity(){
             showFirstLaunchDialog()
             setFirstLaunchFlag(this, false)
         }
-        DatabaseManager.initialize(this)
+        GlobalScope.launch(Dispatchers.Main){
+        RoomDatabaseManager.initialize(applicationContext)
+        }
         showEventData()
 
         //Load Profile Pic
@@ -893,80 +899,96 @@ class MainActivity : AppCompatActivity(){
     }
     @SuppressLint("Range")
     fun showEventData() {
-        val db=DatabaseManager.getDatabase(this)
-        eventList = db.getAllEvents()
-        val eventtimer = db.getEventData(1)
-        val budgettotdal=db.getTotalBudget()
-        val budgetPaid=db.getTotalPaidBudget()
-        val budgetNotPaid=db.getTotalNotPaidBudget()
-        val taskComtext=db.getTaskStatus()
-        val taskpending=db.getTaskPendingStatus()
-        val totaltask=db.getTotalTask()
-        val totalGuest=db.getTotalInvitation()
-        val vendorTotalAmt=db.GetTotalVendorBudget()
-        val vendorTotalPaid=db.GetVendorPaidAmount()
-        val vendorTotalNotPaid=db.GetVendorNotPaidAmount()
-        val totalInvitaionSnt=db.getTotalInvitationsSent()
-        val totalInvitaionNotSnt=db.getTotalInvitationsNotSent()
-        setSummary(totalInvi,totalGuest.toString())
-        setSummary(totalInvitationSent,totalInvitaionSnt.toString())
-        setSummary(totalInvitationNotSent,totalInvitaionNotSnt.toString())
-        setSummary(taskCompleted,taskComtext.toString())
-        setSummary(taskPending,taskpending.toString())
-        setSummary(totalTask,totaltask.toString())
-        setSummary(vendorTotalAmount,vendorTotalAmt.toString())
-        setSummary(vendorPaidAmount,vendorTotalPaid.toString())
-        setSummary(vendorPendingAmount,vendorTotalNotPaid.toString())
-        setSummary(budgetShowTextView,budgettotdal.toString())
-        setSummary(paidAmountShowTextView,budgetPaid.toString())
-        setSummary(pendingAmountShowTextView,budgetNotPaid.toString())
-        var notificationSent = false
+        GlobalScope.launch(Dispatchers.IO) {
+            val dao = RoomDatabaseManager.getEventsDao(applicationContext)
+            eventList = dao.getAllEvents()
+            val eventtimer = dao.getEventData(1)
+            val budgettotdal = dao.getTotalBudget()
+            val budgetPaid = dao.getTotalPaidBudget()
+            val budgetNotPaid = dao.getTotalNotPaidBudget()
+            val taskComtext = dao.getCompletedTaskCount()
+            val taskpending = dao.getTaskPendingStatus()
+            val totaltask = dao.getTotalTask()
+            val totalGuest = dao.getTotalInvitations()
+            val vendorTotalAmt = dao.getTotalVendorBudget()
+            val vendorTotalPaid = dao.getVendorPaidAmount()
+            val vendorTotalNotPaid = dao.getVendorNotPaidAmount()
+            val totalInvitaionSnt = dao.getTotalInvitationsSent()
+            val totalInvitaionNotSnt = dao.getTotalInvitationsNotSent()
 
-        if (eventtimer !=  null) {
-            eventname.text = eventtimer.name
-            val eventDate = eventtimer.Date
-            val eventTime = eventtimer.time
-            val currentDate = Calendar.getInstance().time
-            val eventDateTime = SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.getDefault()).parse("$eventDate $eventTime")
-            if (eventDateTime != null) {
-                val remainingTimeInMillis = eventDateTime.time - currentDate.time
-                countDownTimer?.cancel()
-                countDownTimer = object : CountDownTimer(remainingTimeInMillis, 1000) {
-                    override fun onTick(millisUntilFinished: Long) {
-                        val days = millisUntilFinished / (24 * 60 * 60 * 1000)
-                        val hours = (millisUntilFinished % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)
+            launch(Dispatchers.Main) {
+                setSummary(totalInvi, totalGuest.toString())
+                setSummary(totalInvitationSent, totalInvitaionSnt.toString())
+                setSummary(totalInvitationNotSent, totalInvitaionNotSnt.toString())
+                setSummary(taskCompleted, taskComtext.toString())
+                setSummary(taskPending, taskpending.toString())
+                setSummary(totalTask, totaltask.toString())
+                setSummary(vendorTotalAmount, vendorTotalAmt.toString())
+                setSummary(vendorPaidAmount, vendorTotalPaid.toString())
+                setSummary(vendorPendingAmount, vendorTotalNotPaid.toString())
+                setSummary(budgetShowTextView, budgettotdal.toString())
+                setSummary(paidAmountShowTextView, budgetPaid.toString())
+                setSummary(pendingAmountShowTextView, budgetNotPaid.toString())
+                var notificationSent = false
 
-                        val minutes = (millisUntilFinished % (60 * 60 * 1000)) / (60 * 1000)
-                        val seconds = (millisUntilFinished % (60 * 1000)) / 1000
-                        val remainingTime = String.format("%02dd %02dh %02dm %02ds", days, hours, minutes, seconds)
-                        eventTimerDisplay.text = remainingTime
+                if (eventtimer != null) {
+                    eventname.text = eventtimer.name
+                    val eventDate = eventtimer.date
+                    val eventTime = eventtimer.time
+                    val currentDate = Calendar.getInstance().time
+                    val eventDateTime = SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.getDefault()).parse("$eventDate $eventTime")
+
+                    if (eventDateTime != null) {
+                        val remainingTimeInMillis = eventDateTime.time - currentDate.time
+                        countDownTimer?.cancel()
+                        countDownTimer = object : CountDownTimer(remainingTimeInMillis, 1000) {
+                            override fun onTick(millisUntilFinished: Long) {
+                                val days = millisUntilFinished / (24 * 60 * 60 * 1000)
+                                val hours = (millisUntilFinished % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)
+                                val minutes = (millisUntilFinished % (60 * 60 * 1000)) / (60 * 1000)
+                                val seconds = (millisUntilFinished % (60 * 1000)) / 1000
+                                val remainingTime = String.format("%02dd %02dh %02dm %02ds", days, hours, minutes, seconds)
+
+                                // Update the UI on the main thread
+                                eventTimerDisplay.text = remainingTime
+                            }
+
+                            override fun onFinish() {
+                                // Update the UI on the main thread
+                                eventTimerDisplay.text = "Event Started"
+
+                                if (!notificationSent) {
+                                    val title = "Event Started"
+                                    val message = "Hurry! Your Event ${eventtimer.name} has begun"
+                                    val notificationIntent = Intent(applicationContext, Notification::class.java)
+                                    notificationIntent.putExtra(titleExtra, title)
+                                    notificationIntent.putExtra(messageExtra, message)
+                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, notificationID, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                                    val alarmManager = applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                                    alarmManager[AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000] = pendingIntent
+                                    Log.d("alarm", "the ped:$pendingIntent")
+                                    notificationSent = true
+                                }
+                            }
+                        }.start()
+                    } else {
+                        Log.e("CountdownError", "Error parsing event date and time.")
                     }
-                    override fun onFinish() {
-                        eventTimerDisplay.text = "Event Started"
-                        if (!notificationSent){
-                        val title = "Event Started"
-                        val message = "Hurry ! Your Event $eventname has began "
-                        val notificationIntent = Intent(applicationContext, Notification::class.java)
-                        notificationIntent.putExtra(titleExtra, title)
-                        notificationIntent.putExtra(messageExtra, message)
+                }
 
-                        val pendingIntent = PendingIntent.getBroadcast(applicationContext, notificationID, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                adapter = EventLayoutAdapter(eventList) { position -> }
+                adapter.updateData(eventList)
 
-                        val alarmManager = applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                        alarmManager[AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000] = pendingIntent
-                        Log.d("alaram","the ped:$pendingIntent")
-                            notificationSent = true
-                        }
-                        }
-                }.start()
-            } else { Log.e("CountdownError", "Error parsing event date and time.")
-            } }
-        adapter = EventLayoutAdapter(eventList){ position -> }
-        adapter.updateData(eventList)
-        eventRecyclerView.adapter = adapter
-        eventRecyclerView.layoutManager = LinearLayoutManager(this)
-        adapter.notifyDataSetChanged()
+                // Update the RecyclerView on the main thread
+                launch(Dispatchers.Main) {
+                    eventRecyclerView.adapter = adapter
+                    eventRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
+                    adapter.notifyDataSetChanged()
+                }
+            }
+        }
     }
+
 
     private fun setSummary(textField:TextView,value:String?){
         if(value.isNullOrEmpty() || value=="0" || value=="0.0"){
