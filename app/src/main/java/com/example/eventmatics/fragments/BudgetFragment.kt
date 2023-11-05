@@ -2,7 +2,6 @@ package com.example.eventmatics.fragments
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +12,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import com.example.eventmatics.R
-import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Paymentinfo
+import com.example.eventmatics.RoomDatabase.DataClas.PaymentEntity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.datepicker.CalendarConstraints
@@ -25,7 +24,7 @@ class BudgetFragment(
     private val context: Context,
     private val fragmentManager: FragmentManager,
     private val budgetId: Long?,
-    private val payment: Paymentinfo?
+    private val payment: PaymentEntity?
 ) : BottomSheetDialogFragment() {
 
     private lateinit var etName: EditText
@@ -40,11 +39,11 @@ class BudgetFragment(
     private var updatedStatus: String = ""
 
     interface OnDataEnter {
-        fun onDataEnter(userdata: Paymentinfo)
+        fun onDataEnter(userdata: PaymentEntity)
     }
 
     interface OnDataUpdated {
-        fun onDataUpdate(userdata: Paymentinfo)
+        fun onDataUpdate(userdata: PaymentEntity)
     }
 
     private var userDataEnter: OnDataEnter? = null
@@ -79,7 +78,7 @@ class BudgetFragment(
         }
 
         buttonSubmit.setOnClickListener {
-            val paymentData: Paymentinfo? = arguments?.getParcelable("Payment")
+            val paymentData: PaymentEntity? = arguments?.getParcelable("Payment")
             if (paymentData != null) {
                 val name = etName.text.toString()
                 val amount = etAmount.text.toString().toFloat()
@@ -87,7 +86,7 @@ class BudgetFragment(
                 updatedStatus = if (!isButtonClicked) { paymentData.status }
                 else if (isPaid) { "Paid" }
                 else { "Pending" }
-                val payment = Paymentinfo(paymentData.id, name, amount, date, updatedStatus, paymentData.budgetid)
+                val payment = PaymentEntity(paymentData.id, name, amount, date, updatedStatus, paymentData.BudgetId)
                 userDataUpdate?.onDataUpdate(payment)
                 Toast.makeText(context, "Data Modified", Toast.LENGTH_SHORT).show()
                 dismiss()
@@ -97,7 +96,7 @@ class BudgetFragment(
                 val date = etDate.text.toString()
                 status = if (isPaid) { "Paid" }
                 else { "Pending" }
-                val payment = Paymentinfo(0, name, amount, date, status, budgetId!!)
+                val payment = PaymentEntity(0, name, amount, date, status, budgetId!!)
                 userDataUpdate?.onDataUpdate(payment)
                 Toast.makeText(context, "Data Added", Toast.LENGTH_SHORT).show()
                 dismiss()
@@ -106,7 +105,7 @@ class BudgetFragment(
     }
     override fun onResume() {
         super.onResume()
-        val Payment_data: Paymentinfo? = arguments?.getParcelable("Payment")
+        val Payment_data: PaymentEntity? = arguments?.getParcelable("Payment")
         if (Payment_data != null) {
             etName.setText(Payment_data.name.toString())
             etAmount.setText(Payment_data.amount.toString())

@@ -1,4 +1,4 @@
-package com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter
+package com.example.eventmatics.RoomDatabase.Adapter
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -9,10 +9,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
 import com.example.eventmatics.RoomDatabase.DataClas.VendorPaymentEntity
-import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.VendorPaymentinfo
 
 class VendorPaymentActivityAdapter(private val context: Context, private val paymentList: MutableList<VendorPaymentEntity>,
-                                   private val onitemclicklistener:OnItemClickListener) :
+                                   private val onitemclicklistener: OnItemClickListener
+) :
     RecyclerView.Adapter<VendorPaymentActivityAdapter.PaymentInfoViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PaymentInfoViewHolder {

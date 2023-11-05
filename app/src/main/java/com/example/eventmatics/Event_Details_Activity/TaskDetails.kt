@@ -13,7 +13,6 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
@@ -21,8 +20,6 @@ import androidx.fragment.app.FragmentManager
 import com.example.eventmatics.R
 import com.example.eventmatics.RoomDatabase.DataClas.TaskEntity
 import com.example.eventmatics.RoomDatabase.RoomDatabaseManager
-import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
-import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Task
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker

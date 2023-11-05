@@ -13,23 +13,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.FrameLayout
-import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import com.example.eventmatics.Notification
 import com.example.eventmatics.R
 import com.example.eventmatics.RoomDatabase.Dao.EventsDao
+import com.example.eventmatics.RoomDatabase.Dao.NamesDatabaseDao
 import com.example.eventmatics.RoomDatabase.DataClas.EventEntity
 import com.example.eventmatics.RoomDatabase.EventsDatabase
-import com.example.eventmatics.SQLiteDatabase.Dataclass.AuthenticationUid
-import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
-import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Events
+import com.example.eventmatics.RoomDatabase.AuthenticationUid
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import java.util.Calendar
-import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.NamesDatabase
-import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.DatabaseNameDataClass
+import com.example.eventmatics.RoomDatabase.DataClas.DatabaseNameDataClass
+import com.example.eventmatics.RoomDatabase.NamesDatabase
 import com.example.eventmatics.messageExtra
 import com.example.eventmatics.notificationID
 import com.example.eventmatics.titleExtra
@@ -56,6 +54,9 @@ class EventAdding(
 
     private var db:EventsDatabase?=null
     private var eventdao:EventsDao?=null
+
+    private var dbname:NamesDatabase?=null
+    private var namesdao:NamesDatabaseDao?=null
 
     interface OnDataEnter{
         fun onDataEnter(event: EventEntity)
@@ -108,10 +109,13 @@ class EventAdding(
                 eventTime.error = "Select Time"
                 return@setOnClickListener
             }
-            val Databasename=NamesDatabase(context)
+
             try{
-            db= EventsDatabase.createDatabase(context,eventNameText)
-            eventdao=db?.eventdao()
+                db= EventsDatabase.createDatabase(context,eventNameText)
+                eventdao=db?.eventdao()
+
+                dbname= NamesDatabase.createDatabase(context)
+                namesdao=dbname?.namesdatabasedao()
 
                 GlobalScope.launch(Dispatchers.IO) {
                     if (eventdao!!.isEventNameExists(eventNameText)) {
@@ -125,28 +129,25 @@ class EventAdding(
                         }
                         return@launch
                     }
-
-            val uid=AuthenticationUid.getUserUid(context)!!
-            val eventEntity=EventEntity(0,eventNameText,eventDateText,eventTimeText,eventBudgetText,uid)
-            val names= DatabaseNameDataClass(0,eventNameText,eventDateText,eventTimeText, eventBudgetText,uid)
-            val eventId = eventdao!!.InserEvent(eventEntity)
-            Databasename.createDatabase(names)
-            if (eventId!= -1L ) {
-                val dataAddedIntent = Intent("com.example.eventmatics.fragments")
-                context?.sendBroadcast(dataAddedIntent)
-                onDataEnterListener?.onDataEnter(eventEntity)
-                shownotification(eventNameText,eventDateText,eventTimeText)
-
-                saveToSharedPreferences(context, "databasename", eventNameText)
-                dismiss()
-            }
-            Databasename.close()
-            }
-            }catch (e:Exception){
-                Log.d("eventCreation","Failed to create event:${e.message}")
-            }
-        }
-    }
+                    val uid= AuthenticationUid.getUserUid(context)!!
+                    val eventEntity=EventEntity(0,eventNameText,eventDateText,eventTimeText,eventBudgetText,uid)
+                    val names= DatabaseNameDataClass(0,eventNameText,eventDateText,eventTimeText, eventBudgetText,uid)
+                    val eventId = eventdao!!.InserEvent(eventEntity)
+                    namesdao?.InsertNames(names)
+                    if (eventId!= -1L ) {
+                    val dataAddedIntent = Intent("com.example.eventmatics.fragments")
+                    context?.sendBroadcast(dataAddedIntent)
+                    onDataEnterListener?.onDataEnter(eventEntity)
+                    shownotification(eventNameText,eventDateText,eventTimeText)
+                    saveToSharedPreferences(context, "databasename", eventNameText)
+                    dismiss()
+                }
+                }
+                }catch (e:Exception){
+                    Log.d("eventCreation","Failed to create event:${e.message}")
+                }
+          }
+     }
 
     private fun shownotification(name:String,Date:String,Time:String) {
             val title = "Event Started"

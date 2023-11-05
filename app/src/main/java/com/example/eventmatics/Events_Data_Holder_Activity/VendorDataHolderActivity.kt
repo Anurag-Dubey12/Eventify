@@ -1,7 +1,6 @@
 package com.example.eventmatics.Events_Data_Holder_Activity
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -21,9 +20,6 @@ import com.example.eventmatics.Event_Details_Activity.VendorDetails
 import com.example.eventmatics.R
 import com.example.eventmatics.RoomDatabase.DataClas.VendorEntity
 import com.example.eventmatics.RoomDatabase.RoomDatabaseManager
-import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
-import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
-import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Vendor
 import com.example.eventmatics.SwipeGesture.BudgetSwipeToDelete
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -97,9 +93,8 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
     }
     private fun showVendorData() {
         GlobalScope.launch(Dispatchers.IO){
-
-        val dao = RoomDatabaseManager.getEventsDao(applicationContext)
-        vendorlist=dao.getAllVendors()
+            val dao = RoomDatabaseManager.getEventsDao(applicationContext)
+            vendorlist=dao.getAllVendors()
             runOnUiThread{
         if(vendorlist!=null){
             adapter=VendorDataHolderClass(applicationContext,vendorlist,this@VendorDataHolderActivity)
@@ -131,7 +126,7 @@ class VendorDataHolderActivity : AppCompatActivity(),VendorDataHolderClass.onIte
                         }.show()
                 } }}}
         }
-        val itemtouch=ItemTouchHelper(swipe)
+            val itemtouch=ItemTouchHelper(swipe)
             runOnUiThread { itemtouch.attachToRecyclerView(recyclerView) }
         }
     }

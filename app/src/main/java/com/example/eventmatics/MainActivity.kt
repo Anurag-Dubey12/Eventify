@@ -6,8 +6,6 @@ import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.annotation.SuppressLint
 import android.app.AlarmManager
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.BroadcastReceiver
@@ -37,19 +35,15 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.room.Room
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.eventmatics.Adapter.EventLayoutAdapter
 import com.example.eventmatics.Events_Data_Holder_Activity.BudgetDataHolderActivity
@@ -60,32 +54,19 @@ import com.example.eventmatics.Login_Activity.Login_SignUp_Option
 import com.example.eventmatics.Login_Activity.signin_account
 import com.example.eventmatics.NavigationDrawer.About
 import com.example.eventmatics.NavigationDrawer.EventList
-import com.example.eventmatics.NavigationDrawer.SettingActivity
 import com.example.eventmatics.RoomDatabase.DataClas.EventEntity
 import com.example.eventmatics.RoomDatabase.RoomDatabaseManager
-import com.example.eventmatics.SQLiteDatabase.Dataclass.AuthenticationUid
-import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
-import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.NamesDatabase
+import com.example.eventmatics.RoomDatabase.AuthenticationUid
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.UserProfile
 import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.UserProfileDatabase
-import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
-import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager.saveToSharedPreferences
-import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.DatabaseNameDataClass
-import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Events
 import com.example.eventmatics.fragments.EventAdding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.datepicker.CalendarConstraints
-import com.google.android.material.datepicker.DateValidatorPointForward
-import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.timepicker.MaterialTimePicker
-import com.google.android.material.timepicker.TimeFormat
 import com.google.firebase.auth.FirebaseAuth
 import com.itextpdf.text.Chunk
 import com.itextpdf.text.Document
@@ -468,13 +449,15 @@ class MainActivity : AppCompatActivity(){
         }
     }
 
-    private fun generateTaskPDF(db: LocalDatabase, pdfPath: File) {
-        val eventdetails = db.getEventData(1)
+    private fun generateTaskPDF( pdfPath: File) {
+        GlobalScope.launch(Dispatchers.IO){
+        val dao=RoomDatabaseManager.getEventsDao(applicationContext)
+        val eventdetails = dao.getEventData(1)
         val eventname = eventdetails?.name
-        val taskDetails = db.getAllTasks()
-        val totaltask=db.getTotalTask()
-        val totaltaskcom=db.getTaskStatus()
-        val totalpending=db.getTaskPendingStatus()
+        val taskDetails = dao.getAllTasks()
+        val totaltask=dao.getTotalTask()
+        val totaltaskcom=dao.getCompletedTaskCount()
+        val totalpending=dao.getTaskPendingStatus()
 
         val pdffirectory = File(Environment.getExternalStorageDirectory(), "Eventify")
         if (!pdffirectory.exists()) {
@@ -500,6 +483,8 @@ class MainActivity : AppCompatActivity(){
             val image = Image.getInstance(byteArray.toByteArray())
             image.scaleToFit(100f, 100f)
             image.alignment = Element.ALIGN_LEFT
+            runOnUiThread {
+
             document.add(image)
             val taskTitle = com.itextpdf.text.Font(Font.FontFamily.TIMES_ROMAN, 20f)
             val dataFont = Font(Font.FontFamily.TIMES_ROMAN, 12f)
@@ -541,23 +526,26 @@ class MainActivity : AppCompatActivity(){
             }
             document.add(table)
             document.close()
-            Toast.makeText(this, "PDF file generated successfully", Toast.LENGTH_SHORT).show()
 
+            }
         } catch (e: Exception) {
             e.printStackTrace()
             Log.e("PDF", "Failed to generate PDF file: ${e.message}")
+        }
         }
     }
 
 
     @SuppressLint("SuspiciousIndentation")
-    fun generateBudgetPDF(db:LocalDatabase, pdfPath: File){
-        val budgetdetails=db.getAllBudgets()
-        val eventdetails=db.getEventData(1)
+    fun generateBudgetPDF(pdfPath: File){
+        GlobalScope.launch(Dispatchers.IO){
+            val dao=RoomDatabaseManager.getEventsDao(applicationContext)
+        val budgetdetails=dao.getAllBudgets()
+        val eventdetails=dao.getEventData(1)
         val eventname=eventdetails?.name
-        val totalbudgetnotpaid=db.getTotalNotPaidBudget()
-        val totalbudget=db.getTotalBudget()
-        val totalbudgetpaid=db.getTotalPaidBudget()
+        val totalbudgetnotpaid=dao.getTotalNotPaidBudget()
+        val totalbudget=dao.getTotalBudget()
+        val totalbudgetpaid=dao.getTotalPaidBudget()
         val parentDirectory=File(Environment.getExternalStorageDirectory(),"Eventify")
         if(!parentDirectory.exists()){
             parentDirectory.mkdirs()
@@ -582,6 +570,8 @@ class MainActivity : AppCompatActivity(){
                 val image = Image.getInstance(byteArray.toByteArray())
                 image.scaleToFit(100f, 100f)
                 image.alignment = Element.ALIGN_LEFT
+                runOnUiThread {
+
                 document.add(image)
                 val titleFont = Font(Font.FontFamily.TIMES_ROMAN, 20f, Font.BOLD)
                 val dataFont = Font(Font.FontFamily.TIMES_ROMAN, 12f)
@@ -624,18 +614,21 @@ class MainActivity : AppCompatActivity(){
 
                 document.add(table)
                 document.close()
-                Toast.makeText(this, "PDF file generated successfully", Toast.LENGTH_SHORT).show()
+                }
+
             } catch (e: Exception) {
                 e.printStackTrace()
                 Log.e("PDF", "Failed to generate PDF file: ${e.message}")
-            }
+            }}
     }
-    private fun generateGuestPDF(db:LocalDatabase, pdfPath: File){
-        val guestdetails=db.getAllGuests()
-        val totalinvi=db.getTotalInvitation()
-        val totalinvinot=db.getTotalInvitationsNotSent()
-        val totalinvisnt=db.getTotalInvitationsSent()
-        val eventdetails=db.getEventData(1)
+    private fun generateGuestPDF( pdfPath: File){
+        GlobalScope.launch(Dispatchers.IO){
+            val dao=RoomDatabaseManager.getEventsDao(applicationContext)
+        val guestdetails=dao.getAllGuests()
+        val totalinvi=dao.getTotalInvitations()
+        val totalinvinot=dao.getTotalInvitationsNotSent()
+        val totalinvisnt=dao.getTotalInvitationsSent()
+        val eventdetails=dao.getEventData(1)
         val eventname=eventdetails?.name
 
         val parentDirectory=File(Environment.getExternalStorageDirectory(),"Eventify")
@@ -661,6 +654,8 @@ class MainActivity : AppCompatActivity(){
             val image=Image.getInstance(bytearray.toByteArray())
             image.scaleToFit(100f,100f)
             image.alignment=Element.ALIGN_LEFT
+            runOnUiThread {
+
             document.add(image)
             val guestTitle= Font(Font.FontFamily.TIMES_ROMAN,20f, Font.BOLD)
             val datafont= Font(Font.FontFamily.TIMES_ROMAN,12f)
@@ -703,17 +698,20 @@ class MainActivity : AppCompatActivity(){
             }
             document.add(table)
             document.close()
+            }
         }catch (e:Exception){
             e.printStackTrace()
             Log.d("PDF","File Failed To Generate ${e.message}")
-        }
+        }}
     }
-    private fun generatedVendorPDF(db: LocalDatabase, pdfPath: File){
-        val vendorDetails=db.getAllVendors()
-        val totalbudget=db.GetTotalVendorBudget()
-        val totalbudgetpaid=db.GetVendorPaidAmount()
-        val totalbudgetnotpaid=db.GetVendorNotPaidAmount()
-        val eventDetails=db.getEventData(1)
+    private fun generatedVendorPDF( pdfPath: File){
+        GlobalScope.launch(Dispatchers.IO){
+            val dao=RoomDatabaseManager.getEventsDao(applicationContext)
+        val vendorDetails=dao.getAllVendors()
+        val totalbudget=dao.getTotalVendorBudget()
+        val totalbudgetpaid=dao.getVendorPaidAmount()
+        val totalbudgetnotpaid=dao.getVendorNotPaidAmount()
+        val eventDetails=dao.getEventData(1)
         val eventName=eventDetails?.name
         val parentDirectory=File(Environment.getExternalStorageDirectory(),"Eventify")
         if(!parentDirectory.exists()){
@@ -738,6 +736,8 @@ class MainActivity : AppCompatActivity(){
             val image = Image.getInstance(byteArray.toByteArray())
             image.scaleToFit(100f, 100f)
             image.alignment = Element.ALIGN_LEFT
+            runOnUiThread {
+
             document.add(image)
             val vendorTitle= Font(Font.FontFamily.TIMES_ROMAN,20f, Font.BOLD)
             val dataFont= Font(Font.FontFamily.TIMES_ROMAN,15f)
@@ -780,44 +780,44 @@ class MainActivity : AppCompatActivity(){
                 table.addCell(createDataCell(vendor.estimatedAmount,dataFont))
                 table.addCell(createDataCell(vendor.balance,dataFont))
                 table.addCell(createDataCell(vendor.note,dataFont))
-                table.addCell(createDataCell(vendor.phonenumber,dataFont))
+                table.addCell(createDataCell(vendor.phoneNumber,dataFont))
                 table.addCell(createDataCell(vendor.emailid,dataFont))
                 table.addCell(createDataCell(vendor.website,dataFont))
                 table.addCell(createDataCell(vendor.address,dataFont))
             }
             document.add(table)
             document.close()
+            }
 
         }catch (e:Exception){
             e.printStackTrace()
             Log.e("PDF", "Failed to generate PDF file: ${e.message}")
-        }
+        }}
 
     }
-    private fun sepratePDF(){
-        GlobalScope.launch{
-         val db=DatabaseManager.getDatabase(applicationContext)
-        val eventDetails = db.getEventData(1)
-        val eventName = eventDetails?.name
-
-        val parentDirectory = File(Environment.getExternalStorageDirectory(), "Eventify")
-        if (!parentDirectory.exists()) {
-            parentDirectory.mkdirs()
+    private fun sepratePDF() {
+        GlobalScope.launch(Dispatchers.IO) {
+            val dao = RoomDatabaseManager.getEventsDao(applicationContext)
+            val eventDetails = dao.getEventData(1)
+            val eventName = eventDetails?.name
+            val parentDirectory = File(Environment.getExternalStorageDirectory(), "Eventify")
+            if (!parentDirectory.exists()) {
+                parentDirectory.mkdirs()
+            }
+            val eventDirectroy = File(parentDirectory, "$eventName")
+            if (!eventDirectroy.exists()) {
+                eventDirectroy.mkdirs()
+            }
+            generateGuestPDF(eventDirectroy)
+            generatedVendorPDF(eventDirectroy)
+            generateTaskPDF(eventDirectroy)
+            generateBudgetPDF( eventDirectroy)
         }
-        val eventDirectroy=File(parentDirectory,"$eventName")
-        if(!eventDirectroy.exists()){
-            eventDirectroy.mkdirs()
-        }
-        generateGuestPDF(db, eventDirectroy)
-        generatedVendorPDF(db, eventDirectroy)
-        generateTaskPDF(db, eventDirectroy)
-        generateBudgetPDF(db, eventDirectroy)
     }
-        }
     private fun generatePDF() {
-        GlobalScope.launch {
-         val db=DatabaseManager.getDatabase(applicationContext)
-        val eventDetails = db.getEventData(1)
+        GlobalScope.launch(Dispatchers.IO){
+            val dao=RoomDatabaseManager.getEventsDao(applicationContext)
+        val eventDetails = dao.getEventData(1)
         val eventName = eventDetails?.name
 
         val parentDirectory = File(Environment.getExternalStorageDirectory(), "Eventify")
@@ -830,10 +830,10 @@ class MainActivity : AppCompatActivity(){
         }
         val mergedPdfPath = File(eventDirectroy, "MergedReport.pdf").absolutePath
 
-        generateGuestPDF(db, eventDirectroy)
-        generatedVendorPDF(db, eventDirectroy)
-        generateTaskPDF(db, eventDirectroy)
-        generateBudgetPDF(db, eventDirectroy)
+        generateGuestPDF(eventDirectroy)
+        generatedVendorPDF(eventDirectroy)
+        generateTaskPDF(eventDirectroy)
+        generateBudgetPDF(eventDirectroy)
 
         try {
             mergePDFs(mergedPdfPath,
@@ -954,21 +954,8 @@ class MainActivity : AppCompatActivity(){
                             }
 
                             override fun onFinish() {
-                                // Update the UI on the main thread
                                 eventTimerDisplay.text = "Event Started"
 
-                                if (!notificationSent) {
-                                    val title = "Event Started"
-                                    val message = "Hurry! Your Event ${eventtimer.name} has begun"
-                                    val notificationIntent = Intent(applicationContext, Notification::class.java)
-                                    notificationIntent.putExtra(titleExtra, title)
-                                    notificationIntent.putExtra(messageExtra, message)
-                                    val pendingIntent = PendingIntent.getBroadcast(applicationContext, notificationID, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-                                    val alarmManager = applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                                    alarmManager[AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000] = pendingIntent
-                                    Log.d("alarm", "the ped:$pendingIntent")
-                                    notificationSent = true
-                                }
                             }
                         }.start()
                     } else {

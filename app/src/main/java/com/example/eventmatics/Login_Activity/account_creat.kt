@@ -2,29 +2,24 @@
 package com.example.eventmatics.Login_Activity
 
 import android.app.ProgressDialog
-import android.content.ContentValues.TAG
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import com.example.eventmatics.MainActivity
 import com.example.eventmatics.R
-import com.example.eventmatics.SQLiteDatabase.Dataclass.AuthenticationUid
+import com.example.eventmatics.RoomDatabase.AuthenticationUid
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
-import java.lang.Exception
 
 class account_creat : AppCompatActivity() {
     private lateinit var emailField: EditText

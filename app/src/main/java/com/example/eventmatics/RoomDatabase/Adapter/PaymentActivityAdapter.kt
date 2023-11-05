@@ -1,17 +1,15 @@
-package com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter
+package com.example.eventmatics.RoomDatabase.Adapter
 
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
 import com.example.eventmatics.RoomDatabase.DataClas.PaymentEntity
-import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Paymentinfo
 
 class PaymentActivityAdapter(private val context: Context, private val paymentList: MutableList<PaymentEntity>
 ,private val itemClickListener: OnItemClickListener

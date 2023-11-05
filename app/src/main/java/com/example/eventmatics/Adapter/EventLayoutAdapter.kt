@@ -7,7 +7,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmatics.R
 import com.example.eventmatics.RoomDatabase.DataClas.EventEntity
-import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Events
 
 open class EventLayoutAdapter(
     private var eventdata:MutableList<EventEntity>,

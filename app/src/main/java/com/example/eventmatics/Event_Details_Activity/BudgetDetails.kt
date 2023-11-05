@@ -12,19 +12,15 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.PaymentActivityAdapter
+import com.example.eventmatics.RoomDatabase.Adapter.PaymentActivityAdapter
 import com.example.eventmatics.R
 import com.example.eventmatics.RoomDatabase.DataClas.BudgetEntity
 import com.example.eventmatics.RoomDatabase.DataClas.PaymentEntity
 import com.example.eventmatics.RoomDatabase.RoomDatabaseManager
-import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Budget
-import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
-import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Paymentinfo
 import com.example.eventmatics.fragments.BudgetFragment
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
@@ -48,7 +44,6 @@ class BudgetDetails : AppCompatActivity(),
     lateinit var  warning_Message: LinearLayout
     lateinit var  adapter: PaymentActivityAdapter
     val paymentlist: MutableList<PaymentEntity> = mutableListOf()
-    val updatedpaymentlist: MutableList<Paymentinfo> = mutableListOf()
     val paymentSet: MutableSet<PaymentEntity> = mutableSetOf()
     lateinit var EstimatedEt: EditText
     val fragmentManager = supportFragmentManager

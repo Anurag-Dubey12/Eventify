@@ -7,10 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import com.example.eventmatics.R
-import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Budget
 
 class About : AppCompatActivity() {
     lateinit var github_layout:LinearLayout

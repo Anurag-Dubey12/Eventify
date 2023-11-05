@@ -6,10 +6,12 @@ import android.content.ComponentName
 import android.content.Context
 import android.os.CountDownTimer
 import android.widget.RemoteViews
-import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
+import com.example.eventmatics.RoomDatabase.RoomDatabaseManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.Calendar
-import java.text.SimpleDateFormat
-import java.util.Locale
+
 class EventWidget : AppWidgetProvider() {
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         for (appWidgetId in appWidgetIds) { updateAppWidget(context, appWidgetManager, appWidgetId) }
@@ -29,12 +31,15 @@ fun getSharedPreference(context: Context, key: String): String? {
 
 internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
     val views = RemoteViews(context.packageName, R.layout.event_widget)
-    val databaseHelper = DatabaseManager.getDatabase(context)
-    val eventTimer = databaseHelper.getEventData(1)
+    GlobalScope.launch(Dispatchers.IO){
+
+    val databaseHelper = RoomDatabaseManager.getDatabase(context)
+    val dao=databaseHelper.eventdao()
+    val eventTimer = dao.getEventData(1)
 
     if (eventTimer != null) {
         val name = eventTimer.name
-        val date = eventTimer.Date
+        val date = eventTimer.date
         val time = eventTimer.time
         views.setTextViewText(R.id.eventname, name)
         views.setTextViewText(R.id.eventdate, date)
@@ -43,6 +48,7 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
     }
     appWidgetManager.updateAppWidget(appWidgetId, views)
 }
+    }
 private var countDownTimer: CountDownTimer? = null
 
 private fun updateCountdownTimer(context: Context, views: RemoteViews, eventTime: String) {

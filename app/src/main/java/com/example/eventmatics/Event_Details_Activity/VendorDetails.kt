@@ -6,7 +6,6 @@ import android.content.ContentResolver
 import android.content.Intent
 import android.os.Bundle
 import android.provider.ContactsContract
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -23,14 +22,12 @@ import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.VendorPaymentActivityAdapter
+import androidx.room.Room
+import com.example.eventmatics.RoomDatabase.Adapter.VendorPaymentActivityAdapter
 import com.example.eventmatics.R
 import com.example.eventmatics.RoomDatabase.DataClas.VendorEntity
 import com.example.eventmatics.RoomDatabase.DataClas.VendorPaymentEntity
 import com.example.eventmatics.RoomDatabase.RoomDatabaseManager
-import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseManager
-import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.Vendor
-import com.example.eventmatics.SQLiteDatabase.Dataclass.data_class.VendorPaymentinfo
 import com.example.eventmatics.fragments.VendorFragment
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
@@ -271,7 +268,7 @@ private fun showpaymentsheet(){
         }
         vendorexpireDate.setOnClickListener { showDatePicker() }
         buttonSubmit.setOnClickListener {
-            val Selected_Item: Vendor? = intent.getParcelableExtra("Selected_Item")
+            val Selected_Item: VendorEntity? = intent.getParcelableExtra("Selected_Item")
             val name = editTextName.text.toString()
             val amount = editTextAmount.text.toString().toFloat()
             val date = vendorexpireDate.text.toString()
@@ -386,11 +383,14 @@ private fun showpaymentsheet(){
         val vendorEmail = vendorEmailET.text.toString()
         val vendorWebsite = vendorWebsiteET.text.toString()
         val vendorAddress = vendorAddressET.text.toString()
-        val vendor= Vendor(0,vendorName,category,vendorNote,estimatedAmount,vendorBalance,"","Not Paid",vendorPhone,vendorEmail,vendorWebsite,vendorAddress)
-        val db=DatabaseManager.getDatabase(this)
-        db.createVendor(vendor)
-        Toast.makeText(this, "Vendor Added successfully", Toast.LENGTH_SHORT).show()
-        finish()
+        val vendor= VendorEntity(0,vendorName,category,vendorNote,estimatedAmount,vendorBalance,"","Not Paid",vendorPhone,vendorEmail,vendorWebsite,vendorAddress)
+        GlobalScope.launch(Dispatchers.IO){
+            val dao=RoomDatabaseManager.getEventsDao(applicationContext)
+                dao.InsertVendor(vendor)
+        runOnUiThread {
+            finish()
+        }
+        }
     }
     private fun updateDatabase(id: Long, paymentList: List<VendorPaymentEntity>) {
         val vendorName = vendorNameET.text.toString()

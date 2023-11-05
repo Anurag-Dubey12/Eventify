@@ -7,16 +7,14 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import com.example.eventmatics.MainActivity
 import com.example.eventmatics.R
-import com.example.eventmatics.SQLiteDatabase.Dataclass.AuthenticationUid
+import com.example.eventmatics.RoomDatabase.AuthenticationUid
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 
 class signin_account : AppCompatActivity() {
     private lateinit var alreadyEmail: EditText

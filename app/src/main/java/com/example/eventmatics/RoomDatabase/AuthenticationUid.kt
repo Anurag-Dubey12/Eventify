@@ -1,8 +1,6 @@
-package com.example.eventmatics.SQLiteDatabase.Dataclass
+package com.example.eventmatics.RoomDatabase
 
 import android.content.Context
-import com.example.eventmatics.SQLiteDatabase.Dataclass.DatabaseAdapter.LocalDatabase
-import com.example.eventmatics.getSharedPreference
 
 object AuthenticationUid {
     private const val USER_UID_KEY = "useruid"
